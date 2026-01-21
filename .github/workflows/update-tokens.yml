@@ -1,0 +1,37 @@
+name: Update Design Tokens
+on:
+  workflow_dispatch: # 깃허브에서 버튼을 눌러 수동 실행
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./hyphens-shinhan # 프로젝트 폴더 기준
+
+    steps:
+      - name: Checkout Project
+        uses: actions/checkout@v4
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Extraction Script
+        run: node scripts/extract-figma.js
+        env:
+          FIGMA_TOKEN: ${{ secrets.FIGMA_TOKEN }}
+          FIGMA_FILE_KEY: ${{ secrets.FIGMA_FILE_KEY }}
+
+      - name: Commit and Push changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add src/styles/variables.css
+          git commit -m "style: figma 디자인 토큰 자동 업데이트" || exit 0
+          git push

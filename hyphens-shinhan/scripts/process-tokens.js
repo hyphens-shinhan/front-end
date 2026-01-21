@@ -9,58 +9,69 @@ if (!fs.existsSync(tokenPath)) {
     process.exit(1);
 }
 
-// 1. 이중 파싱 (가장 중요한 부분!)
 const payload = JSON.parse(fs.readFileSync(tokenPath, 'utf8'));
-const designTokens = JSON.parse(payload.tokens); // 문자열로 된 tokens를 다시 객체로 변환
+const designTokens = JSON.parse(payload.tokens);
 
 let cssVariables = [];
 
-/**
- * 참조 값({color.blue})을 CSS var(--color-blue) 형식으로 바꿉니다.
- */
-function resolveValue(val) {
+// 1. 변수 이름 청소 (공백, 괄호, % 등을 하이픈으로 변경)
+function sanitizeName(name) {
+    return name
+        .replace(/\s+/g, '-')        // 공백 -> 하이픈
+        .replace(/[()]/g, '')        // 괄호 제거
+        .replace(/%/g, 'pct')        // % -> pct
+        .replace(/\//g, '-')         // 슬래시 -> 하이픈
+        .toLowerCase();
+}
+
+function resolveValue(val, key) {
     if (typeof val === 'string' && val.startsWith('{') && val.endsWith('}')) {
         const path = val.slice(1, -1).replace(/\./g, '-');
-        return `var(--${path})`;
+        return `var(--${sanitizeName(path)})`;
     }
+    
+    // font-weight는 단위를 붙이지 않음
+    if (key.toLowerCase().includes('fontweight')) {
+        if (typeof val === 'string') {
+            const weights = { 'regular': 400, 'medium': 500, 'semibold': 600, 'bold': 700 };
+            return weights[val.toLowerCase()] || val.replace('px', '');
+        }
+        return val;
+    }
+
     return val;
 }
 
-/**
- * 모든 토큰을 돌면서 CSS 변수를 생성합니다.
- */
 function walk(node, currentPath = '') {
     for (const key in node) {
         const item = node[key];
         const newPath = currentPath ? `${currentPath}-${key}` : key;
 
         if (item && typeof item === 'object') {
-            // 'value'가 있으면 최종 값입니다.
             if (item.hasOwnProperty('value')) {
+                const cleanPath = sanitizeName(newPath);
                 if (typeof item.value === 'object') {
-                    // 폰트 스타일처럼 value 안에 여러 속성(fontSize 등)이 있는 경우
                     for (const prop in item.value) {
-                        cssVariables.push(`  --${newPath}-${prop}: ${resolveValue(item.value[prop])}${typeof item.value[prop] === 'number' ? 'px' : ''};`);
+                        const val = resolveValue(item.value[prop], prop);
+                        const unit = (typeof val === 'number' && !prop.toLowerCase().includes('weight')) ? 'px' : '';
+                        cssVariables.push(`  --${cleanPath}-${sanitizeName(prop)}: ${val}${unit};`);
                     }
                 } else {
-                    // 컬러나 수치 같은 단일 값인 경우
-                    const unit = item.type === 'dimension' && typeof item.value === 'number' ? 'px' : '';
-                    cssVariables.push(`  --${newPath}: ${resolveValue(item.value)}${unit};`);
+                    const val = resolveValue(item.value, key);
+                    const unit = (item.type === 'dimension' && typeof val === 'number' && !key.toLowerCase().includes('weight')) ? 'px' : '';
+                    cssVariables.push(`  --${cleanPath}: ${val}${unit};`);
                 }
             } else {
-                // 더 깊이 파고듭니다.
                 walk(item, newPath);
             }
         }
     }
 }
 
-// 2. 변환 시작
 walk(designTokens);
 
-// 3. 파일 저장
 const cssContent = `:root {\n${cssVariables.join('\n')}\n}\n`;
 fs.mkdirSync(path.dirname(outputPath), { recursive: true });
 fs.writeFileSync(outputPath, cssContent);
 
-console.log(`✅ 총 ${cssVariables.length}개의 변수가 생성되었습니다!`);
+console.log(`✅ ${cssVariables.length}개의 변수가 정화되어 저장되었습니다!`);

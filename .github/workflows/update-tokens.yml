@@ -1,16 +1,23 @@
 name: Update Design Tokens
+
 on:
-  # ✅ 피그마 플러그인이 보낸 '초인종(Dispatch)' 신호를 받습니다.
+  # ✅ 피그마 플러그인이 보내는 'update-tokens' 신호를 감지합니다.
   repository_dispatch:
     types: [update-tokens]
+
+# ✅ 중요: 깃허브 액션이 코드를 수정(Push)할 수 있도록 쓰기 권한을 허용합니다.
+permissions:
+  contents: write
 
 jobs:
   update:
     runs-on: ubuntu-latest
+    
+    # ✅ 프로젝트 폴더 경로 설정
     defaults:
       run:
         working-directory: ./hyphens-shinhan
-    
+
     steps:
       - name: Checkout Project
         uses: actions/checkout@v4
@@ -22,19 +29,22 @@ jobs:
           cache: 'npm'
           cache-dependency-path: './hyphens-shinhan/package-lock.json'
 
-      # ✅ 피그마에서 보낸 데이터를 tokens.json 파일로 임시 저장합니다.
+      # ✅ 피그마 플러그인에서 보낸 디자인 데이터(Payload)를 tokens.json 파일로 저장합니다.
       - name: Save Figma Payload
         run: |
           echo '${{ toJson(github.event.client_payload) }}' > tokens.json
 
-      # ✅ JSON을 CSS로 변환하는 스크립트를 실행합니다.
+      # ✅ JSON을 Tailwind 4에서 쓸 수 있는 CSS로 변환하는 스크립트를 실행합니다.
       - name: Convert JSON to CSS
         run: node scripts/process-tokens.js
 
+      # ✅ 변경된 variables.css 파일을 레포지토리에 커밋하고 푸시합니다.
       - name: Commit and Push changes
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add src/styles/variables.css
+          
+          # 변경사항이 있을 때만 커밋합니다.
           git commit -m "style: 피그마 디자인 토큰 자동 업데이트" || exit 0
           git push

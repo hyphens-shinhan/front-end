@@ -1,6 +1,8 @@
 name: Update Design Tokens
 on:
-  workflow_dispatch:
+  # ✅ 피그마 플러그인이 보낸 '초인종(Dispatch)' 신호를 받습니다.
+  repository_dispatch:
+    types: [update-tokens]
 
 jobs:
   update:
@@ -8,7 +10,7 @@ jobs:
     defaults:
       run:
         working-directory: ./hyphens-shinhan
-
+    
     steps:
       - name: Checkout Project
         uses: actions/checkout@v4
@@ -18,22 +20,21 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-          # ✅ 프로젝트 폴더 안의 lock 파일 경로를 정확히 알려줍니다.
           cache-dependency-path: './hyphens-shinhan/package-lock.json'
 
-      - name: Install dependencies
-        run: npm ci
+      # ✅ 피그마에서 보낸 데이터를 tokens.json 파일로 임시 저장합니다.
+      - name: Save Figma Payload
+        run: |
+          echo '${{ toJson(github.event.client_payload) }}' > tokens.json
 
-      - name: Run Extraction Script
-        run: node scripts/extract-figma.js
-        env:
-          FIGMA_TOKEN: ${{ secrets.FIGMA_TOKEN }}
-          FIGMA_FILE_KEY: ${{ secrets.FIGMA_FILE_KEY }}
+      # ✅ JSON을 CSS로 변환하는 스크립트를 실행합니다.
+      - name: Convert JSON to CSS
+        run: node scripts/process-tokens.js
 
       - name: Commit and Push changes
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add src/styles/variables.css
-          git commit -m "style: figma 디자인 토큰 자동 업데이트" || exit 0
+          git commit -m "style: 피그마 디자인 토큰 자동 업데이트" || exit 0
           git push

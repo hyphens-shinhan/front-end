@@ -28,6 +28,10 @@ jobs:
         # 빠른 설치를 위해 npm install 대신 npm ci를 사용합니다
         run: npm ci
 
+      # ✅ [추가됨] 빌드 전 variables.css 파일을 먼저 생성합니다
+      - name: Generate Design Tokens
+        run: node scripts/process-tokens.js
+
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 

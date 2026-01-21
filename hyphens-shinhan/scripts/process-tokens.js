@@ -12,34 +12,30 @@ if (!fs.existsSync(tokenPath)) {
 const payload = JSON.parse(fs.readFileSync(tokenPath, 'utf8'));
 const designTokens = JSON.parse(payload.tokens);
 
-let cssVariables = [];
+let rawVariables = [];    // 원자 단위 데이터 (--font-size...)
+let utilityClasses = [];  // 세트 메뉴 데이터 (@utility...)
 
-// 1. 변수 이름 청소 (공백, 괄호, % 등을 하이픈으로 변경)
 function sanitizeName(name) {
-    return name
-        .replace(/\s+/g, '-')        // 공백 -> 하이픈
-        .replace(/[()]/g, '')        // 괄호 제거
-        .replace(/%/g, 'pct')        // % -> pct
-        .replace(/\//g, '-')         // 슬래시 -> 하이픈
-        .toLowerCase();
+    return name.replace(/\s+/g, '-').replace(/[()]/g, '').replace(/%/g, 'pct').replace(/\//g, '-').toLowerCase();
 }
 
-function resolveValue(val, key) {
-    if (typeof val === 'string' && val.startsWith('{') && val.endsWith('}')) {
-        const path = val.slice(1, -1).replace(/\./g, '-');
-        return `var(--${sanitizeName(path)})`;
-    }
+/**
+ * 타이포그래피 그룹을 분석해서 @utility 문법으로 변환합니다.
+ */
+function generateUtilities(node, currentPath) {
+    const cleanName = sanitizeName(currentPath);
     
-    // font-weight는 단위를 붙이지 않음
-    if (key.toLowerCase().includes('fontweight')) {
-        if (typeof val === 'string') {
-            const weights = { 'regular': 400, 'medium': 500, 'semibold': 600, 'bold': 700 };
-            return weights[val.toLowerCase()] || val.replace('px', '');
-        }
-        return val;
+    // 이 노드가 폰트 스타일의 모든 속성을 가지고 있는지 확인
+    if (node.fontSize || node.lineHeight || node.fontWeight) {
+        let utility = `@utility ${cleanName} {\n`;
+        if (node.fontFamily) utility += `  font-family: var(--${cleanName}-fontfamily);\n`;
+        if (node.fontSize) utility += `  font-size: var(--${cleanName}-fontsize);\n`;
+        if (node.fontWeight) utility += `  font-weight: var(--${cleanName}-fontweight);\n`;
+        if (node.lineHeight) utility += `  line-height: var(--${cleanName}-lineheight);\n`;
+        if (node.letterSpacing) utility += `  letter-spacing: var(--${cleanName}-letterspacing);\n`;
+        utility += `}`;
+        utilityClasses.push(utility);
     }
-
-    return val;
 }
 
 function walk(node, currentPath = '') {
@@ -51,15 +47,17 @@ function walk(node, currentPath = '') {
             if (item.hasOwnProperty('value')) {
                 const cleanPath = sanitizeName(newPath);
                 if (typeof item.value === 'object') {
+                    // 세트 메뉴 속성들(fontSize, fontWeight 등)을 개별 변수로 저장
                     for (const prop in item.value) {
-                        const val = resolveValue(item.value[prop], prop);
+                        const val = item.value[prop];
                         const unit = (typeof val === 'number' && !prop.toLowerCase().includes('weight')) ? 'px' : '';
-                        cssVariables.push(`  --${cleanPath}-${sanitizeName(prop)}: ${val}${unit};`);
+                        rawVariables.push(`  --${cleanPath}-${sanitizeName(prop)}: ${val}${unit};`);
                     }
+                    // 세트 메뉴 유틸리티 생성 호출
+                    generateUtilities(item.value, newPath);
                 } else {
-                    const val = resolveValue(item.value, key);
-                    const unit = (item.type === 'dimension' && typeof val === 'number' && !key.toLowerCase().includes('weight')) ? 'px' : '';
-                    cssVariables.push(`  --${cleanPath}: ${val}${unit};`);
+                    const unit = (item.type === 'dimension' && typeof item.value === 'number' && !key.toLowerCase().includes('weight')) ? 'px' : '';
+                    rawVariables.push(`  --${cleanPath}: ${item.value}${unit};`);
                 }
             } else {
                 walk(item, newPath);
@@ -70,8 +68,16 @@ function walk(node, currentPath = '') {
 
 walk(designTokens);
 
-const cssContent = `:root {\n${cssVariables.join('\n')}\n}\n`;
-fs.mkdirSync(path.dirname(outputPath), { recursive: true });
-fs.writeFileSync(outputPath, cssContent);
+// 최종 파일 저장 (Variables + Utilities)
+const fileContent = `
+:root {
+${rawVariables.join('\n')}
+}
 
-console.log(`✅ ${cssVariables.length}개의 변수가 정화되어 저장되었습니다!`);
+/* 🚀 자동으로 생성된 디자인 시스템 세트 메뉴 */
+${utilityClasses.join('\n\n')}
+`;
+
+fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+fs.writeFileSync(outputPath, fileContent);
+console.log(`✅ ${utilityClasses.length}개의 세트 메뉴 유틸리티가 생성되었습니다!`);

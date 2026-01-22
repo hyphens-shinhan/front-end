@@ -1,23 +1,12 @@
 import type { Metadata, Viewport } from 'next'
 import type { ReactNode } from 'react'
-import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
+import RQProvider from '@/providers/rq-provider'
 
 const APP_NAME = 'Hyphen'
 const APP_DEFAULT_TITLE = 'Hyphen APP'
 const APP_TITLE_TEMPLATE = '%s - Hyphen APP'
 const APP_DESCRIPTION = 'Hyphen APP'
-
-const geistSans = Geist({
-  variable: '--font-geist-sans',
-  subsets: ['latin'],
-})
-
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
-})
-
 
 export const metadata: Metadata = {
   applicationName: APP_NAME,
@@ -66,7 +55,11 @@ export default function RootLayout({
   return (
     <html lang="en" dir="ltr">
       <head />
-      <body>{children}</body>
+      <body>
+        <RQProvider>
+          {children}
+        </RQProvider>
+      </body>
     </html>
   );
 }

@@ -35,15 +35,24 @@ function generateUtilities(node, currentPath) {
     const cleanName = sanitizeName(currentPath);
     let utilityName = cleanName;
     if (utilityName.startsWith('font-body-body')) utilityName = utilityName.replace('font-body-body', 'body-');
-    if (utilityName.startsWith('font-title-title')) utilityName = utilityName.replace('font-title-title', 'title-');
+    if (utilityName === 'font-title-title') utilityName = 'title';
+    else if (utilityName.startsWith('font-title-title')) utilityName = utilityName.replace('font-title-title', 'title-');
     if (utilityName.startsWith('font-title-shinhantitle')) utilityName = utilityName.replace('font-title-shinhantitle', 'shinhan-title-');
 
     if (node.fontSize || node.lineHeight || node.fontWeight) {
         let utility = `@utility ${utilityName} {\n`;
         if (node.fontFamily) utility += `  font-family: ${resolveValue(node.fontFamily.value || node.fontFamily)};\n`;
-        if (node.fontSize) utility += `  font-size: ${resolveValue(node.fontSize.value || node.fontSize)};\n`;
+        if (node.fontSize) {
+            const fontSize = resolveValue(node.fontSize.value || node.fontSize);
+            const fontSizeWithUnit = typeof fontSize === 'number' ? `${fontSize}px` : fontSize;
+            utility += `  font-size: ${fontSizeWithUnit};\n`;
+        }
         if (node.fontWeight) utility += `  font-weight: ${resolveValue(node.fontWeight.value || node.fontWeight)};\n`;
-        if (node.lineHeight) utility += `  line-height: ${resolveValue(node.lineHeight.value || node.lineHeight)};\n`;
+        if (node.lineHeight) {
+            const lineHeight = resolveValue(node.lineHeight.value || node.lineHeight);
+            const lineHeightWithUnit = typeof lineHeight === 'number' ? `${lineHeight}px` : lineHeight;
+            utility += `  line-height: ${lineHeightWithUnit};\n`;
+        }
         utility += `}`;
         utilityClasses.push(utility);
     }

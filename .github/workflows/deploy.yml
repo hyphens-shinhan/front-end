@@ -28,7 +28,7 @@ jobs:
         # 빠른 설치를 위해 npm install 대신 npm ci를 사용합니다
         run: npm ci
 
-      # ✅ [추가됨] 빌드 전 variables.css 파일을 먼저 생성합니다
+      # 빌드 전 variables.css 파일을 먼저 생성합니다
       - name: Generate Design Tokens
         run: node scripts/process-tokens.js
 
@@ -46,6 +46,9 @@ jobs:
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          # Supabase 환경 변수 추가
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
           # Serwist와 Turbopack 충돌 방지를 위한 환경 변수
           SERWIST_SUPRESS_TURBOPACK_WARNING: 1
 

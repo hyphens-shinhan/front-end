@@ -1,5 +1,18 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## 📚 디자인 시스템 가이드
+
+이 프로젝트는 Figma에서 추출한 디자인 토큰을 자동으로 Tailwind CSS에 등록하여 사용합니다.
+
+**👉 [디자인 시스템 사용 가이드 보기](./DESIGN_SYSTEM.md)**
+
+디자인 시스템 가이드에서 다음 내용을 확인할 수 있습니다:
+- 폰트 사용 방법 (Title, Body, Caption 등)
+- 컬러 사용 방법 (Primary, State, Greyscale)
+- 스페이싱 및 간격 사용 방법
+- 전체 유틸리티 클래스 목록
+- 디자인 토큰 업데이트 방법
+
 ## Getting Started
 
 First, run the development server:

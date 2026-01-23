@@ -36,14 +36,14 @@ export async function updateSession(request: NextRequest) {
   if (!user && !request.nextUrl.pathname.startsWith('/login')) {
     const url = request.nextUrl.clone();
     url.pathname = '/login';
-    return NextResponse.rewrite(url);
+    return NextResponse.redirect(url);
   }
 
   // [중요 로직] 이미 로그인했는데 로그인 페이지로 가려고 할 때
   if (user && request.nextUrl.pathname.startsWith('/login')) {
     const url = request.nextUrl.clone();
     url.pathname = '/';
-    return NextResponse.rewrite(url);
+    return NextResponse.redirect(url);
   }
 
   return supabaseResponse;

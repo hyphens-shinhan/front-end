@@ -6,6 +6,9 @@ export type { AllRoutePath } from './routes';
 /** 바텀 네비게이션 타입 */
 export type { NavLink } from './routes';
 
+/** 사용자 역할 타입 */
+export type UserRole = 'YB' | 'OB' | 'MENTOR';
+
 /** 바텀 네비게이션 아이템 타입 */
 export interface NavItem {
     label: string;

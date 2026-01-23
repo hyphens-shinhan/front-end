@@ -43,6 +43,16 @@
   /* variables.css에 자동 생성된 짧은 이름을 사용하여 배경/글자색을 지정합니다. */
   --background: var(--color-white); 
   --foreground: var(--color-grey-11);
+
+  /* viewport-fit=cover 대응을 위한 safe area 변수 */
+  --sat: env(safe-area-inset-top);
+  --sab: env(safe-area-inset-bottom);
+  --sal: env(safe-area-inset-left);
+  --sar: env(safe-area-inset-right);
+
+  /* 레이아웃 고정 높이 */
+  --header-height: 48px;
+  --bottom-nav-height: 80px;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -53,9 +63,18 @@
   }
 }
 
+html, body {
+  height: 100%;
+  overflow: hidden; /* 전체 문서 스크롤 방지 */
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans); /* 전체 기본 폰트 적용 */
   -webkit-font-smoothing: antialiased; /* 폰트를 더 매끄럽게 표현 */
+  
+  /* PWA 앱처럼 보이기 위해 바운스 스크롤 방지 */
+  overscroll-behavior-y: none;
+  -webkit-overflow-scrolling: touch;
 }

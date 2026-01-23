@@ -1,3 +1,4 @@
+import BottomNav from "@/components/common/BottomNav";
 export default function MainLayout({
     children,
 }: {
@@ -7,6 +8,7 @@ export default function MainLayout({
         <div className="mx-auto max-w-md min-h-screen border-x bg-white">
             {/* 나중에 여기에 <Header />나 <Navbar /> 추가 */}
             <main className="p-4">{children}</main>
+            <BottomNav userRole="YB" />
         </div>
     );
 }

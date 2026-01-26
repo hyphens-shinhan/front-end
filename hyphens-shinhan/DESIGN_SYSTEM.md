@@ -33,11 +33,20 @@
 #### Title 스타일
 
 ```tsx
-// 작은 제목 (14px, Bold)
-<h1 className="title-1">제목 1</h1>
+// 큰 제목 (28px, Regular)
+<h1 className="title-28">큰 제목</h1>
+
+// 중간 제목 (20px, Bold)
+<h2 className="title-20">중간 제목</h2>
 
 // 일반 제목 (18px, Bold)
-<h2 className="title">제목</h2>
+<h3 className="title-18">일반 제목</h3>
+
+// 작은 제목 (16px, Bold)
+<h4 className="title-16">작은 제목</h4>
+
+// 가장 작은 제목 (14px, Bold)
+<h5 className="title-14">가장 작은 제목</h5>
 ```
 
 #### 신한 폰트 Title
@@ -117,27 +126,30 @@
 
 ### 3. 폰트 스타일 상세 정보
 
-| 클래스 | 폰트 패밀리 | 크기 | 굵기 | 줄간격 |
-|--------|------------|------|------|--------|
-| `title-1` | Wanted Sans | 14px | 700 (Bold) | 20px |
-| `title` | Wanted Sans | 18px | 700 (Bold) | 22px |
-| `shinhan-title-1` | OneShinhan | 20px | 700 (Bold) | 20px |
-| `shinhan-title-2` | OneShinhan | 18px | 700 (Bold) | 22px |
-| `body-1` | Wanted Sans | 24px | 400 (Regular) | 29px |
-| `body-2` | Wanted Sans | 20px | 400 (Regular) | 24px |
-| `body-3` | Wanted Sans | 18px | 700 (Bold) | 22px |
-| `body-4` | Wanted Sans | 18px | 400 (Regular) | 24px |
-| `body-5` | Wanted Sans | 16px | 600 (SemiBold) | 22px |
-| `body-6` | Wanted Sans | 16px | 400 (Regular) | 22px |
-| `body-7` | Wanted Sans | 14px | 600 (SemiBold) | 20px |
-| `body-8` | Wanted Sans | 14px | 400 (Regular) | 20px |
-| `body-9` | Wanted Sans | 12px | 600 (SemiBold) | 18px |
-| `body-10` | Wanted Sans | 12px | 400 (Regular) | 18px |
-| `font-caption-caption1` | Wanted Sans | 10px | 400 (Regular) | 11px |
-| `font-caption-caption2` | Wanted Sans | 14px | 400 (Regular) | 20px |
-| `font-caption-caption3` | Wanted Sans | 12px | 600 (SemiBold) | 14px |
-| `font-caption-caption4` | Wanted Sans | 12px | 400 (Regular) | 14px |
-| `font-caption-caption5` | Wanted Sans | 10px | 600 (SemiBold) | 11px |
+| 클래스                  | 폰트 패밀리 | 크기 | 굵기           | 줄간격 |
+| ----------------------- | ----------- | ---- | -------------- | ------ |
+| `title-28`              | Wanted Sans | 28px | 400 (Regular)  | 20px   |
+| `title-20`              | Wanted Sans | 20px | 700 (Bold)     | 20px   |
+| `title-18`              | Wanted Sans | 18px | 700 (Bold)     | 22px   |
+| `title-16`              | Wanted Sans | 16px | 700 (Bold)     | 22px   |
+| `title-14`              | Wanted Sans | 14px | 700 (Bold)     | 20px   |
+| `shinhan-title-1`       | OneShinhan  | 20px | 700 (Bold)     | 20px   |
+| `shinhan-title-2`       | OneShinhan  | 18px | 700 (Bold)     | 22px   |
+| `body-1`                | Wanted Sans | 24px | 400 (Regular)  | 29px   |
+| `body-2`                | Wanted Sans | 20px | 400 (Regular)  | 24px   |
+| `body-3`                | Wanted Sans | 18px | 700 (Bold)     | 22px   |
+| `body-4`                | Wanted Sans | 18px | 400 (Regular)  | 24px   |
+| `body-5`                | Wanted Sans | 16px | 600 (SemiBold) | 22px   |
+| `body-6`                | Wanted Sans | 16px | 400 (Regular)  | 22px   |
+| `body-7`                | Wanted Sans | 14px | 600 (SemiBold) | 20px   |
+| `body-8`                | Wanted Sans | 14px | 400 (Regular)  | 20px   |
+| `body-9`                | Wanted Sans | 12px | 600 (SemiBold) | 18px   |
+| `body-10`               | Wanted Sans | 12px | 400 (Regular)  | 18px   |
+| `font-caption-caption1` | Wanted Sans | 10px | 400 (Regular)  | 11px   |
+| `font-caption-caption2` | Wanted Sans | 14px | 400 (Regular)  | 20px   |
+| `font-caption-caption3` | Wanted Sans | 12px | 600 (SemiBold) | 14px   |
+| `font-caption-caption4` | Wanted Sans | 12px | 400 (Regular)  | 14px   |
+| `font-caption-caption5` | Wanted Sans | 10px | 600 (SemiBold) | 11px   |
 
 ---
 
@@ -163,13 +175,21 @@
 ### Primary (주요 색상)
 
 ```tsx
-// Primary 색상
-<button className="bg-primary text-white">Primary 버튼</button>
+// Primary 색상 (신한 블루)
+<button className="bg-primary-shinhanblue text-white">신한 블루 버튼</button>
 <button className="bg-primary-light text-white">밝은 Primary</button>
 <button className="bg-primary-dark text-white">어두운 Primary</button>
+<button className="bg-primary-lighter text-primary-shinhanblue">가장 밝은 Primary</button>
+
+// Primary Secondary 색상
+<div className="bg-primary-secondarylight">밝은 하늘색</div>
+<div className="bg-primary-secondarysky">하늘색</div>
+<div className="bg-primary-secondaryroyal">로얄 블루</div>
+<div className="bg-primary-secondarynavy">네이비 블루</div>
 
 // 텍스트 색상
-<p className="text-primary">Primary 색상 텍스트</p>
+<p className="text-primary-shinhanblue">신한 블루 텍스트</p>
+<p className="text-primary-light">밝은 Primary 텍스트</p>
 ```
 
 ### State (상태 색상)
@@ -177,6 +197,7 @@
 ```tsx
 // 에러
 <div className="bg-state-error text-white">에러 메시지</div>
+<div className="bg-state-error-dark text-white">어두운 에러 메시지</div>
 <p className="text-state-error">에러 텍스트</p>
 
 // 성공
@@ -190,17 +211,23 @@
 
 ### 사용 가능한 컬러 목록
 
-| 클래스 | 색상 값 | 용도 |
-|--------|---------|------|
-| `bg-white` / `text-white` | #FFFFFF | 흰색 |
-| `bg-black` / `text-black` | #000000 | 검은색 |
-| `bg-grey-2` ~ `bg-grey-11` | #F2F3F5 ~ #2C303D | 회색조 |
-| `bg-primary` / `text-primary` | #0046FF | 주요 색상 |
-| `bg-primary-light` | #4B7CFF | 밝은 주요 색상 |
-| `bg-primary-dark` | #0037C8 | 어두운 주요 색상 |
-| `bg-state-error` / `text-state-error` | #EF4444 | 에러 상태 |
-| `bg-state-success` / `text-state-success` | #10B981 | 성공 상태 |
-| `bg-state-warning` / `text-state-warning` | #F59E0B | 경고 상태 |
+| 클래스                                          | 색상 값           | 용도               |
+| ----------------------------------------------- | ----------------- | ------------------ |
+| `bg-white` / `text-white`                       | #FFFFFF           | 흰색               |
+| `bg-black` / `text-black`                       | #000000           | 검은색             |
+| `bg-grey-2` ~ `bg-grey-11`                      | #F2F3F5 ~ #2C303D | 회색조             |
+| `bg-primary-shinhanblue` / `text-primary-shinhanblue` | #0046FF           | 신한 블루 (주요 색상) |
+| `bg-primary-light`                              | #2E67FF           | 밝은 주요 색상     |
+| `bg-primary-dark`                               | #0D37D6           | 어두운 주요 색상   |
+| `bg-primary-lighter`                            | #E6F2FF           | 가장 밝은 주요 색상 |
+| `bg-primary-secondarylight`                     | #8CD2F5           | 밝은 하늘색        |
+| `bg-primary-secondarysky`                       | #4BAFF5           | 하늘색             |
+| `bg-primary-secondaryroyal`                     | #2878F5           | 로얄 블루          |
+| `bg-primary-secondarynavy`                      | #00236E           | 네이비 블루        |
+| `bg-state-error` / `text-state-error`           | #EF4444           | 에러 상태          |
+| `bg-state-error-dark` / `text-state-error-dark` | #CF3434           | 어두운 에러 상태   |
+| `bg-state-success` / `text-state-success`       | #10B981           | 성공 상태          |
+| `bg-state-warning` / `text-state-warning`       | #F59E0B           | 경고 상태          |
 
 ---
 
@@ -249,7 +276,7 @@
 
 ### 폰트 유틸리티
 
-- **Title**: `title-1`, `title`
+- **Title**: `title-28`, `title-20`, `title-18`, `title-16`, `title-14`
 - **신한 Title**: `shinhan-title-1`, `shinhan-title-2`
 - **Body**: `body-1` ~ `body-10`
 - **Caption**: `font-caption-caption1` ~ `font-caption-caption5`
@@ -258,8 +285,9 @@
 ### 컬러 유틸리티
 
 - **Greyscale**: `bg-grey-2` ~ `bg-grey-11`, `bg-white`, `bg-black`
-- **Primary**: `bg-primary`, `bg-primary-light`, `bg-primary-dark`
-- **State**: `bg-state-error`, `bg-state-success`, `bg-state-warning`
+- **Primary**: `bg-primary-shinhanblue`, `bg-primary-light`, `bg-primary-dark`, `bg-primary-lighter`
+- **Primary Secondary**: `bg-primary-secondarylight`, `bg-primary-secondarysky`, `bg-primary-secondaryroyal`, `bg-primary-secondarynavy`
+- **State**: `bg-state-error`, `bg-state-error-dark`, `bg-state-success`, `bg-state-warning`
 - **텍스트 컬러**: 모든 배경색에 대응하는 `text-*` 클래스 사용 가능
 
 ---
@@ -301,32 +329,32 @@ export default function Example() {
   return (
     <div className="p-[var(--scheme-spacing-5)]">
       {/* 신한 폰트 제목 */}
-      <h1 className="shinhan-title-1 text-primary">신한은행</h1>
-      
+      <h1 className="shinhan-title-1 text-primary-shinhanblue">신한은행</h1>
+
       {/* 일반 제목 */}
-      <h2 className="title text-grey-11">서비스 소개</h2>
-      
+      <h2 className="title-18 text-grey-11">서비스 소개</h2>
+
       {/* 본문 */}
       <p className="body-6 text-grey-11">
         이것은 본문 텍스트입니다. 디자인 시스템의 body-6 스타일을 사용합니다.
       </p>
-      
+
       {/* 버튼 */}
-      <button className="bg-primary text-white body-7 px-[var(--scheme-spacing-5)] py-[var(--scheme-spacing-3)] rounded-[var(--scheme-radius-5)]">
+      <button className="bg-primary-shinhanblue body-7 rounded-[var(--scheme-radius-5)] px-[var(--scheme-spacing-5)] py-[var(--scheme-spacing-3)] text-white">
         시작하기
       </button>
-      
+
       {/* 에러 메시지 */}
-      <div className="bg-state-error text-white body-8 p-[var(--scheme-spacing-4)] rounded-[var(--scheme-radius-3)]">
+      <div className="bg-state-error body-8 rounded-[var(--scheme-radius-3)] p-[var(--scheme-spacing-4)] text-white">
         오류가 발생했습니다.
       </div>
-      
+
       {/* 성공 메시지 */}
-      <div className="bg-state-success text-white body-8 p-[var(--scheme-spacing-4)] rounded-[var(--scheme-radius-3)]">
+      <div className="bg-state-success body-8 rounded-[var(--scheme-radius-3)] p-[var(--scheme-spacing-4)] text-white">
         성공적으로 완료되었습니다.
       </div>
     </div>
-  );
+  )
 }
 ```
 

@@ -11,19 +11,19 @@ export const NAV_ITEMS_BY_ROLE: Record<UserRole, NavItem[]> = {
   // TODO: 멘토 - 임의로 넣어둠 달라질 예정
   MENTOR: [
     { label: '홈', href: ROUTES.HOME.MAIN, icon: 'IconLBoldHome' },
-    { label: '활동', href: ROUTES.SCHOLARSHIP.MAIN, icon: 'IconLBoldChart2' },
+    { label: 'MY활동', href: ROUTES.SCHOLARSHIP.MAIN, icon: 'IconLBoldChart2' },
     {
       label: '커뮤니티',
       href: ROUTES.COMMUNITY.MAIN,
       icon: 'IconLBoldNote2',
     },
     {
-      label: '네트워킹',
+      label: '네트워크',
       href: ROUTES.NETWORK.MAIN,
       icon: 'IconLBoldGlobal',
     },
     {
-      label: '마이페이지',
+      label: '프로필',
       href: ROUTES.MYPAGE.MAIN,
       icon: 'IconLBoldFrame',
     },
@@ -31,19 +31,19 @@ export const NAV_ITEMS_BY_ROLE: Record<UserRole, NavItem[]> = {
   // TODO: 졸업 장학생 - 활동 탭만 다름 임의로 넣어둠 달라질 예정
   OB: [
     { label: '홈', href: ROUTES.HOME.MAIN, icon: 'IconLBoldHome' },
-    { label: '활동', href: ROUTES.SCHOLARSHIP.MAIN, icon: 'IconLBoldChart2' },
+    { label: 'MY활동', href: ROUTES.SCHOLARSHIP.MAIN, icon: 'IconLBoldChart2' },
     {
       label: '커뮤니티',
       href: ROUTES.COMMUNITY.MAIN,
       icon: 'IconLBoldNote2',
     },
     {
-      label: '네트워킹',
+      label: '네트워크',
       href: ROUTES.NETWORK.MAIN,
       icon: 'IconLBoldGlobal',
     },
     {
-      label: '마이페이지',
+      label: '프로필',
       href: ROUTES.MYPAGE.MAIN,
       icon: 'IconLBoldFrame',
     },
@@ -51,19 +51,19 @@ export const NAV_ITEMS_BY_ROLE: Record<UserRole, NavItem[]> = {
   // 기본 장학생
   YB: [
     { label: '홈', href: ROUTES.HOME.MAIN, icon: 'IconLBoldHome' },
-    { label: '활동', href: ROUTES.SCHOLARSHIP.MAIN, icon: 'IconLBoldChart2' },
+    { label: 'MY활동', href: ROUTES.SCHOLARSHIP.MAIN, icon: 'IconLBoldChart2' },
     {
       label: '커뮤니티',
       href: ROUTES.COMMUNITY.MAIN,
       icon: 'IconLBoldNote2',
     },
     {
-      label: '네트워킹',
+      label: '네트워크',
       href: ROUTES.NETWORK.MAIN,
       icon: 'IconLBoldGlobal',
     },
     {
-      label: '마이페이지',
+      label: '프로필',
       href: ROUTES.MYPAGE.MAIN,
       icon: 'IconLBoldFrame',
     },

@@ -1,4 +1,5 @@
 import { NavLink } from './routes';
+import { IconName } from '@/components/common/Icon';
 
 /** 전체 라우트 타입 */
 export type { AllRoutePath } from './routes';
@@ -13,5 +14,5 @@ export type UserRole = 'YB' | 'OB' | 'MENTOR';
 export interface NavItem {
     label: string;
     href: NavLink;
-    icon: string; // 임의로 문자열 처리
+    icon: IconName;
 }

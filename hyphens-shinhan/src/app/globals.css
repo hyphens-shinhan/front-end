@@ -1,12 +1,12 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 /* 1. 자동 생성된 디자인 토큰 및 유틸리티 세트 불러오기 */
 /* 이 파일 안에 :root 변수, @theme(컬러), @utility(폰트 세트)가 모두 들어있습니다. */
-@import "../styles/variables.css"; 
+@import '../styles/variables.css';
 
 /* 2. 폰트 등록 (public/fonts 폴더의 실제 파일명과 확장자 .ttf 반영) */
 /* Wanted Sans - Regular */
 @font-face {
-  font-family: 'Wanted Sans';
+  font-family: 'Wanted Sans Variable';
   src: url('/fonts/WantedSans-Regular.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
@@ -15,7 +15,7 @@
 
 /* Wanted Sans - Bold */
 @font-face {
-  font-family: 'Wanted Sans';
+  font-family: 'Wanted Sans Variable';
   src: url('/fonts/WantedSans-Bold.ttf') format('truetype');
   font-weight: 700;
   font-style: normal;
@@ -34,14 +34,14 @@
 @theme {
   /* 3. 기본 폰트 패밀리 연결 */
   /* 시스템 폰트 폴백(Fallback)을 함께 설정합니다. */
-  --font-sans: "Wanted Sans", ui-sans-serif, system-ui, sans-serif;
-  --font-shinhan: "OneShinhan", sans-serif;
+  --font-sans: 'Wanted Sans Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-shinhan: 'OneShinhan', sans-serif;
 }
 
 /* 4. 변수를 활용한 기본 스타일 설정 */
 :root {
   /* variables.css에 자동 생성된 짧은 이름을 사용하여 배경/글자색을 지정합니다. */
-  --background: var(--color-white); 
+  --background: var(--color-white);
   --foreground: var(--color-grey-11);
 
   /* viewport-fit=cover 대응을 위한 safe area 변수 */
@@ -63,7 +63,8 @@
   }
 }
 
-html, body {
+html,
+body {
   height: 100%;
   overflow: hidden; /* 전체 문서 스크롤 방지 */
 }
@@ -73,7 +74,7 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans); /* 전체 기본 폰트 적용 */
   -webkit-font-smoothing: antialiased; /* 폰트를 더 매끄럽게 표현 */
-  
+
   /* PWA 앱처럼 보이기 위해 바운스 스크롤 방지 */
   overscroll-behavior-y: none;
   -webkit-overflow-scrolling: touch;

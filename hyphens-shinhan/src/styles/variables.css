@@ -1,26 +1,59 @@
 :root {
-  --font-title-title1-fontsize: 14px;
-  --font-title-title1-textdecoration: none;
-  --font-title-title1-fontfamily: Wanted Sans Variable;
-  --font-title-title1-fontweight: 700;
-  --font-title-title1-fontstyle: normal;
-  --font-title-title1-fontstretch: normal;
-  --font-title-title1-letterspacing: 0px;
-  --font-title-title1-lineheight: 20px;
-  --font-title-title1-paragraphindent: 0px;
-  --font-title-title1-paragraphspacing: 0px;
-  --font-title-title1-textcase: none;
-  --font-title-title-fontsize: 18px;
-  --font-title-title-textdecoration: none;
-  --font-title-title-fontfamily: Wanted Sans Variable;
-  --font-title-title-fontweight: 700;
-  --font-title-title-fontstyle: normal;
-  --font-title-title-fontstretch: normal;
-  --font-title-title-letterspacing: 0px;
-  --font-title-title-lineheight: 22px;
-  --font-title-title-paragraphindent: 0px;
-  --font-title-title-paragraphspacing: 0px;
-  --font-title-title-textcase: none;
+  --font-title-title28-fontsize: 28px;
+  --font-title-title28-textdecoration: none;
+  --font-title-title28-fontfamily: Wanted Sans Variable;
+  --font-title-title28-fontweight: 400;
+  --font-title-title28-fontstyle: normal;
+  --font-title-title28-fontstretch: normal;
+  --font-title-title28-letterspacing: 0px;
+  --font-title-title28-lineheight: 20px;
+  --font-title-title28-paragraphindent: 0px;
+  --font-title-title28-paragraphspacing: 0px;
+  --font-title-title28-textcase: none;
+  --font-title-title20-fontsize: 20px;
+  --font-title-title20-textdecoration: none;
+  --font-title-title20-fontfamily: Wanted Sans Variable;
+  --font-title-title20-fontweight: 700;
+  --font-title-title20-fontstyle: normal;
+  --font-title-title20-fontstretch: normal;
+  --font-title-title20-letterspacing: 0px;
+  --font-title-title20-lineheight: 20px;
+  --font-title-title20-paragraphindent: 0px;
+  --font-title-title20-paragraphspacing: 0px;
+  --font-title-title20-textcase: none;
+  --font-title-title18-fontsize: 18px;
+  --font-title-title18-textdecoration: none;
+  --font-title-title18-fontfamily: Wanted Sans Variable;
+  --font-title-title18-fontweight: 700;
+  --font-title-title18-fontstyle: normal;
+  --font-title-title18-fontstretch: normal;
+  --font-title-title18-letterspacing: 0px;
+  --font-title-title18-lineheight: 22px;
+  --font-title-title18-paragraphindent: 0px;
+  --font-title-title18-paragraphspacing: 0px;
+  --font-title-title18-textcase: none;
+  --font-title-title16-fontsize: 16px;
+  --font-title-title16-textdecoration: none;
+  --font-title-title16-fontfamily: Wanted Sans Variable;
+  --font-title-title16-fontweight: 700;
+  --font-title-title16-fontstyle: normal;
+  --font-title-title16-fontstretch: normal;
+  --font-title-title16-letterspacing: 0px;
+  --font-title-title16-lineheight: 22px;
+  --font-title-title16-paragraphindent: 0px;
+  --font-title-title16-paragraphspacing: 0px;
+  --font-title-title16-textcase: none;
+  --font-title-title14-fontsize: 14px;
+  --font-title-title14-textdecoration: none;
+  --font-title-title14-fontfamily: Wanted Sans Variable;
+  --font-title-title14-fontweight: 700;
+  --font-title-title14-fontstyle: normal;
+  --font-title-title14-fontstretch: normal;
+  --font-title-title14-letterspacing: 0px;
+  --font-title-title14-lineheight: 20px;
+  --font-title-title14-paragraphindent: 0px;
+  --font-title-title14-paragraphspacing: 0px;
+  --font-title-title14-textcase: none;
   --font-title-shinhantitle1-fontsize: 20px;
   --font-title-shinhantitle1-textdecoration: none;
   --font-title-shinhantitle1-fontfamily: OneShinhan;
@@ -220,12 +253,18 @@
   --color-greyscale-11: #2c303dff;
   --color-greyscale-1white: #ffffffff;
   --color-greyscale-12black: #000000ff;
-  --color-primary-light: #4b7cffff;
-  --color-primary-normal: #0046ffff;
-  --color-primary-dark: #0037c8ff;
+  --color-primary-light: #2e67ffff;
+  --color-primary-shinhanblue: #0046ffff;
+  --color-primary-dark: #0d37d6ff;
+  --color-primary-secondarylight: #8cd2f5ff;
+  --color-primary-secondarysky: #4baff5ff;
+  --color-primary-secondaryroyal: #2878f5ff;
+  --color-primary-secondarynavy: #00236eff;
+  --color-primary-lighter: #e6f2ffff;
   --color-state-error: #ef4444ff;
   --color-state-success: #10b981ff;
   --color-state-warning: #f59e0bff;
+  --color-state-error-dark: #cf3434ff;
   --typography-size-xxs: 10px;
   --typography-size-xs: 12px;
   --typography-size-sm: 14px;
@@ -255,28 +294,61 @@
   --typography-height-24: 24px;
   --typography-height-29: 29px;
   --typography-height-54: 54px;
-  --typography-title-title1-fontsize: 14px;
-  --typography-title-title1-textdecoration: none;
-  --typography-title-title1-fontfamily: Wanted Sans Variable;
-  --typography-title-title1-fontweight: 700;
-  --typography-title-title1-fontstyle: normal;
-  --typography-title-title1-fontstretch: normal;
-  --typography-title-title1-letterspacing: 0px;
-  --typography-title-title1-lineheight: 20px;
-  --typography-title-title1-paragraphindent: 0px;
-  --typography-title-title1-paragraphspacing: 0px;
-  --typography-title-title1-textcase: none;
-  --typography-title-title-fontsize: 18px;
-  --typography-title-title-textdecoration: none;
-  --typography-title-title-fontfamily: Wanted Sans Variable;
-  --typography-title-title-fontweight: 700;
-  --typography-title-title-fontstyle: normal;
-  --typography-title-title-fontstretch: normal;
-  --typography-title-title-letterspacing: 0px;
-  --typography-title-title-lineheight: 22px;
-  --typography-title-title-paragraphindent: 0px;
-  --typography-title-title-paragraphspacing: 0px;
-  --typography-title-title-textcase: none;
+  --typography-title-title28-fontsize: 28px;
+  --typography-title-title28-textdecoration: none;
+  --typography-title-title28-fontfamily: Wanted Sans Variable;
+  --typography-title-title28-fontweight: 400;
+  --typography-title-title28-fontstyle: normal;
+  --typography-title-title28-fontstretch: normal;
+  --typography-title-title28-letterspacing: 0px;
+  --typography-title-title28-lineheight: 20px;
+  --typography-title-title28-paragraphindent: 0px;
+  --typography-title-title28-paragraphspacing: 0px;
+  --typography-title-title28-textcase: none;
+  --typography-title-title20-fontsize: 20px;
+  --typography-title-title20-textdecoration: none;
+  --typography-title-title20-fontfamily: Wanted Sans Variable;
+  --typography-title-title20-fontweight: 700;
+  --typography-title-title20-fontstyle: normal;
+  --typography-title-title20-fontstretch: normal;
+  --typography-title-title20-letterspacing: 0px;
+  --typography-title-title20-lineheight: 20px;
+  --typography-title-title20-paragraphindent: 0px;
+  --typography-title-title20-paragraphspacing: 0px;
+  --typography-title-title20-textcase: none;
+  --typography-title-title18-fontsize: 18px;
+  --typography-title-title18-textdecoration: none;
+  --typography-title-title18-fontfamily: Wanted Sans Variable;
+  --typography-title-title18-fontweight: 700;
+  --typography-title-title18-fontstyle: normal;
+  --typography-title-title18-fontstretch: normal;
+  --typography-title-title18-letterspacing: 0px;
+  --typography-title-title18-lineheight: 22px;
+  --typography-title-title18-paragraphindent: 0px;
+  --typography-title-title18-paragraphspacing: 0px;
+  --typography-title-title18-textcase: none;
+  --typography-title-title16-fontsize: 16px;
+  --typography-title-title16-textdecoration: none;
+  --typography-title-title16-fontfamily: Wanted Sans Variable;
+  --typography-title-title16-fontweight: 700;
+  --typography-title-title16-fontstyle: normal;
+  --typography-title-title16-fontstretch: normal;
+  --typography-title-title16-letterspacing: 0px;
+  --typography-title-title16-lineheight: 22px;
+  --typography-title-title16-paragraphindent: 0px;
+  --typography-title-title16-paragraphspacing: 0px;
+  --typography-title-title16-textcase: none;
+  --typography-title-title14-fontsize: 14px;
+  --typography-title-title14-textdecoration: none;
+  --typography-title-title14-fontfamily: Wanted Sans Variable;
+  --typography-title-title14-fontweight: 700;
+  --typography-title-title14-fontstyle: normal;
+  --typography-title-title14-fontstretch: normal;
+  --typography-title-title14-letterspacing: 0px;
+  --typography-title-title14-lineheight: 20px;
+  --typography-title-title14-paragraphindent: 0px;
+  --typography-title-title14-paragraphspacing: 0px;
+  --typography-title-title14-textcase: none;
   --typography-title-shinhantitle1-fontsize: 20px;
   --typography-title-shinhantitle1-textdecoration: none;
   --typography-title-shinhantitle1-fontfamily: OneShinhan;
@@ -557,25 +629,52 @@
   --color-white: var(--color-greyscale-1white);
   --color-black: var(--color-greyscale-12black);
   --color-primary-light: var(--color-primary-light);
-  --color-primary: var(--color-primary-normal);
+  --color-primary-shinhanblue: var(--color-primary-shinhanblue);
   --color-primary-dark: var(--color-primary-dark);
+  --color-primary-secondarylight: var(--color-primary-secondarylight);
+  --color-primary-secondarysky: var(--color-primary-secondarysky);
+  --color-primary-secondaryroyal: var(--color-primary-secondaryroyal);
+  --color-primary-secondarynavy: var(--color-primary-secondarynavy);
+  --color-primary-lighter: var(--color-primary-lighter);
   --color-state-error: var(--color-state-error);
   --color-state-success: var(--color-state-success);
   --color-state-warning: var(--color-state-warning);
+  --color-state-error-dark: var(--color-state-error-dark);
 }
 
-@utility title-1 {
+@utility title-28 {
   font-family: Wanted Sans Variable;
-  font-size: 14px;
+  font-size: 28px;
+  font-weight: 400;
+  line-height: 20px;
+}
+
+@utility title-20 {
+  font-family: Wanted Sans Variable;
+  font-size: 20px;
   font-weight: 700;
   line-height: 20px;
 }
 
-@utility title {
+@utility title-18 {
   font-family: Wanted Sans Variable;
   font-size: 18px;
   font-weight: 700;
   line-height: 22px;
+}
+
+@utility title-16 {
+  font-family: Wanted Sans Variable;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 22px;
+}
+
+@utility title-14 {
+  font-family: Wanted Sans Variable;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 20px;
 }
 
 @utility shinhan-title-1 {

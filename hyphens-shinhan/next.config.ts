@@ -8,19 +8,11 @@ const revision =
   spawnSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf-8' }).stdout ??
   crypto.randomUUID()
 
-// 1. Serwist 설정 초기화
-const withSerwist = withSerwistInit({
-  additionalPrecacheEntries: [{ url: '/~offline', revision }],
-  swSrc: 'src/sw.ts', // 서비스 워커 소스 파일 (작성할 파일)
-  swDest: 'public/sw.js', // 빌드 후 생성될 실제 서비스 워커 파일
-})
-
-// 2. 기존 Next.js 설정
+// 1. 기존 Next.js 설정
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-  // SVGR 설정을 추가
   webpack(config) {
-    // SVG 파일을 처리하는 기존 규칙이 있다면 제외하고 SVGR을 적용합니다.
+    // 1. 기존 SVG 처리 규칙을 찾아서 제외 (중요)
     const fileLoaderRule = config.module.rules.find((rule: any) =>
       rule.test?.test?.('.svg'),
     )
@@ -29,20 +21,20 @@ const nextConfig: NextConfig = {
       fileLoaderRule.exclude = /\.svg$/i
     }
 
+    // 2. SVGR 로더를 규칙 최상단에 추가
     config.module.rules.push({
       test: /\.svg$/i,
-      issuer: /\.[jt]sx?$/,
       use: [
         {
           loader: '@svgr/webpack',
           options: {
-            icon: true, // SVG 내부 크기 대신 props 크기 우선
+            icon: true,
             svgoConfig: {
               plugins: [
                 {
                   name: 'convertColors',
                   params: {
-                    currentColor: true, // 고정 색상을 currentColor로 자동 변환
+                    currentColor: true,
                   },
                 },
               ],
@@ -55,6 +47,13 @@ const nextConfig: NextConfig = {
     return config
   },
 }
+
+// 2. Serwist 설정 초기화
+const withSerwist = withSerwistInit({
+  additionalPrecacheEntries: [{ url: '/~offline', revision }],
+  swSrc: 'src/sw.ts', // 서비스 워커 소스 파일 (작성할 파일)
+  swDest: 'public/sw.js', // 빌드 후 생성될 실제 서비스 워커 파일
+})
 
 // 3. 설정을 Serwist로 감싸서 내보내기
 export default withSerwist(nextConfig)

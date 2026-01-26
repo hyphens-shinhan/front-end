@@ -58,6 +58,6 @@ const styles = {
     ),
     label: (isActive: boolean) => cn(
         'font-caption-caption1',
-        isActive ? 'text-grey-10' : 'text-grey-5',
+        isActive ? 'text-grey-10' : 'text-grey-8',
     ),
 }

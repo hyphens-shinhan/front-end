@@ -44,8 +44,7 @@ export default function BottomNav({ userRole = 'YB' }: { userRole?: UserRole }) 
 
 const styles = {
     container: cn(
-        'fixed bottom-0 left-0 right-0 z-50',
-        'bg-white border-t border-grey-2 rounded-[var(--scheme-radius-8)]',
+        'w-full bg-white border-t border-grey-2 rounded-t-[var(--scheme-radius-8)]',
         'pt-1 pb-2 px-5',
     ),
     wrapper: cn(

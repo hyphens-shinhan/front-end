@@ -1,87 +1,63 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-import { cn } from '@/utils/cn';
-import { ReactNode } from 'react';
+import { Icon } from "./Icon";
+import { cn } from "@/utils/cn";
+import Link from "next/link";
+import { HEADER_ITEMS, HEADER_NAV_ITEM_KEY } from "@/constants";
 
-interface HeaderProps {
-    title?: string;
-    showBackButton?: boolean;
-    rightElement?: ReactNode;
-    className?: string;
+interface PropsType {
+    title: string;
+    navItems: (typeof HEADER_ITEMS)[HEADER_NAV_ITEM_KEY][];
 }
-
-export default function Header({
-    title,
-    showBackButton = false,
-    rightElement,
-    className,
-}: HeaderProps) {
-    const router = useRouter();
-
-    const handleBack = () => {
-        router.back();
-    };
-
+/**  
+ * 헤더 컴포넌트
+ * @param title - 헤더 타이틀
+ * @param navItems - 헤더 네비게이션 아이템
+ * @example
+ * <Header title="홈" navItems={[HEADER_ITEMS.CHAT, HEADER_ITEMS.SEARCH]} />
+ * @returns 헤더 컴포넌트
+ */
+export default function Header({ title, navItems }: PropsType) {
     return (
-        <header className={cn(styles.container, className)}>
-            <div className={styles.wrapper}>
-                {/* Left Section */}
-                <div className={styles.leftSection}>
-                    {showBackButton && (
-                        <button
-                            type="button"
-                            onClick={handleBack}
-                            className={styles.backButton}
-                            aria-label="뒤로 가기"
+        <header className={styles.container}>
+            { /** 헤더 타이틀 */}
+            <h1 className={styles.title}>
+                {title}
+            </h1>
+            { /** 헤더 네비게이션 */}
+            {navItems.length > 0 && (
+                <nav className={styles.nav}>
+                    {navItems.map((item) => (
+                        <Link
+                            href={item.href}
+                            key={item.href}
+                            className={styles.navItem}
+                            aria-label={item.ariaLabel}
                         >
-                            <svg
-                                width="24"
-                                height="24"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                            >
-                                <path
-                                    d="M15 18L9 12L15 6"
-                                    stroke="currentColor"
-                                    strokeWidth="2"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                />
-                            </svg>
-                        </button>
-                    )}
-                </div>
-
-                {/* Center Section - Title */}
-                {title && <h1 className={styles.title}>{title}</h1>}
-
-                {/* Right Section */}
-                <div className={styles.rightSection}>{rightElement}</div>
-            </div>
+                            <span aria-hidden="true">
+                                <Icon name={item.icon} />
+                            </span>
+                        </Link>
+                    ))}
+                </nav>
+            )}
         </header>
     );
 }
 
 const styles = {
     container: cn(
-        'fixed top-0 left-0 right-0 z-50',
-        'bg-white border-b border-gray-100',
-        // safe-area-inset-top 적용
-        'pt-[var(--sat)]'
+        'flex flex-row justify-between items-center',
+        'px-4 py-3'
     ),
-    wrapper: cn(
-        'flex items-center justify-between',
-        'h-[var(--header-height)] px-4',
-        'max-w-md mx-auto'
+    title: cn(
+        'shinhan-title-1 text-grey-11',
     ),
-    leftSection: 'flex items-center min-w-[40px]',
-    rightSection: 'flex items-center min-w-[40px] justify-end',
-    backButton: cn(
-        'p-2 -ml-2 rounded-full',
-        'text-gray-700 hover:bg-gray-100',
-        'transition-colors duration-200'
+    nav: cn(
+        'flex flex-row gap-x-4',
     ),
-    title: 'text-lg font-semibold text-gray-900 truncate',
-};
+    navItem: cn(
+        'flex items-center justify-center w-6 h-6',
+        'text-grey-9',
+    ),
+}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               

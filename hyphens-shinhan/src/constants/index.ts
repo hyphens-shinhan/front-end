@@ -1,5 +1,6 @@
-import { NavItem, UserRole } from '@/types'
+import { HeaderNavItem, NavItem, NavLink, PostFABItem, UserRole } from '@/types'
 import { ROUTES } from './routes'
+import { IconName } from '@/components/common/Icon'
 
 /** 라우트 상수 */
 export { ROUTES } from './routes'
@@ -68,4 +69,85 @@ export const NAV_ITEMS_BY_ROLE: Record<UserRole, NavItem[]> = {
       icon: 'IconLBoldFrame',
     },
   ],
+} as const
+
+/** 헤더 네비게이션 아이템 키 */
+export enum HEADER_NAV_ITEM_KEY {
+  // 알림 기능
+  NOTIFICATIONS = 'NOTIFICATIONS',
+  // 채팅 기능
+  CHAT = 'CHAT',
+  // 검색 기능
+  SEARCH = 'SEARCH',
 }
+
+/** 헤더에 들어갈 공통 기능 아이템들 */
+export const HEADER_ITEMS: Record<HEADER_NAV_ITEM_KEY, HeaderNavItem> = {
+  // 알림 기능
+  [HEADER_NAV_ITEM_KEY.NOTIFICATIONS]: {
+    href: ROUTES.NOTIFICATION,
+    icon: 'IconLBoldNotification',
+    ariaLabel: '알림',
+  },
+  // 채팅 기능
+  [HEADER_NAV_ITEM_KEY.CHAT]: {
+    href: ROUTES.CHAT,
+    icon: 'IconLBoldMessages3',
+    ariaLabel: '채팅',
+  },
+  // 검색 기능
+  [HEADER_NAV_ITEM_KEY.SEARCH]: {
+    href: ROUTES.SEARCH,
+    icon: 'IconLLineSearchLine',
+    ariaLabel: '검색',
+  },
+} as const
+
+/** 바텀 네비게이션 아이템 키에 따른 헤더 설정 */
+export interface HeaderConfig {
+  title: string
+  navItems: (typeof HEADER_ITEMS)[HEADER_NAV_ITEM_KEY][]
+}
+
+export const HEADER_CONFIG_BY_BOTTOM_NAV: Record<NavLink, HeaderConfig> = {
+  [ROUTES.HOME.MAIN]: {
+    title: '홈',
+    navItems: [HEADER_ITEMS.CHAT, HEADER_ITEMS.NOTIFICATIONS],
+  },
+  [ROUTES.SCHOLARSHIP.MAIN]: {
+    title: 'MY활동',
+    navItems: [HEADER_ITEMS.NOTIFICATIONS, HEADER_ITEMS.SEARCH],
+  },
+  [ROUTES.COMMUNITY.MAIN]: {
+    title: '커뮤니티',
+    navItems: [HEADER_ITEMS.NOTIFICATIONS, HEADER_ITEMS.SEARCH],
+  },
+  [ROUTES.NETWORK.MAIN]: {
+    title: '네트워크',
+    navItems: [HEADER_ITEMS.CHAT, HEADER_ITEMS.NOTIFICATIONS],
+  },
+  [ROUTES.MYPAGE.MAIN]: {
+    title: '프로필',
+    navItems: [HEADER_ITEMS.NOTIFICATIONS],
+  },
+} as const
+
+/** 포스트 플로팅 액션 버튼 아이템 키 */
+export enum POST_FAB_ITEM_KEY {
+  WRITE = 'WRITE',
+  ADD = 'ADD',
+}
+
+/** 포스트 플로팅 액션 버튼 아이템 상수 */
+export const POST_FAB_ITEMS: Record<POST_FAB_ITEM_KEY, PostFABItem> = {
+  [POST_FAB_ITEM_KEY.WRITE]: {
+    icon: 'IconLBoldEdit2',
+    href: ROUTES.HOME.MAIN, // TODO: 수정 필요
+    ariaLabel: '글쓰기',
+  },
+  [POST_FAB_ITEM_KEY.ADD]: {
+    icon: 'IconLLinePlus',
+    href: ROUTES.HOME.MAIN, // TODO: 수정 필요
+    ariaLabel: '추가하기',
+  },
+} as const

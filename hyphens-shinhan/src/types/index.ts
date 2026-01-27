@@ -25,3 +25,11 @@ export interface HeaderNavItem {
   /** 접근성: 링크에 부여할 이름 */
   ariaLabel: string
 }
+
+/** 포스트 플로팅 액션 버튼 타입 */
+export interface PostFABItem {
+  icon: IconName
+  href: AllRoutePath
+  /** 접근성: 링크에 부여할 이름 */
+  ariaLabel: string
+}

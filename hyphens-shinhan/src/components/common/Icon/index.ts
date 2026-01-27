@@ -1,5 +1,5 @@
 // 자동 생성된 파일입니다. 직접 수정하지 마세요!
-// 생성일: 1/27/2026, 3:33:41 PM
+// 생성일: 1/27/2026, 4:43:48 PM
 
 import IconLBoldAddCircle from '@/assets/icons/Icon-L/Bold/add-circle.svg'
 import IconLBoldBarcode from '@/assets/icons/Icon-L/Bold/barcode.svg'
@@ -56,6 +56,7 @@ import IconLLineArrowRight from '@/assets/icons/Icon-L/Line/arrow-right.svg'
 import IconLLineArrowUp1 from '@/assets/icons/Icon-L/Line/arrow-up-1.svg'
 import IconLLineArrowUp from '@/assets/icons/Icon-L/Line/arrow-up.svg'
 import IconLLineClose from '@/assets/icons/Icon-L/Line/close.svg'
+import IconLLinePlus from '@/assets/icons/Icon-L/Line/plus.svg'
 import IconLLineSearch2 from '@/assets/icons/Icon-L/Line/search-2.svg'
 import IconLLineSearchLine from '@/assets/icons/Icon-L/Line/search-line.svg'
 import IconLLineSort from '@/assets/icons/Icon-L/Line/sort.svg'
@@ -166,6 +167,7 @@ export const ICON_LIST = {
   IconLLineArrowUp1,
   IconLLineArrowUp,
   IconLLineClose,
+  IconLLinePlus,
   IconLLineSearch2,
   IconLLineSearchLine,
   IconLLineSort,

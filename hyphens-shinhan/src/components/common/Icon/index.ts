@@ -1,8 +1,9 @@
 // 자동 생성된 파일입니다. 직접 수정하지 마세요!
-// 생성일: 1/26/2026, 4:53:21 PM
+// 생성일: 1/27/2026, 3:33:41 PM
 
 import IconLBoldAddCircle from '@/assets/icons/Icon-L/Bold/add-circle.svg'
 import IconLBoldBarcode from '@/assets/icons/Icon-L/Bold/barcode.svg'
+import IconLBoldBookmark from '@/assets/icons/Icon-L/Bold/bookmark.svg'
 import IconLBoldBriefcase from '@/assets/icons/Icon-L/Bold/briefcase.svg'
 import IconLBoldCalendar from '@/assets/icons/Icon-L/Bold/calendar.svg'
 import IconLBoldCard from '@/assets/icons/Icon-L/Bold/card.svg'
@@ -42,6 +43,7 @@ import IconLBoldTrash from '@/assets/icons/Icon-L/Bold/trash.svg'
 import IconLBoldUserSquare1 from '@/assets/icons/Icon-L/Bold/user-square-1.svg'
 import IconLBoldUserSquare from '@/assets/icons/Icon-L/Bold/user-square.svg'
 import IconLBoldVerify from '@/assets/icons/Icon-L/Bold/verify.svg'
+import IconLImageShinhanLogo from '@/assets/icons/Icon-L/Image/shinhan-logo.svg'
 import IconLLine3DotHorizontal from '@/assets/icons/Icon-L/Line/3-dot-horizontal.svg'
 import IconLLine3DotVertical from '@/assets/icons/Icon-L/Line/3-dot-vertical.svg'
 import IconLLineArrowCircleDown from '@/assets/icons/Icon-L/Line/arrow-circle-down.svg'
@@ -59,6 +61,7 @@ import IconLLineSearchLine from '@/assets/icons/Icon-L/Line/search-line.svg'
 import IconLLineSort from '@/assets/icons/Icon-L/Line/sort.svg'
 import IconMBoldAddCircle from '@/assets/icons/Icon-M/Bold/add-circle.svg'
 import IconMBoldBarcode from '@/assets/icons/Icon-M/Bold/barcode.svg'
+import IconMBoldBookmark from '@/assets/icons/Icon-M/Bold/bookmark.svg'
 import IconMBoldBriefcase from '@/assets/icons/Icon-M/Bold/briefcase.svg'
 import IconMBoldCalendar from '@/assets/icons/Icon-M/Bold/calendar.svg'
 import IconMBoldCard from '@/assets/icons/Icon-M/Bold/card.svg'
@@ -90,6 +93,7 @@ import IconMBoldTeacher from '@/assets/icons/Icon-M/Bold/teacher.svg'
 import IconMBoldTickCircle from '@/assets/icons/Icon-M/Bold/tick-circle.svg'
 import IconMBoldTrash from '@/assets/icons/Icon-M/Bold/trash.svg'
 import IconMBoldVerify from '@/assets/icons/Icon-M/Bold/verify.svg'
+import IconMImageFire from '@/assets/icons/Icon-M/Image/fire.svg'
 import IconMLine3DotHorizontal from '@/assets/icons/Icon-M/Line/3-dot-horizontal.svg'
 import IconMLine3DotVertical from '@/assets/icons/Icon-M/Line/3-dot-vertical.svg'
 import IconMLineArrowCircleDown from '@/assets/icons/Icon-M/Line/arrow-circle-down.svg'
@@ -105,12 +109,11 @@ import IconMLineClose from '@/assets/icons/Icon-M/Line/close.svg'
 import IconMLineSearch2 from '@/assets/icons/Icon-M/Line/search-2.svg'
 import IconMLineSearchLine from '@/assets/icons/Icon-M/Line/search-line.svg'
 import IconMLineSort from '@/assets/icons/Icon-M/Line/sort.svg'
-import ViconLBoldBookmark from '@/assets/icons/vIcon-L/Bold/bookmark.svg'
-import ViconMBoldBookmark from '@/assets/icons/vIcon-M/Bold/bookmark.svg'
 
 export const ICON_LIST = {
   IconLBoldAddCircle,
   IconLBoldBarcode,
+  IconLBoldBookmark,
   IconLBoldBriefcase,
   IconLBoldCalendar,
   IconLBoldCard,
@@ -150,6 +153,7 @@ export const ICON_LIST = {
   IconLBoldUserSquare1,
   IconLBoldUserSquare,
   IconLBoldVerify,
+  IconLImageShinhanLogo,
   IconLLine3DotHorizontal,
   IconLLine3DotVertical,
   IconLLineArrowCircleDown,
@@ -167,6 +171,7 @@ export const ICON_LIST = {
   IconLLineSort,
   IconMBoldAddCircle,
   IconMBoldBarcode,
+  IconMBoldBookmark,
   IconMBoldBriefcase,
   IconMBoldCalendar,
   IconMBoldCard,
@@ -198,6 +203,7 @@ export const ICON_LIST = {
   IconMBoldTickCircle,
   IconMBoldTrash,
   IconMBoldVerify,
+  IconMImageFire,
   IconMLine3DotHorizontal,
   IconMLine3DotVertical,
   IconMLineArrowCircleDown,
@@ -213,10 +219,9 @@ export const ICON_LIST = {
   IconMLineSearch2,
   IconMLineSearchLine,
   IconMLineSort,
-  ViconLBoldBookmark,
-  ViconMBoldBookmark,
 } as const
 
 export type IconName = keyof typeof ICON_LIST
 
+// Icon 컴포넌트 re-export
 export { Icon } from './Icon'

@@ -50,6 +50,9 @@ ${mapEntries}
 } as const;
 
 export type IconName = keyof typeof ICON_LIST;
+
+// Icon 컴포넌트 re-export
+export { Icon } from './Icon';
 `
 
 const outputDir = path.dirname(OUTPUT_FILE)

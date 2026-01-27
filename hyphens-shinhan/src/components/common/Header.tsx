@@ -47,7 +47,6 @@ export default function Header({ title, navItems }: PropsType) {
 
 const styles = {
     container: cn(
-        'fixed top-0 left-0 right-0 z-50',
         'flex flex-row justify-between items-center',
         'px-4 py-3'
     ),

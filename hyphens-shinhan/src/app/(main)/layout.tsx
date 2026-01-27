@@ -28,7 +28,6 @@ export default function MainLayout({
                     {children}
                 </div>
             </main>
-
             {/* 하단 고정 네비게이션 */}
             <BottomNav userRole="YB" />
         </div>
@@ -39,20 +38,18 @@ const styles = {
     // 전체 컨테이너: 전체 화면 높이, 스크롤 방지
     container: cn(
         'relative mx-auto max-w-md',
-        'h-[100dvh] overflow-hidden',
+        'h-[100dvh] overflow-hidden flex flex-col',
         'bg-white'
     ),
     // 메인 영역: 헤더와 바텀 네비 사이에서 독립 스크롤
     main: cn(
-        'absolute inset-0',
-        // 상단: 헤더 높이 + safe-area-top
-        'pt-[calc(var(--header-height)+var(--sat))]',
-        // 하단: 바텀 네비 높이만 (safe-area는 PWA에서 자동 처리됨)
-        'pb-[var(--bottom-nav-height)]',
-        'overflow-y-auto',
+        'flex-1 overflow-y-auto',
         'overscroll-behavior-y-contain',
-        '-webkit-overflow-scrolling-touch'
+        'relative', // FAB의 위치 기준점
     ),
-    // 컨텐츠 패딩
-    content: 'p-0',
+    // 컨텐츠 영역
+    content: cn(
+        'relative',
+        'min-h-full',
+    ),
 }

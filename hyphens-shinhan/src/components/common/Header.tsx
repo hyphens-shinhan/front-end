@@ -28,8 +28,15 @@ export default function Header({ title, navItems }: PropsType) {
             {navItems.length > 0 && (
                 <nav className={styles.nav}>
                     {navItems.map((item) => (
-                        <Link href={item.href} key={item.href} className={styles.navItem}>
-                            <Icon name={item.icon} />
+                        <Link
+                            href={item.href}
+                            key={item.href}
+                            className={styles.navItem}
+                            aria-label={item.ariaLabel}
+                        >
+                            <span aria-hidden="true">
+                                <Icon name={item.icon} />
+                            </span>
                         </Link>
                     ))}
                 </nav>

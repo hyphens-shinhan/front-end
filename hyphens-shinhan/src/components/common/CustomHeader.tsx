@@ -37,8 +37,10 @@ export default function CustomHeader({ type = 'Left', title, logo, navItem, onBa
     return (
         <header className={styles.container}>
             {/** 헤더 뒤로가기 버튼 */}
-            <button onClick={handleBack}>
-                <Icon name='IconLLineArrowLeft' className={styles.backButton} />
+            <button onClick={handleBack} aria-label="뒤로가기">
+                <span aria-hidden="true">
+                    <Icon name='IconLLineArrowLeft' className={styles.backButton} />
+                </span>
             </button>
             <div className={cn(styles.wrapper, styles[type])}>
                 {/** 헤더 타이틀 로고 */}
@@ -51,8 +53,15 @@ export default function CustomHeader({ type = 'Left', title, logo, navItem, onBa
 
             { /** 헤더 네비게이션 */}
             {navItem && (
-                <Link href={navItem.href} className={styles.navItem} onClick={onClick}>
-                    <Icon name={navItem.icon} />
+                <Link
+                    href={navItem.href}
+                    className={styles.navItem}
+                    onClick={onClick}
+                    aria-label={navItem.ariaLabel}
+                >
+                    <span aria-hidden="true">
+                        <Icon name={navItem.icon} />
+                    </span>
                 </Link>
             )}
         </header>

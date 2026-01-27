@@ -87,16 +87,19 @@ export const HEADER_ITEMS: Record<HEADER_NAV_ITEM_KEY, HeaderNavItem> = {
   NOTIFICATIONS: {
     href: ROUTES.NOTIFICATION,
     icon: 'IconLBoldNotification',
+    ariaLabel: '알림',
   },
   // 채팅 기능
   CHAT: {
     href: ROUTES.CHAT,
     icon: 'IconLBoldMessages3',
+    ariaLabel: '채팅',
   },
   // 검색 기능
   SEARCH: {
     href: ROUTES.SEARCH,
     icon: 'IconLLineSearchLine',
+    ariaLabel: '검색',
   },
 } as const
 

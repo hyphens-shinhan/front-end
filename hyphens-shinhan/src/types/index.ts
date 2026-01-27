@@ -22,4 +22,6 @@ export interface NavItem {
 export interface HeaderNavItem {
   href: string
   icon: IconName
+  /** 접근성: 링크에 부여할 이름 */
+  ariaLabel: string
 }

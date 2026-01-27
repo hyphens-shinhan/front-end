@@ -85,7 +85,7 @@ export enum HEADER_NAV_ITEM_KEY {
 export const HEADER_ITEMS: Record<HEADER_NAV_ITEM_KEY, HeaderNavItem> = {
   // 알림 기능
   NOTIFICATIONS: {
-    href: ROUTES.ALARM,
+    href: ROUTES.NOTIFICATION,
     icon: 'IconLBoldNotification',
   },
   // 채팅 기능

@@ -24,7 +24,7 @@ export const ROUTES = {
 
   /** 6. Common 라우트 상수 */
   /** 알림 라우트 상수 */
-  ALARM: COMMON_ROUTES.ALARM,
+  NOTIFICATION: COMMON_ROUTES.NOTIFICATION,
   /** 채팅 라우트 상수 */
   CHAT: COMMON_ROUTES.CHAT,
   /** 검색 라우트 상수 */

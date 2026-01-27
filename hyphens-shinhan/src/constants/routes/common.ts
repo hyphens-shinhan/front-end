@@ -1,5 +1,5 @@
 export const COMMON_ROUTES = {
-  ALARM: '/alarm',
+  NOTIFICATION: '/notification',
   CHAT: '/chat',
   SEARCH: '/search',
 } as const

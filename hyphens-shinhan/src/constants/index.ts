@@ -1,4 +1,4 @@
-import { HeaderNavItem, NavItem, UserRole } from '@/types'
+import { HeaderNavItem, NavItem, NavLink, UserRole } from '@/types'
 import { ROUTES } from './routes'
 import { IconName } from '@/components/common/Icon'
 
@@ -97,5 +97,34 @@ export const HEADER_ITEMS: Record<HEADER_NAV_ITEM_KEY, HeaderNavItem> = {
   SEARCH: {
     href: ROUTES.SEARCH,
     icon: 'IconLLineSearchLine',
+  },
+} as const
+
+/** 바텀 네비게이션 아이템 키에 따른 헤더 설정 */
+export interface HeaderConfig {
+  title: string
+  navItems: (typeof HEADER_ITEMS)[HEADER_NAV_ITEM_KEY][]
+}
+
+export const HEADER_CONFIG_BY_BOTTOM_NAV: Record<NavLink, HeaderConfig> = {
+  [ROUTES.HOME.MAIN]: {
+    title: '홈',
+    navItems: [HEADER_ITEMS.CHAT, HEADER_ITEMS.NOTIFICATIONS],
+  },
+  [ROUTES.SCHOLARSHIP.MAIN]: {
+    title: 'MY활동',
+    navItems: [HEADER_ITEMS.NOTIFICATIONS, HEADER_ITEMS.SEARCH],
+  },
+  [ROUTES.COMMUNITY.MAIN]: {
+    title: '커뮤니티',
+    navItems: [HEADER_ITEMS.NOTIFICATIONS, HEADER_ITEMS.SEARCH],
+  },
+  [ROUTES.NETWORK.MAIN]: {
+    title: '네트워크',
+    navItems: [HEADER_ITEMS.CHAT, HEADER_ITEMS.NOTIFICATIONS],
+  },
+  [ROUTES.MYPAGE.MAIN]: {
+    title: '프로필',
+    navItems: [HEADER_ITEMS.NOTIFICATIONS],
   },
 } as const

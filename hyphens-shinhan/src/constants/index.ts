@@ -1,5 +1,6 @@
-import { NavItem, UserRole } from '@/types'
+import { HeaderNavItem, NavItem, UserRole } from '@/types'
 import { ROUTES } from './routes'
+import { IconName } from '@/components/common/Icon'
 
 /** 라우트 상수 */
 export { ROUTES } from './routes'
@@ -68,4 +69,33 @@ export const NAV_ITEMS_BY_ROLE: Record<UserRole, NavItem[]> = {
       icon: 'IconLBoldFrame',
     },
   ],
+} as const
+
+/** 헤더 네비게이션 아이템 키 */
+export enum HEADER_NAV_ITEM_KEY {
+  // 알림 기능
+  NOTIFICATIONS = 'NOTIFICATIONS',
+  // 채팅 기능
+  CHAT = 'CHAT',
+  // 검색 기능
+  SEARCH = 'SEARCH',
 }
+
+/** 헤더에 들어갈 공통 기능 아이템들 */
+export const HEADER_ITEMS: Record<HEADER_NAV_ITEM_KEY, HeaderNavItem> = {
+  // 알림 기능
+  NOTIFICATIONS: {
+    href: ROUTES.ALARM,
+    icon: 'IconLBoldNotification',
+  },
+  // 채팅 기능
+  CHAT: {
+    href: ROUTES.CHAT,
+    icon: 'IconLBoldMessages3',
+  },
+  // 검색 기능
+  SEARCH: {
+    href: ROUTES.SEARCH,
+    icon: 'IconLLineSearchLine',
+  },
+} as const

@@ -1,3 +1,5 @@
+'use client';
+
 import { HEADER_ITEMS, HEADER_NAV_ITEM_KEY } from "@/constants";
 import { Icon, IconName } from "./Icon";
 import { cn } from "@/utils/cn";
@@ -21,6 +23,8 @@ interface PropsType {
  * @param onBack - ? 뒤로가기 핸들러
  * @param onClick - ? 네비게이션 클릭 핸들러
  * @returns 헤더 컴포넌트
+ * @example
+ * <CustomHeader type="Left" title="헤더 타이틀" logo="IconName" navItem={HEADER_ITEMS[HEADER_NAV_ITEM_KEY]} onBack={() => {}} onClick={() => {}} />
  */
 export default function CustomHeader({ type = 'Left', title, logo, navItem, onBack, onClick }: PropsType) {
     const router = useRouter();
@@ -70,9 +74,8 @@ export default function CustomHeader({ type = 'Left', title, logo, navItem, onBa
 
 const styles = {
     container: cn(
-        'fixed top-0 left-0 right-0 z-50',
         'flex flex-row justify-between items-center',
-        'px-4 py-3'
+        'px-4 py-3 border-b border-grey-2',
     ),
     wrapper: cn(
         'flex flex-1 flex-row items-center',

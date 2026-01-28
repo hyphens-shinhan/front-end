@@ -2,7 +2,7 @@ import BottomNav from "@/components/common/BottomNav";
 import Header from "@/components/common/Header";
 import { cn } from "@/utils/cn";
 
-export default function MainLayout({
+export default function TabsLayout({
     children,
 }: {
     children: React.ReactNode;

@@ -8,8 +8,8 @@ export default function NoTabsLayout({
 }) {
     return (
         <div>
-            {/* 상단 고정 헤더 */}
-            <CustomHeader type="Left" title="헤더 타이틀" />
+            {/* 상단 고정 헤더 - 현재 경로에 따라 자동으로 설정됨 */}
+            <CustomHeader />
             <main className={styles.main}>
                 <div className={styles.content}>
                     {children}

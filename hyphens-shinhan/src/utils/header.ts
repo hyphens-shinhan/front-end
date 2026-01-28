@@ -1,4 +1,4 @@
-import { HEADER_CONFIG_BY_BOTTOM_NAV, ROUTES, HeaderConfig } from '@/constants'
+import { HEADER_CONFIG_BY_BOTTOM_NAV, ROUTES, HeaderConfig, CUSTOM_HEADER_CONFIG, CustomHeaderConfig } from '@/constants'
 import { NavLink } from '@/types'
 
 /**
@@ -17,6 +17,20 @@ export function getHeaderConfig(pathname: string): HeaderConfig | null {
     (typeof HEADER_CONFIG_BY_BOTTOM_NAV)[NavLink],
   ][]) {
     if (route !== ROUTES.HOME.MAIN && pathname.startsWith(route)) {
+      return config
+    }
+  }
+  return null
+}
+
+/**
+ * 현재 경로에 해당하는 상세 페이지 헤더 설정을 반환합니다.
+ * @param pathname - 현재 경로
+ * @returns 상세 페이지 헤더 설정 또는 null
+ */
+export function getCustomHeaderConfig(pathname: string): CustomHeaderConfig | null {
+  for (const [route, config] of Object.entries(CUSTOM_HEADER_CONFIG)) {
+    if (pathname.startsWith(route)) {
       return config
     }
   }

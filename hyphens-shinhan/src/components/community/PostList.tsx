@@ -1,6 +1,7 @@
 import { cn } from "@/utils/cn";
 import PostCard from "./PostCard";
 import ShinhanNoticeCard from "./ShinhanNoticeCard";
+import Separator from "../common/Separator";
 
 /** 커뮤니티 게시판 리스트 컴포넌트
  * TODO: api 호출해서 데이터를 리스트에 뿌려줘야 함
@@ -20,7 +21,7 @@ export default function PostList() {
             {/** TODO: 게시글 데이터 추가 시 컴포넌트 수정 필요 */}
             <div className={styles.postCardWrapper}>
                 <PostCard />
-                <div className={styles.postCardSeparator} />
+                <Separator />
                 <PostCard />
             </div>
         </div>
@@ -35,7 +36,7 @@ const styles = {
         'flex-1 m-4 mb-3',
     ),
     postCardSeparator: cn(
-        'h-0.5 bg-grey-3 mx-4',
+        'h-[1px] bg-grey-3 mx-4',
     ),
     postCardWrapper: cn(
         'flex flex-col',

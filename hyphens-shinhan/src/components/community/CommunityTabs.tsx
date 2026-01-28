@@ -24,7 +24,7 @@ export default function CommunityTabs() {
         <div className={styles.container}>
             <Tab isActive={activeTab === '게시판'} title='게시판' onClick={() => handleTabClick('게시판')} />
             <Tab isActive={activeTab === '소모임'} title='소모임' onClick={() => handleTabClick('소모임')} />
-            <Tab isActive={activeTab === '커뮤니티'} title='커뮤니티' onClick={() => handleTabClick('커뮤니티')} />
+            <Tab isActive={activeTab === '자치회'} title='자치회' onClick={() => handleTabClick('자치회')} />
         </div>
     );
 }
@@ -32,6 +32,6 @@ export default function CommunityTabs() {
 const styles = {
     container: cn(
         'flex flex-row gap-[6px]',
-        'px-4',
+        'px-4 py-2',
     ),
 };

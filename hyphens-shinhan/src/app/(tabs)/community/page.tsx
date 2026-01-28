@@ -1,22 +1,26 @@
-import PostCard from "@/components/community/PostCard";
-import FollowButton from "@/components/community/FollowButton";
-import ShinhanNoticeCard from "@/components/community/ShinhanNoticeCard";
+import CommunityTabs from "@/components/community/CommunityTabs";
+import GroupList from "@/components/community/GroupList";
+import PostList from "@/components/community/PostList";
 import { cn } from "@/utils/cn";
 
-export default function CommunityPage() {
+export default async function CommunityPage({ searchParams }: { searchParams: Promise<{ tab?: string }> }) {
+    const { tab } = await searchParams;
+    const currentTab = tab || '게시판';
+
     return (
-        <div>
-            <div className={styles.noticeCardWrapper}>
-                <ShinhanNoticeCard />
+        <div className={styles.container}>
+            <CommunityTabs />
+            <div>
+                {currentTab === '게시판' && <PostList />}
+                {currentTab === '소모임' && <GroupList />}
+                {currentTab === '자치회' && <div>자치회</div>}
             </div>
-            <PostCard />
         </div>
     );
 }
 
 const styles = {
-    noticeCardWrapper: cn(
-        'flex-1 m-4 mb-3',
+    container: cn(
+        'flex flex-col',
     ),
 };
-

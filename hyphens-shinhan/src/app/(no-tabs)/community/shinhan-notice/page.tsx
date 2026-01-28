@@ -1,7 +1,15 @@
-export default function ShinhanNoticePage() {
+import EventList from "@/components/community/shinhan-notice/EventList";
+import NoticeList from "@/components/community/shinhan-notice/NoticeList";
+import NoticeTabs from "@/components/community/shinhan-notice/NoticeTabs";
+
+export default async function ShinhanNoticePage({ searchParams }: { searchParams: Promise<{ tab?: string }> }) {
+    const { tab } = await searchParams;
+    const currentTab = tab || '공지사항';
     return (
         <div>
-            신한장학 재단의 새로운 소식
+            <NoticeTabs />
+            {currentTab === '공지사항' && <NoticeList />}
+            {currentTab === '이벤트' && <EventList />}
         </div>
     );
 }

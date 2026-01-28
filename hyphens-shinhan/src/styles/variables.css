@@ -253,6 +253,7 @@
   --color-greyscale-11: #2c303dff;
   --color-greyscale-1white: #ffffffff;
   --color-greyscale-12black: #000000ff;
+  --color-greyscale-1-1: #f5f5f5ff;
   --color-primary-light: #2e67ffff;
   --color-primary-shinhanblue: #0046ffff;
   --color-primary-dark: #0d37d6ff;
@@ -261,10 +262,14 @@
   --color-primary-secondaryroyal: #2878f5ff;
   --color-primary-secondarynavy: #00236eff;
   --color-primary-lighter: #e6f2ffff;
-  --color-state-error: #ef4444ff;
-  --color-state-success: #10b981ff;
-  --color-state-warning: #f59e0bff;
-  --color-state-error-dark: #cf3434ff;
+  --color-state-red: #ef4444ff;
+  --color-state-green: #10b981ff;
+  --color-state-yellow: #ffc637ff;
+  --color-state-red-dark: #cf3434ff;
+  --color-state-green-light: #d1fae5ff;
+  --color-state-green-dark: #059669ff;
+  --color-state-yellow-light: #ffead3ff;
+  --color-state-yellow-dark: #f59e0bff;
   --typography-size-xxs: 10px;
   --typography-size-xs: 12px;
   --typography-size-sm: 14px;
@@ -628,6 +633,7 @@
   --color-grey-11: var(--color-greyscale-11);
   --color-white: var(--color-greyscale-1white);
   --color-black: var(--color-greyscale-12black);
+  --color-grey-1-1: var(--color-greyscale-1-1);
   --color-primary-light: var(--color-primary-light);
   --color-primary-shinhanblue: var(--color-primary-shinhanblue);
   --color-primary-dark: var(--color-primary-dark);
@@ -636,10 +642,14 @@
   --color-primary-secondaryroyal: var(--color-primary-secondaryroyal);
   --color-primary-secondarynavy: var(--color-primary-secondarynavy);
   --color-primary-lighter: var(--color-primary-lighter);
-  --color-state-error: var(--color-state-error);
-  --color-state-success: var(--color-state-success);
-  --color-state-warning: var(--color-state-warning);
-  --color-state-error-dark: var(--color-state-error-dark);
+  --color-state-red: var(--color-state-red);
+  --color-state-green: var(--color-state-green);
+  --color-state-yellow: var(--color-state-yellow);
+  --color-state-red-dark: var(--color-state-red-dark);
+  --color-state-green-light: var(--color-state-green-light);
+  --color-state-green-dark: var(--color-state-green-dark);
+  --color-state-yellow-light: var(--color-state-yellow-light);
+  --color-state-yellow-dark: var(--color-state-yellow-dark);
 }
 
 @utility title-28 {

@@ -61,6 +61,7 @@ const styles = {
     ),
     content: cn(
         'body-8 text-grey-11',
+        'line-clamp-2',
     ),
     memberPreviewContainer: cn(
         'flex flex-col -space-y-8',

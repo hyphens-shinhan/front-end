@@ -100,6 +100,7 @@ const styles = {
         'pr-14',
         'body-8',
         'text-grey-11',
+        'line-clamp-2',
     ),
     imageWrapper: cn(
         'flex flex-row gap-2 items-center',

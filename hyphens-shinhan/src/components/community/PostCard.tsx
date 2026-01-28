@@ -4,6 +4,7 @@ import FollowButton from "./FollowButton";
 import MoreButton from "./MoreButton";
 
 /** 커뮤니티 게시글 카드
+ * TODO: 게시글 데이터 추가 시 컴포넌트 수정 필요
  * - 나와 친구인지에 따라 팔로우 버튼 노출 여부 결정
  * - 익명인지에 따라 유저 이름 노출 여부 결정
  * - 사진 첨부에 따라 이미지 영역 노출 여부 결정

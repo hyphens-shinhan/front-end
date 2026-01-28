@@ -24,7 +24,8 @@ interface PropsType {
 */
 export default function Button({ label, size, type, disabled = false, onClick }: PropsType) {
     const containerStyle = cn(
-        'flex items-center justify-center border border-grey-3 shadow-md',
+        'flex items-center justify-center border border-grey-3 shadow-md ',
+        'transition-all duration-100 active:scale-98',
         sizeStyles[size],
         typeStyles[type],
         disabled && disabledStyles
@@ -41,7 +42,7 @@ const sizeStyles = {
     L: 'w-[145px] py-3.5 rounded-[12px] body-7',
     M: 'w-[100px] py-2.5 rounded-[12px] body-7',
     S: 'w-[80px] py-1.5 rounded-[8px] body-9',
-    XS: 'px-2.5 py-1 rounded-[6px] font-caption-caption5',
+    XS: 'px-2.5 py-[5px] rounded-[6px] font-caption-caption5',
 }
 const typeStyles = {
     primary: 'bg-primary-shinhanblue text-white body-7 hover:bg-primary-dark',

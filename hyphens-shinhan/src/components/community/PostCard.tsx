@@ -27,7 +27,7 @@ export default function PostCard() {
                 {/** 유저 이름, 시간, 팔로우 버튼, 더보기 버튼 */}
                 <div className={styles.infoWrapper}>
                     {/** 유저 이름 */}
-                    <h3 className={styles.userName}>오시온</h3>
+                    <p className={styles.userName}>오시온</p>
                     {/** 시간 */}
                     <time className={styles.time}>12월 14일 12:20</time>
                     {/** 팔로우 버튼, 더보기 버튼 */}

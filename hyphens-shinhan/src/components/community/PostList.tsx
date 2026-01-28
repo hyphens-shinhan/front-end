@@ -2,6 +2,8 @@ import { cn } from "@/utils/cn";
 import PostCard from "./PostCard";
 import ShinhanNoticeCard from "./ShinhanNoticeCard";
 import Separator from "../common/Separator";
+import PostFAB from "../common/PostFAB";
+import { POST_FAB_ITEM_KEY } from "@/constants";
 
 /** 커뮤니티 게시판 리스트 컴포넌트
  * TODO: api 호출해서 데이터를 리스트에 뿌려줘야 함
@@ -24,6 +26,7 @@ export default function PostList() {
                 <Separator />
                 <PostCard />
             </div>
+            <PostFAB type={POST_FAB_ITEM_KEY.WRITE} />
         </div>
     );
 }

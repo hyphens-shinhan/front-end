@@ -1,26 +1,16 @@
-'use client';
-
 import BottomNav from "@/components/common/BottomNav";
-import CustomHeader from "@/components/common/CustomHeader";
 import Header from "@/components/common/Header";
 import { cn } from "@/utils/cn";
-import { getHeaderConfig } from "@/utils/header";
-import { usePathname } from "next/navigation";
 
 export default function MainLayout({
     children,
 }: {
     children: React.ReactNode;
 }) {
-    const pathname = usePathname();
-    const headerConfig = getHeaderConfig(pathname);
-
     return (
         <div className={styles.container}>
             {/* 상단 고정 헤더 */}
-            {headerConfig && (
-                <Header title={headerConfig.title} navItems={headerConfig.navItems} />
-            )}
+            <Header />
 
             {/* 메인 컨텐츠 영역 - 독립적인 스크롤 */}
             <main className={styles.main}>

@@ -43,7 +43,6 @@ import IconLBoldTrash from '@/assets/icons/Icon-L/Bold/trash.svg'
 import IconLBoldUserSquare1 from '@/assets/icons/Icon-L/Bold/user-square-1.svg'
 import IconLBoldUserSquare from '@/assets/icons/Icon-L/Bold/user-square.svg'
 import IconLBoldVerify from '@/assets/icons/Icon-L/Bold/verify.svg'
-import IconLImageShinhanLogo from '@/assets/icons/Icon-L/Image/shinhan-logo.svg'
 import IconLLine3DotHorizontal from '@/assets/icons/Icon-L/Line/3-dot-horizontal.svg'
 import IconLLine3DotVertical from '@/assets/icons/Icon-L/Line/3-dot-vertical.svg'
 import IconLLineArrowCircleDown from '@/assets/icons/Icon-L/Line/arrow-circle-down.svg'
@@ -154,7 +153,6 @@ export const ICON_LIST = {
   IconLBoldUserSquare1,
   IconLBoldUserSquare,
   IconLBoldVerify,
-  IconLImageShinhanLogo,
   IconLLine3DotHorizontal,
   IconLLine3DotVertical,
   IconLLineArrowCircleDown,

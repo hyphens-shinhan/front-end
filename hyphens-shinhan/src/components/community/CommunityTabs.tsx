@@ -17,7 +17,7 @@ export default function CommunityTabs() {
 
     const handleTabClick = (title: string) => {
         // URL을 변경함 (예: /community?tab=소모임)
-        router.push(`?tab=${title}`);
+        router.replace(`?tab=${title}`, { scroll: false });
     };
 
     return (

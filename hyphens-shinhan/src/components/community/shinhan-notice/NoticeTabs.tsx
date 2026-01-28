@@ -17,7 +17,7 @@ export default function NoticeTabs() {
 
     const handleTabClick = (title: string) => {
         // URL을 변경함 (예: /community?tab=이벤트)
-        router.push(`?tab=${title}`);
+        router.replace(`?tab=${title}`, { scroll: false });
     };
 
     return (

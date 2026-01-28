@@ -142,6 +142,7 @@ export interface CustomHeaderConfig {
   logo?: IconName
   img?: string | StaticImageData
   navItem?: HeaderNavItem
+  backHref?: string
 }
 
 /** 상세 페이지 헤더 설정 상수 */
@@ -159,6 +160,7 @@ export const CUSTOM_HEADER_CONFIG: Record<string, CustomHeaderConfig> = {
     title: '신한장학재단',
     type: 'Left',
     img: shinhanNoticeImg,
+    backHref: ROUTES.COMMUNITY.MAIN,
   },
 } as const
 

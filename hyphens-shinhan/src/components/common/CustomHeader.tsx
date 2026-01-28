@@ -14,6 +14,7 @@ interface PropsType {
     logo?: IconName;
     img?: string | StaticImageData;
     navItem?: (typeof HEADER_ITEMS)[HEADER_NAV_ITEM_KEY];
+    backHref?: string;
     onBack?: () => void;
     onClick?: () => void;
 }
@@ -24,13 +25,14 @@ interface PropsType {
  * @param logo - ? 헤더 로고 (아이콘)
  * @param img - ? 헤더 이미지
  * @param navItem - ? 헤더 네비게이션 아이템
- * @param onBack - ? 뒤로가기 핸들러
+ * @param backHref - ? 뒤로가기 시 이동할 경로
+ * @param onBack - ? 뒤로가기 핸들러 (backHref보다 우선순위가 높음)
  * @param onClick - ? 네비게이션 클릭 핸들러
  * @returns 헤더 컴포넌트
  * @example
  * <CustomHeader type="Left" title="헤더 타이틀" logo="IconName" navItem={HEADER_ITEMS[HEADER_NAV_ITEM_KEY]} onBack={() => {}} onClick={() => {}} />
  */
-export default function CustomHeader({ type, title, logo, img, navItem, onBack, onClick }: PropsType) {
+export default function CustomHeader({ type, title, logo, img, navItem, backHref, onBack, onClick }: PropsType) {
     const router = useRouter();
     const pathname = usePathname();
 
@@ -42,14 +44,21 @@ export default function CustomHeader({ type, title, logo, img, navItem, onBack, 
     const displayLogo = logo || headerConfig?.logo;
     const displayImg = img || headerConfig?.img;
     const displayNavItem = navItem || headerConfig?.navItem;
+    const displayBackHref = backHref || headerConfig?.backHref;
 
-    // 사용자가 준 onBack이 있으면 그걸 쓰고, 없으면 router.back() 실행
+    // 사용자가 준 onBack이 있으면 그걸 쓰고, 없으면 backHref, 둘 다 없으면 router.back() 실행
     const handleBack = () => {
         if (onBack) {
             onBack();
-        } else {
-            router.back();
+            return;
         }
+
+        if (displayBackHref) {
+            router.push(displayBackHref);
+            return;
+        }
+
+        router.back();
     };
 
     return (

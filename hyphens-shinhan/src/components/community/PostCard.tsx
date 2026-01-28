@@ -124,7 +124,7 @@ const styles = {
         'text-grey-5',
     ),
     footerButtonText: cn(
-        'font-caption-caption5',
+        'font-caption-caption3',
         'text-grey-9',
     ),
 }

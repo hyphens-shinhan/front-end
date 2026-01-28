@@ -3,7 +3,7 @@ import { Icon } from "../common/Icon";
 import InfoTag from "../common/InfoTag";
 
 /** 소모임 모집글 카드 컴포넌트
- * 
+ * TODO: api 호출해서 데이터를 카드에 뿌려줘야 함, 파이어 아이콘 디자인 수정 요청 필요
  * @returns {React.ReactNode} 소모임 모집글 카드 컴포넌트
  * @example
  * <GroupCard />
@@ -14,7 +14,7 @@ export default function GroupCard() {
             {/** 태그들 */}
             <div className={styles.tagContainer}>
                 <InfoTag label="현재 참여 중" color="blue" />
-                <InfoTag label="스터디" color="green" />
+                <InfoTag label="스터디" color="grey" />
                 <InfoTag label="글로벌" color="grey" />
             </div>
             <div className={styles.contentWrapper}>
@@ -23,7 +23,7 @@ export default function GroupCard() {
                     {/** 제목과 인기 로고 */}
                     <div className={styles.titleContainer}>
                         <p className={styles.title}>글로벌 리더십 스터디 모임</p>
-                        <Icon name="IconLBoldAddCircle" />
+                        <Icon name="IconMImageFire" />
                     </div>
                     {/** 내용 */}
                     <p className={styles.content}>해외 유학이나 취업 관심 있으신 분이면 환영입니다!!! 같이 이야기 나눠요!</p>
@@ -63,10 +63,10 @@ const styles = {
         'body-8 text-grey-11',
     ),
     memberPreviewContainer: cn(
-        'flex flex-col -space-y-6',
+        'flex flex-col -space-y-8',
     ),
     memberPreviewItem: cn(
-        'w-10 h-10 rounded-full bg-grey-3 ',
+        'w-10 h-10 rounded-full bg-grey-3',
     ),
     memberCountItem: cn(
         'w-10 h-10 rounded-full bg-grey-4',

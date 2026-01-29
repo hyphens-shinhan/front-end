@@ -1,11 +1,11 @@
 'use client';
 
-import { HEADER_ITEMS, HEADER_NAV_ITEM_KEY } from "@/constants";
 import { HeaderNavItem } from "@/types";
-import { Icon, IconName } from "./Icon";
+import { useHeaderStore } from "@/stores";
+import { Icon } from "./Icon";
 import { cn } from "@/utils/cn";
 import Link from "next/link";
-import Image, { StaticImageData } from "next/image";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { getCustomHeaderConfig } from "@/utils/header";
 
@@ -51,72 +51,44 @@ function NavItemRenderer({ item, onClick }: NavItemRendererProps) {
     );
 }
 
-// ─────────────────────────────────────────────────────────────
-// CustomHeader Props
-// ─────────────────────────────────────────────────────────────
-interface PropsType {
-    /** 타이틀 정렬 방식 - Center: 중앙, Left: 좌측 */
-    type?: 'Center' | 'Left';
-    /** 좌측 버튼 타입 - Back: ← 화살표, Close: X 닫기 */
-    btnType?: 'Back' | 'Close';
-    /** 헤더 타이틀 */
-    title?: string;
-    /** 타이틀 앞에 표시할 아이콘 */
-    logo?: IconName;
-    /** 타이틀 앞에 표시할 이미지 (logo보다 우선) */
-    img?: string | StaticImageData;
-    /** 우측 네비게이션 아이템 (아이콘 링크 or 텍스트 버튼) */
-    navItem?: (typeof HEADER_ITEMS)[HEADER_NAV_ITEM_KEY];
-    /** 뒤로가기 시 이동할 경로 */
-    backHref?: string;
-    /** 뒤로가기 커스텀 핸들러 (backHref보다 우선) */
-    onBack?: () => void;
-    /** 우측 네비게이션 클릭 핸들러 */
-    onClick?: () => void;
-}
-
 /**
  * 커스텀 헤더 컴포넌트
  *
- * props를 전달하지 않으면 현재 경로(pathname)에 맞는 설정이 자동 적용됩니다.
- * (constants/index.ts의 CUSTOM_HEADER_CONFIG 참고)
+ * ─────────────────────────────────────────────────────────────
+ * - 정적 설정 (title, navItem 등): 경로 기반 설정 (CUSTOM_HEADER_CONFIG)
+ * - 동적 핸들러 (onClick, onBack): useHeaderStore
+ * ─────────────────────────────────────────────────────────────
  *
  * @example
- * // 기본 사용 - 경로 기반 자동 설정
+ * // 레이아웃에서 사용
  * <CustomHeader />
  *
- * // 타이틀만 커스텀
- * <CustomHeader title="글 작성" />
+ * @example
+ * // 페이지에서 핸들러 설정
+ * const { setHandlers, resetHandlers } = useHeaderStore()
  *
- * // 완료 버튼 + 클릭 핸들러
- * <CustomHeader
- *   title="글 작성"
- *   navItem={HEADER_ITEMS.COMPLETE}
- *   onClick={handleComplete}
- * />
- *
- * // X 닫기 버튼 + 커스텀 뒤로가기
- * <CustomHeader
- *   btnType="Close"
- *   onBack={() => router.push('/home')}
- * />
+ * useEffect(() => {
+ *   setHandlers({ onClick: handleComplete })
+ *   return () => resetHandlers()
+ * }, [])
  */
-export default function CustomHeader({ type, title, logo, img, navItem, btnType, backHref, onBack, onClick }: PropsType) {
+export default function CustomHeader() {
     const router = useRouter();
     const pathname = usePathname();
 
     // ─────────────────────────────────────────────────────────────
-    // 설정 결정: props > 경로 기반 설정 > 기본값
+    // 설정: 경로 기반(정적) + store(핸들러)
     // ─────────────────────────────────────────────────────────────
-    const headerConfig = getCustomHeaderConfig(pathname);
+    const pathConfig = getCustomHeaderConfig(pathname);
+    const { onBack, onClick } = useHeaderStore((state) => state.handlers);
 
-    const displayType = type || headerConfig?.type || 'Left';
-    const displayBtnType = btnType || headerConfig?.btnType || 'Back';
-    const displayTitle = title || headerConfig?.title || '';
-    const displayLogo = logo || headerConfig?.logo;
-    const displayImg = img || headerConfig?.img;
-    const displayNavItem = navItem || headerConfig?.navItem;
-    const displayBackHref = backHref || headerConfig?.backHref;
+    const displayType = pathConfig?.type || 'Left';
+    const displayBtnType = pathConfig?.btnType || 'Back';
+    const displayTitle = pathConfig?.title || '';
+    const displayLogo = pathConfig?.logo;
+    const displayImg = pathConfig?.img;
+    const displayNavItem = pathConfig?.navItem;
+    const displayBackHref = pathConfig?.backHref;
 
     // ─────────────────────────────────────────────────────────────
     // 뒤로가기 핸들러: onBack > backHref > router.back()

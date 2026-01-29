@@ -1,3 +1,4 @@
+export { useHeaderStore } from './useHeaderStore'
 export {
   useBottomSheetStore,
   useConfirmModalStore,

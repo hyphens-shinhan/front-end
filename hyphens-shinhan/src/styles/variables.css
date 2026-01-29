@@ -253,7 +253,7 @@
   --color-greyscale-11: #2c303dff;
   --color-greyscale-1white: #ffffffff;
   --color-greyscale-12black: #000000ff;
-  --color-greyscale-1-1: #f5f5f5ff;
+  --color-greyscale-1-1: #f5f7faff;
   --color-primary-light: #2e67ffff;
   --color-primary-shinhanblue: #0046ffff;
   --color-primary-dark: #0d37d6ff;
@@ -270,6 +270,7 @@
   --color-state-green-dark: #059669ff;
   --color-state-yellow-light: #ffead3ff;
   --color-state-yellow-dark: #f59e0bff;
+  --color-state-red-light: #ffd5d5ff;
   --typography-size-xxs: 10px;
   --typography-size-xs: 12px;
   --typography-size-sm: 14px;
@@ -650,6 +651,7 @@
   --color-state-green-dark: var(--color-state-green-dark);
   --color-state-yellow-light: var(--color-state-yellow-light);
   --color-state-yellow-dark: var(--color-state-yellow-dark);
+  --color-state-red-light: var(--color-state-red-light);
 }
 
 @utility title-28 {

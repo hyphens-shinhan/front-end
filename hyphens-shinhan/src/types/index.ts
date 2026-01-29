@@ -20,8 +20,10 @@ export interface NavItem {
 
 /** 상단 헤더 네비게이션 아이템 타입 */
 export interface HeaderNavItem {
-  href: string
-  icon: IconName
+  href?: string
+  icon?: IconName
+  /** 텍스트 버튼일 경우 표시할 텍스트 */
+  text?: string
   /** 접근성: 링크에 부여할 이름 */
   ariaLabel: string
 }

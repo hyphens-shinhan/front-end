@@ -81,6 +81,8 @@ export enum HEADER_NAV_ITEM_KEY {
   CHAT = 'CHAT',
   // 검색 기능
   SEARCH = 'SEARCH',
+  // 완료 버튼
+  COMPLETE = 'COMPLETE',
 }
 
 /** 헤더에 들어갈 공통 기능 아이템들 */
@@ -102,6 +104,11 @@ export const HEADER_ITEMS: Record<HEADER_NAV_ITEM_KEY, HeaderNavItem> = {
     href: ROUTES.SEARCH,
     icon: 'IconLLineSearchLine',
     ariaLabel: '검색',
+  },
+  // 완료 버튼 (텍스트)
+  [HEADER_NAV_ITEM_KEY.COMPLETE]: {
+    text: '완료',
+    ariaLabel: '완료',
   },
 } as const
 
@@ -138,6 +145,7 @@ export const HEADER_CONFIG_BY_BOTTOM_NAV: Record<NavLink, HeaderConfig> = {
 /** 상세 페이지 헤더 설정 */
 export interface CustomHeaderConfig {
   type?: 'Center' | 'Left'
+  btnType?: 'Back' | 'Close'
   title: string
   logo?: IconName
   img?: string | StaticImageData
@@ -156,11 +164,24 @@ export const CUSTOM_HEADER_CONFIG: Record<string, CustomHeaderConfig> = {
   [ROUTES.SEARCH]: {
     title: '검색',
   },
+  /** 신한장학재단 공지사항 페이지 헤더 설정 */
   [ROUTES.COMMUNITY.SHINHAN_NOTICE]: {
     title: '신한장학재단',
     type: 'Left',
     img: shinhanNoticeImg,
     backHref: ROUTES.COMMUNITY.MAIN,
+  },
+  /** 커뮤니티 피드 글쓰기 페이지 헤더 설정 */
+  [ROUTES.COMMUNITY.CREATE.FEED]: {
+    title: '게시글 작성하기',
+    type: 'Left',
+    btnType: 'Close',
+    navItem: HEADER_ITEMS[HEADER_NAV_ITEM_KEY.COMPLETE],
+  },
+  /** 커뮤니티 소모임 추가하기 페이지 헤더 설정 */
+  [ROUTES.COMMUNITY.CREATE.GROUP]: {
+    title: '추가하기',
+    type: 'Left',
   },
 } as const
 

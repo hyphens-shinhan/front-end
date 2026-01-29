@@ -6,4 +6,5 @@ export const COMMUNITY_ROUTES = {
     FEED: '/community/feed/create',
     GROUP: '/community/group/create',
   },
+  FEED: '/community/feed/[id]',
 } as const

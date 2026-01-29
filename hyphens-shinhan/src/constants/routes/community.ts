@@ -2,9 +2,11 @@
 export const COMMUNITY_ROUTES = {
   MAIN: '/community',
   SHINHAN_NOTICE: '/community/shinhan-notice',
-  CREATE: {
-    FEED: '/community/feed/create',
-    GROUP: '/community/group/create',
+  FEED: {
+    CREATE: '/community/feed/create',
+    DETAIL: '/community/feed',
   },
-  FEED: '/community/feed/[id]',
+  GROUP: {
+    CREATE: '/community/group/create',
+  },
 } as const

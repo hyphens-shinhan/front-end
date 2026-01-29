@@ -1,9 +1,11 @@
+import Link from "next/link";
+import Image from "next/image";
 import { Icon } from "../common/Icon";
 import { cn } from "@/utils/cn";
+import { ROUTES } from "@/constants";
 import FollowButton from "./FollowButton";
 import MoreButton from "./MoreButton";
 import { FeedPostResponse } from "@/types/posts";
-import Image from "next/image";
 
 interface PostCardProps {
     post: FeedPostResponse;
@@ -16,6 +18,7 @@ interface PostCardProps {
  */
 export default function PostCard({ post }: PostCardProps) {
     const {
+        id,
         author,
         content,
         created_at,
@@ -32,7 +35,7 @@ export default function PostCard({ post }: PostCardProps) {
     };
 
     return (
-        <article className={styles.container}>
+        <Link href={`${ROUTES.COMMUNITY.FEED.DETAIL}/${id}`} className={styles.container}>
             {/** 유저 프로필 사진 */}
             <div className={styles.userProfileWrapper}>
                 {/* {author?.avatar_url ? (
@@ -104,7 +107,7 @@ export default function PostCard({ post }: PostCardProps) {
                     </div>
                 </footer>
             </div>
-        </article>
+        </Link>
     );
 }
 

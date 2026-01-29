@@ -22,6 +22,7 @@ export interface NavItem {
 export interface HeaderNavItem {
   href?: string
   icon?: IconName
+  type?: 'button' | 'link'
   /** 텍스트 버튼일 경우 표시할 텍스트 */
   text?: string
   /** 접근성: 링크에 부여할 이름 */

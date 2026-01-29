@@ -83,6 +83,8 @@ export enum HEADER_NAV_ITEM_KEY {
   SEARCH = 'SEARCH',
   // 완료 버튼
   COMPLETE = 'COMPLETE',
+  // 더보기 버튼
+  MORE = 'MORE',
 }
 
 /** 헤더에 들어갈 공통 기능 아이템들 */
@@ -109,6 +111,11 @@ export const HEADER_ITEMS: Record<HEADER_NAV_ITEM_KEY, HeaderNavItem> = {
   [HEADER_NAV_ITEM_KEY.COMPLETE]: {
     text: '완료',
     ariaLabel: '완료',
+  },
+  // 더보기 버튼
+  [HEADER_NAV_ITEM_KEY.MORE]: {
+    icon: 'IconLLine3DotVertical',
+    ariaLabel: '더보기',
   },
 } as const
 
@@ -172,16 +179,24 @@ export const CUSTOM_HEADER_CONFIG: Record<string, CustomHeaderConfig> = {
     backHref: ROUTES.COMMUNITY.MAIN,
   },
   /** 커뮤니티 피드 글쓰기 페이지 헤더 설정 */
-  [ROUTES.COMMUNITY.CREATE.FEED]: {
+  [ROUTES.COMMUNITY.FEED.CREATE]: {
     title: '게시글 작성하기',
     type: 'Left',
     btnType: 'Close',
     navItem: HEADER_ITEMS[HEADER_NAV_ITEM_KEY.COMPLETE],
   },
   /** 커뮤니티 소모임 추가하기 페이지 헤더 설정 */
-  [ROUTES.COMMUNITY.CREATE.GROUP]: {
+  [ROUTES.COMMUNITY.GROUP.CREATE]: {
     title: '추가하기',
     type: 'Left',
+  },
+  /** 게시글 상세 보기 */
+  [ROUTES.COMMUNITY.FEED.DETAIL]: {
+    title: '게시글',
+    type: 'Center',
+    btnType: 'Back',
+    navItem: HEADER_ITEMS[HEADER_NAV_ITEM_KEY.MORE],
+    backHref: ROUTES.COMMUNITY.MAIN,
   },
 } as const
 
@@ -195,12 +210,12 @@ export enum POST_FAB_ITEM_KEY {
 export const POST_FAB_ITEMS: Record<POST_FAB_ITEM_KEY, PostFABItem> = {
   [POST_FAB_ITEM_KEY.WRITE]: {
     icon: 'IconLBoldEdit2',
-    href: ROUTES.COMMUNITY.CREATE.FEED,
+    href: ROUTES.COMMUNITY.FEED.CREATE,
     ariaLabel: '글쓰기',
   },
   [POST_FAB_ITEM_KEY.ADD]: {
     icon: 'IconLLinePlus',
-    href: ROUTES.COMMUNITY.CREATE.GROUP,
+    href: ROUTES.COMMUNITY.GROUP.CREATE,
     ariaLabel: '추가하기',
   },
 } as const

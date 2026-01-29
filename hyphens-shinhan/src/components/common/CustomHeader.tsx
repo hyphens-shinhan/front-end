@@ -26,7 +26,7 @@ function NavItemRenderer({ item, onClick }: NavItemRendererProps) {
     );
 
     // href가 있으면 Link, 없으면 Button
-    if (item.href) {
+    if (item.type === 'link' && item.href) {
         return (
             <Link
                 href={item.href}

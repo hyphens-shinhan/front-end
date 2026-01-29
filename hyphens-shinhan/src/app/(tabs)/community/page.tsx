@@ -1,10 +1,13 @@
+'use client';
+
 import CommunityTabs from "@/components/community/CommunityTabs";
 import GroupList from "@/components/community/GroupList";
 import PostList from "@/components/community/PostList";
 import { cn } from "@/utils/cn";
+import { use } from "react";
 
-export default async function CommunityPage({ searchParams }: { searchParams: Promise<{ tab?: string }> }) {
-    const { tab } = await searchParams;
+export default function CommunityPage({ searchParams }: { searchParams: Promise<{ tab?: string }> }) {
+    const { tab } = use(searchParams);
     const currentTab = tab || '게시판';
 
     return (

@@ -1,34 +1,61 @@
 import { Icon } from "@/components/common/Icon";
 import { cn } from "@/utils/cn";
+import { NoticePostResponse } from "@/types/posts";
+
+interface NoticeCardProps {
+    notice: NoticePostResponse;
+}
 
 /** 신한 장학재단 공지 카드 컴포넌트
- * TODO: api 호출해서 데이터를 카드에 뿌려줘야 함
+ * @param {NoticeCardProps} props - 공지사항 데이터
  * @returns {React.ReactNode} 신한 장학재단 공지 카드 컴포넌트
  * @example
- * <NoticeCard />
+ * <NoticeCard notice={noticeData} />
  */
-export default function NoticeCard() {
+export default function NoticeCard({ notice }: NoticeCardProps) {
+    const {
+        title,
+        content,
+        is_pinned,
+        view_count,
+        file_urls,
+        created_at,
+    } = notice;
+
+    // 날짜 포맷팅 (예: 2024.12.15)
+    const formatDate = (dateString: string) => {
+        const date = new Date(dateString);
+        return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')}`;
+    };
+
+    // 파일명 추출 (URL에서 마지막 부분)
+    const getFileName = (url: string) => {
+        return url.split('/').pop() || url;
+    };
+
     return (
         <article className={styles.container}>
-            {/** 제목과 핀 아이콘, N 아이콘 */}
+            {/** 제목과 핀 아이콘 */}
             <header className={styles.titleContainer}>
-                <h3 className={styles.title}>2025년 상반기 장학금 신청 안내</h3>
-                <Icon name='IconLBoldPin' size={20} className={styles.pinIcon} />
+                <h3 className={styles.title}>{title}</h3>
+                {is_pinned && <Icon name='IconLBoldPin' size={20} className={styles.pinIcon} />}
             </header>
 
             {/** 본문 내용 */}
-            <p className={styles.content}>2025년 상반기 장학금 신청 시작! 신청 기간은 2025년 1월 1일부터 1월 31일까지입니다. 자세한 내용은 첨부된 파일을 확인해주세요.</p>
+            <p className={styles.content}>{content}</p>
 
             {/** 첨부 파일 */}
-            <div className={styles.attachmentContainer}>
-                <Icon name='IconMBoldDocumentText' />
-                2025_상반기_장학금_신청안내.pdf
-            </div>
+            {file_urls && file_urls.length > 0 && (
+                <div className={styles.attachmentContainer}>
+                    <Icon name='IconMBoldDocumentText' />
+                    {getFileName(file_urls[0])}
+                </div>
+            )}
 
             {/** 조회수와 작성일 */}
             <div className={styles.infoContainer}>
-                <time>2024.12.15</time>
-                <p>조회수 391</p>
+                <time>{formatDate(created_at)}</time>
+                <p>조회수 {view_count}</p>
             </div>
         </article>
     );

@@ -174,12 +174,12 @@ export enum POST_FAB_ITEM_KEY {
 export const POST_FAB_ITEMS: Record<POST_FAB_ITEM_KEY, PostFABItem> = {
   [POST_FAB_ITEM_KEY.WRITE]: {
     icon: 'IconLBoldEdit2',
-    href: ROUTES.HOME.MAIN, // TODO: 수정 필요
+    href: ROUTES.COMMUNITY.CREATE.FEED,
     ariaLabel: '글쓰기',
   },
   [POST_FAB_ITEM_KEY.ADD]: {
     icon: 'IconLLinePlus',
-    href: ROUTES.HOME.MAIN, // TODO: 수정 필요
+    href: ROUTES.COMMUNITY.CREATE.GROUP,
     ariaLabel: '추가하기',
   },
 } as const

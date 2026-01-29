@@ -1,8 +1,10 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { cn } from '@/utils/cn'
 import { useBottomSheetStore } from '@/stores'
+
+const ANIMATION_DURATION = 250 // ms
 
 /**
  * 바텀시트 모달 컴포넌트
@@ -29,24 +31,44 @@ import { useBottomSheetStore } from '@/stores'
 export default function BottomModal() {
   const { isOpen, options, onClose } = useBottomSheetStore()
   const modalRef = useRef<HTMLDivElement>(null)
+  const [isClosing, setIsClosing] = useState(false)
+  const [shouldRender, setShouldRender] = useState(false)
 
   const { title, content, closeOnOverlayClick = true } = options
+
+  // 열림/닫힘 상태 관리
+  useEffect(() => {
+    if (isOpen) {
+      setShouldRender(true)
+      setIsClosing(false)
+    }
+  }, [isOpen])
+
+  // 닫힘 애니메이션 처리
+  const handleClose = () => {
+    setIsClosing(true)
+    setTimeout(() => {
+      onClose()
+      setShouldRender(false)
+      setIsClosing(false)
+    }, ANIMATION_DURATION)
+  }
 
   // ESC 키로 모달 닫기
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
-        onClose()
+      if (e.key === 'Escape' && isOpen && !isClosing) {
+        handleClose()
       }
     }
 
     document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [isOpen, onClose])
+  }, [isOpen, isClosing])
 
   // 모달 열릴 때 스크롤 방지
   useEffect(() => {
-    if (isOpen) {
+    if (shouldRender) {
       document.body.style.overflow = 'hidden'
     } else {
       document.body.style.overflow = ''
@@ -55,40 +77,46 @@ export default function BottomModal() {
     return () => {
       document.body.style.overflow = ''
     }
-  }, [isOpen])
+  }, [shouldRender])
 
   // 오버레이 클릭 핸들러
   const handleOverlayClick = (e: React.MouseEvent) => {
-    if (closeOnOverlayClick && e.target === e.currentTarget) {
-      onClose()
+    if (closeOnOverlayClick && e.target === e.currentTarget && !isClosing) {
+      handleClose()
     }
   }
 
-  if (!isOpen) return null
+  if (!shouldRender) return null
 
   return (
     <div
-      className={styles.overlay}
+      className={cn(styles.overlay, isClosing && 'animate-fade-out')}
       onClick={handleOverlayClick}
       role="dialog"
       aria-modal="true"
     >
-      {/* 모달 컨텐츠 */}
-      <div ref={modalRef} className={styles.modal}>
-        {/* 드래그 핸들 */}
-        <div className={styles.handleWrapper}>
-          <div className={styles.handle} />
-        </div>
-
-        {/* 타이틀 */}
-        {title && (
-          <div className={styles.titleWrapper}>
-            <h2 className={styles.title}>{title}</h2>
+      {/* 모달 위치 wrapper */}
+      <div className={styles.modalWrapper}>
+        {/* 모달 컨텐츠 */}
+        <div
+          ref={modalRef}
+          className={cn(styles.modal, isClosing && 'animate-slide-down')}
+        >
+          {/* 드래그 핸들 */}
+          <div className={styles.handleWrapper}>
+            <div className={styles.handle} />
           </div>
-        )}
 
-        {/* 컨텐츠 영역 */}
-        <div className={styles.content}>{content}</div>
+          {/* 타이틀 */}
+          {title && (
+            <div className={styles.titleWrapper}>
+              <h2 className={styles.title}>{title}</h2>
+            </div>
+          )}
+
+          {/* 컨텐츠 영역 */}
+          <div className={styles.content}>{content}</div>
+        </div>
       </div>
     </div>
   )
@@ -97,19 +125,21 @@ export default function BottomModal() {
 const styles = {
   overlay: cn(
     'fixed inset-0 z-50',
-    'bg-black/50',
-    'animate-fade-in',
-    'flex flex-col justify-end items-center'
+    'animate-fade-in'
+  ),
+  modalWrapper: cn(
+    'absolute bottom-0 left-0 right-0',
+    'flex justify-center'
   ),
   modal: cn(
     'w-full max-w-md',
-    'bg-white rounded-t-[20px]',
-    'max-h-[80vh] overflow-y-auto',
+    'bg-white rounded-t-[24px]',
     'animate-slide-up',
-    'pb-[env(safe-area-inset-bottom)]'
+    'pb-[calc(env(safe-area-inset-bottom)+48px)]',
+    'shadow-[0_-4px_20px_rgba(0,0,0,0.15)]'
   ),
-  handleWrapper: 'flex justify-center pt-3 pb-2',
-  handle: 'w-10 h-1 bg-grey-5 rounded-full',
+  handleWrapper: 'flex justify-center pt-3 pb-4',
+  handle: 'w-9 h-1.5 bg-grey-7 rounded-full',
   titleWrapper: 'px-5 pb-4',
   title: 'title-18 text-grey-11',
   content: 'px-5 pb-5',

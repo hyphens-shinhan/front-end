@@ -1,3 +1,5 @@
+'use client'
+
 import { cn } from "@/utils/cn";
 import PostCard from "./PostCard";
 import PostCardSkeleton from "./PostCardSkeleton";

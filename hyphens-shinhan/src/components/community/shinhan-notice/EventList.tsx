@@ -22,7 +22,7 @@ export default function EventList() {
                 {Array.from({ length: 3 }).map((_, index) => (
                     <React.Fragment key={index}>
                         <EventCardSkeleton />
-                        {index < 2 && <Separator />}
+                        <Separator />
                     </React.Fragment>
                 ))}
             </div>
@@ -40,7 +40,7 @@ export default function EventList() {
             {allEvents.map((event, index) => (
                 <React.Fragment key={event.id}>
                     <EventCard event={event} />
-                    {index < allEvents.length - 1 && <Separator />}
+                    <Separator />
                 </React.Fragment>
             ))}
 

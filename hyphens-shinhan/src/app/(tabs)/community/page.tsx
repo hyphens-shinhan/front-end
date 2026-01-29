@@ -13,7 +13,7 @@ export default function CommunityPage({ searchParams }: { searchParams: Promise<
     return (
         <div className={styles.container}>
             <CommunityTabs />
-            <div>
+            <div className={styles.contentContainer}>
                 {currentTab === '게시판' && <PostList />}
                 {currentTab === '소모임' && <GroupList />}
                 {currentTab === '자치회' && <div>자치회</div>}
@@ -24,6 +24,9 @@ export default function CommunityPage({ searchParams }: { searchParams: Promise<
 
 const styles = {
     container: cn(
-        'flex flex-col',
+        'flex flex-col h-full',
+    ),
+    contentContainer: cn(
+        'flex-1 pb-8 overflow-y-auto scrollbar-hide',
     ),
 };

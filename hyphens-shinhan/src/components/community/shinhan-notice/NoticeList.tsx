@@ -22,7 +22,7 @@ export default function NoticeList() {
                 {Array.from({ length: 3 }).map((_, index) => (
                     <React.Fragment key={index}>
                         <NoticeCardSkeleton />
-                        {index < 2 && <Separator />}
+                        <Separator />
                     </React.Fragment>
                 ))}
             </div>
@@ -40,7 +40,7 @@ export default function NoticeList() {
             {allNotices.map((notice, index) => (
                 <React.Fragment key={notice.id}>
                     <NoticeCard notice={notice} />
-                    {index < allNotices.length - 1 && <Separator />}
+                    <Separator />
                 </React.Fragment>
             ))}
 

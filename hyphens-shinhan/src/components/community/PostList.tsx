@@ -26,14 +26,16 @@ export default function PostList() {
     if (isLoading) {
         return (
             <div className={styles.container}>
+                {/** 신한 공지사항 카드 */}
                 <div className={styles.noticeCardWrapper}>
                     <ShinhanNoticeCard />
                 </div>
+                {/** 게시글 카드 리스트 */}
                 <div className={styles.postCardWrapper}>
                     {Array.from({ length: 5 }).map((_, index) => (
                         <React.Fragment key={index}>
                             <PostCardSkeleton />
-                            {index < 4 && <Separator />}
+                            <Separator />
                         </React.Fragment>
                     ))}
                 </div>
@@ -55,7 +57,7 @@ export default function PostList() {
                 {allPosts.map((post, index) => (
                     <React.Fragment key={post.id}>
                         <PostCard post={post} />
-                        {index < allPosts.length - 1 && <Separator />}
+                        <Separator />
                     </React.Fragment>
                 ))}
             </div>

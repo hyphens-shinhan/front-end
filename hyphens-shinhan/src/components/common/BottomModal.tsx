@@ -46,9 +46,9 @@ export default function BottomModal() {
 
   // 닫힘 애니메이션 처리
   const handleClose = () => {
+    onClose() // 먼저 isOpen = false로 변경 (외부 상태 즉시 반영)
     setIsClosing(true)
     setTimeout(() => {
-      onClose()
       setShouldRender(false)
       setIsClosing(false)
     }, ANIMATION_DURATION)

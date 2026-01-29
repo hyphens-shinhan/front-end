@@ -186,14 +186,14 @@
   --font-body-body10-paragraphindent: 0px;
   --font-body-body10-paragraphspacing: 0px;
   --font-body-body10-textcase: none;
-  --font-caption-caption1-fontsize: 10px;
+  --font-caption-caption1-fontsize: 14px;
   --font-caption-caption1-textdecoration: none;
   --font-caption-caption1-fontfamily: Wanted Sans Variable;
-  --font-caption-caption1-fontweight: 400;
+  --font-caption-caption1-fontweight: 600;
   --font-caption-caption1-fontstyle: normal;
   --font-caption-caption1-fontstretch: normal;
   --font-caption-caption1-letterspacing: 0px;
-  --font-caption-caption1-lineheight: 11px;
+  --font-caption-caption1-lineheight: 20px;
   --font-caption-caption1-paragraphindent: 0px;
   --font-caption-caption1-paragraphspacing: 0px;
   --font-caption-caption1-textcase: none;
@@ -487,14 +487,14 @@
   --typography-body-body10-paragraphindent: 0px;
   --typography-body-body10-paragraphspacing: 0px;
   --typography-body-body10-textcase: none;
-  --typography-caption-caption1-fontsize: 10px;
+  --typography-caption-caption1-fontsize: 14px;
   --typography-caption-caption1-textdecoration: none;
   --typography-caption-caption1-fontfamily: Wanted Sans Variable;
-  --typography-caption-caption1-fontweight: 400;
+  --typography-caption-caption1-fontweight: 600;
   --typography-caption-caption1-fontstyle: normal;
   --typography-caption-caption1-fontstretch: normal;
   --typography-caption-caption1-letterspacing: 0px;
-  --typography-caption-caption1-lineheight: 11px;
+  --typography-caption-caption1-lineheight: 20px;
   --typography-caption-caption1-paragraphindent: 0px;
   --typography-caption-caption1-paragraphspacing: 0px;
   --typography-caption-caption1-textcase: none;
@@ -775,9 +775,9 @@
 
 @utility font-caption-caption1 {
   font-family: Wanted Sans Variable;
-  font-size: 10px;
-  font-weight: 400;
-  line-height: 11px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
 }
 
 @utility font-caption-caption2 {

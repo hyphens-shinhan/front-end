@@ -2,6 +2,9 @@ import { useQuery, useInfiniteQuery } from '@tanstack/react-query'
 import { PostService } from '@/services/posts'
 import { EventStatus } from '@/types/posts'
 
+/**
+ * 쿼리 키 관리 객체
+ */
 export const postKeys = {
   all: ['posts'] as const,
   lists: () => [...postKeys.all, 'list'] as const,
@@ -12,7 +15,8 @@ export const postKeys = {
 }
 
 /**
- * 피드 게시글 목록 조회 (무한 스크롤)
+ * [FEED] 피드 게시글 목록 조회 (무한 스크롤)
+ * @param limit 가져올 개수
  */
 export const useInfiniteFeedPosts = (limit = 20) => {
   return useInfiniteQuery({
@@ -27,7 +31,8 @@ export const useInfiniteFeedPosts = (limit = 20) => {
 }
 
 /**
- * 익명 피드 게시글 목록 조회 (무한 스크롤)
+ * [FEED] 익명 피드 게시글 목록 조회 (무한 스크롤)
+ * @param limit 가져올 개수
  */
 export const useInfiniteAnonymousFeedPosts = (limit = 20) => {
   return useInfiniteQuery({
@@ -43,27 +48,43 @@ export const useInfiniteAnonymousFeedPosts = (limit = 20) => {
 }
 
 /**
- * 공지사항 목록 조회
+ * [NOTICE] 공지사항 목록 조회 (무한 스크롤)
+ * @param limit 가져올 개수
  */
-export const useNoticePosts = (limit = 20, offset = 0) => {
-  return useQuery({
-    queryKey: postKeys.list('notice', { limit, offset }),
-    queryFn: () => PostService.getNoticePosts(limit, offset),
+export const useInfiniteNoticePosts = (limit = 20) => {
+  return useInfiniteQuery({
+    queryKey: postKeys.list('notice', { limit }),
+    queryFn: ({ pageParam = 0 }) =>
+      PostService.getNoticePosts(limit, pageParam),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, allPages) => {
+      const nextOffset = allPages.length * limit
+      return nextOffset < lastPage.total ? nextOffset : undefined
+    },
   })
 }
 
 /**
- * 이벤트 목록 조회
+ * [EVENT] 이벤트 목록 조회 (무한 스크롤)
+ * @param status 이벤트 상태 필터 (OPEN, CLOSED, SCHEDULED)
+ * @param limit 가져올 개수
  */
-export const useEventPosts = (status?: EventStatus, limit = 20, offset = 0) => {
-  return useQuery({
-    queryKey: postKeys.list('event', { status, limit, offset }),
-    queryFn: () => PostService.getEventPosts(status, limit, offset),
+export const useInfiniteEventPosts = (status?: EventStatus, limit = 20) => {
+  return useInfiniteQuery({
+    queryKey: postKeys.list('event', { status, limit }),
+    queryFn: ({ pageParam = 0 }) =>
+      PostService.getEventPosts(status, limit, pageParam),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, allPages) => {
+      const nextOffset = allPages.length * limit
+      return nextOffset < lastPage.total ? nextOffset : undefined
+    },
   })
 }
 
 /**
- * 피드 게시글 상세 조회
+ * [FEED] 피드 게시글 상세 조회
+ * @param postId 게시글 ID
  */
 export const useFeedPost = (postId: string) => {
   return useQuery({
@@ -74,7 +95,8 @@ export const useFeedPost = (postId: string) => {
 }
 
 /**
- * 공지사항 상세 조회
+ * [NOTICE] 공지사항 상세 조회
+ * @param postId 게시글 ID
  */
 export const useNoticePost = (postId: string) => {
   return useQuery({
@@ -85,7 +107,8 @@ export const useNoticePost = (postId: string) => {
 }
 
 /**
- * 이벤트 상세 조회
+ * [EVENT] 이벤트 상세 조회
+ * @param postId 게시글 ID
  */
 export const useEventPost = (postId: string) => {
   return useQuery({

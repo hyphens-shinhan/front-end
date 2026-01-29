@@ -7,7 +7,7 @@ interface AccordionProps {
     /** 표시할 텍스트 */
     title?: string;
     /** 아이콘 이름 */
-    iconName: IconName;
+    iconName?: IconName;
     /** 열림 상태 */
     isOpen?: boolean;
     /** 클릭 핸들러 */
@@ -29,7 +29,7 @@ interface AccordionProps {
 export default function Accordion({ title, iconName, isOpen = false, onClick }: AccordionProps) {
     return (
         <button type="button" onClick={onClick} className={styles.container}>
-            <Icon name={iconName} className={styles.icon} />
+            {iconName && <Icon name={iconName} className={styles.icon} />}
             <p className={styles.title}>{title}</p>
             <Icon
                 name='IconLLineArrowDown'

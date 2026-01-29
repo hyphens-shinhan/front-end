@@ -1,13 +1,15 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useBottomSheetStore, useHeaderStore } from '@/stores'
 import { useAutoResize } from '@/hooks/useAutoResize'
+import { useImageUpload } from '@/hooks/useImageUpload'
+import { useCreateFeedPost } from '@/hooks/posts/usePostMutations'
 import SelectableOption from '@/components/community/SelectableOption'
 import Accordion from '@/components/common/Accordion'
+import ImagePicker from '@/components/common/ImagePicker'
 import { cn } from '@/utils/cn'
-import { Icon } from '../common/Icon'
 
 const WRITE_OPTIONS = [
   { value: 'anonymous', label: '익명으로 글 쓰기' },
@@ -21,24 +23,62 @@ const WRITE_OPTIONS = [
  */
 export default function CreateFeed() {
   const router = useRouter()
+
   // 모달 상태 관리
   const { isOpen, onOpen } = useBottomSheetStore()
   // 헤더 핸들러 설정
   const { setHandlers, resetHandlers } = useHeaderStore()
   // 작성 타입 선택
-  const writeTypeRef = useRef('anonymous')
+  const [isAnonymous, setIsAnonymous] = useState(true)
+  // 게시글 내용
+  const [content, setContent] = useState('')
+
   // textarea 높이 자동 조절
   const { textareaRef, handleResize } = useAutoResize()
+
+  // 이미지 업로드 훅
+  const {
+    images,
+    isUploading,
+    fileInputRef,
+    handleImageSelect,
+    handleRemoveImage,
+    openFilePicker,
+    uploadImages,
+    canAddMore,
+  } = useImageUpload({ maxImages: 5, bucket: 'images', pathPrefix: 'feeds' })
+
+  // 피드 생성 훅
+  const { mutateAsync: createFeedPost, isPending } = useCreateFeedPost()
 
   // ─────────────────────────────────────────────────────────────
   // 완료 버튼 클릭 핸들러
   // ─────────────────────────────────────────────────────────────
   const handleComplete = async () => {
-    // TODO: 게시물 생성 API 호출
-    // const postId = await createPost({ ... })
+    if (!content.trim()) {
+      // TODO: 에러 메시지 표시 - toast 만들어서 쓰는게 좋지 않을까 ?
+      alert('내용을 입력해주세요.')
+      return
+    }
 
-    const postId = '1' // 임시: 실제로는 API 응답에서 받은 ID
-    router.push(`/community/feed/${postId}`)
+    try {
+      // 1. 이미지가 있으면 먼저 Supabase에 업로드
+      const imageUrls = await uploadImages()
+
+      // 2. 피드 생성 API 호출
+      const result = await createFeedPost({
+        content: content.trim(),
+        is_anonymous: isAnonymous,
+        image_urls: imageUrls.length > 0 ? imageUrls : null,
+      })
+
+      // 3. 생성된 게시글 상세로 이동
+      router.push(`/community/feed/${result.id}`)
+    } catch (error) {
+      console.error('게시글 생성 실패:', error)
+      // TODO: 에러 메시지 표시 - toast 만들어서 쓰는게 좋지 않을까 ?
+      alert('게시글 생성에 실패했습니다.')
+    }
   }
 
   // ─────────────────────────────────────────────────────────────
@@ -47,7 +87,7 @@ export default function CreateFeed() {
   useEffect(() => {
     setHandlers({ onClick: handleComplete })
     return () => resetHandlers()
-  }, [])
+  }, [content, isAnonymous, images])
 
   // ─────────────────────────────────────────────────────────────
   // 바텀시트 열기
@@ -57,9 +97,9 @@ export default function CreateFeed() {
       content: (
         <SelectableOption
           options={WRITE_OPTIONS}
-          defaultValue={writeTypeRef.current}
+          defaultValue={isAnonymous ? 'anonymous' : 'real'}
           onChange={(value) => {
-            writeTypeRef.current = value
+            setIsAnonymous(value === 'anonymous')
           }}
         />
       ),
@@ -70,10 +110,12 @@ export default function CreateFeed() {
   // ─────────────────────────────────────────────────────────────
   // 렌더링
   // ─────────────────────────────────────────────────────────────
+  const isSubmitting = isPending || isUploading
+
   return (
     <div className={styles.container}>
       <Accordion
-        title="익명"
+        title={isAnonymous ? '익명' : '실명'}
         isOpen={isOpen}
         onClick={handleOpenBottomSheet}
       />
@@ -85,28 +127,38 @@ export default function CreateFeed() {
           name="content"
           className={styles.contentInput}
           placeholder="공유하고 싶은 내용이 있나요?"
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
           onInput={handleResize}
           rows={1}
+          disabled={isSubmitting}
         />
         {/** 이미지 첨부 영역 */}
-        <div className={styles.imageContainer}>
-          {/** 이미지 미리보기 영역 */}
-          <div className={styles.imagePreview} />
-          <div className={styles.imagePreview} />
-          <div className={styles.imagePreview} />
-
-          {/** 이미지 첨부 버튼 */}
-          <div className={cn(styles.imagePreview, styles.imageUploadButton)}>
-            <Icon name='IconLLinePlus' />
-          </div>
-        </div>
+        <ImagePicker
+          images={images}
+          onSelect={handleImageSelect}
+          onRemove={handleRemoveImage}
+          onAdd={openFilePicker}
+          canAddMore={canAddMore}
+          disabled={isSubmitting}
+          fileInputRef={fileInputRef}
+        />
       </div>
+
+      {/** TODO: 로딩 오버레이 */}
+      {isSubmitting && (
+        <div className={styles.loadingOverlay}>
+          <span className={styles.loadingText}>
+            {isUploading ? '이미지 업로드 중...' : '게시 중...'}
+          </span>
+        </div>
+      )}
     </div>
   )
 }
 
 const styles = {
-  container: cn('flex flex-col h-full'),
+  container: cn('flex flex-col h-full relative'),
   contentContainer: cn('flex flex-col p-4 gap-5.5'),
   contentInput: cn(
     'w-full',
@@ -114,16 +166,12 @@ const styles = {
     'placeholder:text-grey-6 placeholder:body-5',
     'outline-none focus:outline-none',
     'resize-none',
+    'disabled:opacity-50',
   ),
-  imageContainer: cn(
-    'flex flex-row flex-wrap gap-2'
-  ),
-  imagePreview: cn(
+  loadingOverlay: cn(
+    'absolute inset-0',
     'flex items-center justify-center',
-    'w-20 h-20',
-    'bg-grey-2 rounded-[16px]',
+    'bg-white/70',
   ),
-  imageUploadButton: cn(
-    'bg-grey-2 text-grey-6',
-  ),
+  loadingText: cn('body-5 text-grey-8'),
 }

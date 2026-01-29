@@ -1,6 +1,8 @@
 import { HeaderNavItem, NavItem, NavLink, PostFABItem, UserRole } from '@/types'
 import { ROUTES } from './routes'
 import { IconName } from '@/components/common/Icon'
+import { StaticImageData } from 'next/image'
+import shinhanNoticeImg from '@/assets/icons/Icon-L/Image/shinhan-logo.png'
 
 /** 라우트 상수 */
 export { ROUTES } from './routes'
@@ -109,6 +111,7 @@ export interface HeaderConfig {
   navItems: (typeof HEADER_ITEMS)[HEADER_NAV_ITEM_KEY][]
 }
 
+/** 바텀 네비게이션 아이템 키에 따른 헤더 설정 상수 */
 export const HEADER_CONFIG_BY_BOTTOM_NAV: Record<NavLink, HeaderConfig> = {
   [ROUTES.HOME.MAIN]: {
     title: '홈',
@@ -129,6 +132,35 @@ export const HEADER_CONFIG_BY_BOTTOM_NAV: Record<NavLink, HeaderConfig> = {
   [ROUTES.MYPAGE.MAIN]: {
     title: '프로필',
     navItems: [HEADER_ITEMS.NOTIFICATIONS],
+  },
+} as const
+
+/** 상세 페이지 헤더 설정 */
+export interface CustomHeaderConfig {
+  type?: 'Center' | 'Left'
+  title: string
+  logo?: IconName
+  img?: string | StaticImageData
+  navItem?: HeaderNavItem
+  backHref?: string
+}
+
+/** 상세 페이지 헤더 설정 상수 */
+export const CUSTOM_HEADER_CONFIG: Record<string, CustomHeaderConfig> = {
+  [ROUTES.NOTIFICATION]: {
+    title: '알림',
+  },
+  [ROUTES.CHAT]: {
+    title: '채팅',
+  },
+  [ROUTES.SEARCH]: {
+    title: '검색',
+  },
+  [ROUTES.COMMUNITY.SHINHAN_NOTICE]: {
+    title: '신한장학재단',
+    type: 'Left',
+    img: shinhanNoticeImg,
+    backHref: ROUTES.COMMUNITY.MAIN,
   },
 } as const
 

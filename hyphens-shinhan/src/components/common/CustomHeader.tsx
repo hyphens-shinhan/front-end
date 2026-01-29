@@ -1,37 +1,64 @@
+'use client';
+
 import { HEADER_ITEMS, HEADER_NAV_ITEM_KEY } from "@/constants";
 import { Icon, IconName } from "./Icon";
 import { cn } from "@/utils/cn";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import Image, { StaticImageData } from "next/image";
+import { usePathname, useRouter } from "next/navigation";
+import { getCustomHeaderConfig } from "@/utils/header";
 
 interface PropsType {
     type?: 'Center' | 'Left';
-    title: string;
+    title?: string;
     logo?: IconName;
+    img?: string | StaticImageData;
     navItem?: (typeof HEADER_ITEMS)[HEADER_NAV_ITEM_KEY];
+    backHref?: string;
     onBack?: () => void;
     onClick?: () => void;
 }
 
 /** 커스텀 헤더 컴포넌트
  * @param type - 헤더 타입 (Center, Left)
- * @param title - 헤더 타이틀
- * @param logo - ? 헤더 로고
+ * @param title - 헤더 타이틀 (전달하지 않으면 현재 경로에 맞는 타이틀 자동 설정)
+ * @param logo - ? 헤더 로고 (아이콘)
+ * @param img - ? 헤더 이미지
  * @param navItem - ? 헤더 네비게이션 아이템
- * @param onBack - ? 뒤로가기 핸들러
+ * @param backHref - ? 뒤로가기 시 이동할 경로
+ * @param onBack - ? 뒤로가기 핸들러 (backHref보다 우선순위가 높음)
  * @param onClick - ? 네비게이션 클릭 핸들러
  * @returns 헤더 컴포넌트
+ * @example
+ * <CustomHeader type="Left" title="헤더 타이틀" logo="IconName" navItem={HEADER_ITEMS[HEADER_NAV_ITEM_KEY]} onBack={() => {}} onClick={() => {}} />
  */
-export default function CustomHeader({ type = 'Left', title, logo, navItem, onBack, onClick }: PropsType) {
+export default function CustomHeader({ type, title, logo, img, navItem, backHref, onBack, onClick }: PropsType) {
     const router = useRouter();
+    const pathname = usePathname();
 
-    // 사용자가 준 onBack이 있으면 그걸 쓰고, 없으면 router.back() 실행
+    // props로 들어온 값이 없으면 현재 경로에 기반한 설정을 가져옴
+    const headerConfig = getCustomHeaderConfig(pathname);
+
+    const displayType = type || headerConfig?.type || 'Left';
+    const displayTitle = title || headerConfig?.title || '';
+    const displayLogo = logo || headerConfig?.logo;
+    const displayImg = img || headerConfig?.img;
+    const displayNavItem = navItem || headerConfig?.navItem;
+    const displayBackHref = backHref || headerConfig?.backHref;
+
+    // 사용자가 준 onBack이 있으면 그걸 쓰고, 없으면 backHref, 둘 다 없으면 router.back() 실행
     const handleBack = () => {
         if (onBack) {
             onBack();
-        } else {
-            router.back();
+            return;
         }
+
+        if (displayBackHref) {
+            router.push(displayBackHref);
+            return;
+        }
+
+        router.back();
     };
 
     return (
@@ -42,25 +69,34 @@ export default function CustomHeader({ type = 'Left', title, logo, navItem, onBa
                     <Icon name='IconLLineArrowLeft' className={styles.backButton} />
                 </span>
             </button>
-            <div className={cn(styles.wrapper, styles[type])}>
-                {/** 헤더 타이틀 로고 */}
-                {logo && (
-                    <Icon name={logo} className={styles.logo} />
-                )}
+            <div className={cn(styles.wrapper, styles[displayType])}>
+                {/** 헤더 타이틀 로고 (아이콘 또는 이미지) */}
+                {displayImg ? (
+                    <div className={styles.logo}>
+                        <Image
+                            src={displayImg}
+                            alt="Header Logo"
+                            fill
+                            className="object-contain"
+                        />
+                    </div>
+                ) : displayLogo ? (
+                    <Icon name={displayLogo} className={styles.logo} />
+                ) : null}
                 {/** 헤더 타이틀 */}
-                <h1 className={styles.title}>{title}</h1>
+                <h1 className={styles.title}>{displayTitle}</h1>
             </div>
 
             { /** 헤더 네비게이션 */}
-            {navItem && (
+            {displayNavItem && (
                 <Link
-                    href={navItem.href}
+                    href={displayNavItem.href}
                     className={styles.navItem}
                     onClick={onClick}
-                    aria-label={navItem.ariaLabel}
+                    aria-label={displayNavItem.ariaLabel}
                 >
                     <span aria-hidden="true">
-                        <Icon name={navItem.icon} />
+                        <Icon name={displayNavItem.icon} />
                     </span>
                 </Link>
             )}
@@ -70,9 +106,8 @@ export default function CustomHeader({ type = 'Left', title, logo, navItem, onBa
 
 const styles = {
     container: cn(
-        'fixed top-0 left-0 right-0 z-50',
         'flex flex-row justify-between items-center',
-        'px-4 py-3'
+        'px-4 py-3',
     ),
     wrapper: cn(
         'flex flex-1 flex-row items-center',
@@ -88,7 +123,7 @@ const styles = {
         'text-grey-9 mr-2',
     ),
     logo: cn(
-        'w-6 h-6 mr-1',
+        'relative w-6 h-6 mr-1',
     ),
     title: cn(
         'title-18 text-black',

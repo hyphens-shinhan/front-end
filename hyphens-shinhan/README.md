@@ -4,9 +4,18 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 이 프로젝트는 Figma에서 추출한 디자인 토큰을 자동으로 Tailwind CSS에 등록하여 사용합니다.
 
-**👉 [디자인 시스템 사용 가이드 보기](./DESIGN_SYSTEM.md)**
+### 🧩 주요 공통 컴포넌트
+
+- **[Button](./src/components/common/Button.tsx)**: 다양한 스타일과 크기를 지원하는 공통 버튼
+- **[InfoTag](./src/components/common/InfoTag.tsx)**: 정보 표시를 위한 태그 (Blue, Grey, Green, Yellow)
+- **[StatusTag](./src/components/common/StatusTag.tsx)**: 상태 표시를 위한 태그 (Blue, Grey, Green, Yellow)
+- **[Icon](./src/components/common/Icon/Icon.tsx)**: SVG 아이콘 시스템
+
+**👉 [디자인 시스템 상세 가이드 보기](./DESIGN_SYSTEM.md)**
 
 디자인 시스템 가이드에서 다음 내용을 확인할 수 있습니다:
+
+- 공통 컴포넌트 사용 방법 (InfoTag, StatusTag 등)
 - 폰트 사용 방법 (Title, Body, Caption 등)
 - 컬러 사용 방법 (Primary, State, Greyscale)
 - 스페이싱 및 간격 사용 방법

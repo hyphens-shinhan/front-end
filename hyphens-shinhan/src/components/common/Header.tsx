@@ -3,21 +3,24 @@
 import { Icon } from "./Icon";
 import { cn } from "@/utils/cn";
 import Link from "next/link";
-import { HEADER_ITEMS, HEADER_NAV_ITEM_KEY } from "@/constants";
+import { usePathname } from "next/navigation";
+import { getHeaderConfig } from "@/utils/header";
 
-interface PropsType {
-    title: string;
-    navItems: (typeof HEADER_ITEMS)[HEADER_NAV_ITEM_KEY][];
-}
 /**  
  * 헤더 컴포넌트
- * @param title - 헤더 타이틀
- * @param navItems - 헤더 네비게이션 아이템
- * @example
- * <Header title="홈" navItems={[HEADER_ITEMS.CHAT, HEADER_ITEMS.SEARCH]} />
- * @returns 헤더 컴포넌트
+ * 현재 경로에 따라 자동으로 헤더 설정을 적용합니다.
+ * @returns 헤더 컴포넌트 또는 null
  */
-export default function Header({ title, navItems }: PropsType) {
+export default function Header() {
+    const pathname = usePathname();
+    const headerConfig = getHeaderConfig(pathname);
+
+    if (!headerConfig) {
+        return null;
+    }
+
+    const { title, navItems } = headerConfig;
+
     return (
         <header className={styles.container}>
             { /** 헤더 타이틀 */}

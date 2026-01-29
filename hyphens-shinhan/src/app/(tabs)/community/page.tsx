@@ -2,7 +2,7 @@
 
 import CommunityTabs from "@/components/community/CommunityTabs";
 import GroupList from "@/components/community/GroupList";
-import PostList from "@/components/community/PostList";
+import PostList from "@/components/community/feed/PostList";
 import { cn } from "@/utils/cn";
 import { use } from "react";
 

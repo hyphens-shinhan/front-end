@@ -1,10 +1,10 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Icon } from "../common/Icon";
+import { Icon } from "@/components/common/Icon";
 import { cn } from "@/utils/cn";
 import { ROUTES } from "@/constants";
-import FollowButton from "./FollowButton";
-import MoreButton from "./MoreButton";
+import FollowButton from "@/components/community/FollowButton";
+import MoreButton from "@/components/community/MoreButton";
 import { FeedPostResponse } from "@/types/posts";
 
 interface PostCardProps {

@@ -65,7 +65,7 @@ export default function PostContent({
 }
 
 const styles = {
-  container: cn('flex flex-col gap-2.5'),
+  container: cn('flex flex-col gap-4'),
   content: cn('body-8', 'text-grey-11'),
   imageWrapper: cn('flex flex-row gap-2 items-center'),
   imageItem: cn(

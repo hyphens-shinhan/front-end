@@ -126,7 +126,7 @@ const styles = {
         'font-caption-caption4 text-gray-8',
     ),
     contentWrapper: cn(
-        'mt-1',
+        'mt-1 gap-3',
     ),
     footerWrapper: cn(
         'flex flex-row items-center gap-2.5 justify-end',

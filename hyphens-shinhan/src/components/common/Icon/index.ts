@@ -1,5 +1,5 @@
 // 자동 생성된 파일입니다. 직접 수정하지 마세요!
-// 생성일: 1/30/2026, 1:30:58 PM
+// 생성일: 1/30/2026, 2:49:38 PM
 
 import IconLBoldAddCircle from '@/assets/icons/Icon-L/Bold/add-circle.svg';
 import IconLBoldAttachCircle from '@/assets/icons/Icon-L/Bold/attach-circle.svg';
@@ -92,6 +92,7 @@ import IconMBoldPersonalcard from '@/assets/icons/Icon-M/Bold/personalcard.svg';
 import IconMBoldPin from '@/assets/icons/Icon-M/Bold/pin.svg';
 import IconMBoldProfile2user from '@/assets/icons/Icon-M/Bold/profile-2user.svg';
 import IconMBoldSave2 from '@/assets/icons/Icon-M/Bold/save-2.svg';
+import IconMBoldSend2 from '@/assets/icons/Icon-M/Bold/send-2.svg';
 import IconMBoldSetting2 from '@/assets/icons/Icon-M/Bold/setting-2.svg';
 import IconMBoldShieldTick from '@/assets/icons/Icon-M/Bold/shield-tick.svg';
 import IconMBoldTeacher from '@/assets/icons/Icon-M/Bold/teacher.svg';
@@ -207,6 +208,7 @@ export const ICON_LIST = {
   IconMBoldPin,
   IconMBoldProfile2user,
   IconMBoldSave2,
+  IconMBoldSend2,
   IconMBoldSetting2,
   IconMBoldShieldTick,
   IconMBoldTeacher,

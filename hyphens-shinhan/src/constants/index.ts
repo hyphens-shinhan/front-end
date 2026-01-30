@@ -257,7 +257,8 @@ export const INPUT_BAR_ITEMS: Record<INPUT_BAR_TYPE, InputBarConfig> = {
     placeholder: '댓글 입력하기',
     leftIcon: undefined,
     showAttach: false,
-    showEmoji: true,
+    showEmoji: false,
     sendButton: true,
+    showAnonymous: true,
   },
 } as const

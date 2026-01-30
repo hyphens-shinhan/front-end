@@ -44,4 +44,5 @@ export interface InputBarConfig {
   showAttach?: boolean
   showEmoji?: boolean
   sendButton?: boolean
+  showAnonymous?: boolean // 익명 버튼 표시 여부
 }

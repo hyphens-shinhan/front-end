@@ -77,12 +77,12 @@ export default function PostCard({ post }: PostCardProps) {
                         <div className={styles.imageWrapper}>
                             {image_urls.slice(0, 2).map((url, index) => (
                                 <div key={index} className={styles.imageItem}>
-                                    {/* <Image
+                                    <Image
                                         src={url}
                                         alt={`post-image-${index}`}
                                         fill
                                         className="rounded-[12px] object-cover"
-                                    /> */}
+                                    />
                                 </div>
                             ))}
                             {image_urls.length > 2 && (
@@ -151,10 +151,11 @@ const styles = {
         'line-clamp-2',
     ),
     imageWrapper: cn(
-        'flex flex-row gap-2 items-center',
+        ' flex flex-row gap-2 items-center',
     ),
     imageItem: cn(
-        'w-22 h-22 rounded-[12px]',
+        'relative',
+        'w-22 h-22 rounded-[12px] overflow-hidden',
         'bg-grey-5',
     ),
     imageMoreButton: cn(

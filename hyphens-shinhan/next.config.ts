@@ -11,6 +11,16 @@ const revision =
 // 1. 기존 Next.js 설정
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '*.supabase.co',
+      },
+    ],
+  },
+
   webpack(config) {
     // 1. 기존 SVG 처리 규칙을 찾아서 제외 (중요)
     const fileLoaderRule = config.module.rules.find((rule: any) =>

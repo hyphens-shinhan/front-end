@@ -120,9 +120,9 @@ export function useImageUpload(
           throw new Error(`이미지 업로드 실패: ${error.message}`)
         }
 
-        // authenticated 경로로 URL 생성
-        const authenticatedUrl = `${supabaseUrl}/storage/v1/object/authenticated/${bucket}/${filePath}`
-        uploadedUrls.push(authenticatedUrl)
+        // public 경로로 URL 생성
+        const publicUrl = `${supabaseUrl}/storage/v1/object/${bucket}/${filePath}`
+        uploadedUrls.push(publicUrl)
       }
 
       return uploadedUrls

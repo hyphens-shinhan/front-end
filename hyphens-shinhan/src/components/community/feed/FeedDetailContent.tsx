@@ -40,9 +40,12 @@ export default function FeedDetailContent({ postId }: FeedDetailContentProps) {
 
     // 답글 달기 클릭 핸들러
     const handleReply = (commentId: string, authorName: string) => {
+        // PWA/모바일: 사용자 제스처와 같은 호출 스택에서 먼저 focus() 호출해야 키보드가 뜸
+        const input = commentInputRef.current;
+        if (input) {
+            input.focus({ preventScroll: false });
+        }
         setReplyTo({ commentId, authorName });
-        // 다음 틱에 포커스 (상태 반영 후 입력창에 포커스)
-        setTimeout(() => commentInputRef.current?.focus(), 0);
     };
 
     // 댓글 전송 핸들러

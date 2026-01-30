@@ -46,7 +46,7 @@ export default function CreateFeed() {
     openFilePicker,
     uploadImages,
     canAddMore,
-  } = useImageUpload({ maxImages: 5, bucket: 'images', pathPrefix: 'feeds' })
+  } = useImageUpload({ maxImages: 5, bucket: 'posts', pathPrefix: 'feeds' })
 
   // 피드 생성 훅
   const { mutateAsync: createFeedPost, isPending } = useCreateFeedPost()
@@ -63,7 +63,17 @@ export default function CreateFeed() {
 
     try {
       // 1. 이미지가 있으면 먼저 Supabase에 업로드
-      const imageUrls = await uploadImages()
+      let imageUrls: string[] = []
+      if (images.length > 0) {
+        try {
+          imageUrls = await uploadImages()
+        } catch (uploadError) {
+          console.error('이미지 업로드 실패:', uploadError)
+          // TODO: toast 만들어서 쓰는게 좋지 않을까 ?
+          alert('이미지 업로드에 실패했습니다. 네트워크 연결을 확인해주세요.')
+          return // 피드 생성 중단
+        }
+      }
 
       // 2. 피드 생성 API 호출
       const result = await createFeedPost({
@@ -76,8 +86,7 @@ export default function CreateFeed() {
       router.push(`/community/feed/${result.id}`)
     } catch (error) {
       console.error('게시글 생성 실패:', error)
-      // TODO: 에러 메시지 표시 - toast 만들어서 쓰는게 좋지 않을까 ?
-      alert('게시글 생성에 실패했습니다.')
+      alert('게시글 생성에 실패했습니다. 네트워크 연결을 확인해주세요.')
     }
   }
 
@@ -158,7 +167,7 @@ export default function CreateFeed() {
 }
 
 const styles = {
-  container: cn('flex flex-col h-full relative'),
+  container: cn('flex flex-col h-full relative overflow-y-auto scrollbar-hide'),
   contentContainer: cn('flex flex-col p-4 gap-5.5'),
   contentInput: cn(
     'w-full',

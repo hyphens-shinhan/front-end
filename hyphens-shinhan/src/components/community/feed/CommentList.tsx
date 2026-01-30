@@ -8,7 +8,6 @@ import Comment from "@/components/community/feed/Comment";
 import Separator from "@/components/common/Separator";
 import PostInteraction from "@/components/community/feed/PostInteraction";
 import { FeedPostResponse } from "@/types/posts";
-import { Icon } from "@/components/common/Icon";
 
 interface CommentListProps {
     postId: string;

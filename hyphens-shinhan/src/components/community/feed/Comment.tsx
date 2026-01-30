@@ -1,3 +1,4 @@
+'use client'
 import { cn } from "@/utils/cn";
 import { Icon } from "@/components/common/Icon";
 import MoreButton from "@/components/community/MoreButton";

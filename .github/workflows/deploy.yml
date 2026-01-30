@@ -19,10 +19,10 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
           # npm 캐싱을 추가하여 설치 속도를 개선합니다
-          cache: 'npm'
-          cache-dependency-path: './hyphens-shinhan/package-lock.json'
+          cache: "npm"
+          cache-dependency-path: "./hyphens-shinhan/package-lock.json"
 
       - name: Install dependencies
         # 빠른 설치를 위해 npm install 대신 npm ci를 사용합니다
@@ -49,6 +49,7 @@ jobs:
           # Supabase 환경 변수 추가
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          NEXT_PUBLIC_API_BASE_URL: ${{ secrets.NEXT_PUBLIC_API_BASE_URL }}
           # Serwist와 Turbopack 충돌 방지를 위한 환경 변수
           SERWIST_SUPRESS_TURBOPACK_WARNING: 1
 

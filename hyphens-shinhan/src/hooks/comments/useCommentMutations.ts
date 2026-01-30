@@ -12,7 +12,10 @@ export const useCreateComment = () => {
     mutationFn: ({ postId, data }: { postId: string; data: CommentCreate }) =>
       CommentService.createComment(postId, data),
     onSuccess: (_, { postId }) => {
-      queryClient.invalidateQueries({ queryKey: commentKeys.list(postId) })
+      // postId로 시작하는 모든 댓글 목록 쿼리 invalidate
+      queryClient.invalidateQueries({
+        queryKey: ['comments', 'list', postId],
+      })
     },
   })
 }
@@ -36,7 +39,9 @@ export const useUpdateComment = () => {
       queryClient.invalidateQueries({
         queryKey: commentKeys.detail(postId, commentId),
       })
-      queryClient.invalidateQueries({ queryKey: commentKeys.list(postId) })
+      queryClient.invalidateQueries({
+        queryKey: ['comments', 'list', postId],
+      })
     },
   })
 }
@@ -55,7 +60,9 @@ export const useDeleteComment = () => {
       commentId: string
     }) => CommentService.deleteComment(postId, commentId),
     onSuccess: (_, { postId }) => {
-      queryClient.invalidateQueries({ queryKey: commentKeys.list(postId) })
+      queryClient.invalidateQueries({
+        queryKey: ['comments', 'list', postId],
+      })
     },
   })
 }

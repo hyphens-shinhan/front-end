@@ -1,10 +1,10 @@
 import Link from "next/link";
-import Image from "next/image";
 import { Icon } from "@/components/common/Icon";
 import { cn } from "@/utils/cn";
 import { ROUTES } from "@/constants";
 import FollowButton from "@/components/community/FollowButton";
 import MoreButton from "@/components/community/MoreButton";
+import PostContent from "@/components/community/feed/PostContent";
 import { FeedPostResponse } from "@/types/posts";
 
 interface PostCardProps {
@@ -70,29 +70,13 @@ export default function PostCard({ post }: PostCardProps) {
                     </div>
                 </div>
                 {/** 중앙: 이미지/본문 영역 */}
-                <div className={styles.contentWrapper}>
-                    <p className={styles.contentText}>{content}</p>
-                    {/** 이미지 영역 */}
-                    {image_urls && image_urls.length > 0 && (
-                        <div className={styles.imageWrapper}>
-                            {image_urls.slice(0, 2).map((url, index) => (
-                                <div key={index} className={styles.imageItem}>
-                                    <Image
-                                        src={url}
-                                        alt={`post-image-${index}`}
-                                        fill
-                                        className="rounded-[12px] object-cover"
-                                    />
-                                </div>
-                            ))}
-                            {image_urls.length > 2 && (
-                                <div className={styles.imageMoreButton}>
-                                    +{image_urls.length - 2}
-                                </div>
-                            )}
-                        </div>
-                    )}
-                </div>
+                <PostContent
+                    content={content}
+                    imageUrls={image_urls}
+                    lineClamp={2}
+                    maxImages={2}
+                    className={styles.contentWrapper}
+                />
 
                 {/** 좋아요 버튼, 댓글 버튼 */}
                 <footer className={styles.footerWrapper}>
@@ -142,29 +126,7 @@ const styles = {
         'font-caption-caption4 text-gray-8',
     ),
     contentWrapper: cn(
-        'flex flex-col gap-2.5 mt-1',
-    ),
-    contentText: cn(
-        'pr-14',
-        'body-8',
-        'text-grey-11',
-        'line-clamp-2',
-    ),
-    imageWrapper: cn(
-        ' flex flex-row gap-2 items-center',
-    ),
-    imageItem: cn(
-        'relative',
-        'w-22 h-22 rounded-[12px] overflow-hidden',
-        'bg-grey-5',
-    ),
-    imageMoreButton: cn(
-        'flex items-center justify-center',
-        'w-fit h-fit',
-        'px-[9px] py-[7px] rounded-[17px]',
-        'font-caption-caption3 ',
-        'text-grey-9',
-        'bg-grey-2',
+        'mt-1',
     ),
     footerWrapper: cn(
         'flex flex-row items-center gap-2.5 justify-end',

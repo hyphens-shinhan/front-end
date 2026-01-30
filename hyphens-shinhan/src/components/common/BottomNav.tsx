@@ -56,7 +56,7 @@ const styles = {
         'transition-transform duration-300'
     ),
     label: (isActive: boolean) => cn(
-        'font-caption-caption1',
+        'font-caption-caption6',
         isActive ? 'text-grey-10' : 'text-grey-8',
     ),
 }

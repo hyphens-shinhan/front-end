@@ -1,4 +1,5 @@
 import { cn } from "@/utils/cn";
+import { Skeleton } from "@/components/common/Skeleton";
 
 /** 커뮤니티 게시글 카드 스켈레톤
  * @returns {React.ReactNode} 게시글 카드 로딩 스켈레톤
@@ -7,31 +8,28 @@ import { cn } from "@/utils/cn";
  */
 export default function PostCardSkeleton() {
     return (
-        <article className={styles.container}>
+        <Skeleton.Container className={styles.container}>
             {/** 유저 프로필 사진 스켈레톤 */}
-            <div className={styles.userProfileWrapper} />
+            <Skeleton.Circle className="w-10 h-10" />
 
             {/** 유저 정보, 본문 영역 스켈레톤 */}
             <div className={styles.postContent}>
                 {/** 유저 이름, 시간 스켈레톤 */}
                 <div className={styles.infoWrapper}>
-                    <div className={styles.userName} />
-                    <div className={styles.time} />
+                    <Skeleton.Box className="w-16 h-4" />
+                    <Skeleton.Box className="w-24 h-3" />
                 </div>
 
                 {/** 본문 영역 스켈레톤 */}
-                <div className={styles.contentWrapper}>
-                    <div className={styles.contentLine1} />
-                    <div className={styles.contentLine2} />
-                </div>
+                <Skeleton.Text lines={2} lastLineWidth="w-3/4" className="mt-2" />
 
                 {/** 좋아요, 댓글 버튼 스켈레톤 */}
                 <footer className={styles.footerWrapper}>
-                    <div className={styles.footerButton} />
-                    <div className={styles.footerButton} />
+                    <Skeleton.Box className="w-10 h-4" />
+                    <Skeleton.Box className="w-10 h-4" />
                 </footer>
             </div>
-        </article>
+        </Skeleton.Container>
     );
 }
 
@@ -40,43 +38,15 @@ const styles = {
         'w-full flex flex-row',
         'bg-white gap-3',
         'px-4 py-2.5',
-        'animate-pulse',
     ),
     postContent: cn(
         'flex-1 flex-col',
     ),
-    userProfileWrapper: cn(
-        'w-10 h-10 rounded-full',
-        'bg-grey-3',
-    ),
     infoWrapper: cn(
         'flex flex-row items-center gap-2',
-    ),
-    userName: cn(
-        'w-16 h-4 rounded',
-        'bg-grey-3',
-    ),
-    time: cn(
-        'w-24 h-3 rounded',
-        'bg-grey-3',
-    ),
-    contentWrapper: cn(
-        'flex flex-col gap-2 mt-2',
-    ),
-    contentLine1: cn(
-        'w-full h-4 rounded',
-        'bg-grey-3',
-    ),
-    contentLine2: cn(
-        'w-3/4 h-4 rounded',
-        'bg-grey-3',
     ),
     footerWrapper: cn(
         'flex flex-row items-center gap-2.5 justify-end',
         'mt-2',
-    ),
-    footerButton: cn(
-        'w-10 h-4 rounded',
-        'bg-grey-3',
     ),
 };

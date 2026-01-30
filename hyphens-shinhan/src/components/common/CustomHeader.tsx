@@ -1,52 +1,98 @@
 'use client';
 
-import { HEADER_ITEMS, HEADER_NAV_ITEM_KEY } from "@/constants";
-import { Icon, IconName } from "./Icon";
+import { HeaderNavItem } from "@/types";
+import { useHeaderStore } from "@/stores";
+import { Icon } from "./Icon";
 import { cn } from "@/utils/cn";
 import Link from "next/link";
-import Image, { StaticImageData } from "next/image";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { getCustomHeaderConfig } from "@/utils/header";
 
-interface PropsType {
-    type?: 'Center' | 'Left';
-    title?: string;
-    logo?: IconName;
-    img?: string | StaticImageData;
-    navItem?: (typeof HEADER_ITEMS)[HEADER_NAV_ITEM_KEY];
-    backHref?: string;
-    onBack?: () => void;
+// ─────────────────────────────────────────────────────────────
+// NavItem 렌더러 컴포넌트
+// ─────────────────────────────────────────────────────────────
+interface NavItemRendererProps {
+    item: HeaderNavItem;
     onClick?: () => void;
 }
+/** 네비게이션 아이템 렌더러 */
+function NavItemRenderer({ item, onClick }: NavItemRendererProps) {
+    const content = (
+        <>
+            {item.icon && <Icon name={item.icon} />}
+            {item.text && <span className={styles.navText}>{item.text}</span>}
+        </>
+    );
 
-/** 커스텀 헤더 컴포넌트
- * @param type - 헤더 타입 (Center, Left)
- * @param title - 헤더 타이틀 (전달하지 않으면 현재 경로에 맞는 타이틀 자동 설정)
- * @param logo - ? 헤더 로고 (아이콘)
- * @param img - ? 헤더 이미지
- * @param navItem - ? 헤더 네비게이션 아이템
- * @param backHref - ? 뒤로가기 시 이동할 경로
- * @param onBack - ? 뒤로가기 핸들러 (backHref보다 우선순위가 높음)
- * @param onClick - ? 네비게이션 클릭 핸들러
- * @returns 헤더 컴포넌트
+    // href가 있으면 Link, 없으면 Button
+    if (item.type === 'link' && item.href) {
+        return (
+            <Link
+                href={item.href}
+                className={styles.navItem}
+                onClick={onClick}
+                aria-label={item.ariaLabel}
+            >
+                {content}
+            </Link>
+        );
+    }
+
+    return (
+        <button
+            type="button"
+            className={styles.navItem}
+            onClick={onClick}
+            aria-label={item.ariaLabel}
+        >
+            {content}
+        </button>
+    );
+}
+
+/**
+ * 커스텀 헤더 컴포넌트
+ *
+ * ─────────────────────────────────────────────────────────────
+ * - 정적 설정 (title, navItem 등): 경로 기반 설정 (CUSTOM_HEADER_CONFIG)
+ * - 동적 핸들러 (onClick, onBack): useHeaderStore
+ * ─────────────────────────────────────────────────────────────
+ *
  * @example
- * <CustomHeader type="Left" title="헤더 타이틀" logo="IconName" navItem={HEADER_ITEMS[HEADER_NAV_ITEM_KEY]} onBack={() => {}} onClick={() => {}} />
+ * // 레이아웃에서 사용
+ * <CustomHeader />
+ *
+ * @example
+ * // 페이지에서 핸들러 설정
+ * const { setHandlers, resetHandlers } = useHeaderStore()
+ *
+ * useEffect(() => {
+ *   setHandlers({ onClick: handleComplete })
+ *   return () => resetHandlers()
+ * }, [])
  */
-export default function CustomHeader({ type, title, logo, img, navItem, backHref, onBack, onClick }: PropsType) {
+export default function CustomHeader() {
     const router = useRouter();
     const pathname = usePathname();
 
-    // props로 들어온 값이 없으면 현재 경로에 기반한 설정을 가져옴
-    const headerConfig = getCustomHeaderConfig(pathname);
+    // ─────────────────────────────────────────────────────────────
+    // 설정: 경로 기반(정적) + store(핸들러)
+    // ─────────────────────────────────────────────────────────────
+    const pathConfig = getCustomHeaderConfig(pathname);
+    const { onBack, onClick } = useHeaderStore((state) => state.handlers);
 
-    const displayType = type || headerConfig?.type || 'Left';
-    const displayTitle = title || headerConfig?.title || '';
-    const displayLogo = logo || headerConfig?.logo;
-    const displayImg = img || headerConfig?.img;
-    const displayNavItem = navItem || headerConfig?.navItem;
-    const displayBackHref = backHref || headerConfig?.backHref;
+    const displayType = pathConfig?.type || 'Left';
+    const displayBtnType = pathConfig?.btnType || 'Back';
+    const displayTitle = pathConfig?.title || '';
+    const displayLogo = pathConfig?.logo;
+    const displayImg = pathConfig?.img;
+    const displayNavItem = pathConfig?.navItem;
+    const displayBackHref = pathConfig?.backHref;
 
-    // 사용자가 준 onBack이 있으면 그걸 쓰고, 없으면 backHref, 둘 다 없으면 router.back() 실행
+    // ─────────────────────────────────────────────────────────────
+    // 뒤로가기 핸들러: onBack > backHref > router.back()
+    // ─────────────────────────────────────────────────────────────
     const handleBack = () => {
         if (onBack) {
             onBack();
@@ -61,16 +107,24 @@ export default function CustomHeader({ type, title, logo, img, navItem, backHref
         router.back();
     };
 
+    // ─────────────────────────────────────────────────────────────
+    // 렌더링
+    // ─────────────────────────────────────────────────────────────
     return (
         <header className={styles.container}>
-            {/** 헤더 뒤로가기 버튼 */}
+            {/* ─────────── 좌측: 뒤로가기/닫기 버튼 ─────────── */}
             <button onClick={handleBack} aria-label="뒤로가기">
                 <span aria-hidden="true">
-                    <Icon name='IconLLineArrowLeft' className={styles.backButton} />
+                    {displayBtnType === 'Back' ? (
+                        <Icon name='IconLLineArrowLeft' className={styles.backButton} />
+                    ) : (
+                        <Icon name='IconLLineClose' className={styles.backButton} />
+                    )}
                 </span>
             </button>
+
+            {/* ─────────── 중앙: 로고/이미지 + 타이틀 ─────────── */}
             <div className={cn(styles.wrapper, styles[displayType])}>
-                {/** 헤더 타이틀 로고 (아이콘 또는 이미지) */}
                 {displayImg ? (
                     <div className={styles.logo}>
                         <Image
@@ -83,22 +137,12 @@ export default function CustomHeader({ type, title, logo, img, navItem, backHref
                 ) : displayLogo ? (
                     <Icon name={displayLogo} className={styles.logo} />
                 ) : null}
-                {/** 헤더 타이틀 */}
                 <h1 className={styles.title}>{displayTitle}</h1>
             </div>
 
-            { /** 헤더 네비게이션 */}
+            {/* ─────────── 우측: 네비게이션 ─────────── */}
             {displayNavItem && (
-                <Link
-                    href={displayNavItem.href}
-                    className={styles.navItem}
-                    onClick={onClick}
-                    aria-label={displayNavItem.ariaLabel}
-                >
-                    <span aria-hidden="true">
-                        <Icon name={displayNavItem.icon} />
-                    </span>
-                </Link>
+                <NavItemRenderer item={displayNavItem} onClick={onClick} />
             )}
         </header>
     );
@@ -132,7 +176,10 @@ const styles = {
         'flex flex-row gap-x-4',
     ),
     navItem: cn(
-        'flex items-center justify-center w-6 h-6',
+        'flex items-center justify-center',
         'text-grey-9',
+    ),
+    navText: cn(
+        'body-5 font-semibold text-grey-6',
     ),
 }      

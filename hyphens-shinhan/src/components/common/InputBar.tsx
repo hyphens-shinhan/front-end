@@ -113,7 +113,7 @@ const styles = {
     anonymousIcon: cn('text-grey-6 shrink-0'),
     anonymousIconActive: cn('text-primary-shinhanblue shrink-0'),
     anonymousText: cn('font-caption-caption3 text-grey-7'),
-    anonymousTextActive: cn('text-primary-light'),
+    anonymousTextActive: cn('font-caption-caption3 text-primary-light'),
     input: cn(
         'flex-1 min-w-0',
         'body-6',

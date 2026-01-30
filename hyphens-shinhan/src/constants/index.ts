@@ -1,4 +1,11 @@
-import { HeaderNavItem, NavItem, NavLink, PostFABItem, UserRole } from '@/types'
+import {
+  HeaderNavItem,
+  InputBarConfig,
+  NavItem,
+  NavLink,
+  PostFABItem,
+  UserRole,
+} from '@/types'
 import { ROUTES } from './routes'
 import { IconName } from '@/components/common/Icon'
 import { StaticImageData } from 'next/image'
@@ -217,5 +224,40 @@ export const POST_FAB_ITEMS: Record<POST_FAB_ITEM_KEY, PostFABItem> = {
     icon: 'IconLLinePlus',
     href: ROUTES.COMMUNITY.GROUP.CREATE,
     ariaLabel: '추가하기',
+  },
+} as const
+
+/** InputBar 타입 키 */
+export enum INPUT_BAR_TYPE {
+  /** 검색바 */
+  SEARCH = 'SEARCH',
+  /** 채팅 입력창 */
+  CHAT = 'CHAT',
+  /** 댓글 입력창 */
+  COMMENT = 'COMMENT',
+}
+
+/** InputBar 타입별 설정 상수 */
+export const INPUT_BAR_ITEMS: Record<INPUT_BAR_TYPE, InputBarConfig> = {
+  [INPUT_BAR_TYPE.SEARCH]: {
+    placeholder: '검색어를 입력하세요',
+    leftIcon: 'IconLLineSearchLine',
+    showAttach: false,
+    showEmoji: false,
+    sendButton: false,
+  },
+  [INPUT_BAR_TYPE.CHAT]: {
+    placeholder: '메시지 입력하기',
+    leftIcon: undefined,
+    showAttach: true,
+    showEmoji: true,
+    sendButton: true,
+  },
+  [INPUT_BAR_TYPE.COMMENT]: {
+    placeholder: '댓글 입력하기',
+    leftIcon: undefined,
+    showAttach: false,
+    showEmoji: true,
+    sendButton: true,
   },
 } as const

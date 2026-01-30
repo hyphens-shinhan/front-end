@@ -36,3 +36,12 @@ export interface PostFABItem {
   /** 접근성: 링크에 부여할 이름 */
   ariaLabel: string
 }
+
+/** InputBar 설정 타입 */
+export interface InputBarConfig {
+  placeholder: string
+  leftIcon?: IconName
+  showAttach?: boolean
+  showEmoji?: boolean
+  sendButton?: boolean
+}

@@ -2,6 +2,9 @@ import type { Metadata, Viewport } from 'next'
 import type { ReactNode } from 'react'
 import './globals.css'
 import RQProvider from '@/providers/rq-provider'
+import BottomModal from '@/components/common/BottomModal'
+import ConfirmModal from '@/components/common/ConfirmModal'
+import AlertModal from '@/components/common/AlertModal'
 
 const APP_NAME = 'Hyphen'
 const APP_DEFAULT_TITLE = 'Hyphen APP'
@@ -70,6 +73,10 @@ export default function RootLayout({
       <body>
         <RQProvider>
           {children}
+          {/* 전역 모달 */}
+          <BottomModal />
+          <ConfirmModal />
+          <AlertModal />
         </RQProvider>
       </body>
     </html>

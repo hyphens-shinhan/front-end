@@ -1,9 +1,11 @@
-import { Icon } from "../common/Icon";
+import Link from "next/link";
+import { Icon } from "@/components/common/Icon";
 import { cn } from "@/utils/cn";
-import FollowButton from "./FollowButton";
-import MoreButton from "./MoreButton";
+import { ROUTES } from "@/constants";
+import FollowButton from "@/components/community/FollowButton";
+import MoreButton from "@/components/community/MoreButton";
+import PostContent from "@/components/community/feed/PostContent";
 import { FeedPostResponse } from "@/types/posts";
-import Image from "next/image";
 
 interface PostCardProps {
     post: FeedPostResponse;
@@ -16,6 +18,7 @@ interface PostCardProps {
  */
 export default function PostCard({ post }: PostCardProps) {
     const {
+        id,
         author,
         content,
         created_at,
@@ -32,7 +35,7 @@ export default function PostCard({ post }: PostCardProps) {
     };
 
     return (
-        <article className={styles.container}>
+        <Link href={`${ROUTES.COMMUNITY.FEED.DETAIL}/${id}`} className={styles.container}>
             {/** 유저 프로필 사진 */}
             <div className={styles.userProfileWrapper}>
                 {/* {author?.avatar_url ? (
@@ -43,7 +46,8 @@ export default function PostCard({ post }: PostCardProps) {
                         className="rounded-full object-cover"
                     />
                 ) : null} */}
-                {!is_anonymous && (
+                {/** 익명이 아니고, 팔로우하지 않은 경우에만 팔로우 버튼 표시 */}
+                {!is_anonymous && author && !author.is_following && (
                     <div className={styles.followButton}>
                         <FollowButton type="addIcon" />
                     </div>
@@ -66,29 +70,13 @@ export default function PostCard({ post }: PostCardProps) {
                     </div>
                 </div>
                 {/** 중앙: 이미지/본문 영역 */}
-                <div className={styles.contentWrapper}>
-                    <p className={styles.contentText}>{content}</p>
-                    {/** 이미지 영역 */}
-                    {image_urls && image_urls.length > 0 && (
-                        <div className={styles.imageWrapper}>
-                            {image_urls.slice(0, 2).map((url, index) => (
-                                <div key={index} className={styles.imageItem}>
-                                    {/* <Image
-                                        src={url}
-                                        alt={`post-image-${index}`}
-                                        fill
-                                        className="rounded-[12px] object-cover"
-                                    /> */}
-                                </div>
-                            ))}
-                            {image_urls.length > 2 && (
-                                <div className={styles.imageMoreButton}>
-                                    +{image_urls.length - 2}
-                                </div>
-                            )}
-                        </div>
-                    )}
-                </div>
+                <PostContent
+                    content={content}
+                    imageUrls={image_urls}
+                    lineClamp={2}
+                    maxImages={2}
+                    className={styles.contentWrapper}
+                />
 
                 {/** 좋아요 버튼, 댓글 버튼 */}
                 <footer className={styles.footerWrapper}>
@@ -104,7 +92,7 @@ export default function PostCard({ post }: PostCardProps) {
                     </div>
                 </footer>
             </div>
-        </article>
+        </Link>
     );
 }
 
@@ -138,28 +126,7 @@ const styles = {
         'font-caption-caption4 text-gray-8',
     ),
     contentWrapper: cn(
-        'flex flex-col gap-2.5 mt-1',
-    ),
-    contentText: cn(
-        'pr-14',
-        'body-8',
-        'text-grey-11',
-        'line-clamp-2',
-    ),
-    imageWrapper: cn(
-        'flex flex-row gap-2 items-center',
-    ),
-    imageItem: cn(
-        'w-22 h-22 rounded-[12px]',
-        'bg-grey-5',
-    ),
-    imageMoreButton: cn(
-        'flex items-center justify-center',
-        'w-fit h-fit',
-        'px-[9px] py-[7px] rounded-[17px]',
-        'font-caption-caption3 ',
-        'text-grey-9',
-        'bg-grey-2',
+        'mt-1 gap-3',
     ),
     footerWrapper: cn(
         'flex flex-row items-center gap-2.5 justify-end',

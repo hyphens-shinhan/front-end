@@ -5,8 +5,11 @@ import {
   EventPostResponse,
   PostListResponse,
   FeedPostCreate,
+  FeedPostUpdate,
   NoticePostCreate,
+  NoticePostUpdate,
   EventPostCreate,
+  EventPostUpdate,
   EventStatus,
 } from '@/types/posts'
 
@@ -73,7 +76,7 @@ export const PostService = {
    */
   updateFeedPost: async (
     postId: string,
-    data: Partial<FeedPostCreate>,
+    data: FeedPostUpdate,
   ): Promise<FeedPostResponse> => {
     const response = await apiClient.patch<FeedPostResponse>(
       `/posts/feed/${postId}`,
@@ -128,7 +131,7 @@ export const PostService = {
    */
   updateNoticePost: async (
     postId: string,
-    data: Partial<NoticePostCreate>,
+    data: NoticePostUpdate,
   ): Promise<NoticePostResponse> => {
     const response = await apiClient.patch<NoticePostResponse>(
       `/posts/notice/${postId}`,
@@ -185,7 +188,7 @@ export const PostService = {
    */
   updateEventPost: async (
     postId: string,
-    data: Partial<EventPostCreate>,
+    data: EventPostUpdate,
   ): Promise<EventPostResponse> => {
     const response = await apiClient.patch<EventPostResponse>(
       `/posts/event/${postId}`,

@@ -1,7 +1,7 @@
 // MARK: - 커뮤니티 탭 타입 정의
 
 /**
- * 게시글의 종류를 나타내는 열거형
+ * 게시글 종류
  */
 export enum PostType {
   /** 일반 피드 게시물 */
@@ -13,7 +13,7 @@ export enum PostType {
 }
 
 /**
- * 이벤트의 진행 상태를 나타내는 열거형
+ * 이벤트 진행 상태
  */
 export enum EventStatus {
   /** 모집 중 / 진행 중 */
@@ -32,8 +32,10 @@ export interface PostAuthor {
   id: string
   /** 작성자 이름/닉네임 */
   name: string
-  /** 작성자 프로필 이미지 URL */
+  /** 프로필 이미지 URL */
   avatar_url?: string | null
+  /** 현재 사용자가 이 작성자를 팔로우 중인지 여부 */
+  is_following: boolean
 }
 
 /**
@@ -44,8 +46,6 @@ interface BasePostResponse {
   id: string
   /** 생성 일시 (ISO 8601 형식) */
   created_at: string
-  /** 작성자 정보 (익명 게시글의 경우 null 가능) */
-  author: PostAuthor | null
   /** 좋아요 수 */
   like_count: number
   /** 현재 사용자가 좋아요를 눌렀는지 여부 */
@@ -55,7 +55,7 @@ interface BasePostResponse {
 }
 
 /**
- * 피드(FEED) 게시글 상세 정보
+ * 피드(FEED) 게시글 응답
  */
 export interface FeedPostResponse extends BasePostResponse {
   /** 게시글 타입: FEED */
@@ -70,10 +70,12 @@ export interface FeedPostResponse extends BasePostResponse {
   comment_count: number
   /** 현재 사용자가 스크랩했는지 여부 */
   is_scrapped: boolean
+  /** 작성자 정보 (익명일 경우 null) */
+  author: PostAuthor | null
 }
 
 /**
- * 공지사항(NOTICE) 게시글 상세 정보
+ * 공지사항(NOTICE) 게시글 응답
  */
 export interface NoticePostResponse extends BasePostResponse {
   /** 게시글 타입: NOTICE */
@@ -88,12 +90,11 @@ export interface NoticePostResponse extends BasePostResponse {
   view_count: number
   /** 첨부 파일 URL 목록 */
   file_urls?: string[] | null
-  /** 공지사항 작성자 (필수) */
-  author: PostAuthor
+  // author 필드가 스키마에서 제외됨
 }
 
 /**
- * 이벤트(EVENT) 게시글 상세 정보
+ * 이벤트(EVENT) 게시글 응답
  */
 export interface EventPostResponse extends BasePostResponse {
   /** 게시글 타입: EVENT */
@@ -122,8 +123,7 @@ export interface EventPostResponse extends BasePostResponse {
   max_participants?: number | null
   /** 첨부 파일 URL 목록 */
   file_urls?: string[] | null
-  /** 이벤트 작성자 (필수) */
-  author: PostAuthor
+  // author 필드가 스키마에서 제외됨
 }
 
 /**
@@ -198,4 +198,23 @@ export interface EventPostCreate {
   file_urls?: string[] | null
   /** 이미지 URL 목록 (선택) */
   image_urls?: string[] | null
+}
+
+// --- 수정 요청 타입 (Partial 활용) ---
+
+/**
+ * 피드 게시글 수정 요청 데이터 (익명 여부는 수정 불가)
+ */
+export type FeedPostUpdate = Partial<Omit<FeedPostCreate, 'is_anonymous'>>
+
+/**
+ * 공지사항 수정 요청 데이터
+ */
+export type NoticePostUpdate = Partial<NoticePostCreate>
+
+/**
+ * 이벤트 수정 요청 데이터 (상태 변경 가능)
+ */
+export interface EventPostUpdate extends Partial<EventPostCreate> {
+  event_status?: EventStatus | null
 }

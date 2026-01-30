@@ -20,8 +20,11 @@ export interface NavItem {
 
 /** 상단 헤더 네비게이션 아이템 타입 */
 export interface HeaderNavItem {
-  href: string
-  icon: IconName
+  href?: string
+  icon?: IconName
+  type?: 'button' | 'link'
+  /** 텍스트 버튼일 경우 표시할 텍스트 */
+  text?: string
   /** 접근성: 링크에 부여할 이름 */
   ariaLabel: string
 }
@@ -32,4 +35,14 @@ export interface PostFABItem {
   href: AllRoutePath
   /** 접근성: 링크에 부여할 이름 */
   ariaLabel: string
+}
+
+/** InputBar 설정 타입 */
+export interface InputBarConfig {
+  placeholder: string
+  leftIcon?: IconName
+  showAttach?: boolean
+  showEmoji?: boolean
+  sendButton?: boolean
+  showAnonymous?: boolean // 익명 버튼 표시 여부
 }

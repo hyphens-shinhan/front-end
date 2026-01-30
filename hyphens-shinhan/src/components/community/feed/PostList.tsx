@@ -1,12 +1,15 @@
+'use client'
+
 import { cn } from "@/utils/cn";
-import PostCard from "./PostCard";
-import PostCardSkeleton from "./PostCardSkeleton";
-import ShinhanNoticeCard from "./ShinhanNoticeCard";
-import Separator from "../common/Separator";
-import PostFAB from "../common/PostFAB";
+
+import PostCardSkeleton from "@/components/community/feed/PostCardSkeleton";
+import ShinhanNoticeCard from "@/components/community/ShinhanNoticeCard";
+import Separator from "@/components/common/Separator";
+import PostFAB from "@/components/common/PostFAB";
 import { POST_FAB_ITEM_KEY } from "@/constants";
 import { useInfiniteFeedPosts } from "@/hooks/posts/usePosts";
 import React from "react";
+import PostCard from "@/components/community/feed/PostCard";
 
 /** 커뮤니티 게시판 리스트 컴포넌트
  * @returns {React.ReactNode} 커뮤니티 게시판 리스트 컴포넌트

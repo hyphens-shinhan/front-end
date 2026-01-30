@@ -46,10 +46,10 @@ import StatusTag from '@/components/common/StatusTag';
 <StatusTag label="대기" color="yellow" />
 ```
 
-| 속성 | 타입 | 설명 |
-| --- | --- | --- |
-| `label` | `string` | 태그에 표시될 텍스트 |
-| `color` | `'blue' \| 'grey' \| 'green' \| 'yellow'` | 태그 색상 테마 |
+| 속성    | 타입                                      | 설명                 |
+| ------- | ----------------------------------------- | -------------------- |
+| `label` | `string`                                  | 태그에 표시될 텍스트 |
+| `color` | `'blue' \| 'grey' \| 'green' \| 'yellow'` | 태그 색상 테마       |
 
 ---
 
@@ -174,7 +174,7 @@ import StatusTag from '@/components/common/StatusTag';
 | `body-8`                | Wanted Sans | 14px | 400 (Regular)  | 20px   |
 | `body-9`                | Wanted Sans | 12px | 600 (SemiBold) | 18px   |
 | `body-10`               | Wanted Sans | 12px | 400 (Regular)  | 18px   |
-| `font-caption-caption1` | Wanted Sans | 10px | 400 (Regular)  | 11px   |
+| `font-caption-caption1` | Wanted Sans | 14px | 600 (Regular)  | 14px   |
 | `font-caption-caption2` | Wanted Sans | 14px | 400 (Regular)  | 20px   |
 | `font-caption-caption3` | Wanted Sans | 12px | 600 (SemiBold) | 14px   |
 | `font-caption-caption4` | Wanted Sans | 12px | 400 (Regular)  | 14px   |
@@ -226,6 +226,7 @@ import StatusTag from '@/components/common/StatusTag';
 ```tsx
 // 레드 (에러)
 <div className="bg-state-red text-white">레드</div>
+<div className="bg-state-red-light text-state-red-dark">밝은 레드</div>
 <div className="bg-state-red-dark text-white">어두운 레드</div>
 
 // 그린 (성공)
@@ -241,28 +242,29 @@ import StatusTag from '@/components/common/StatusTag';
 
 ### 사용 가능한 컬러 목록
 
-| 클래스                                          | 색상 값           | 용도               |
-| ----------------------------------------------- | ----------------- | ------------------ |
-| `bg-white` / `text-white`                       | #FFFFFF           | 흰색               |
-| `bg-black` / `text-black`                       | #000000           | 검은색             |
-| `bg-grey-1-1`                                   | #F5F5F5           | 아주 밝은 회색     |
-| `bg-grey-2` ~ `bg-grey-11`                      | #F2F3F5 ~ #2C303D | 회색조             |
+| 클래스                                                | 색상 값           | 용도                  |
+| ----------------------------------------------------- | ----------------- | --------------------- |
+| `bg-white` / `text-white`                             | #FFFFFF           | 흰색                  |
+| `bg-black` / `text-black`                             | #000000           | 검은색                |
+| `bg-grey-1-1`                                         | #F5F7FA           | 아주 밝은 회색        |
+| `bg-grey-2` ~ `bg-grey-11`                            | #F2F3F5 ~ #2C303D | 회색조                |
 | `bg-primary-shinhanblue` / `text-primary-shinhanblue` | #0046FF           | 신한 블루 (주요 색상) |
-| `bg-primary-light`                              | #2E67FF           | 밝은 주요 색상     |
-| `bg-primary-dark`                               | #0D37D6           | 어두운 주요 색상   |
-| `bg-primary-lighter`                            | #E6F2FF           | 가장 밝은 주요 색상 |
-| `bg-primary-secondarylight`                     | #8CD2F5           | 밝은 하늘색        |
-| `bg-primary-secondarysky`                       | #4BAFF5           | 하늘색             |
-| `bg-primary-secondaryroyal`                     | #2878F5           | 로얄 블루          |
-| `bg-primary-secondarynavy`                      | #00236E           | 네이비 블루        |
-| `bg-state-red` / `text-state-red`               | #EF4444           | 레드 상태          |
-| `bg-state-red-dark`                             | #CF3434           | 어두운 레드 상태   |
-| `bg-state-green` / `text-state-green`           | #10B981           | 그린 상태          |
-| `bg-state-green-light`                          | #D1FAE5           | 밝은 그린 상태     |
-| `bg-state-green-dark`                           | #059669           | 어두운 그린 상태   |
-| `bg-state-yellow` / `text-state-yellow`         | #FFC637           | 옐로우 상태        |
-| `bg-state-yellow-light`                         | #FFEAD3           | 밝은 옐로우 상태   |
-| `bg-state-yellow-dark`                          | #F59E0B           | 어두운 옐로우 상태   |
+| `bg-primary-light`                                    | #2E67FF           | 밝은 주요 색상        |
+| `bg-primary-dark`                                     | #0D37D6           | 어두운 주요 색상      |
+| `bg-primary-lighter`                                  | #E6F2FF           | 가장 밝은 주요 색상   |
+| `bg-primary-secondarylight`                           | #8CD2F5           | 밝은 하늘색           |
+| `bg-primary-secondarysky`                             | #4BAFF5           | 하늘색                |
+| `bg-primary-secondaryroyal`                           | #2878F5           | 로얄 블루             |
+| `bg-primary-secondarynavy`                            | #00236E           | 네이비 블루           |
+| `bg-state-red` / `text-state-red`                     | #EF4444           | 레드 (에러)           |
+| `bg-state-red-light`                                  | #FFD5D5           | 밝은 레드             |
+| `bg-state-red-dark`                                   | #CF3434           | 어두운 레드           |
+| `bg-state-green` / `text-state-green`                 | #10B981           | 그린 (성공)           |
+| `bg-state-green-light`                                | #D1FAE5           | 밝은 그린             |
+| `bg-state-green-dark`                                 | #059669           | 어두운 그린           |
+| `bg-state-yellow` / `text-state-yellow`               | #FFC637           | 옐로우 (경고)         |
+| `bg-state-yellow-light`                               | #FFEAD3           | 밝은 옐로우           |
+| `bg-state-yellow-dark`                                | #F59E0B           | 어두운 옐로우         |
 
 ---
 
@@ -283,12 +285,35 @@ import StatusTag from '@/components/common/StatusTag';
 <div className="p-[var(--scheme-spacing-2)]">간격 2</div>
 ```
 
+| 변수                  | 값   |
+| --------------------- | ---- |
+| `--scheme-spacing-1`  | 0px  |
+| `--scheme-spacing-2`  | 1px  |
+| `--scheme-spacing-3`  | 2px  |
+| `--scheme-spacing-4`  | 3px  |
+| `--scheme-spacing-5`  | 4px  |
+| `--scheme-spacing-6`  | 5px  |
+| `--scheme-spacing-7`  | 6px  |
+| `--scheme-spacing-8`  | 8px  |
+| `--scheme-spacing-9`  | 9px  |
+| `--scheme-spacing-10` | 10px |
+| `--scheme-spacing-11` | 12px |
+| `--scheme-spacing-12` | 14px |
+| `--scheme-spacing-13` | 16px |
+| `--scheme-spacing-14` | 18px |
+| `--scheme-spacing-15` | 20px |
+| `--scheme-spacing-16` | 24px |
+| `--scheme-spacing-17` | 28px |
+| `--scheme-spacing-18` | 32px |
+| `--scheme-spacing-19` | 40px |
+| `--scheme-spacing-20` | 48px |
+
 ### Margin (여백)
 
 ```tsx
 <div className="m-[var(--scheme-margin-xxs)]">아주 작은 여백</div>
 <div className="m-[var(--scheme-margin-xs)]">작은 여백</div>
-<div className="m-[var(--scheme-margin-sm)]">작은 여백</div>
+<div className="m-[var(--scheme-margin-sm)]">약간 작은 여백</div>
 <div className="m-[var(--scheme-margin-md)]">중간 여백</div>
 <div className="m-[var(--scheme-margin-lg)]">큰 여백</div>
 <div className="m-[var(--scheme-margin-xl)]">아주 큰 여백</div>
@@ -296,14 +321,50 @@ import StatusTag from '@/components/common/StatusTag';
 <div className="m-[var(--scheme-margin-xxxl)]">최대 여백</div>
 ```
 
+| 변수                   | 값   |
+| ---------------------- | ---- |
+| `--scheme-margin-xxs`  | 4px  |
+| `--scheme-margin-xs`   | 8px  |
+| `--scheme-margin-sm`   | 12px |
+| `--scheme-margin-md`   | 16px |
+| `--scheme-margin-lg`   | 20px |
+| `--scheme-margin-xl`   | 24px |
+| `--scheme-margin-xxl`  | 28px |
+| `--scheme-margin-xxxl` | 32px |
+
 ### Radius (둥근 모서리)
 
 ```tsx
 <div className="rounded-[var(--scheme-radius-1)]">반경 1</div>
 <div className="rounded-[var(--scheme-radius-2)]">반경 2</div>
 // ... rounded-[var(--scheme-radius-8)]
-<div className="rounded-[var(--scheme-radius-max)]">최대 반경</div>
+<div className="rounded-[var(--scheme-radius-max)]">최대 반경 (원형)</div>
 ```
+
+| 변수                  | 값     |
+| --------------------- | ------ |
+| `--scheme-radius-1`   | 0px    |
+| `--scheme-radius-2`   | 2px    |
+| `--scheme-radius-3`   | 4px    |
+| `--scheme-radius-4`   | 6px    |
+| `--scheme-radius-5`   | 8px    |
+| `--scheme-radius-6`   | 12px   |
+| `--scheme-radius-7`   | 16px   |
+| `--scheme-radius-8`   | 24px   |
+| `--scheme-radius-max` | 9999px |
+
+### Stroke (선 두께)
+
+| 변수                      | 값    |
+| ------------------------- | ----- |
+| `--scheme-stroke-0`       | 0.5px |
+| `--scheme-stroke-1`       | 1px   |
+| `--scheme-stroke-2icons`  | 1.2px |
+| `--scheme-stroke-3iconml` | 1.5px |
+| `--scheme-stroke-4`       | 2px   |
+| `--scheme-stroke-5`       | 3px   |
+| `--scheme-stroke-6`       | 4px   |
+| `--scheme-stroke-7`       | 5px   |
 
 ---
 
@@ -319,10 +380,12 @@ import StatusTag from '@/components/common/StatusTag';
 
 ### 컬러 유틸리티
 
-- **Greyscale**: `bg-grey-2` ~ `bg-grey-11`, `bg-white`, `bg-black`
+- **Greyscale**: `bg-grey-2` ~ `bg-grey-11`, `bg-grey-1-1`, `bg-white`, `bg-black`
 - **Primary**: `bg-primary-shinhanblue`, `bg-primary-light`, `bg-primary-dark`, `bg-primary-lighter`
 - **Primary Secondary**: `bg-primary-secondarylight`, `bg-primary-secondarysky`, `bg-primary-secondaryroyal`, `bg-primary-secondarynavy`
-- **State**: `bg-state-error`, `bg-state-error-dark`, `bg-state-success`, `bg-state-warning`
+- **State Red**: `bg-state-red`, `bg-state-red-light`, `bg-state-red-dark`
+- **State Green**: `bg-state-green`, `bg-state-green-light`, `bg-state-green-dark`
+- **State Yellow**: `bg-state-yellow`, `bg-state-yellow-light`, `bg-state-yellow-dark`
 - **텍스트 컬러**: 모든 배경색에 대응하는 `text-*` 클래스 사용 가능
 
 ---
@@ -380,12 +443,12 @@ export default function Example() {
       </button>
 
       {/* 에러 메시지 */}
-      <div className="bg-state-error body-8 rounded-[var(--scheme-radius-3)] p-[var(--scheme-spacing-4)] text-white">
+      <div className="bg-state-red body-8 rounded-[var(--scheme-radius-3)] p-[var(--scheme-spacing-4)] text-white">
         오류가 발생했습니다.
       </div>
 
       {/* 성공 메시지 */}
-      <div className="bg-state-success body-8 rounded-[var(--scheme-radius-3)] p-[var(--scheme-spacing-4)] text-white">
+      <div className="bg-state-green body-8 rounded-[var(--scheme-radius-3)] p-[var(--scheme-spacing-4)] text-white">
         성공적으로 완료되었습니다.
       </div>
     </div>

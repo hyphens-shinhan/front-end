@@ -32,14 +32,16 @@ export default function Header() {
                 <nav className={styles.nav}>
                     {navItems.map((item) => (
                         <Link
-                            href={item.href}
+                            href={item.href ?? '/'}
                             key={item.href}
                             className={styles.navItem}
                             aria-label={item.ariaLabel}
                         >
-                            <span aria-hidden="true">
-                                <Icon name={item.icon} />
-                            </span>
+                            {item.icon && (
+                                <span aria-hidden="true">
+                                    <Icon name={item.icon} />
+                                </span>
+                            )}
                         </Link>
                     ))}
                 </nav>

@@ -12,7 +12,7 @@
   --font-title-title28-textcase: none;
   --font-title-title20-fontsize: 20px;
   --font-title-title20-textdecoration: none;
-  --font-title-title20-fontfamily: Wanted Sans Variable;
+  --font-title-title20-fontfamily: Wanted Sans;
   --font-title-title20-fontweight: 700;
   --font-title-title20-fontstyle: normal;
   --font-title-title20-fontstretch: normal;
@@ -23,7 +23,7 @@
   --font-title-title20-textcase: none;
   --font-title-title18-fontsize: 18px;
   --font-title-title18-textdecoration: none;
-  --font-title-title18-fontfamily: Wanted Sans Variable;
+  --font-title-title18-fontfamily: Wanted Sans;
   --font-title-title18-fontweight: 700;
   --font-title-title18-fontstyle: normal;
   --font-title-title18-fontstretch: normal;
@@ -34,7 +34,7 @@
   --font-title-title18-textcase: none;
   --font-title-title16-fontsize: 16px;
   --font-title-title16-textdecoration: none;
-  --font-title-title16-fontfamily: Wanted Sans Variable;
+  --font-title-title16-fontfamily: Wanted Sans;
   --font-title-title16-fontweight: 700;
   --font-title-title16-fontstyle: normal;
   --font-title-title16-fontstretch: normal;
@@ -45,7 +45,7 @@
   --font-title-title16-textcase: none;
   --font-title-title14-fontsize: 14px;
   --font-title-title14-textdecoration: none;
-  --font-title-title14-fontfamily: Wanted Sans Variable;
+  --font-title-title14-fontfamily: Wanted Sans;
   --font-title-title14-fontweight: 700;
   --font-title-title14-fontstyle: normal;
   --font-title-title14-fontstretch: normal;
@@ -100,7 +100,7 @@
   --font-body-body2-textcase: none;
   --font-body-body3-fontsize: 18px;
   --font-body-body3-textdecoration: none;
-  --font-body-body3-fontfamily: Wanted Sans Variable;
+  --font-body-body3-fontfamily: Wanted Sans;
   --font-body-body3-fontweight: 700;
   --font-body-body3-fontstyle: normal;
   --font-body-body3-fontstretch: normal;
@@ -241,6 +241,17 @@
   --font-caption-caption5-paragraphindent: 0px;
   --font-caption-caption5-paragraphspacing: 0px;
   --font-caption-caption5-textcase: none;
+  --font-caption-caption6-fontsize: 10px;
+  --font-caption-caption6-textdecoration: none;
+  --font-caption-caption6-fontfamily: Wanted Sans Variable;
+  --font-caption-caption6-fontweight: 400;
+  --font-caption-caption6-fontstyle: normal;
+  --font-caption-caption6-fontstretch: normal;
+  --font-caption-caption6-letterspacing: 0px;
+  --font-caption-caption6-lineheight: 11px;
+  --font-caption-caption6-paragraphindent: 0px;
+  --font-caption-caption6-paragraphspacing: 0px;
+  --font-caption-caption6-textcase: none;
   --color-greyscale-2: #f2f3f5ff;
   --color-greyscale-3: #eaecf1ff;
   --color-greyscale-4: #e0e3edff;
@@ -313,7 +324,7 @@
   --typography-title-title28-textcase: none;
   --typography-title-title20-fontsize: 20px;
   --typography-title-title20-textdecoration: none;
-  --typography-title-title20-fontfamily: Wanted Sans Variable;
+  --typography-title-title20-fontfamily: Wanted Sans;
   --typography-title-title20-fontweight: 700;
   --typography-title-title20-fontstyle: normal;
   --typography-title-title20-fontstretch: normal;
@@ -324,7 +335,7 @@
   --typography-title-title20-textcase: none;
   --typography-title-title18-fontsize: 18px;
   --typography-title-title18-textdecoration: none;
-  --typography-title-title18-fontfamily: Wanted Sans Variable;
+  --typography-title-title18-fontfamily: Wanted Sans;
   --typography-title-title18-fontweight: 700;
   --typography-title-title18-fontstyle: normal;
   --typography-title-title18-fontstretch: normal;
@@ -335,7 +346,7 @@
   --typography-title-title18-textcase: none;
   --typography-title-title16-fontsize: 16px;
   --typography-title-title16-textdecoration: none;
-  --typography-title-title16-fontfamily: Wanted Sans Variable;
+  --typography-title-title16-fontfamily: Wanted Sans;
   --typography-title-title16-fontweight: 700;
   --typography-title-title16-fontstyle: normal;
   --typography-title-title16-fontstretch: normal;
@@ -346,7 +357,7 @@
   --typography-title-title16-textcase: none;
   --typography-title-title14-fontsize: 14px;
   --typography-title-title14-textdecoration: none;
-  --typography-title-title14-fontfamily: Wanted Sans Variable;
+  --typography-title-title14-fontfamily: Wanted Sans;
   --typography-title-title14-fontweight: 700;
   --typography-title-title14-fontstyle: normal;
   --typography-title-title14-fontstretch: normal;
@@ -401,7 +412,7 @@
   --typography-body-body2-textcase: none;
   --typography-body-body3-fontsize: 18px;
   --typography-body-body3-textdecoration: none;
-  --typography-body-body3-fontfamily: Wanted Sans Variable;
+  --typography-body-body3-fontfamily: Wanted Sans;
   --typography-body-body3-fontweight: 700;
   --typography-body-body3-fontstyle: normal;
   --typography-body-body3-fontstretch: normal;
@@ -542,6 +553,17 @@
   --typography-caption-caption5-paragraphindent: 0px;
   --typography-caption-caption5-paragraphspacing: 0px;
   --typography-caption-caption5-textcase: none;
+  --typography-caption-caption6-fontsize: 10px;
+  --typography-caption-caption6-textdecoration: none;
+  --typography-caption-caption6-fontfamily: Wanted Sans Variable;
+  --typography-caption-caption6-fontweight: 400;
+  --typography-caption-caption6-fontstyle: normal;
+  --typography-caption-caption6-fontstretch: normal;
+  --typography-caption-caption6-letterspacing: 0px;
+  --typography-caption-caption6-lineheight: 11px;
+  --typography-caption-caption6-paragraphindent: 0px;
+  --typography-caption-caption6-paragraphspacing: 0px;
+  --typography-caption-caption6-textcase: none;
   --scheme-opacity-30: 30px;
   --scheme-opacity-50: 50px;
   --scheme-opacity-100: 100px;
@@ -662,28 +684,28 @@
 }
 
 @utility title-20 {
-  font-family: Wanted Sans Variable;
+  font-family: Wanted Sans;
   font-size: 20px;
   font-weight: 700;
   line-height: 20px;
 }
 
 @utility title-18 {
-  font-family: Wanted Sans Variable;
+  font-family: Wanted Sans;
   font-size: 18px;
   font-weight: 700;
   line-height: 22px;
 }
 
 @utility title-16 {
-  font-family: Wanted Sans Variable;
+  font-family: Wanted Sans;
   font-size: 16px;
   font-weight: 700;
   line-height: 22px;
 }
 
 @utility title-14 {
-  font-family: Wanted Sans Variable;
+  font-family: Wanted Sans;
   font-size: 14px;
   font-weight: 700;
   line-height: 20px;
@@ -718,7 +740,7 @@
 }
 
 @utility body-3 {
-  font-family: Wanted Sans Variable;
+  font-family: Wanted Sans;
   font-size: 18px;
   font-weight: 700;
   line-height: 22px;
@@ -805,5 +827,12 @@
   font-family: Wanted Sans Variable;
   font-size: 10px;
   font-weight: 600;
+  line-height: 11px;
+}
+
+@utility font-caption-caption6 {
+  font-family: Wanted Sans Variable;
+  font-size: 10px;
+  font-weight: 400;
   line-height: 11px;
 }

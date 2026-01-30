@@ -46,7 +46,8 @@ export default function PostCard({ post }: PostCardProps) {
                         className="rounded-full object-cover"
                     />
                 ) : null} */}
-                {!is_anonymous && (
+                {/** 익명이 아니고, 팔로우하지 않은 경우에만 팔로우 버튼 표시 */}
+                {!is_anonymous && author && !author.is_following && (
                     <div className={styles.followButton}>
                         <FollowButton type="addIcon" />
                     </div>

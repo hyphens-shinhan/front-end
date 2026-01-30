@@ -44,7 +44,7 @@ interface UseImageUploadReturn {
 export function useImageUpload(
   options: UseImageUploadOptions = {},
 ): UseImageUploadReturn {
-  const { maxImages = 5, bucket = 'images', pathPrefix = 'uploads' } = options
+  const { maxImages = 5, bucket = 'posts', pathPrefix = 'uploads' } = options
 
   const supabase = createClient()
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -103,6 +103,7 @@ export function useImageUpload(
 
     setIsUploading(true)
     const uploadedUrls: string[] = []
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
 
     try {
       for (const { file } of images) {
@@ -116,14 +117,12 @@ export function useImageUpload(
 
         if (error) {
           console.error('이미지 업로드 실패:', error)
-          continue
+          throw new Error(`이미지 업로드 실패: ${error.message}`)
         }
 
-        const {
-          data: { publicUrl },
-        } = supabase.storage.from(bucket).getPublicUrl(filePath)
-
-        uploadedUrls.push(publicUrl)
+        // authenticated 경로로 URL 생성
+        const authenticatedUrl = `${supabaseUrl}/storage/v1/object/authenticated/${bucket}/${filePath}`
+        uploadedUrls.push(authenticatedUrl)
       }
 
       return uploadedUrls

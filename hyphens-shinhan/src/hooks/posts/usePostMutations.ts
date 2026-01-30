@@ -3,8 +3,11 @@ import { PostService } from '@/services/posts'
 import { postKeys } from './usePosts'
 import {
   FeedPostCreate,
+  FeedPostUpdate,
   NoticePostCreate,
+  NoticePostUpdate,
   EventPostCreate,
+  EventPostUpdate,
 } from '@/types/posts'
 
 /**
@@ -25,13 +28,8 @@ export const useCreateFeedPost = () => {
 export const useUpdateFeedPost = () => {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: ({
-      postId,
-      data,
-    }: {
-      postId: string
-      data: Partial<FeedPostCreate>
-    }) => PostService.updateFeedPost(postId, data),
+    mutationFn: ({ postId, data }: { postId: string; data: FeedPostUpdate }) =>
+      PostService.updateFeedPost(postId, data),
     onSuccess: (_, { postId }) => {
       queryClient.invalidateQueries({ queryKey: postKeys.detail(postId) })
       queryClient.invalidateQueries({ queryKey: postKeys.lists() })
@@ -62,7 +60,7 @@ export const useUpdateNoticePost = () => {
       data,
     }: {
       postId: string
-      data: Partial<NoticePostCreate>
+      data: NoticePostUpdate
     }) => PostService.updateNoticePost(postId, data),
     onSuccess: (_, { postId }) => {
       queryClient.invalidateQueries({ queryKey: postKeys.detail(postId) })
@@ -89,13 +87,8 @@ export const useCreateEventPost = () => {
 export const useUpdateEventPost = () => {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: ({
-      postId,
-      data,
-    }: {
-      postId: string
-      data: Partial<EventPostCreate>
-    }) => PostService.updateEventPost(postId, data),
+    mutationFn: ({ postId, data }: { postId: string; data: EventPostUpdate }) =>
+      PostService.updateEventPost(postId, data),
     onSuccess: (_, { postId }) => {
       queryClient.invalidateQueries({ queryKey: postKeys.detail(postId) })
       queryClient.invalidateQueries({ queryKey: postKeys.lists() })

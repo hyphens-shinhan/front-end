@@ -12,7 +12,7 @@
   --font-title-title28-textcase: none;
   --font-title-title20-fontsize: 20px;
   --font-title-title20-textdecoration: none;
-  --font-title-title20-fontfamily: Wanted Sans;
+  --font-title-title20-fontfamily: Wanted Sans Variable;
   --font-title-title20-fontweight: 700;
   --font-title-title20-fontstyle: normal;
   --font-title-title20-fontstretch: normal;
@@ -23,7 +23,7 @@
   --font-title-title20-textcase: none;
   --font-title-title18-fontsize: 18px;
   --font-title-title18-textdecoration: none;
-  --font-title-title18-fontfamily: Wanted Sans;
+  --font-title-title18-fontfamily: Wanted Sans Variable;
   --font-title-title18-fontweight: 700;
   --font-title-title18-fontstyle: normal;
   --font-title-title18-fontstretch: normal;
@@ -34,7 +34,7 @@
   --font-title-title18-textcase: none;
   --font-title-title16-fontsize: 16px;
   --font-title-title16-textdecoration: none;
-  --font-title-title16-fontfamily: Wanted Sans;
+  --font-title-title16-fontfamily: Wanted Sans Variable;
   --font-title-title16-fontweight: 700;
   --font-title-title16-fontstyle: normal;
   --font-title-title16-fontstretch: normal;
@@ -45,7 +45,7 @@
   --font-title-title16-textcase: none;
   --font-title-title14-fontsize: 14px;
   --font-title-title14-textdecoration: none;
-  --font-title-title14-fontfamily: Wanted Sans;
+  --font-title-title14-fontfamily: Wanted Sans Variable;
   --font-title-title14-fontweight: 700;
   --font-title-title14-fontstyle: normal;
   --font-title-title14-fontstretch: normal;
@@ -100,7 +100,7 @@
   --font-body-body2-textcase: none;
   --font-body-body3-fontsize: 18px;
   --font-body-body3-textdecoration: none;
-  --font-body-body3-fontfamily: Wanted Sans;
+  --font-body-body3-fontfamily: Wanted Sans Variable;
   --font-body-body3-fontweight: 700;
   --font-body-body3-fontstyle: normal;
   --font-body-body3-fontstretch: normal;
@@ -282,6 +282,8 @@
   --color-state-yellow-light: #ffead3ff;
   --color-state-yellow-dark: #f59e0bff;
   --color-state-red-light: #ffd5d5ff;
+  --color-state-firered: #ff8484ff;
+  --color-state-fireorange: #ff9d52ff;
   --typography-size-xxs: 10px;
   --typography-size-xs: 12px;
   --typography-size-sm: 14px;
@@ -324,7 +326,7 @@
   --typography-title-title28-textcase: none;
   --typography-title-title20-fontsize: 20px;
   --typography-title-title20-textdecoration: none;
-  --typography-title-title20-fontfamily: Wanted Sans;
+  --typography-title-title20-fontfamily: Wanted Sans Variable;
   --typography-title-title20-fontweight: 700;
   --typography-title-title20-fontstyle: normal;
   --typography-title-title20-fontstretch: normal;
@@ -335,7 +337,7 @@
   --typography-title-title20-textcase: none;
   --typography-title-title18-fontsize: 18px;
   --typography-title-title18-textdecoration: none;
-  --typography-title-title18-fontfamily: Wanted Sans;
+  --typography-title-title18-fontfamily: Wanted Sans Variable;
   --typography-title-title18-fontweight: 700;
   --typography-title-title18-fontstyle: normal;
   --typography-title-title18-fontstretch: normal;
@@ -346,7 +348,7 @@
   --typography-title-title18-textcase: none;
   --typography-title-title16-fontsize: 16px;
   --typography-title-title16-textdecoration: none;
-  --typography-title-title16-fontfamily: Wanted Sans;
+  --typography-title-title16-fontfamily: Wanted Sans Variable;
   --typography-title-title16-fontweight: 700;
   --typography-title-title16-fontstyle: normal;
   --typography-title-title16-fontstretch: normal;
@@ -357,7 +359,7 @@
   --typography-title-title16-textcase: none;
   --typography-title-title14-fontsize: 14px;
   --typography-title-title14-textdecoration: none;
-  --typography-title-title14-fontfamily: Wanted Sans;
+  --typography-title-title14-fontfamily: Wanted Sans Variable;
   --typography-title-title14-fontweight: 700;
   --typography-title-title14-fontstyle: normal;
   --typography-title-title14-fontstretch: normal;
@@ -412,7 +414,7 @@
   --typography-body-body2-textcase: none;
   --typography-body-body3-fontsize: 18px;
   --typography-body-body3-textdecoration: none;
-  --typography-body-body3-fontfamily: Wanted Sans;
+  --typography-body-body3-fontfamily: Wanted Sans Variable;
   --typography-body-body3-fontweight: 700;
   --typography-body-body3-fontstyle: normal;
   --typography-body-body3-fontstretch: normal;
@@ -674,6 +676,8 @@
   --color-state-yellow-light: var(--color-state-yellow-light);
   --color-state-yellow-dark: var(--color-state-yellow-dark);
   --color-state-red-light: var(--color-state-red-light);
+  --color-state-firered: var(--color-state-firered);
+  --color-state-fireorange: var(--color-state-fireorange);
 }
 
 @utility title-28 {
@@ -684,28 +688,28 @@
 }
 
 @utility title-20 {
-  font-family: Wanted Sans;
+  font-family: Wanted Sans Variable;
   font-size: 20px;
   font-weight: 700;
   line-height: 20px;
 }
 
 @utility title-18 {
-  font-family: Wanted Sans;
+  font-family: Wanted Sans Variable;
   font-size: 18px;
   font-weight: 700;
   line-height: 22px;
 }
 
 @utility title-16 {
-  font-family: Wanted Sans;
+  font-family: Wanted Sans Variable;
   font-size: 16px;
   font-weight: 700;
   line-height: 22px;
 }
 
 @utility title-14 {
-  font-family: Wanted Sans;
+  font-family: Wanted Sans Variable;
   font-size: 14px;
   font-weight: 700;
   line-height: 20px;
@@ -740,7 +744,7 @@
 }
 
 @utility body-3 {
-  font-family: Wanted Sans;
+  font-family: Wanted Sans Variable;
   font-size: 18px;
   font-weight: 700;
   line-height: 22px;

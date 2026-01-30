@@ -8,6 +8,8 @@ export { INPUT_BAR_TYPE } from "@/constants";
 interface InputBarProps {
     /** InputBar 타입 */
     type: INPUT_BAR_TYPE;
+    /** input element ref (포커스 등에 사용) */
+    inputRef?: React.RefObject<HTMLInputElement | null>;
     /** 입력값 */
     value?: string;
     /** 입력값 변경 핸들러 */
@@ -39,6 +41,7 @@ interface InputBarProps {
  */
 export default function InputBar({
     type,
+    inputRef,
     value,
     onChange,
     onSend,
@@ -61,6 +64,7 @@ export default function InputBar({
 
             {/** 입력 필드 */}
             <input
+                ref={inputRef}
                 type="text"
                 placeholder={config.placeholder}
                 value={value}

@@ -7,6 +7,8 @@ import { INPUT_BAR_TYPE } from "@/constants";
 interface MessageInputProps {
     /** InputBar 타입 (COMMENT, CHAT) */
     type: INPUT_BAR_TYPE;
+    /** input element ref (포커스 등에 사용) */
+    inputRef?: React.RefObject<HTMLInputElement | null>;
     /** 입력값 */
     value: string;
     /** 입력값 변경 핸들러 */
@@ -43,6 +45,7 @@ interface MessageInputProps {
  */
 export default function MessageInput({
     type,
+    inputRef,
     value,
     onChange,
     onSend,
@@ -67,6 +70,7 @@ export default function MessageInput({
         <div className={cn(styles.container, className)} onKeyDown={handleKeyDown}>
             <InputBar
                 type={type}
+                inputRef={inputRef}
                 value={value}
                 onChange={onChange}
                 onSend={onSend}

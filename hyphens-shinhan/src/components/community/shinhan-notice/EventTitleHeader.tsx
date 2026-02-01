@@ -25,7 +25,7 @@ interface EventTitleHeaderProps {
   /** 카드용(제목 말줄임, gap 16px) / 상세용(전체, gap 12px) */
   variant?: 'card' | 'detail';
   /** 상세용 추가 정보 (D-day 등) - variant="detail"일 때 제목 아래에 표시 */
-  extra?: React.ReactNode;
+  extra?: string;
   className?: string;
 }
 
@@ -54,9 +54,10 @@ export default function EventTitleHeader({
         <InfoTag label={statusInfo.label} color={statusInfo.color} />
       </div>
 
-      <p className={cn(styles.title, isCard && styles.titleCard)}>{title}</p>
-
-      {!isCard && extra != null && <div className={styles.extra}>{extra}</div>}
+      <div className={styles.titleContainer}>
+        <p className={cn(styles.title, isCard && styles.titleCard)}>{title}</p>
+        {!isCard && extra != null && <p className={styles.extra}>{extra}</p>}
+      </div>
     </header>
   );
 }
@@ -70,5 +71,6 @@ const styles = {
   tagContainer: cn('flex gap-1.5'),
   title: cn('title-18 text-grey-11'),
   titleCard: cn('line-clamp-1 truncate'),
-  extra: cn('flex flex-col gap-1'),
+  extra: cn('flex flex-col gap-1 font-caption-caption3 text-state-red'),
+  titleContainer: cn('flex gap-2 items-center'),
 };

@@ -23,7 +23,8 @@ export default function GroupCard() {
                     {/** 제목과 인기 로고 */}
                     <div className={styles.titleContainer}>
                         <p className={styles.title}>글로벌 리더십 스터디 모임</p>
-                        <Icon name="IconMImageFire" />
+                        {/** TODO: 인기 소모임인지 여부에 따라 아이콘 표시 */}
+                        <Icon name="IconMVectorFire" />
                     </div>
                     {/** 내용 */}
                     <p className={styles.content}>해외 유학이나 취업 관심 있으신 분이면 환영입니다!!! 같이 이야기 나눠요!</p>

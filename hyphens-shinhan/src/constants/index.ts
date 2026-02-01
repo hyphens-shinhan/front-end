@@ -178,8 +178,16 @@ export const CUSTOM_HEADER_CONFIG: Record<string, CustomHeaderConfig> = {
   [ROUTES.SEARCH]: {
     title: '검색',
   },
-  /** 신한장학재단 공지사항 페이지 헤더 설정 */
-  [ROUTES.COMMUNITY.SHINHAN_NOTICE]: {
+  /** 신한장학재단 공지 상세 - 목록보다 먼저 두어 /community/notice/[id] 매칭 */
+  [ROUTES.COMMUNITY.NOTICE.DETAIL_PREFIX]: {
+    title: '공지사항',
+    type: 'Center',
+    btnType: 'Back',
+    backHref: ROUTES.COMMUNITY.NOTICE.MAIN,
+    navItem: HEADER_ITEMS[HEADER_NAV_ITEM_KEY.MORE],
+  },
+  /** 신한장학재단 공지 목록 페이지 헤더 설정 */
+  [ROUTES.COMMUNITY.NOTICE.MAIN]: {
     title: '신한장학재단',
     type: 'Left',
     img: shinhanNoticeImg,

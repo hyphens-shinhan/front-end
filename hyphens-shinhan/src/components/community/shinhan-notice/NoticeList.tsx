@@ -4,6 +4,8 @@ import Separator from "@/components/common/Separator";
 import NoticeCard from "./NoticeCard";
 import NoticeCardSkeleton from "./NoticeCardSkeleton";
 import { useInfiniteNoticePosts } from "@/hooks/posts/usePosts";
+import { ROUTES } from "@/constants";
+import Link from "next/link";
 import React from "react";
 
 export default function NoticeList() {
@@ -37,9 +39,11 @@ export default function NoticeList() {
 
     return (
         <div>
-            {allNotices.map((notice, index) => (
+            {allNotices.map((notice) => (
                 <React.Fragment key={notice.id}>
-                    <NoticeCard notice={notice} />
+                    <Link href={`${ROUTES.COMMUNITY.NOTICE.DETAIL}/${notice.id}`}>
+                        <NoticeCard notice={notice} />
+                    </Link>
                     <Separator />
                 </React.Fragment>
             ))}

@@ -12,7 +12,7 @@ import { ROUTES } from "@/constants";
  */
 export default function ShinhanNoticeCard() {
     return (
-        <Link href={ROUTES.COMMUNITY.SHINHAN_NOTICE} className={styles.container}>
+        <Link href={ROUTES.COMMUNITY.NOTICE.MAIN} className={styles.container}>
             <div className={styles.logoWrapper}>
                 <Image src={shinhanLogo} alt="신한장학재단 로고" width={24} height={24} aria-label="신한장학재단 로고" />
             </div>

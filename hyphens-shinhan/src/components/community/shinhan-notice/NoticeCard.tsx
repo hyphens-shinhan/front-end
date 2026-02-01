@@ -2,6 +2,7 @@ import { Icon } from "@/components/common/Icon";
 import { cn } from "@/utils/cn";
 import { formatDateYMD, startOfDay } from "@/utils/date";
 import { NoticePostResponse } from "@/types/posts";
+import NoticeTitleHeader from "./NoticeTitleHeader";
 
 interface NoticeCardProps {
     notice: NoticePostResponse;
@@ -38,12 +39,11 @@ export default function NoticeCard({ notice }: NoticeCardProps) {
 
     return (
         <article className={styles.container}>
-            {/** 제목과 핀 아이콘 */}
-            <header className={styles.titleContainer}>
-                <h3 className={styles.title}>{title}</h3>
-                {is_pinned && <Icon name='IconLBoldPin' size={20} className={styles.pinIcon} />}
-                {isWithin3Days && <Icon name='IconMVectorNewbadge' size={20} />}
-            </header>
+            <NoticeTitleHeader
+                title={title}
+                is_pinned={is_pinned}
+                showNewBadge={isWithin3Days}
+            />
 
             {/** 본문 내용 */}
             <p className={styles.content}>{content}</p>
@@ -69,15 +69,6 @@ const styles = {
     container: cn(
         'flex flex-col gap-3',
         'px-4 pt-6 pb-3',
-    ),
-    titleContainer: cn(
-        'flex items-center gap-1',
-    ),
-    title: cn(
-        'title-18',
-    ),
-    pinIcon: cn(
-        'text-grey-9',
     ),
     content: cn(
         'body-8 text-grey-11',

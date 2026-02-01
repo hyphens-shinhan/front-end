@@ -7,6 +7,7 @@ import { useCreateComment } from "@/hooks/comments/useCommentMutations";
 import CommentList from "@/components/community/feed/CommentList";
 import PostContent from "@/components/community/feed/PostContent";
 import { cn } from "@/utils/cn";
+import { formatDateKrWithTime } from "@/utils/date";
 import FollowButton from "../FollowButton";
 import MessageInput from "@/components/common/MessageInput";
 import { INPUT_BAR_TYPE } from "@/constants";
@@ -31,12 +32,6 @@ export default function FeedDetailContent({ postId }: FeedDetailContentProps) {
     const [replyTo, setReplyTo] = useState<{ commentId: string; authorName: string } | null>(null);
     // 댓글 입력창 ref (답글 달기 클릭 시 포커스용)
     const commentInputRef = useRef<HTMLInputElement>(null);
-
-    // 날짜 포맷팅 (예: 12월 14일 12:20)
-    const formatDate = (dateString: string) => {
-        const date = new Date(dateString);
-        return `${date.getMonth() + 1}월 ${date.getDate()}일 ${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`;
-    };
 
     // 답글 달기 클릭 핸들러
     const handleReply = (commentId: string, authorName: string) => {
@@ -118,7 +113,7 @@ export default function FeedDetailContent({ postId }: FeedDetailContentProps) {
                         <p className={styles.userName}>
                             {is_anonymous ? '익명' : (author?.name || '알 수 없음')}
                         </p>
-                        <time className={styles.time}>{formatDate(created_at)}</time>
+                        <time className={styles.time}>{formatDateKrWithTime(created_at)}</time>
                     </div>
                     {/** 익명이 아니고, 팔로우하지 않은 경우에만 팔로우 버튼 표시 */}
                     {!is_anonymous && author && !author.is_following && (

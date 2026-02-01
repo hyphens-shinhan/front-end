@@ -1,5 +1,6 @@
 'use client'
 import { cn } from "@/utils/cn";
+import { formatDateKrWithTime } from "@/utils/date";
 import { Icon } from "@/components/common/Icon";
 import MoreButton from "@/components/community/MoreButton";
 import { CommentResponse } from "@/types/comments";
@@ -31,12 +32,6 @@ export default function Comment({ comment, onReply, isReplyingTo = false }: Comm
     // 대댓글 여부 (parent_id가 있으면 대댓글)
     const isReply = !!parent_id;
 
-    // 날짜 포맷팅 (예: 12월 14일 12:20)
-    const formatDate = (dateString: string) => {
-        const date = new Date(dateString);
-        return `${date.getMonth() + 1}월 ${date.getDate()}일 ${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`;
-    };
-
     // TODO: 삭제된 댓글 처리
 
     return (
@@ -65,7 +60,7 @@ export default function Comment({ comment, onReply, isReplyingTo = false }: Comm
                         {is_anonymous ? '익명' : (author?.name || '알 수 없음')}
                     </p>
                     {/** 시간 */}
-                    <time className={styles.time}>{formatDate(created_at)}</time>
+                    <time className={styles.time}>{formatDateKrWithTime(created_at)}</time>
                     {/** 더보기 버튼 */}
                     <div className={styles.moreButtonWrapper}>
                         <MoreButton />

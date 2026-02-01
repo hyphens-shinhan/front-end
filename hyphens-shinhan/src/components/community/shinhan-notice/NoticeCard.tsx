@@ -1,5 +1,6 @@
 import { Icon } from "@/components/common/Icon";
 import { cn } from "@/utils/cn";
+import { formatDateYMD, startOfDay } from "@/utils/date";
 import { NoticePostResponse } from "@/types/posts";
 
 interface NoticeCardProps {
@@ -22,16 +23,18 @@ export default function NoticeCard({ notice }: NoticeCardProps) {
         created_at,
     } = notice;
 
-    // 날짜 포맷팅 (예: 2024.12.15)
-    const formatDate = (dateString: string) => {
-        const date = new Date(dateString);
-        return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')}`;
-    };
-
     // 파일명 추출 (URL에서 마지막 부분)
     const getFileName = (url: string) => {
         return url.split('/').pop() || url;
     };
+
+    // 오늘 포함 3일 이내 공지인지 (뱃지 노출 조건)
+    const isWithin3Days = (() => {
+        const todayStart = startOfDay(new Date());
+        const createdStart = startOfDay(created_at);
+        const diffDays = Math.floor((todayStart.getTime() - createdStart.getTime()) / (1000 * 60 * 60 * 24));
+        return diffDays >= 0 && diffDays <= 2;
+    })();
 
     return (
         <article className={styles.container}>
@@ -39,6 +42,7 @@ export default function NoticeCard({ notice }: NoticeCardProps) {
             <header className={styles.titleContainer}>
                 <h3 className={styles.title}>{title}</h3>
                 {is_pinned && <Icon name='IconLBoldPin' size={20} className={styles.pinIcon} />}
+                {isWithin3Days && <Icon name='IconMVectorNewbadge' size={20} />}
             </header>
 
             {/** 본문 내용 */}
@@ -54,7 +58,7 @@ export default function NoticeCard({ notice }: NoticeCardProps) {
 
             {/** 조회수와 작성일 */}
             <div className={styles.infoContainer}>
-                <time>{formatDate(created_at)}</time>
+                <time>{formatDateYMD(created_at)}</time>
                 <p>조회수 {view_count}</p>
             </div>
         </article>
@@ -63,7 +67,7 @@ export default function NoticeCard({ notice }: NoticeCardProps) {
 
 const styles = {
     container: cn(
-        'flex flex-col gap-3.5',
+        'flex flex-col gap-3',
         'px-4 pt-6 pb-3',
     ),
     titleContainer: cn(

@@ -1,4 +1,5 @@
 import { cn } from "@/utils/cn";
+import { formatEventTimeRange } from "@/utils/date";
 import { Icon } from "@/components/common/Icon";
 import InfoTag from "@/components/common/InfoTag";
 import { EventPostResponse, EventStatus } from "@/types/posts";
@@ -40,16 +41,6 @@ export default function EventCard({ event }: EventCardProps) {
         }
     };
 
-    // 날짜/시간 포맷팅 (예: 2026.01.23 14:00~16:00)
-    const formatEventTime = (start: string, end: string) => {
-        const startDate = new Date(start);
-        const endDate = new Date(end);
-        const dateStr = `${startDate.getFullYear()}.${String(startDate.getMonth() + 1).padStart(2, '0')}.${String(startDate.getDate()).padStart(2, '0')}`;
-        const startTime = `${String(startDate.getHours()).padStart(2, '0')}:${String(startDate.getMinutes()).padStart(2, '0')}`;
-        const endTime = `${String(endDate.getHours()).padStart(2, '0')}:${String(endDate.getMinutes()).padStart(2, '0')}`;
-        return `${dateStr} ${startTime}~${endTime}`;
-    };
-
     const statusInfo = getStatusInfo(event_status);
 
     return (
@@ -70,7 +61,7 @@ export default function EventCard({ event }: EventCardProps) {
             <div className={styles.infoContainer}>
                 <div className={styles.infoItem}>
                     <Icon name='IconLBoldCalendar' />
-                    <p>{formatEventTime(event_start, event_end)}</p>
+                    <time>{formatEventTimeRange(event_start, event_end)}</time>
                 </div>
                 <div className={styles.infoItem}>
                     <Icon name='IconLBoldLocation' />

@@ -63,7 +63,7 @@ const styles = {
         'flex flex-col gap-4',
         'px-4 py-5'
     ),
-    content: cn('body-8 text-grey-11'),
+    content: cn('body-8 text-grey-11 line-clamp-2'),
     infoContainer: cn(
         'flex flex-col gap-1.5',
     ),

@@ -51,7 +51,7 @@ export default function CommentList({ postId, post, onReply, replyToCommentId }:
                 onScrapClick={handleScrapClick}
             />
 
-            <Separator />
+            <Separator className="mx-4" />
 
             {/** 댓글 리스트 */}
             {isLoading ? (

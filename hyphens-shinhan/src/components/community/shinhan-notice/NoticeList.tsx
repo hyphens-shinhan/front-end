@@ -44,7 +44,7 @@ export default function NoticeList() {
                     <Link href={`${ROUTES.COMMUNITY.NOTICE.DETAIL}/${notice.id}`}>
                         <NoticeCard notice={notice} />
                     </Link>
-                    <Separator />
+                    <Separator className="mx-4" />
                 </React.Fragment>
             ))}
 

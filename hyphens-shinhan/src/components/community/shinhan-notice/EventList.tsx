@@ -44,7 +44,7 @@ export default function EventList() {
                     <Link href={`${ROUTES.COMMUNITY.EVENT.DETAIL}/${event.id}`}>
                         <EventCard event={event} />
                     </Link>
-                    <Separator />
+                    <Separator className="mx-4" />
                 </React.Fragment>
             ))}
 

@@ -38,7 +38,7 @@ export default function PostList() {
                     {Array.from({ length: 5 }).map((_, index) => (
                         <React.Fragment key={index}>
                             <PostCardSkeleton />
-                            <Separator />
+                            <Separator className="mx-4" />
                         </React.Fragment>
                     ))}
                 </div>
@@ -60,7 +60,7 @@ export default function PostList() {
                 {allPosts.map((post, index) => (
                     <React.Fragment key={post.id}>
                         <PostCard post={post} />
-                        <Separator />
+                        <Separator className="mx-4" />
                     </React.Fragment>
                 ))}
             </div>

@@ -9,7 +9,7 @@ import {
 import { ROUTES } from './routes'
 import { IconName } from '@/components/common/Icon'
 import { StaticImageData } from 'next/image'
-import shinhanNoticeImg from '@/assets/icons/Icon-L/Image/shinhan-logo.png'
+import shinhanLogoImg from '@/assets/icons/Icon-L/Vector/shinhan-logo.png'
 
 /** 라우트 상수 */
 export { ROUTES } from './routes'
@@ -190,7 +190,7 @@ export const CUSTOM_HEADER_CONFIG: Record<string, CustomHeaderConfig> = {
   [ROUTES.COMMUNITY.NOTICE.MAIN]: {
     title: '신한장학재단',
     type: 'Left',
-    img: shinhanNoticeImg,
+    img: shinhanLogoImg,
     backHref: ROUTES.COMMUNITY.MAIN,
   },
   /** 커뮤니티 피드 글쓰기 페이지 헤더 설정 */

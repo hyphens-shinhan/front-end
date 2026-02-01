@@ -3,7 +3,7 @@
 import { cn } from "@/utils/cn";
 import { Icon } from "../common/Icon";
 import Image from "next/image";
-import shinhanLogo from "@/assets/icons/Icon-L/Image/shinhan-logo.png";
+import shinhanLogo from "@/assets/icons/Icon-L/Vector/shinhan-logo.png";
 import Link from "next/link";
 import { ROUTES } from "@/constants";
 

@@ -6,6 +6,8 @@ interface PropsType {
     label: string;
     size: 'L' | 'M' | 'S' | 'XS';
     type: 'primary' | 'secondary' | 'danger' | 'warning';
+    /** true면 가로 전체 채움 (w-full) */
+    fullWidth?: boolean;
     disabled?: boolean;
     onClick?: () => void;
 }
@@ -22,12 +24,13 @@ interface PropsType {
  * <FollowButton> 참고: 이벤트 핸들러를 작성하고 <Button /> 컴포넌트 props로 전달 ! 
  * <Button label="버튼" size="L" type="primary" disabled={false} onClick={() => {}} />
 */
-export default function Button({ label, size, type, disabled = false, onClick }: PropsType) {
+export default function Button({ label, size, type, fullWidth = false, disabled = false, onClick }: PropsType) {
     const containerStyle = cn(
-        'flex items-center justify-center shadow-md ',
+        'flex items-center justify-center shadow-md',
         'transition-all duration-100 active:scale-98',
         sizeStyles[size],
         typeStyles[type],
+        fullWidth && 'w-full',
         disabled && disabledStyles
     );
 
@@ -38,14 +41,15 @@ export default function Button({ label, size, type, disabled = false, onClick }:
     );
 }
 
+/** 사이즈별 패딩만 적용, 가로 길이는 텍스트(콘텐츠)에 맞춤 */
 const sizeStyles = {
-    L: 'w-[145px] py-3.5 rounded-[12px] body-7',
-    M: 'w-[100px] py-2.5 rounded-[12px] body-7',
-    S: 'w-[80px] py-1.5 rounded-[8px] body-9',
+    L: 'px-6 py-3 rounded-[16px] body-5',
+    M: 'px-5 py-2.5 rounded-[12px] body-7',
+    S: 'px-4 py-1.5 rounded-[8px] body-9',
     XS: 'px-2.5 py-[5px] rounded-[8px] font-caption-caption3',
 }
 const typeStyles = {
-    primary: 'bg-primary-shinhanblue text-white body-7 hover:bg-primary-dark',
+    primary: 'bg-primary-shinhanblue text-white hover:bg-primary-dark',
     secondary: 'bg-white text-grey-9 border-0.5 border-grey-3 hover:bg-grey-2',
     danger: 'bg-state-error text-white hover:bg-state-error-dark',
     warning: 'bg-white text-state-error border-0.5 border-grey-3 hover:bg-grey-2',

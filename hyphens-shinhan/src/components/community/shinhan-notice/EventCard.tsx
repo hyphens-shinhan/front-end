@@ -27,7 +27,7 @@ export default function EventCard({ event }: EventCardProps) {
         max_participants,
     } = event;
 
-    // 이벤트 상태 라벨 및 색상
+    // TODO: 카테고리 지정 및 이벤트 상태 라벨 및 색상 정하기 !! 
     const getStatusInfo = (status?: EventStatus | null) => {
         switch (status) {
             case EventStatus.OPEN:
@@ -89,12 +89,13 @@ const styles = {
     ),
     title: cn(
         'title-18 text-grey-11',
+        'line-clamp-1 truncate',
     ),
     content: cn(
         'body-8 text-grey-11',
     ),
     infoContainer: cn(
-        'flex flex-col gap-2.5',
+        'flex flex-col gap-1.5',
     ),
     infoItem: cn(
         'flex gap-2',

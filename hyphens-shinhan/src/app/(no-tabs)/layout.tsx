@@ -26,10 +26,10 @@ const styles = {
         'bg-white'
     ),
     main: cn(
-        'flex-1 min-h-0 overflow-y-auto',
+        'flex-1 min-h-0 overflow-hidden',
         'overscroll-behavior-y-contain',
     ),
     content: cn(
-        'min-h-full',
+        'flex-1 h-full min-h-0',
     ),
 };

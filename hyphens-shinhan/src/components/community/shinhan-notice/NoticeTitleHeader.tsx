@@ -32,6 +32,6 @@ export default function NoticeTitleHeader({
 
 const styles = {
     container: cn('flex items-center gap-1'),
-    title: cn('title-18'),
+    title: cn('title-18 line-clamp-1 truncate'),
     pinIcon: cn('text-grey-9'),
 };

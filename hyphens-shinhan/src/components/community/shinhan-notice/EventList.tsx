@@ -1,9 +1,11 @@
 'use client';
 
+import Link from "next/link";
 import Separator from "@/components/common/Separator";
 import EventCard from "./EventCard";
 import EventCardSkeleton from "./EventCardSkeleton";
 import { useInfiniteEventPosts } from "@/hooks/posts/usePosts";
+import { ROUTES } from "@/constants";
 import React from "react";
 
 export default function EventList() {
@@ -37,9 +39,11 @@ export default function EventList() {
 
     return (
         <div>
-            {allEvents.map((event, index) => (
+            {allEvents.map((event) => (
                 <React.Fragment key={event.id}>
-                    <EventCard event={event} />
+                    <Link href={`${ROUTES.COMMUNITY.EVENT.DETAIL}/${event.id}`}>
+                        <EventCard event={event} />
+                    </Link>
                     <Separator />
                 </React.Fragment>
             ))}

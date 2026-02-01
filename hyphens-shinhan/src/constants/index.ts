@@ -193,6 +193,14 @@ export const CUSTOM_HEADER_CONFIG: Record<string, CustomHeaderConfig> = {
     img: shinhanLogoImg,
     backHref: ROUTES.COMMUNITY.MAIN,
   },
+  /** 신한장학재단 이벤트 상세 - 목록보다 먼저 두어 /community/event/[id] 매칭 */
+  [ROUTES.COMMUNITY.EVENT.DETAIL_PREFIX]: {
+    title: '이벤트',
+    type: 'Center',
+    btnType: 'Back',
+    backHref: ROUTES.COMMUNITY.EVENT.MAIN,
+    navItem: HEADER_ITEMS[HEADER_NAV_ITEM_KEY.MORE],
+  },
   /** 커뮤니티 피드 글쓰기 페이지 헤더 설정 */
   [ROUTES.COMMUNITY.FEED.CREATE]: {
     title: '게시글 작성하기',

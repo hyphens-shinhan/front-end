@@ -137,7 +137,7 @@ export default function CustomHeader() {
                 ) : displayLogo ? (
                     <Icon name={displayLogo} className={styles.logo} />
                 ) : null}
-                <h1 className={styles.title}>{displayTitle}</h1>
+                <h1 className={displayType === 'Center' ? styles.centerTitle : styles.title}>{displayTitle}</h1>
             </div>
 
             {/* ─────────── 우측: 네비게이션 ─────────── */}
@@ -169,8 +169,11 @@ const styles = {
     logo: cn(
         'relative w-6 h-6 mr-1',
     ),
+    centerTitle: cn(
+        'title-16 text-grey-11',
+    ),
     title: cn(
-        'title-18 text-black',
+        'title-18 text-grey-11',
     ),
     nav: cn(
         'flex flex-row gap-x-4',

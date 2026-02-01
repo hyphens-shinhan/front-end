@@ -77,7 +77,7 @@ export default function NoticeDetailContent({ noticeId }: NoticeDetailContentPro
 const styles = {
     container: cn('flex flex-col', 'px-4 pb-5'),
     titleContainer: cn('flex flex-col gap-2 py-4'),
-    content: cn('body-8 text-grey-11', 'whitespace-pre-wrap', 'py-4'),
+    content: cn('body-6 text-grey-11', 'whitespace-pre-wrap', 'py-4'),
     attachmentContainer: cn(
         'flex items-center gap-2.5',
         'bg-grey-2 rounded-[6px] border border-grey-3',

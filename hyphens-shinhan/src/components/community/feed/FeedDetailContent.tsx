@@ -32,6 +32,8 @@ export default function FeedDetailContent({ postId }: FeedDetailContentProps) {
     const [replyTo, setReplyTo] = useState<{ commentId: string; authorName: string } | null>(null);
     // 댓글 입력창 ref (답글 달기 클릭 시 포커스용)
     const commentInputRef = useRef<HTMLInputElement>(null);
+    // 전송 중복 방지 (isSubmitting 상태보다 먼저 체크)
+    const sendingRef = useRef(false);
 
     // 답글 달기 클릭 핸들러
     const handleReply = (commentId: string, authorName: string) => {
@@ -43,31 +45,33 @@ export default function FeedDetailContent({ postId }: FeedDetailContentProps) {
         setReplyTo({ commentId, authorName });
     };
 
-    // 댓글 전송 핸들러
+    // 댓글 전송 핸들러 (연타/엔터+클릭 중복 요청 방지)
     const handleSendComment = () => {
-        if (!comment.trim() || isSubmitting) return;
+        if (!comment.trim() || isSubmitting || sendingRef.current) return;
+        sendingRef.current = true;
 
-        createComment(
-            {
-                postId,
-                data: {
-                    content: comment.trim(),
-                    is_anonymous: isAnonymous,
-                    parent_id: replyTo?.commentId, // 답글인 경우 부모 댓글 ID
-                },
+        const payload = {
+            postId,
+            data: {
+                content: comment.trim(),
+                is_anonymous: isAnonymous,
+                parent_id: replyTo?.commentId ?? undefined,
             },
-            {
-                onSuccess: () => {
-                    setComment(''); // 입력창 초기화
-                    setIsAnonymous(false); // 익명 버튼 초기화
-                    setReplyTo(null); // 답글 모드 초기화
-                },
-                onError: (error) => {
-                    console.error('댓글 작성 실패:', error);
-                    alert('댓글 작성에 실패했습니다.');
-                },
-            }
-        );
+        };
+
+        createComment(payload, {
+            onSuccess: () => {
+                setComment('');
+                setIsAnonymous(false);
+                setReplyTo(null);
+                sendingRef.current = false;
+            },
+            onError: (error) => {
+                console.error('댓글 작성 실패:', error);
+                alert('댓글 작성에 실패했습니다.');
+                sendingRef.current = false;
+            },
+        });
     };
 
     if (isLoading) {
@@ -105,6 +109,7 @@ export default function FeedDetailContent({ postId }: FeedDetailContentProps) {
                                 src={author.avatar_url}
                                 alt={author.name || '프로필'}
                                 fill
+                                sizes="40px"
                                 className="rounded-full object-cover"
                             />
                         )} */}
@@ -190,7 +195,7 @@ const styles = {
         'flex-1',
     ),
     inputWrapper: cn(
-        'flex flex-col',
+        'flex flex-col fixed bottom-0 left-0 right-0',
         'bg-white',
     ),
 }

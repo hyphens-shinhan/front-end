@@ -47,6 +47,8 @@ interface ConfirmModalOptions {
   title: string
   /** 모달 메시지 */
   message?: string
+  /** 커스텀 컨텐츠 (title/message 대신 또는 함께 사용) */
+  content?: ReactNode
   /** 확인 버튼 텍스트 (기본: '확인') */
   confirmText?: string
   /** 취소 버튼 텍스트 (기본: '취소') */
@@ -64,6 +66,8 @@ interface ConfirmModalState {
   options: ConfirmModalOptions | null
   onOpen: (options: ConfirmModalOptions) => void
   onClose: () => void
+  /** 열린 모달의 options 일부만 갱신 (content 등) */
+  updateOptions: (partial: Partial<ConfirmModalOptions>) => void
 }
 
 /**
@@ -84,6 +88,10 @@ export const useConfirmModalStore = create<ConfirmModalState>((set) => ({
   options: null,
   onOpen: (options) => set({ isOpen: true, options }),
   onClose: () => set({ isOpen: false, options: null }),
+  updateOptions: (partial) =>
+    set((state) => ({
+      options: state.options ? { ...state.options, ...partial } : null,
+    })),
 }))
 
 /* ========================================
@@ -95,6 +103,7 @@ interface AlertModalOptions {
   title: string
   /** 모달 메시지 */
   message?: string
+  children: ReactNode | null
   /** 확인 버튼 텍스트 (기본: '확인') */
   confirmText?: string
   /** 확인 버튼 클릭 시 콜백 */
@@ -104,6 +113,7 @@ interface AlertModalOptions {
 interface AlertModalState {
   isOpen: boolean
   options: AlertModalOptions | null
+  children: ReactNode | null
   onOpen: (options: AlertModalOptions) => void
   onClose: () => void
 }
@@ -121,6 +131,7 @@ interface AlertModalState {
 export const useAlertModalStore = create<AlertModalState>((set) => ({
   isOpen: false,
   options: null,
+  children: null,
   onOpen: (options) => set({ isOpen: true, options }),
   onClose: () => set({ isOpen: false, options: null }),
 }))

@@ -9,6 +9,7 @@ interface PropsType {
     /** true면 가로 전체 채움 (w-full) */
     fullWidth?: boolean;
     disabled?: boolean;
+    className?: string;
     onClick?: () => void;
 }
 
@@ -24,7 +25,7 @@ interface PropsType {
  * <FollowButton> 참고: 이벤트 핸들러를 작성하고 <Button /> 컴포넌트 props로 전달 ! 
  * <Button label="버튼" size="L" type="primary" disabled={false} onClick={() => {}} />
 */
-export default function Button({ label, size, type, fullWidth = false, disabled = false, onClick }: PropsType) {
+export default function Button({ label, size, type, fullWidth = false, disabled = false, className, onClick }: PropsType) {
     const containerStyle = cn(
         'flex items-center justify-center shadow-md',
         'transition-all duration-100 active:scale-98',
@@ -35,7 +36,7 @@ export default function Button({ label, size, type, fullWidth = false, disabled 
     );
 
     return (
-        <button className={containerStyle} disabled={disabled} onClick={onClick}>
+        <button className={cn(containerStyle, className)} disabled={disabled} onClick={onClick}>
             <span>{label}</span>
         </button>
     );

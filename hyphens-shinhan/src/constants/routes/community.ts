@@ -21,6 +21,9 @@ export const COMMUNITY_ROUTES = {
     DETAIL: '/community/feed',
   },
   GROUP: {
+    /** 이벤트 목록 = 공지 페이지 이벤트 탭 (뒤로가기/목록으로용) */
+    MAIN: '/community?tab=소모임',
     CREATE: '/community/group/create',
+    DETAIL: '/community/group',
   },
 } as const

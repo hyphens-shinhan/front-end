@@ -224,6 +224,14 @@ export const CUSTOM_HEADER_CONFIG: Record<string, CustomHeaderConfig> = {
     navItem: HEADER_ITEMS[HEADER_NAV_ITEM_KEY.MORE],
     backHref: ROUTES.COMMUNITY.MAIN,
   },
+  /** 커뮤니티 소모임 상세 보기 */
+  [ROUTES.COMMUNITY.GROUP.DETAIL]: {
+    title: '소모임',
+    type: 'Center',
+    btnType: 'Back',
+    navItem: HEADER_ITEMS[HEADER_NAV_ITEM_KEY.MORE],
+    backHref: ROUTES.COMMUNITY.GROUP.MAIN,
+  },
 } as const
 
 /** 포스트 플로팅 액션 버튼 아이템 키 */

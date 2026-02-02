@@ -22,12 +22,11 @@ export default function NoTabsLayout({
 const styles = {
     container: cn(
         'relative mx-auto max-w-md',
-        'h-[100dvh] overflow-hidden flex flex-col',
+        'h-[100dvh] flex flex-col',
         'bg-white'
     ),
     main: cn(
-        'flex-1 min-h-0 overflow-hidden',
-        'overscroll-behavior-y-contain',
+        'flex-1 min-h-0',
     ),
     content: cn(
         'flex-1 h-full min-h-0',

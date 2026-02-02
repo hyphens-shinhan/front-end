@@ -12,6 +12,10 @@ export const postKeys = {
     [...postKeys.lists(), type, filters] as const,
   details: () => [...postKeys.all, 'detail'] as const,
   detail: (id: string) => [...postKeys.details(), id] as const,
+  /** 이벤트 상세 쿼리 무효화 시 사용 (detail과 동일) */
+  eventDetail: (id: string) => postKeys.detail(id),
+  /** 내가 신청한 이벤트 목록 쿼리 키 */
+  myAppliedEvents: () => [...postKeys.lists(), 'event', 'me-applied'] as const,
 }
 
 /**
@@ -115,5 +119,17 @@ export const useEventPost = (postId: string) => {
     queryKey: postKeys.detail(postId),
     queryFn: () => PostService.getEventPost(postId),
     enabled: !!postId,
+  })
+}
+
+/**
+ * [EVENT] 내가 신청한 이벤트 목록 조회
+ * @param limit 가져올 개수
+ * @param offset 시작 위치
+ */
+export const useMyAppliedEventPosts = (limit = 20, offset = 0) => {
+  return useQuery({
+    queryKey: [...postKeys.myAppliedEvents(), limit, offset],
+    queryFn: () => PostService.getMyAppliedEventPosts(limit, offset),
   })
 }

@@ -1,4 +1,8 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import {
+  useMutation,
+  useQueryClient,
+  type UseMutationResult,
+} from '@tanstack/react-query'
 import { PostService } from '@/services/posts'
 import { postKeys } from './usePosts'
 import {
@@ -8,6 +12,8 @@ import {
   NoticePostUpdate,
   EventPostCreate,
   EventPostUpdate,
+  EventApplyResponse,
+  EventCancelApplyResponse,
 } from '@/types/posts'
 
 /**
@@ -92,6 +98,46 @@ export const useUpdateEventPost = () => {
     onSuccess: (_, { postId }) => {
       queryClient.invalidateQueries({ queryKey: postKeys.detail(postId) })
       queryClient.invalidateQueries({ queryKey: postKeys.lists() })
+    },
+  })
+}
+
+/**
+ * [EVENT] 이벤트 신청 훅
+ */
+export const useApplyEventPost = (): UseMutationResult<
+  EventApplyResponse,
+  Error,
+  string,
+  unknown
+> => {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (postId: string) => PostService.applyEventPost(postId),
+    onSuccess: (_, postId) => {
+      queryClient.invalidateQueries({ queryKey: postKeys.detail(postId) })
+      queryClient.invalidateQueries({ queryKey: postKeys.lists() })
+      queryClient.invalidateQueries({ queryKey: postKeys.myAppliedEvents() })
+    },
+  })
+}
+
+/**
+ * [EVENT] 이벤트 신청 취소 훅
+ */
+export const useCancelApplyEventPost = (): UseMutationResult<
+  EventCancelApplyResponse,
+  Error,
+  string,
+  unknown
+> => {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (postId: string) => PostService.cancelApplyEventPost(postId),
+    onSuccess: (_, postId) => {
+      queryClient.invalidateQueries({ queryKey: postKeys.detail(postId) })
+      queryClient.invalidateQueries({ queryKey: postKeys.lists() })
+      queryClient.invalidateQueries({ queryKey: postKeys.myAppliedEvents() })
     },
   })
 }

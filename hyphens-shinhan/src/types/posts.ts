@@ -103,6 +103,10 @@ export interface EventPostResponse extends BasePostResponse {
   title: string
   /** 이벤트 상세 내용 */
   content: string
+  /** 신청 시작 일시 (ISO 8601) */
+  application_start: string | null
+  /** 신청 종료 일시 (ISO 8601) */
+  application_end: string | null
   /** 이벤트 시작 일시 (ISO 8601) */
   event_start: string
   /** 이벤트 종료 일시 (ISO 8601) */
@@ -115,6 +119,8 @@ export interface EventPostResponse extends BasePostResponse {
   participants_count: number
   /** 댓글 수 */
   comment_count: number
+  /** 현재 사용자 이벤트 신청 여부 */
+  is_applied: boolean
   /** 이벤트 진행 상태 */
   event_status?: EventStatus | null
   /** 이벤트 카테고리 */
@@ -182,9 +188,13 @@ export interface EventPostCreate {
   title: string
   /** 이벤트 내용 */
   content: string
-  /** 이벤트 시작 일시 */
+  /** 신청 시작 일시 (ISO 8601) */
+  application_start: string
+  /** 신청 종료 일시 (ISO 8601) */
+  application_end: string
+  /** 이벤트 시작 일시 (ISO 8601) */
   event_start: string
-  /** 이벤트 종료 일시 */
+  /** 이벤트 종료 일시 (ISO 8601) */
   event_end: string
   /** 이벤트 장소 */
   event_location: string
@@ -215,6 +225,42 @@ export type NoticePostUpdate = Partial<NoticePostCreate>
 /**
  * 이벤트 수정 요청 데이터 (상태 변경 가능)
  */
-export interface EventPostUpdate extends Partial<EventPostCreate> {
+export interface EventPostUpdate {
+  title?: string | null
+  content?: string | null
+  application_start?: string | null
+  application_end?: string | null
+  event_start?: string | null
+  event_end?: string | null
+  event_location?: string | null
+  is_mandatory?: boolean | null
   event_status?: EventStatus | null
+  event_category?: string | null
+  max_participants?: number | null
+  file_urls?: string[] | null
+  image_urls?: string[] | null
+}
+
+// --- 이벤트 신청 / 좋아요·스크랩 응답 타입 ---
+
+/** 이벤트 신청 성공 응답 */
+export interface EventApplyResponse {
+  message: 'Successfully applied for event'
+}
+
+/** 이벤트 신청 취소 응답 */
+export interface EventCancelApplyResponse {
+  message: 'Event application cancelled'
+}
+
+/** 좋아요 토글 응답 */
+export interface ToggleLikeResponse {
+  liked: boolean
+  like_count: number
+}
+
+/** 스크랩 토글 응답 */
+export interface ToggleScrapResponse {
+  scrapped: boolean
+  scrap_count: number
 }

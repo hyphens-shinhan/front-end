@@ -2,11 +2,15 @@
 
 import { Icon } from "@/components/common/Icon";
 import { cn } from "@/utils/cn";
-import { formatDateYMD, formatEventTimeRange, formatTime, getDaysUntil } from "@/utils/date";
+import { formatEventTimeRange, getDaysUntil } from "@/utils/date";
+import {
+    getEventApplicationPhase,
+    getEventDetailBottomContent,
+} from "@/utils/eventApplication";
 import { useEventPost } from "@/hooks/posts/usePosts";
+import { useApplyEventPost, useCancelApplyEventPost } from "@/hooks/posts/usePostMutations";
 import EventTitleHeader from "./EventTitleHeader";
 import { ROUTES } from "@/constants";
-import { EventStatus } from "@/types/posts";
 import Link from "next/link";
 import Separator from "@/components/common/Separator";
 import BottomFixedButton from "@/components/common/BottomFixedButton";
@@ -18,6 +22,8 @@ interface EventDetailContentProps {
 /** 신한장학재단 이벤트 상세 콘텐츠 */
 export default function EventDetailContent({ eventId }: EventDetailContentProps) {
     const { data: event, isLoading, isError, error } = useEventPost(eventId);
+    const applyMutation = useApplyEventPost();
+    const cancelApplyMutation = useCancelApplyEventPost();
 
     if (isLoading) {
         return (
@@ -50,6 +56,8 @@ export default function EventDetailContent({ eventId }: EventDetailContentProps)
     const {
         title,
         content,
+        application_start,
+        application_end,
         event_start,
         event_end,
         event_location,
@@ -57,16 +65,38 @@ export default function EventDetailContent({ eventId }: EventDetailContentProps)
         event_category,
         participants_count,
         max_participants,
+        is_applied,
     } = event;
 
-    // D-Day: event_end와 오늘 비교, 과거면 미표시
+    const phase = getEventApplicationPhase({
+        application_start,
+        application_end,
+        event_status,
+    });
+    const deadlineDate = application_end ?? event_end;
+    const isApplying: boolean =
+        applyMutation.isPending || cancelApplyMutation.isPending;
+    const { topContentText, buttonLabel, isButtonDisabled } =
+        getEventDetailBottomContent({
+            phase,
+            application_start,
+            application_end,
+            deadlineDate,
+            is_applied,
+            isApplying,
+        });
+
     const daysUntil = getDaysUntil(event_end);
     const dDayLabel =
         daysUntil < 0 ? null : daysUntil === 0 ? 'D-Day' : `D-${daysUntil}`;
 
-    // 신청 마감일 표기 (event_end 기준)
-    const deadlineText = `신청 마감일 : ${formatDateYMD(event_end)} ${formatTime(event_end)}`;
-    const isClosed = event_status === EventStatus.CLOSED;
+    const handleApplyClick = () => {
+        if (is_applied) {
+            cancelApplyMutation.mutate(eventId);
+        } else {
+            applyMutation.mutate(eventId);
+        }
+    };
 
     return (
         <article className={styles.container}>
@@ -111,10 +141,10 @@ export default function EventDetailContent({ eventId }: EventDetailContentProps)
 
             {/** 하단 고정 버튼 */}
             <BottomFixedButton
-                topContent={<p>{deadlineText}</p>}
-                label={isClosed ? '마감됨' : '신청하기'}
-                disabled={isClosed}
-                onClick={isClosed ? undefined : () => { }}
+                topContent={<p>{topContentText}</p>}
+                label={buttonLabel}
+                disabled={isButtonDisabled}
+                onClick={isButtonDisabled ? undefined : handleApplyClick}
             />
         </article>
     );

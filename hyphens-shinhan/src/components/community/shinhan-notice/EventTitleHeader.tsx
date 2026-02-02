@@ -63,7 +63,7 @@ export default function EventTitleHeader({
 }
 
 const styles = {
-  container: cn('flex flex-col'),
+  container: cn('flex min-w-0 flex-col pr-4'),
   /** 리스트(카드): gap 16px */
   containerCard: cn('gap-4'),
   /** 상세: gap 12px */

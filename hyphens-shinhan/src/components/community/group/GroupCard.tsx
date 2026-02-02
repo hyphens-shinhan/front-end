@@ -77,7 +77,7 @@ const styles = {
     'flex flex-col gap-4',
     'px-4 py-5'
   ),
-  containerCard: cn('gap-3'),
+  containerCard: cn('gap-3 px-0'),
   tagContainer: cn(
     'flex gap-1.5',
   ),
@@ -91,7 +91,7 @@ const styles = {
     'flex items-center gap-1',
   ),
   title: cn('title-18 text-grey-11'),
-  titleCard: cn('min-w-0 line-clamp-1 truncate'),
+  titleCard: cn('min-w-0 line-clamp-1'),
   content: cn('body-8 text-grey-11'),
   contentCard: cn('line-clamp-2'),
   memberPreviewContainer: cn(

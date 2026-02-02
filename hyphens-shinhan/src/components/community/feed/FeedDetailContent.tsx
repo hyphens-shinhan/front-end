@@ -1,16 +1,18 @@
 'use client'
 
 import { useRef, useState } from "react";
-import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useFeedPost } from "@/hooks/posts/usePosts";
 import { useCreateComment } from "@/hooks/comments/useCommentMutations";
 import CommentList from "@/components/community/feed/CommentList";
 import PostContent from "@/components/community/feed/PostContent";
+import Button from "@/components/common/Button";
+import EmptyContent from "@/components/common/EmptyContent";
 import { cn } from "@/utils/cn";
 import { formatDateKrWithTime } from "@/utils/date";
 import FollowButton from "../FollowButton";
 import MessageInput from "@/components/common/MessageInput";
-import { INPUT_BAR_TYPE } from "@/constants";
+import { EMPTY_CONTENT_MESSAGES, INPUT_BAR_TYPE, ROUTES } from "@/constants";
 
 interface FeedDetailContentProps {
     postId: string;
@@ -22,6 +24,7 @@ interface FeedDetailContentProps {
  * <FeedDetailContent postId="abc-123" />
  */
 export default function FeedDetailContent({ postId }: FeedDetailContentProps) {
+    const router = useRouter();
     const { data: post, isLoading, isError } = useFeedPost(postId);
     const { mutate: createComment, isPending: isSubmitting } = useCreateComment();
 
@@ -75,18 +78,23 @@ export default function FeedDetailContent({ postId }: FeedDetailContentProps) {
     };
 
     if (isLoading) {
-        return (
-            <div className="flex items-center justify-center py-20">
-                <p className="text-grey-7">로딩 중...</p>
-            </div>
-        );
+        return <EmptyContent variant="loading" message={EMPTY_CONTENT_MESSAGES.LOADING.DEFAULT} />;
     }
 
     if (isError || !post) {
         return (
-            <div className="flex items-center justify-center py-20">
-                <p className="text-state-red">게시글을 불러오는 중 오류가 발생했습니다.</p>
-            </div>
+            <EmptyContent
+                variant="error"
+                message={EMPTY_CONTENT_MESSAGES.ERROR.FEED}
+                action={
+                    <Button
+                        label="목록으로 돌아가기"
+                        size="M"
+                        type="primary"
+                        onClick={() => router.push(ROUTES.COMMUNITY.MAIN)}
+                    />
+                }
+            />
         );
     }
 

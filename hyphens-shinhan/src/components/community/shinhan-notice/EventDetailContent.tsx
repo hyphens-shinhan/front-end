@@ -1,6 +1,9 @@
 'use client';
 
+import { useRouter } from "next/navigation";
 import { Icon } from "@/components/common/Icon";
+import Button from "@/components/common/Button";
+import EmptyContent from "@/components/common/EmptyContent";
 import { cn } from "@/utils/cn";
 import { formatEventTimeRange, getDaysUntil } from "@/utils/date";
 import {
@@ -10,8 +13,7 @@ import {
 import { useEventPost } from "@/hooks/posts/usePosts";
 import { useApplyEventPost, useCancelApplyEventPost } from "@/hooks/posts/usePostMutations";
 import EventTitleHeader from "./EventTitleHeader";
-import { ROUTES } from "@/constants";
-import Link from "next/link";
+import { EMPTY_CONTENT_MESSAGES, ROUTES } from "@/constants";
 import Separator from "@/components/common/Separator";
 import BottomFixedButton from "@/components/common/BottomFixedButton";
 
@@ -21,16 +23,13 @@ interface EventDetailContentProps {
 
 /** 신한장학재단 이벤트 상세 콘텐츠 */
 export default function EventDetailContent({ eventId }: EventDetailContentProps) {
+    const router = useRouter();
     const { data: event, isLoading, isError, error } = useEventPost(eventId);
     const applyMutation = useApplyEventPost();
     const cancelApplyMutation = useCancelApplyEventPost();
 
     if (isLoading) {
-        return (
-            <div className="flex items-center justify-center py-20">
-                <p className="text-grey-7">로딩 중...</p>
-            </div>
-        );
+        return <EmptyContent variant="loading" message={EMPTY_CONTENT_MESSAGES.LOADING.DEFAULT} />;
     }
 
     if (isError || !event) {
@@ -39,17 +38,23 @@ export default function EventDetailContent({ eventId }: EventDetailContentProps)
                 ? (error as { response?: { data?: { detail?: string } } }).response?.data?.detail
                 : null;
         return (
-            <div className={styles.errorContainer}>
-                <p className={styles.errorText}>
-                    이 이벤트를 불러올 수 없습니다.
-                    {errorDetail && process.env.NODE_ENV === 'development' && (
-                        <span className="mt-2 block font-mono text-xs text-grey-7">{errorDetail}</span>
-                    )}
-                </p>
-                <Link href={ROUTES.COMMUNITY.EVENT.MAIN} className={styles.errorBackLink}>
-                    목록으로 돌아가기
-                </Link>
-            </div>
+            <EmptyContent
+                variant="error"
+                message={EMPTY_CONTENT_MESSAGES.ERROR.EVENT}
+                subMessage={
+                    errorDetail && process.env.NODE_ENV === 'development' ? (
+                        <span className="font-mono text-xs text-grey-7">{errorDetail}</span>
+                    ) : undefined
+                }
+                action={
+                    <Button
+                        label="목록으로 돌아가기"
+                        size="M"
+                        type="primary"
+                        onClick={() => router.push(ROUTES.COMMUNITY.EVENT.MAIN)}
+                    />
+                }
+            />
         );
     }
 
@@ -152,12 +157,6 @@ export default function EventDetailContent({ eventId }: EventDetailContentProps)
 
 const styles = {
     imageContainer: cn('py-3 rounded-[16px] h-[158px] bg-grey-4'),
-    errorContainer: cn(
-        'flex flex-col items-center justify-center gap-4',
-        'px-4 py-20'
-    ),
-    errorText: cn('text-center body-6 text-grey-11'),
-    errorBackLink: cn('body-6 text-primary-light underline', 'hover:text-primary-shinhanblue'),
     container: cn('flex flex-col gap-3', 'px-4 py-3'),
     contentTitle: cn('body-5 text-grey-11 pt-3'),
     content: cn('body-8 text-grey-11', 'whitespace-pre-wrap'),

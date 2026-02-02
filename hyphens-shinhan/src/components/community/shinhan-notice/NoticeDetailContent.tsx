@@ -1,11 +1,15 @@
 'use client';
 
+import { useRouter } from "next/navigation";
 import { Icon } from "@/components/common/Icon";
+import Button from "@/components/common/Button";
+import EmptyContent from "@/components/common/EmptyContent";
 import { cn } from "@/utils/cn";
 import { formatDateYMD, startOfDay } from "@/utils/date";
 import { useNoticePost } from "@/hooks/posts/usePosts";
 import NoticeTitleHeader from "./NoticeTitleHeader";
 import Separator from "@/components/common/Separator";
+import { EMPTY_CONTENT_MESSAGES, ROUTES } from "@/constants";
 
 interface NoticeDetailContentProps {
     noticeId: string;
@@ -21,21 +25,27 @@ function isWithin3Days(created_at: string): boolean {
 
 /** 신한장학재단 공지사항 상세 콘텐츠 */
 export default function NoticeDetailContent({ noticeId }: NoticeDetailContentProps) {
+    const router = useRouter();
     const { data: notice, isLoading, isError } = useNoticePost(noticeId);
 
     if (isLoading) {
-        return (
-            <div className="flex items-center justify-center py-20">
-                <p className="text-grey-7">로딩 중...</p>
-            </div>
-        );
+        return <EmptyContent variant="loading" message={EMPTY_CONTENT_MESSAGES.LOADING.DEFAULT} />;
     }
 
     if (isError || !notice) {
         return (
-            <div className="flex items-center justify-center py-20">
-                <p className="text-state-red">공지사항을 불러오는 중 오류가 발생했습니다.</p>
-            </div>
+            <EmptyContent
+                variant="error"
+                message={EMPTY_CONTENT_MESSAGES.ERROR.NOTICE}
+                action={
+                    <Button
+                        label="목록으로 돌아가기"
+                        size="M"
+                        type="primary"
+                        onClick={() => router.push(ROUTES.COMMUNITY.NOTICE.MAIN)}
+                    />
+                }
+            />
         );
     }
 

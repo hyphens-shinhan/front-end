@@ -1,11 +1,13 @@
 'use client';
 
 import Link from "next/link";
+import Button from "@/components/common/Button";
+import EmptyContent from "@/components/common/EmptyContent";
 import Separator from "@/components/common/Separator";
 import EventCard from "./EventCard";
 import EventCardSkeleton from "./EventCardSkeleton";
 import { useInfiniteEventPosts } from "@/hooks/posts/usePosts";
-import { ROUTES } from "@/constants";
+import { EMPTY_CONTENT_MESSAGES, ROUTES } from "@/constants";
 import React from "react";
 
 export default function EventList() {
@@ -16,6 +18,7 @@ export default function EventList() {
         isFetchingNextPage,
         isLoading,
         isError,
+        refetch,
     } = useInfiniteEventPosts();
 
     if (isLoading) {
@@ -32,7 +35,20 @@ export default function EventList() {
     }
 
     if (isError) {
-        return <div className="p-4 text-center text-red-500">데이터를 불러오는 중 오류가 발생했습니다.</div>;
+        return (
+            <EmptyContent
+                variant="error"
+                message={EMPTY_CONTENT_MESSAGES.ERROR.LIST}
+                action={
+                    <Button
+                        label="다시 시도"
+                        size="M"
+                        type="primary"
+                        onClick={() => refetch()}
+                    />
+                }
+            />
+        );
     }
 
     const allEvents = data?.pages.flatMap(page => page.posts) || [];

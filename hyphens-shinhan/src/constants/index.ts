@@ -14,6 +14,9 @@ import shinhanLogoImg from '@/assets/icons/Icon-L/Vector/shinhan-logo.png'
 /** 라우트 상수 */
 export { ROUTES } from './routes'
 
+/** EmptyContent(로딩/빈/에러) 문구 상수 */
+export { EMPTY_CONTENT_MESSAGES } from './emptyContent'
+
 /** 바텀 네비게이션 아이템 상수
  * 사용자 역할에 따라 바텀 네비게이션 아이템 상수를 반환합니다.
  */

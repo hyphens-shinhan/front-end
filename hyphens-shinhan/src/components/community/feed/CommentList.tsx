@@ -5,8 +5,11 @@ import { cn } from "@/utils/cn";
 import { useComments } from "@/hooks/comments/useComments";
 import { useToggleLike, useToggleScrap } from "@/hooks/posts/usePostMutations";
 import Comment from "@/components/community/feed/Comment";
+import Button from "@/components/common/Button";
+import EmptyContent from "@/components/common/EmptyContent";
 import Separator from "@/components/common/Separator";
 import PostInteraction from "@/components/community/feed/PostInteraction";
+import { EMPTY_CONTENT_MESSAGES } from "@/constants";
 import { FeedPostResponse } from "@/types/posts";
 
 interface CommentListProps {
@@ -24,7 +27,7 @@ interface CommentListProps {
  * <CommentList postId={post.id} post={post} />
  */
 export default function CommentList({ postId, post, onReply, replyToCommentId }: CommentListProps) {
-    const { data, isLoading, isError } = useComments(postId);
+    const { data, isLoading, isError, refetch } = useComments(postId);
     const { mutate: toggleLike } = useToggleLike();
     const { mutate: toggleScrap } = useToggleScrap();
 
@@ -55,13 +58,23 @@ export default function CommentList({ postId, post, onReply, replyToCommentId }:
 
             {/** 댓글 리스트 */}
             {isLoading ? (
-                <div className={styles.loadingWrapper}>
-                    <p className={styles.loadingText}>댓글을 불러오는 중...</p>
-                </div>
+                <EmptyContent variant="loading" message={EMPTY_CONTENT_MESSAGES.LOADING.COMMENT} className="py-8" />
             ) : isError ? (
-                <p className={styles.errorText}>댓글을 불러오는 중 오류가 발생했습니다.</p>
+                <EmptyContent
+                    variant="error"
+                    message={EMPTY_CONTENT_MESSAGES.ERROR.COMMENT}
+                    className="py-8"
+                    action={
+                        <Button
+                            label="다시 시도"
+                            size="M"
+                            type="primary"
+                            onClick={() => refetch()}
+                        />
+                    }
+                />
             ) : comments.length === 0 ? (
-                <p className={styles.emptyText}>아직 댓글이 없습니다.</p>
+                <EmptyContent variant="empty" message={EMPTY_CONTENT_MESSAGES.EMPTY.COMMENT} className="py-8" />
             ) : (
                 <div className={styles.commentWrapper}>
                     {comments.map((comment) => (
@@ -98,24 +111,6 @@ const styles = {
     ),
     commentWrapper: cn(
         'flex flex-col py-1',
-    ),
-    loadingWrapper: cn(
-        'flex items-center justify-center',
-        'py-8',
-    ),
-    loadingText: cn(
-        'font-caption-caption3',
-        'text-grey-7',
-    ),
-    errorText: cn(
-        'p-4 text-center',
-        'font-caption-caption3',
-        'text-state-red',
-    ),
-    emptyText: cn(
-        'p-8 text-center',
-        'font-caption-caption3',
-        'text-grey-7',
     ),
     replyWrapper: cn(
         'flex flex-row items-center',

@@ -4,9 +4,11 @@ import { cn } from "@/utils/cn";
 
 import PostCardSkeleton from "@/components/community/feed/PostCardSkeleton";
 import ShinhanNoticeCard from "@/components/community/ShinhanNoticeCard";
+import Button from "@/components/common/Button";
+import EmptyContent from "@/components/common/EmptyContent";
 import Separator from "@/components/common/Separator";
 import PostFAB from "@/components/common/PostFAB";
-import { POST_FAB_ITEM_KEY } from "@/constants";
+import { EMPTY_CONTENT_MESSAGES, POST_FAB_ITEM_KEY } from "@/constants";
 import { useInfiniteFeedPosts } from "@/hooks/posts/usePosts";
 import React from "react";
 import PostCard from "@/components/community/feed/PostCard";
@@ -23,7 +25,8 @@ export default function PostList() {
         hasNextPage,
         isFetchingNextPage,
         isLoading,
-        isError
+        isError,
+        refetch,
     } = useInfiniteFeedPosts();
 
     if (isLoading) {
@@ -45,7 +48,22 @@ export default function PostList() {
             </div>
         );
     }
-    if (isError) return <div className="p-4 text-center text-red-500">데이터를 불러오는 중 오류가 발생했습니다.</div>;
+    if (isError) {
+        return (
+            <EmptyContent
+                variant="error"
+                message={EMPTY_CONTENT_MESSAGES.ERROR.LIST}
+                action={
+                    <Button
+                        label="다시 시도"
+                        size="M"
+                        type="primary"
+                        onClick={() => refetch()}
+                    />
+                }
+            />
+        );
+    }
 
     const allPosts = data?.pages.flatMap(page => page.posts) || [];
 

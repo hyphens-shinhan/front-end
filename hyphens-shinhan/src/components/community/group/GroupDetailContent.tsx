@@ -7,9 +7,11 @@ import EmptyContent from "@/components/common/EmptyContent";
 import GroupCard from "./GroupCard";
 import Tab from "@/components/common/Tab";
 import { useClub, useGalleryImages } from "@/hooks/clubs/useClubs";
+import { useJoinClub } from "@/hooks/clubs/useClubMutations";
 import { EMPTY_CONTENT_MESSAGES, ROUTES } from "@/constants";
 import MemberContent from "./MemberContent";
 import GalleryContent from "./GalleryContent";
+import BottomFixedButton from "@/components/common/BottomFixedButton";
 
 type DetailTab = '멤버' | '앨범';
 
@@ -32,6 +34,25 @@ export default function GroupDetailContent({ clubId }: GroupDetailContentProps) 
 
     const { data: club, isLoading, isError } = useClub(clubId);
     const { data: galleryData } = useGalleryImages(clubId);
+    const joinClub = useJoinClub();
+
+    const handleJoin = () => {
+        if (!club || club.is_member) return;
+        const profile = {
+            is_anonymous: club.anonymity === 'PRIVATE' ? true : false,
+            nickname: club.anonymity === 'PRIVATE' ? '' : null,
+            avatar_url: null,
+        };
+        joinClub.mutate(
+            { clubId, profile },
+            {
+                onSuccess: () => { },
+                onError: (error) => {
+                    alert(error instanceof Error ? error.message : '참여에 실패했어요.');
+                },
+            }
+        );
+    };
 
     if (isLoading) {
         return (
@@ -84,13 +105,23 @@ export default function GroupDetailContent({ clubId }: GroupDetailContentProps) 
                 {activeTab === '멤버' && <MemberContent />}
                 {activeTab === '앨범' && <GalleryContent />}
             </div>
+
+            {/** 하단 버튼 */}
+            <BottomFixedButton
+                label="참여하기"
+                size="M"
+                type="primary"
+                disabled={club.is_member || joinClub.isPending}
+                onClick={handleJoin}
+                bottomContent={<p className="font-caption-caption3 text-grey-9">소모임 채팅방에서 멤버와 대화할 수 있어요.</p>}
+            />
         </div>
     );
 }
 
 const styles = {
     container: cn(
-        'flex-1 px-4 pb-8 overflow-y-auto scrollbar-hide',
+        'flex-1 px-4 pb-40 overflow-y-auto scrollbar-hide',
     ),
     tabContainer: cn('flex gap-2'),
     tabContent: cn('py-4'),

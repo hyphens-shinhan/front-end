@@ -1,13 +1,17 @@
 'use client';
 
+import { useEffect, useRef, useState } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { cn } from "@/utils/cn";
 import Button from "@/components/common/Button";
 import EmptyContent from "@/components/common/EmptyContent";
 import GroupCard from "./GroupCard";
 import Tab from "@/components/common/Tab";
+import JoinProfileOptions from "@/components/common/JoinProfileOptions";
+import type { JoinProfileType } from "@/components/common/JoinProfileOptions";
 import { useClub, useGalleryImages } from "@/hooks/clubs/useClubs";
 import { useJoinClub } from "@/hooks/clubs/useClubMutations";
+import { useConfirmModalStore } from "@/stores";
 import { EMPTY_CONTENT_MESSAGES, ROUTES } from "@/constants";
 import MemberContent from "./MemberContent";
 import GalleryContent from "./GalleryContent";
@@ -35,12 +39,31 @@ export default function GroupDetailContent({ clubId }: GroupDetailContentProps) 
     const { data: club, isLoading, isError } = useClub(clubId);
     const { data: galleryData } = useGalleryImages(clubId);
     const joinClub = useJoinClub();
+    const { onOpen: openConfirmModal, updateOptions } = useConfirmModalStore();
+    const [joinProfileType, setJoinProfileType] = useState<JoinProfileType>('realname');
+    const [joinModalOpen, setJoinModalOpen] = useState(false);
+    const joinProfileTypeRef = useRef(joinProfileType);
+    joinProfileTypeRef.current = joinProfileType;
 
-    const handleJoin = () => {
+    useEffect(() => {
+        if (joinModalOpen) {
+            updateOptions({
+                content: (
+                    <JoinProfileOptions
+                        value={joinProfileType}
+                        onChange={setJoinProfileType}
+                    />
+                ),
+            });
+        }
+    }, [joinModalOpen, joinProfileType, updateOptions]);
+
+    const doJoin = () => {
         if (!club || club.is_member) return;
+        const isAnonymous = joinProfileTypeRef.current === 'anonymous';
         const profile = {
-            is_anonymous: club.anonymity === 'PRIVATE' ? true : false,
-            nickname: club.anonymity === 'PRIVATE' ? '' : null,
+            is_anonymous: isAnonymous,
+            nickname: isAnonymous ? '' : null,
             avatar_url: null,
         };
         joinClub.mutate(
@@ -52,6 +75,29 @@ export default function GroupDetailContent({ clubId }: GroupDetailContentProps) 
                 },
             }
         );
+    };
+
+    const handleJoin = () => {
+        if (!club || club.is_member) return;
+        setJoinProfileType('realname');
+        setJoinModalOpen(true);
+        openConfirmModal({
+            title: '그룹에 참여할\n프로필을 선택해주세요',
+            message: '참여 후 소모임 채팅방에서 멤버와 대화할 수 있어요.',
+            confirmText: '참여하기',
+            cancelText: '취소',
+            content: (
+                <JoinProfileOptions
+                    value={joinProfileType}
+                    onChange={setJoinProfileType}
+                />
+            ),
+            onConfirm: () => {
+                setJoinModalOpen(false);
+                doJoin();
+            },
+            onCancel: () => setJoinModalOpen(false),
+        });
     };
 
     if (isLoading) {
@@ -111,7 +157,8 @@ export default function GroupDetailContent({ clubId }: GroupDetailContentProps) 
                 label="참여하기"
                 size="M"
                 type="primary"
-                disabled={club.is_member || joinClub.isPending}
+                disabled={joinClub.isPending}
+                /** TODO: 이미 참여한 경우 버튼 채팅방 이동 */
                 onClick={handleJoin}
                 bottomContent={<p className="font-caption-caption3 text-grey-9">소모임 채팅방에서 멤버와 대화할 수 있어요.</p>}
             />

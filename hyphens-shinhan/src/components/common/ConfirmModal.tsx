@@ -3,21 +3,32 @@
 import { useEffect } from 'react'
 import { cn } from '@/utils/cn'
 import { useConfirmModalStore } from '@/stores'
+import { Icon } from './Icon'
+import Button from './Button'
 
 /**
  * 확인(Confirm) 모달 컴포넌트
  *
  * 전역 레이아웃에 한 번만 등록해두면,
- * 어디서든 useConfirmModalStore의 open으로 모달을 열 수 있습니다.
+ * 어디서든 useConfirmModalStore의 onOpen으로 모달을 열 수 있습니다.
+ * content를 넘기면 title/message 대신 또는 함께 커스텀 컨텐츠를 넣을 수 있습니다.
  *
  * @example
- * const { open } = useConfirmModalStore();
- * open({
+ * const { onOpen } = useConfirmModalStore();
+ * onOpen({
  *   title: '삭제하시겠습니까?',
  *   message: '삭제된 게시글은 복구할 수 없습니다.',
  *   confirmText: '삭제',
  *   isDanger: true,
  *   onConfirm: () => handleDelete(),
+ * });
+ *
+ * // 커스텀 컨텐츠 사용
+ * onOpen({
+ *   title: '프로필 선택',
+ *   content: <ProfileList />,
+ *   confirmText: '참여하기',
+ *   onConfirm: () => {},
  * });
  */
 export default function ConfirmModal() {
@@ -53,6 +64,7 @@ export default function ConfirmModal() {
   const {
     title,
     message,
+    content,
     confirmText = '확인',
     cancelText = '취소',
     onConfirm,
@@ -62,62 +74,88 @@ export default function ConfirmModal() {
 
   const handleConfirm = () => {
     onConfirm?.()
-    close()
+    onClose()
   }
 
   const handleCancel = () => {
     onCancel?.()
-    close()
+    onClose()
   }
 
   return (
     <div
-      className={cn(
-        'fixed inset-0 z-[60]',
-        'bg-black/50',
-        'flex items-center justify-center',
-        'animate-fade-in',
-        'px-10'
-      )}
+      className={styles.container}
       role="dialog"
       aria-modal="true"
     >
       {/* 모달 컨텐츠 */}
       <div
-        className={cn(
-          'w-full max-w-[320px]',
-          'bg-white rounded-[16px]',
-          'overflow-hidden',
-          'animate-scale-in'
-        )}
+        className={styles.modal}
       >
-        {/* 헤더 & 메시지 */}
-        <div className="px-6 pt-6 pb-4 text-center">
-          <h2 className="title-18 text-grey-11">{title}</h2>
-          {message && (
-            <p className="mt-2 body-8 text-grey-8">{message}</p>
-          )}
+        {/** 헤더: 제목 가운데, 닫기 버튼 오른쪽 상단 */}
+        <div className={styles.titleWrapper}>
+          <div className={styles.titleTextWrapper}>
+            {title.split('\n').map((line, index) => (
+              <p key={index} className={styles.titleStyle}>{line}</p>
+            ))}
+          </div>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation()
+              onClose()
+            }}
+            className={styles.closeButton}
+            aria-label="닫기"
+          >
+            <Icon name="IconLLineClose" />
+          </button>
         </div>
 
-        {/* 버튼 영역 */}
-        <div className="flex border-t border-grey-3">
-          <button
-            onClick={handleCancel}
-            className="flex-1 py-4 body-7 text-grey-8 border-r border-grey-3 active:bg-grey-2"
-          >
-            {cancelText}
-          </button>
-          <button
+        {/** 커스텀 컨텐츠 */}
+        {content != null && <div>{content}</div>}
+
+        {/** 버튼 영역 */}
+        <div className={styles.buttonWrapper}>
+          <Button
+            label={confirmText}
             onClick={handleConfirm}
-            className={cn(
-              'flex-1 py-4 body-7 active:bg-grey-2',
-              isDanger ? 'text-state-red' : 'text-primary-shinhanblue'
-            )}
-          >
-            {confirmText}
-          </button>
+            size="M"
+            type="primary"
+            className='px-9'
+          />
         </div>
       </div>
     </div>
   )
+}
+
+const styles = {
+  container: cn(
+    'fixed inset-0 z-[60]',
+    'bg-black/50',
+    'flex items-center justify-center',
+    'animate-fade-in',
+  ),
+  modal: cn(
+    'px-5 pt-7 pb-5',
+    'bg-white rounded-[16px]',
+    'overflow-hidden',
+    'animate-scale-in'
+  ),
+  titleStyle: cn(
+    'title-18 text-grey-11',
+  ),
+  titleWrapper: cn(
+    'relative flex items-start justify-center px-12 pb-4',
+  ),
+  titleTextWrapper: cn(
+    'flex flex-col items-center text-center',
+  ),
+  closeButton: cn(
+    'absolute right-0 top-0 p-1 -m-1 active:opacity-70',
+  ),
+  buttonWrapper: cn(
+    'flex flex-1 items-center justify-center mt-5',
+  ),
 }

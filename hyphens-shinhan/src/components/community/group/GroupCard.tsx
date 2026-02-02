@@ -49,7 +49,9 @@ export default function GroupCard({ club, variant = 'card' }: GroupCardProps) {
           <div className={styles.titleContainer}>
             <p className={cn(styles.title, isCard && styles.titleCard)}>{name}</p>
             {/** TODO: 인기 소모임인지 여부에 따라 아이콘 표시 */}
-            <Icon name="IconMVectorFire" />
+            <span className={styles.iconWrapper}>
+              <Icon name="IconMVectorFire" size={20} />
+            </span>
           </div>
           <p className={cn(styles.content, isCard && styles.contentCard)}>{description}</p>
         </div>
@@ -88,10 +90,11 @@ const styles = {
     'flex flex-col gap-3',
   ),
   titleContainer: cn(
-    'flex items-center gap-1',
+    'flex items-center gap-1 pr-4',
   ),
-  title: cn('title-18 text-grey-11'),
-  titleCard: cn('min-w-0 line-clamp-1'),
+  title: cn('title-18 text-grey-11 min-w-0'),
+  titleCard: cn('line-clamp-1'),
+  iconWrapper: cn('shrink-0'),
   content: cn('body-8 text-grey-11'),
   contentCard: cn('line-clamp-2'),
   memberPreviewContainer: cn(

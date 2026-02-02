@@ -94,7 +94,7 @@ export default function GroupList() {
                         <Link href={`${ROUTES.COMMUNITY.GROUP.DETAIL}/${club.id}`}>
                             <GroupCard club={club} />
                         </Link>
-                        {index < clubs.length - 1 && <Separator className="mx-4" />}
+                        <Separator className="mx-4" />
                     </div>
                 ))
             )}

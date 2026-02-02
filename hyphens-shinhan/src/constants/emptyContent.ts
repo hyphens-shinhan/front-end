@@ -9,6 +9,9 @@ export const EMPTY_CONTENT_MESSAGES = {
     COMMENT: '아직 댓글이 없습니다.',
     GROUP: '소모임이 없습니다.',
     MY_GROUP: '참여 중인 소모임이 없습니다.',
+    GALLERY: '등록된 앨범 사진이 없어요',
+    /** 앨범 탭에서 비멤버일 때 */
+    GALLERY_MEMBERS_ONLY: '앨범은 소모임 멤버에게만 공개됩니다.\n참여 후 사진을 확인해 보세요.',
   },
   ERROR: {
     /** 리스트 공통 (피드/공지/이벤트 목록) */

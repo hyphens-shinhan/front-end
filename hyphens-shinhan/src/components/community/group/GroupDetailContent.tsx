@@ -157,7 +157,7 @@ export default function GroupDetailContent({ clubId }: GroupDetailContentProps) 
             {/** 탭별 콘텐츠 */}
             <div className={styles.tabContent}>
                 {activeTab === '멤버' && <MemberContent />}
-                {activeTab === '앨범' && <GalleryContent />}
+                {activeTab === '앨범' && <GalleryContent images={galleryData?.images ?? []} isMember={club.is_member} />}
             </div>
 
             {/** 하단 버튼 */}

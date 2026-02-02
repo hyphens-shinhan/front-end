@@ -60,6 +60,7 @@ export default function NoticeDetailContent({ noticeId }: NoticeDetailContentPro
                     is_pinned={is_pinned}
                     showNewBadge={isWithin3Days(created_at)}
                     titleAs="h1"
+                    variant="detail"
                 />
                 {/** 조회수와 작성일 */}
                 <div className={styles.infoContainer}>

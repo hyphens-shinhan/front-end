@@ -43,6 +43,7 @@ export default function NoticeCard({ notice }: NoticeCardProps) {
                 title={title}
                 is_pinned={is_pinned}
                 showNewBadge={isWithin3Days}
+                variant="card"
             />
 
             {/** 본문 내용 */}

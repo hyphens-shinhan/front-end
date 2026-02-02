@@ -6,10 +6,7 @@ import Button from "@/components/common/Button";
 import EmptyContent from "@/components/common/EmptyContent";
 import { cn } from "@/utils/cn";
 import { formatEventTimeRange, getDaysUntil } from "@/utils/date";
-import {
-    getEventApplicationPhase,
-    getEventDetailBottomContent,
-} from "@/utils/eventApplication";
+import { getEventDetailBottomContent } from "@/utils/eventApplication";
 import { useEventPost } from "@/hooks/posts/usePosts";
 import { useApplyEventPost, useCancelApplyEventPost } from "@/hooks/posts/usePostMutations";
 import EventTitleHeader from "./EventTitleHeader";
@@ -71,19 +68,15 @@ export default function EventDetailContent({ eventId }: EventDetailContentProps)
         participants_count,
         max_participants,
         is_applied,
+        application_status,
     } = event;
 
-    const phase = getEventApplicationPhase({
-        application_start,
-        application_end,
-        event_status,
-    });
     const deadlineDate = application_end ?? event_end;
     const isApplying: boolean =
         applyMutation.isPending || cancelApplyMutation.isPending;
     const { topContentText, buttonLabel, isButtonDisabled } =
         getEventDetailBottomContent({
-            phase,
+            application_status,
             application_start,
             application_end,
             deadlineDate,

@@ -1,48 +1,9 @@
-import { EventStatus } from '@/types/posts'
+import type { ApplicationStatus } from '@/types/posts'
 import { formatDateYMD, formatTime } from './date'
 
-/** 이벤트 신청 구간: 신청 전 / 모집 중 / 마감 */
-export type EventApplicationPhase = 'before' | 'open' | 'closed'
-
-export interface GetEventApplicationPhaseParams {
-  application_start: string | null
-  application_end: string | null
-  event_status: EventStatus | null | undefined
-  now?: Date
-}
-
-/**
- * 현재 시점 기준 이벤트 신청 구간을 반환합니다.
- * - before: 신청 시작 전
- * - open: 모집 기간 (신청 가능)
- * - closed: 마감 (신청 종료 또는 event_status === CLOSED)
- */
-export function getEventApplicationPhase({
-  application_start,
-  application_end,
-  event_status,
-  now = new Date(),
-}: GetEventApplicationPhaseParams): EventApplicationPhase {
-  if (event_status != null && event_status === EventStatus.CLOSED) {
-    return 'closed'
-  }
-
-  const applicationStartDate = application_start
-    ? new Date(application_start)
-    : null
-  const applicationEndDate = application_end ? new Date(application_end) : null
-
-  if (applicationStartDate !== null && now < applicationStartDate) {
-    return 'before'
-  }
-  if (applicationEndDate !== null && now > applicationEndDate) {
-    return 'closed'
-  }
-  return 'open'
-}
-
 export interface GetEventDetailBottomContentParams {
-  phase: EventApplicationPhase
+  /** API에서 반환하는 신청 기간 기준 상태 */
+  application_status: ApplicationStatus
   application_start: string | null
   application_end: string | null
   deadlineDate: string
@@ -57,10 +18,13 @@ export interface EventDetailBottomContent {
 }
 
 /**
- * 이벤트 상세 하단(버튼 위 문구, 버튼 라벨, 비활성화 여부)을 구간·신청 상태에 따라 반환합니다.
+ * 이벤트 상세 하단(버튼 위 문구, 버튼 라벨, 비활성화 여부)을 API의 application_status 기준으로 반환합니다.
+ * - UPCOMING: 신청 시작 전
+ * - OPEN: 모집 기간 (신청 가능)
+ * - CLOSED: 마감
  */
 export function getEventDetailBottomContent({
-  phase,
+  application_status,
   application_start,
   application_end,
   deadlineDate,
@@ -68,17 +32,23 @@ export function getEventDetailBottomContent({
   isApplying,
 }: GetEventDetailBottomContentParams): EventDetailBottomContent {
   const topContentText =
-    phase === 'before' && application_start
+    application_status === 'UPCOMING' && application_start
       ? `모집 시작일 : ${formatDateYMD(application_start)} ${formatTime(application_start)}`
-      : phase === 'closed'
+      : application_status === 'CLOSED'
         ? '이미 마감된 이벤트입니다.'
         : `신청 마감일 : ${formatDateYMD(deadlineDate)} ${formatTime(deadlineDate)}`
 
   const buttonLabel =
-    phase === 'closed' ? '마감됨' : is_applied ? '신청 취소하기' : '신청하기'
+    application_status === 'CLOSED'
+      ? '마감됨'
+      : is_applied
+        ? '신청 취소하기'
+        : '신청하기'
 
   const isButtonDisabled =
-    phase === 'before' || phase === 'closed' || isApplying
+    application_status === 'UPCOMING' ||
+    application_status === 'CLOSED' ||
+    isApplying
 
   return { topContentText, buttonLabel, isButtonDisabled }
 }

@@ -16,13 +16,16 @@ export enum PostType {
  * 이벤트 진행 상태
  */
 export enum EventStatus {
+  /** 예정됨 */
+  SCHEDULED = 'SCHEDULED',
   /** 모집 중 / 진행 중 */
   OPEN = 'OPEN',
   /** 종료됨 */
   CLOSED = 'CLOSED',
-  /** 예정됨 */
-  SCHEDULED = 'SCHEDULED',
 }
+
+/** 신청 기간 기준 상태 (API에서 반환) */
+export type ApplicationStatus = 'UPCOMING' | 'OPEN' | 'CLOSED'
 
 /**
  * 게시글 작성자 정보
@@ -33,7 +36,7 @@ export interface PostAuthor {
   /** 작성자 이름/닉네임 */
   name: string
   /** 프로필 이미지 URL */
-  avatar_url?: string | null
+  avatar_url: string | null
   /** 현재 사용자가 이 작성자를 팔로우 중인지 여부 */
   is_following: boolean
 }
@@ -103,6 +106,10 @@ export interface EventPostResponse extends BasePostResponse {
   title: string
   /** 이벤트 상세 내용 */
   content: string
+  /** 신청 시작 일시 (ISO 8601) */
+  application_start: string | null
+  /** 신청 종료 일시 (ISO 8601) */
+  application_end: string | null
   /** 이벤트 시작 일시 (ISO 8601) */
   event_start: string
   /** 이벤트 종료 일시 (ISO 8601) */
@@ -115,15 +122,20 @@ export interface EventPostResponse extends BasePostResponse {
   participants_count: number
   /** 댓글 수 */
   comment_count: number
+  /** 현재 사용자 이벤트 신청 여부 */
+  is_applied: boolean
   /** 이벤트 진행 상태 */
-  event_status?: EventStatus | null
+  event_status: EventStatus
+  /** 신청 기간 기준 상태 (API에서 반환) */
+  application_status: ApplicationStatus
   /** 이벤트 카테고리 */
-  event_category?: string | null
+  event_category: string | null
   /** 최대 참여 가능 인원 */
-  max_participants?: number | null
+  max_participants: number | null
   /** 첨부 파일 URL 목록 */
-  file_urls?: string[] | null
-  // author 필드가 스키마에서 제외됨
+  file_urls: string[] | null
+  /** 첨부 이미지 URL 목록 */
+  image_urls: string[] | null
 }
 
 /**
@@ -182,9 +194,13 @@ export interface EventPostCreate {
   title: string
   /** 이벤트 내용 */
   content: string
-  /** 이벤트 시작 일시 */
+  /** 신청 시작 일시 (ISO 8601) */
+  application_start: string
+  /** 신청 종료 일시 (ISO 8601) */
+  application_end: string
+  /** 이벤트 시작 일시 (ISO 8601) */
   event_start: string
-  /** 이벤트 종료 일시 */
+  /** 이벤트 종료 일시 (ISO 8601) */
   event_end: string
   /** 이벤트 장소 */
   event_location: string
@@ -215,6 +231,42 @@ export type NoticePostUpdate = Partial<NoticePostCreate>
 /**
  * 이벤트 수정 요청 데이터 (상태 변경 가능)
  */
-export interface EventPostUpdate extends Partial<EventPostCreate> {
+export interface EventPostUpdate {
+  title?: string | null
+  content?: string | null
+  application_start?: string | null
+  application_end?: string | null
+  event_start?: string | null
+  event_end?: string | null
+  event_location?: string | null
+  is_mandatory?: boolean | null
   event_status?: EventStatus | null
+  event_category?: string | null
+  max_participants?: number | null
+  file_urls?: string[] | null
+  image_urls?: string[] | null
+}
+
+// --- 이벤트 신청 / 좋아요·스크랩 응답 타입 ---
+
+/** 이벤트 신청 성공 응답 */
+export interface EventApplyResponse {
+  message: 'Successfully applied for event'
+}
+
+/** 이벤트 신청 취소 응답 */
+export interface EventCancelApplyResponse {
+  message: 'Event application cancelled'
+}
+
+/** 좋아요 토글 응답 */
+export interface ToggleLikeResponse {
+  liked: boolean
+  like_count: number
+}
+
+/** 스크랩 토글 응답 */
+export interface ToggleScrapResponse {
+  scrapped: boolean
+  scrap_count: number
 }

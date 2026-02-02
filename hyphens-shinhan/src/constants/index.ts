@@ -9,10 +9,13 @@ import {
 import { ROUTES } from './routes'
 import { IconName } from '@/components/common/Icon'
 import { StaticImageData } from 'next/image'
-import shinhanNoticeImg from '@/assets/icons/Icon-L/Image/shinhan-logo.png'
+import shinhanLogoImg from '@/assets/icons/Icon-L/Vector/shinhan-logo.png'
 
 /** 라우트 상수 */
 export { ROUTES } from './routes'
+
+/** EmptyContent(로딩/빈/에러) 문구 상수 */
+export { EMPTY_CONTENT_MESSAGES } from './emptyContent'
 
 /** 바텀 네비게이션 아이템 상수
  * 사용자 역할에 따라 바텀 네비게이션 아이템 상수를 반환합니다.
@@ -178,12 +181,28 @@ export const CUSTOM_HEADER_CONFIG: Record<string, CustomHeaderConfig> = {
   [ROUTES.SEARCH]: {
     title: '검색',
   },
-  /** 신한장학재단 공지사항 페이지 헤더 설정 */
-  [ROUTES.COMMUNITY.SHINHAN_NOTICE]: {
+  /** 신한장학재단 공지 상세 - 목록보다 먼저 두어 /community/notice/[id] 매칭 */
+  [ROUTES.COMMUNITY.NOTICE.DETAIL_PREFIX]: {
+    title: '공지사항',
+    type: 'Center',
+    btnType: 'Back',
+    backHref: ROUTES.COMMUNITY.NOTICE.MAIN,
+    navItem: HEADER_ITEMS[HEADER_NAV_ITEM_KEY.MORE],
+  },
+  /** 신한장학재단 공지 목록 페이지 헤더 설정 */
+  [ROUTES.COMMUNITY.NOTICE.MAIN]: {
     title: '신한장학재단',
     type: 'Left',
-    img: shinhanNoticeImg,
+    img: shinhanLogoImg,
     backHref: ROUTES.COMMUNITY.MAIN,
+  },
+  /** 신한장학재단 이벤트 상세 - 목록보다 먼저 두어 /community/event/[id] 매칭 */
+  [ROUTES.COMMUNITY.EVENT.DETAIL_PREFIX]: {
+    title: '이벤트',
+    type: 'Center',
+    btnType: 'Back',
+    backHref: ROUTES.COMMUNITY.EVENT.MAIN,
+    navItem: HEADER_ITEMS[HEADER_NAV_ITEM_KEY.MORE],
   },
   /** 커뮤니티 피드 글쓰기 페이지 헤더 설정 */
   [ROUTES.COMMUNITY.FEED.CREATE]: {

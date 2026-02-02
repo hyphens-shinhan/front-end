@@ -17,9 +17,9 @@ export default function GroupList() {
             </div>
 
             <GroupCard />
-            <Separator />
+            <Separator className="mx-4" />
             <GroupCard />
-            <Separator />
+            <Separator className="mx-4" />
             <PostFAB type={POST_FAB_ITEM_KEY.ADD} />
         </div>
     );

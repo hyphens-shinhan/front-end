@@ -3,7 +3,7 @@
 import { cn } from "@/utils/cn";
 import { Icon } from "../common/Icon";
 import Image from "next/image";
-import shinhanLogo from "@/assets/icons/Icon-L/Image/shinhan-logo.png";
+import shinhanLogo from "@/assets/icons/Icon-L/Vector/shinhan-logo.png";
 import Link from "next/link";
 import { ROUTES } from "@/constants";
 
@@ -12,7 +12,7 @@ import { ROUTES } from "@/constants";
  */
 export default function ShinhanNoticeCard() {
     return (
-        <Link href={ROUTES.COMMUNITY.SHINHAN_NOTICE} className={styles.container}>
+        <Link href={ROUTES.COMMUNITY.NOTICE.MAIN} className={styles.container}>
             <div className={styles.logoWrapper}>
                 <Image src={shinhanLogo} alt="신한장학재단 로고" width={24} height={24} aria-label="신한장학재단 로고" />
             </div>

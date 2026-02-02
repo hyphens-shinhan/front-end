@@ -11,6 +11,10 @@ import {
   EventPostCreate,
   EventPostUpdate,
   EventStatus,
+  EventApplyResponse,
+  EventCancelApplyResponse,
+  ToggleLikeResponse,
+  ToggleScrapResponse,
 } from '@/types/posts'
 
 /**
@@ -171,6 +175,45 @@ export const PostService = {
   },
 
   /**
+   * [EVENT] 내가 신청한 이벤트 목록 조회
+   */
+  getMyAppliedEventPosts: async (
+    limit = 20,
+    offset = 0,
+  ): Promise<PostListResponse<EventPostResponse>> => {
+    const response = await apiClient.get<
+      PostListResponse<EventPostResponse>
+    >('/posts/event/me/applied', {
+      params: { limit, offset },
+    })
+    return response.data
+  },
+
+  /**
+   * [EVENT] 이벤트 신청
+   */
+  applyEventPost: async (
+    postId: string,
+  ): Promise<EventApplyResponse> => {
+    const response = await apiClient.post<EventApplyResponse>(
+      `/posts/event/${postId}/apply`,
+    )
+    return response.data
+  },
+
+  /**
+   * [EVENT] 이벤트 신청 취소
+   */
+  cancelApplyEventPost: async (
+    postId: string,
+  ): Promise<EventCancelApplyResponse> => {
+    const response = await apiClient.delete<EventCancelApplyResponse>(
+      `/posts/event/${postId}/apply`,
+    )
+    return response.data
+  },
+
+  /**
    * [EVENT] 이벤트 생성 (관리자 전용)
    */
   createEventPost: async (
@@ -211,29 +254,21 @@ export const PostService = {
 
   /**
    * 게시글 좋아요 토글
-   * @returns { liked: boolean, like_count: number }
    */
-  toggleLike: async (
-    postId: string,
-  ): Promise<{ liked: boolean; like_count: number }> => {
-    const response = await apiClient.post<{
-      liked: boolean
-      like_count: number
-    }>(`/posts/${postId}/like`)
+  toggleLike: async (postId: string): Promise<ToggleLikeResponse> => {
+    const response = await apiClient.post<ToggleLikeResponse>(
+      `/posts/${postId}/like`,
+    )
     return response.data
   },
 
   /**
    * 피드 게시글 스크랩 토글 (FEED 타입만 가능)
-   * @returns { scrapped: boolean, scrap_count: number }
    */
-  toggleScrap: async (
-    postId: string,
-  ): Promise<{ scrapped: boolean; scrap_count: number }> => {
-    const response = await apiClient.post<{
-      scrapped: boolean
-      scrap_count: number
-    }>(`/posts/${postId}/scrap`)
+  toggleScrap: async (postId: string): Promise<ToggleScrapResponse> => {
+    const response = await apiClient.post<ToggleScrapResponse>(
+      `/posts/${postId}/scrap`,
+    )
     return response.data
   },
 }

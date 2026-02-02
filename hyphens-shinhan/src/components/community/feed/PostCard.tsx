@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Icon } from "@/components/common/Icon";
 import { cn } from "@/utils/cn";
+import { formatDateKrWithTime } from "@/utils/date";
 import { ROUTES } from "@/constants";
 import FollowButton from "@/components/community/FollowButton";
 import MoreButton from "@/components/community/MoreButton";
@@ -27,12 +28,6 @@ export default function PostCard({ post }: PostCardProps) {
         image_urls,
         is_anonymous,
     } = post;
-
-    // 날짜 포맷팅 (예: 12월 14일 12:20)
-    const formatDate = (dateString: string) => {
-        const date = new Date(dateString);
-        return `${date.getMonth() + 1}월 ${date.getDate()}일 ${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`;
-    };
 
     return (
         <Link href={`${ROUTES.COMMUNITY.FEED.DETAIL}/${id}`} className={styles.container}>
@@ -63,7 +58,7 @@ export default function PostCard({ post }: PostCardProps) {
                         {is_anonymous ? '익명' : (author?.name || '알 수 없음')}
                     </p>
                     {/** 시간 */}
-                    <time className={styles.time}>{formatDate(created_at)}</time>
+                    <time className={styles.time}>{formatDateKrWithTime(created_at)}</time>
                     {/** 팔로우 버튼, 더보기 버튼 */}
                     <div className={styles.moreButtonWrapper}>
                         <MoreButton />

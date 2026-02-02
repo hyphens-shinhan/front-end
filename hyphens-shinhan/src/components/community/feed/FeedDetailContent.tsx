@@ -1,15 +1,18 @@
 'use client'
 
 import { useRef, useState } from "react";
-import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useFeedPost } from "@/hooks/posts/usePosts";
 import { useCreateComment } from "@/hooks/comments/useCommentMutations";
 import CommentList from "@/components/community/feed/CommentList";
 import PostContent from "@/components/community/feed/PostContent";
+import Button from "@/components/common/Button";
+import EmptyContent from "@/components/common/EmptyContent";
 import { cn } from "@/utils/cn";
+import { formatDateKrWithTime } from "@/utils/date";
 import FollowButton from "../FollowButton";
 import MessageInput from "@/components/common/MessageInput";
-import { INPUT_BAR_TYPE } from "@/constants";
+import { EMPTY_CONTENT_MESSAGES, INPUT_BAR_TYPE, ROUTES } from "@/constants";
 
 interface FeedDetailContentProps {
     postId: string;
@@ -21,6 +24,7 @@ interface FeedDetailContentProps {
  * <FeedDetailContent postId="abc-123" />
  */
 export default function FeedDetailContent({ postId }: FeedDetailContentProps) {
+    const router = useRouter();
     const { data: post, isLoading, isError } = useFeedPost(postId);
     const { mutate: createComment, isPending: isSubmitting } = useCreateComment();
 
@@ -31,12 +35,8 @@ export default function FeedDetailContent({ postId }: FeedDetailContentProps) {
     const [replyTo, setReplyTo] = useState<{ commentId: string; authorName: string } | null>(null);
     // 댓글 입력창 ref (답글 달기 클릭 시 포커스용)
     const commentInputRef = useRef<HTMLInputElement>(null);
-
-    // 날짜 포맷팅 (예: 12월 14일 12:20)
-    const formatDate = (dateString: string) => {
-        const date = new Date(dateString);
-        return `${date.getMonth() + 1}월 ${date.getDate()}일 ${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`;
-    };
+    // 전송 중복 방지 (isSubmitting 상태보다 먼저 체크)
+    const sendingRef = useRef(false);
 
     // 답글 달기 클릭 핸들러
     const handleReply = (commentId: string, authorName: string) => {
@@ -48,46 +48,53 @@ export default function FeedDetailContent({ postId }: FeedDetailContentProps) {
         setReplyTo({ commentId, authorName });
     };
 
-    // 댓글 전송 핸들러
+    // 댓글 전송 핸들러 (연타/엔터+클릭 중복 요청 방지)
     const handleSendComment = () => {
-        if (!comment.trim() || isSubmitting) return;
+        if (!comment.trim() || isSubmitting || sendingRef.current) return;
+        sendingRef.current = true;
 
-        createComment(
-            {
-                postId,
-                data: {
-                    content: comment.trim(),
-                    is_anonymous: isAnonymous,
-                    parent_id: replyTo?.commentId, // 답글인 경우 부모 댓글 ID
-                },
+        const payload = {
+            postId,
+            data: {
+                content: comment.trim(),
+                is_anonymous: isAnonymous,
+                parent_id: replyTo?.commentId ?? undefined,
             },
-            {
-                onSuccess: () => {
-                    setComment(''); // 입력창 초기화
-                    setIsAnonymous(false); // 익명 버튼 초기화
-                    setReplyTo(null); // 답글 모드 초기화
-                },
-                onError: (error) => {
-                    console.error('댓글 작성 실패:', error);
-                    alert('댓글 작성에 실패했습니다.');
-                },
-            }
-        );
+        };
+
+        createComment(payload, {
+            onSuccess: () => {
+                setComment('');
+                setIsAnonymous(false);
+                setReplyTo(null);
+                sendingRef.current = false;
+            },
+            onError: (error) => {
+                console.error('댓글 작성 실패:', error);
+                alert('댓글 작성에 실패했습니다.');
+                sendingRef.current = false;
+            },
+        });
     };
 
     if (isLoading) {
-        return (
-            <div className="flex items-center justify-center py-20">
-                <p className="text-grey-7">로딩 중...</p>
-            </div>
-        );
+        return <EmptyContent variant="loading" message={EMPTY_CONTENT_MESSAGES.LOADING.DEFAULT} />;
     }
 
     if (isError || !post) {
         return (
-            <div className="flex items-center justify-center py-20">
-                <p className="text-state-red">게시글을 불러오는 중 오류가 발생했습니다.</p>
-            </div>
+            <EmptyContent
+                variant="error"
+                message={EMPTY_CONTENT_MESSAGES.ERROR.FEED}
+                action={
+                    <Button
+                        label="목록으로 돌아가기"
+                        size="M"
+                        type="primary"
+                        onClick={() => router.push(ROUTES.COMMUNITY.MAIN)}
+                    />
+                }
+            />
         );
     }
 
@@ -110,6 +117,7 @@ export default function FeedDetailContent({ postId }: FeedDetailContentProps) {
                                 src={author.avatar_url}
                                 alt={author.name || '프로필'}
                                 fill
+                                sizes="40px"
                                 className="rounded-full object-cover"
                             />
                         )} */}
@@ -118,7 +126,7 @@ export default function FeedDetailContent({ postId }: FeedDetailContentProps) {
                         <p className={styles.userName}>
                             {is_anonymous ? '익명' : (author?.name || '알 수 없음')}
                         </p>
-                        <time className={styles.time}>{formatDate(created_at)}</time>
+                        <time className={styles.time}>{formatDateKrWithTime(created_at)}</time>
                     </div>
                     {/** 익명이 아니고, 팔로우하지 않은 경우에만 팔로우 버튼 표시 */}
                     {!is_anonymous && author && !author.is_following && (
@@ -195,7 +203,7 @@ const styles = {
         'flex-1',
     ),
     inputWrapper: cn(
-        'flex flex-col',
+        'flex flex-col fixed bottom-0 left-0 right-0',
         'bg-white',
     ),
 }

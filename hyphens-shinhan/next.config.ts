@@ -31,9 +31,22 @@ const nextConfig: NextConfig = {
       fileLoaderRule.exclude = /\.svg$/i
     }
 
-    // 2. SVGR 로더를 규칙 최상단에 추가
+    // 2. 다색 벡터 아이콘(Vector 폴더) - convertColors 미적용으로 원본 fill 유지
+    config.module.rules.unshift({
+      test: /\.svg$/i,
+      include: /[\\/]Vector[\\/]/,
+      use: [
+        {
+          loader: '@svgr/webpack',
+          options: { icon: true },
+        },
+      ],
+    })
+
+    // 3. 일반 SVG - currentColor로 통일 (단색 아이콘)
     config.module.rules.push({
       test: /\.svg$/i,
+      exclude: /[\\/]Vector[\\/]/,
       use: [
         {
           loader: '@svgr/webpack',

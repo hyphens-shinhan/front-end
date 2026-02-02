@@ -44,7 +44,7 @@ export default function BottomFixedButton({
 
 const styles = {
     container: cn(
-        'fixed bottom-0 left-0 right-0',
+        'w-full max-w-md mx-auto fixed bottom-0 left-0 right-0',
         'flex flex-col gap-2',
         'px-4 pb-12 pt-4',
         'bg-white'

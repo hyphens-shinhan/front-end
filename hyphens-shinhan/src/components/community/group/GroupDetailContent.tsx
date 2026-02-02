@@ -41,9 +41,12 @@ export default function GroupDetailContent({ clubId }: GroupDetailContentProps) 
     const joinClub = useJoinClub();
     const { onOpen: openConfirmModal, updateOptions } = useConfirmModalStore();
     const [joinProfileType, setJoinProfileType] = useState<JoinProfileType>('realname');
+    const [anonymousNickname, setAnonymousNickname] = useState('');
     const [joinModalOpen, setJoinModalOpen] = useState(false);
     const joinProfileTypeRef = useRef(joinProfileType);
+    const anonymousNicknameRef = useRef(anonymousNickname);
     joinProfileTypeRef.current = joinProfileType;
+    anonymousNicknameRef.current = anonymousNickname;
 
     useEffect(() => {
         if (joinModalOpen) {
@@ -52,18 +55,20 @@ export default function GroupDetailContent({ clubId }: GroupDetailContentProps) 
                     <JoinProfileOptions
                         value={joinProfileType}
                         onChange={setJoinProfileType}
+                        anonymousNickname={anonymousNickname}
+                        onAnonymousNicknameChange={setAnonymousNickname}
                     />
                 ),
             });
         }
-    }, [joinModalOpen, joinProfileType, updateOptions]);
+    }, [joinModalOpen, joinProfileType, anonymousNickname, updateOptions]);
 
     const doJoin = () => {
         if (!club || club.is_member) return;
         const isAnonymous = joinProfileTypeRef.current === 'anonymous';
         const profile = {
             is_anonymous: isAnonymous,
-            nickname: isAnonymous ? '' : null,
+            nickname: isAnonymous ? anonymousNicknameRef.current : null,
             avatar_url: null,
         };
         joinClub.mutate(
@@ -80,6 +85,7 @@ export default function GroupDetailContent({ clubId }: GroupDetailContentProps) 
     const handleJoin = () => {
         if (!club || club.is_member) return;
         setJoinProfileType('realname');
+        setAnonymousNickname('');
         setJoinModalOpen(true);
         openConfirmModal({
             title: '그룹에 참여할\n프로필을 선택해주세요',
@@ -90,6 +96,8 @@ export default function GroupDetailContent({ clubId }: GroupDetailContentProps) 
                 <JoinProfileOptions
                     value={joinProfileType}
                     onChange={setJoinProfileType}
+                    anonymousNickname={anonymousNickname}
+                    onAnonymousNicknameChange={setAnonymousNickname}
                 />
             ),
             onConfirm: () => {

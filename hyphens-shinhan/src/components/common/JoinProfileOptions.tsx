@@ -55,13 +55,22 @@ export default function JoinProfileOptions({
     onAnonymousNicknameChange?.(getRandomNickname(anonymousNickname))
   }
 
+  const handleOptionKeyDown = (e: React.KeyboardEvent, optionValue: JoinProfileType) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      handleOptionClick(optionValue)
+    }
+  }
+
   return (
     <div className={styles.optionWrapper}>
       {OPTIONS.map((option) => (
-        <button
+        <div
           key={option.value}
-          type="button"
+          role="button"
+          tabIndex={0}
           onClick={() => handleOptionClick(option.value)}
+          onKeyDown={(e) => handleOptionKeyDown(e, option.value)}
           className={cn(
             styles.option,
             value === option.value && styles.optionSelected,
@@ -100,7 +109,7 @@ export default function JoinProfileOptions({
               </div>
             </div>
           )}
-        </button>
+        </div>
       ))}
     </div>
   )
@@ -109,7 +118,7 @@ export default function JoinProfileOptions({
 const styles = {
   optionWrapper: cn('flex flex-col gap-1.5'),
   option: cn(
-    'flex flex-col items-stretch body-7 w-full text-left',
+    'flex flex-col items-stretch body-7 w-full text-left cursor-pointer',
     'px-4 py-3 gap-0',
     'border border-grey-3 rounded-[16px]',
     'active:opacity-90'

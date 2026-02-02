@@ -166,8 +166,8 @@ export default function GroupDetailContent({ clubId }: GroupDetailContentProps) 
                 size="M"
                 type="primary"
                 disabled={joinClub.isPending}
-                /** TODO: 이미 참여한 경우 버튼 채팅방 이동 */
-                onClick={handleJoin}
+                /** TODO: 멤버가 아니면 참여 모달, 멤버면 채팅방 이동 등 (TODO) */
+                onClick={club.is_member ? undefined : handleJoin}
                 bottomContent={<p className="font-caption-caption3 text-grey-9">소모임 채팅방에서 멤버와 대화할 수 있어요.</p>}
             />
         </div>

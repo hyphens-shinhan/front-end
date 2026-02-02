@@ -1,6 +1,6 @@
 import { cn } from "@/utils/cn";
-import { Icon } from "../common/Icon";
-import InfoTag from "../common/InfoTag";
+import { Icon } from "@/components/common/Icon";
+import InfoTag from "@/components/common/InfoTag";
 
 /** 소모임 모집글 카드 컴포넌트
  * TODO: api 호출해서 데이터를 카드에 뿌려줘야 함, 파이어 아이콘 디자인 수정 요청 필요

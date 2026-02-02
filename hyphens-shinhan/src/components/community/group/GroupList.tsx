@@ -1,8 +1,8 @@
 import { cn } from "@/utils/cn";
-import Separator from "../common/Separator";
+import Separator from "@/components/common/Separator";
 import GroupCard from "./GroupCard";
 import { POST_FAB_ITEM_KEY } from "@/constants";
-import PostFAB from "../common/PostFAB";
+import PostFAB from "@/components/common/PostFAB";
 
 export default function GroupList() {
     return (

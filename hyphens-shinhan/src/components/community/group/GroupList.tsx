@@ -1,5 +1,6 @@
 'use client';
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import { cn } from "@/utils/cn";
 import Button from "@/components/common/Button";
@@ -7,7 +8,7 @@ import EmptyContent from "@/components/common/EmptyContent";
 import PillTabs from "@/components/common/PillTabs";
 import Separator from "@/components/common/Separator";
 import GroupCard from "./GroupCard";
-import { EMPTY_CONTENT_MESSAGES, POST_FAB_ITEM_KEY } from "@/constants";
+import { EMPTY_CONTENT_MESSAGES, POST_FAB_ITEM_KEY, ROUTES } from "@/constants";
 import PostFAB from "@/components/common/PostFAB";
 import { useInfiniteClubs } from "@/hooks/clubs/useClubs";
 import type { ClubCategory } from "@/types/clubs";
@@ -90,7 +91,9 @@ export default function GroupList() {
             ) : (
                 clubs.map((club, index) => (
                     <div key={club.id}>
-                        <GroupCard club={club} />
+                        <Link href={`${ROUTES.COMMUNITY.GROUP.DETAIL}/${club.id}`}>
+                            <GroupCard club={club} />
+                        </Link>
                         {index < clubs.length - 1 && <Separator className="mx-4" />}
                     </div>
                 ))

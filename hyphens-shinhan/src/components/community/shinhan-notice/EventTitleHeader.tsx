@@ -67,10 +67,10 @@ const styles = {
   /** 리스트(카드): gap 16px */
   containerCard: cn('gap-4'),
   /** 상세: gap 12px */
-  containerDetail: cn('gap-3'),
+  containerDetail: cn('flex-wrap gap-3'),
   tagContainer: cn('flex gap-1.5'),
   title: cn('title-18 text-grey-11'),
   titleCard: cn('line-clamp-1 truncate'),
-  extra: cn('flex flex-col gap-1 font-caption-caption3 text-state-red'),
-  titleContainer: cn('flex gap-2 items-center'),
+  extra: cn('flex gap-1 font-caption-caption3 text-state-red'),
+  titleContainer: cn('flex flex-wrap gap-2 items-center'),
 };

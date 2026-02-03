@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { cn } from "@/utils/cn";
 import { formatEventTimeRange } from "@/utils/date";
 import { Icon } from "@/components/common/Icon";
@@ -8,13 +9,29 @@ interface EventCardProps {
     event: EventPostResponse;
 }
 
+function areEventPropsEqual(prev: EventCardProps, next: EventCardProps): boolean {
+    const a = prev.event;
+    const b = next.event;
+    if (a.id !== b.id) return false;
+    if (a.title !== b.title) return false;
+    if (a.content !== b.content) return false;
+    if (a.event_start !== b.event_start) return false;
+    if (a.event_end !== b.event_end) return false;
+    if (a.event_location !== b.event_location) return false;
+    if (a.event_status !== b.event_status) return false;
+    if (a.event_category !== b.event_category) return false;
+    if (a.participants_count !== b.participants_count) return false;
+    if (a.max_participants !== b.max_participants) return false;
+    return true;
+}
+
 /** 이벤트 카드 컴포넌트
  * @param {EventCardProps} props - 이벤트 데이터
  * @returns {React.ReactNode} 이벤트 카드 컴포넌트
  * @example
  * <EventCard event={eventData} />
  */
-export default function EventCard({ event }: EventCardProps) {
+function EventCard({ event }: EventCardProps) {
     const {
         title,
         content,
@@ -72,3 +89,5 @@ const styles = {
         'text-grey-9 body-8',
     ),
 };
+
+export default memo(EventCard, areEventPropsEqual);

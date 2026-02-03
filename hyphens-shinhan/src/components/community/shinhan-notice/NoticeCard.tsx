@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Icon } from "@/components/common/Icon";
 import { cn } from "@/utils/cn";
 import { formatDateYMD, startOfDay } from "@/utils/date";
@@ -8,13 +9,29 @@ interface NoticeCardProps {
     notice: NoticePostResponse;
 }
 
+function areNoticePropsEqual(prev: NoticeCardProps, next: NoticeCardProps): boolean {
+    const a = prev.notice;
+    const b = next.notice;
+    if (a.id !== b.id) return false;
+    if (a.title !== b.title) return false;
+    if (a.content !== b.content) return false;
+    if (a.is_pinned !== b.is_pinned) return false;
+    if (a.view_count !== b.view_count) return false;
+    if (a.created_at !== b.created_at) return false;
+    const aUrls = a.file_urls ?? [];
+    const bUrls = b.file_urls ?? [];
+    if (aUrls.length !== bUrls.length) return false;
+    if (aUrls.some((url, i) => url !== bUrls[i])) return false;
+    return true;
+}
+
 /** 신한 장학재단 공지 카드 컴포넌트
  * @param {NoticeCardProps} props - 공지사항 데이터
  * @returns {React.ReactNode} 신한 장학재단 공지 카드 컴포넌트
  * @example
  * <NoticeCard notice={noticeData} />
  */
-export default function NoticeCard({ notice }: NoticeCardProps) {
+function NoticeCard({ notice }: NoticeCardProps) {
     const {
         title,
         content,
@@ -86,3 +103,5 @@ const styles = {
         'font-caption-caption4 text-grey-8',
     ),
 };
+
+export default memo(NoticeCard, areNoticePropsEqual);

@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { CommentService } from '@/services/comments'
 import { commentKeys } from './useComments'
+import { postKeys } from '@/hooks/posts/usePosts'
 import { CommentCreate, CommentUpdate } from '@/types/comments'
 
 /**
@@ -12,9 +13,12 @@ export const useCreateComment = () => {
     mutationFn: ({ postId, data }: { postId: string; data: CommentCreate }) =>
       CommentService.createComment(postId, data),
     onSuccess: (_, { postId }) => {
-      // postId로 시작하는 모든 댓글 목록 쿼리 invalidate
       queryClient.invalidateQueries({
         queryKey: ['comments', 'list', postId],
+      })
+      // 게시글 상세(comment_count) 갱신 → PostInteraction 댓글 수 실시간 반영
+      queryClient.invalidateQueries({
+        queryKey: postKeys.detail(postId),
       })
     },
   })
@@ -62,6 +66,10 @@ export const useDeleteComment = () => {
     onSuccess: (_, { postId }) => {
       queryClient.invalidateQueries({
         queryKey: ['comments', 'list', postId],
+      })
+      // 게시글 상세(comment_count) 갱신
+      queryClient.invalidateQueries({
+        queryKey: postKeys.detail(postId),
       })
     },
   })

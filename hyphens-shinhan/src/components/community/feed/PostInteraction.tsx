@@ -1,5 +1,6 @@
 'use client';
 
+import { memo } from "react";
 import { cn } from "@/utils/cn";
 import { Icon } from "@/components/common/Icon";
 
@@ -27,7 +28,7 @@ interface PostInteractionProps {
  *   onScrapClick={() => {}}
  * />
  */
-export default function PostInteraction({
+const PostInteraction = memo(function PostInteraction({
     likeCount,
     commentCount,
     scrapCount,
@@ -64,7 +65,9 @@ export default function PostInteraction({
             </button>
         </div>
     );
-}
+});
+
+export default PostInteraction;
 
 const styles = {
     container: cn(

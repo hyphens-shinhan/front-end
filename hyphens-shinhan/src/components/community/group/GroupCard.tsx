@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { cn } from "@/utils/cn";
 import { Icon } from "@/components/common/Icon";
 import InfoTag from "@/components/common/InfoTag";
@@ -16,12 +17,30 @@ interface GroupCardProps {
   variant?: 'card' | 'detail';
 }
 
+/** 소모임 모집글 카드 컴포넌트 동일성 비교 함수 */
+function areGroupCardPropsEqual(prev: GroupCardProps, next: GroupCardProps): boolean {
+  const a = prev.club;
+  const b = next.club;
+  if (prev.variant !== next.variant) return false;
+  if (a.id !== b.id) return false;
+  if (a.name !== b.name) return false;
+  if (a.description !== b.description) return false;
+  if (a.category !== b.category) return false;
+  if (a.is_member !== b.is_member) return false;
+  if (a.member_count !== b.member_count) return false;
+  const aImgs = a.recent_member_images ?? [];
+  const bImgs = b.recent_member_images ?? [];
+  if (aImgs.length !== bImgs.length) return false;
+  if (aImgs.some((url, i) => url !== bImgs[i])) return false;
+  return true;
+}
+
 /** 소모임 모집글 카드 컴포넌트 (목록·상세 공통)
  * @example
  * <GroupCard club={clubData} />
  * <GroupCard club={clubData} variant="detail" />
  */
-export default function GroupCard({ club, variant = 'card' }: GroupCardProps) {
+function GroupCard({ club, variant = 'card' }: GroupCardProps) {
   const {
     name,
     description,
@@ -109,3 +128,5 @@ const styles = {
     'body-10 font-caption-caption-1 text-grey-2',
   ),
 };
+
+export default memo(GroupCard, areGroupCardPropsEqual);

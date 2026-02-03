@@ -1,4 +1,6 @@
 'use client'
+
+import { memo } from "react";
 import { cn } from "@/utils/cn";
 import { formatDateKrWithTime } from "@/utils/date";
 import { Icon } from "@/components/common/Icon";
@@ -18,7 +20,7 @@ interface CommentProps {
  * @example
  * <Comment comment={commentData} />
  */
-export default function Comment({ comment, onReply, isReplyingTo = false }: CommentProps) {
+function Comment({ comment, onReply, isReplyingTo = false }: CommentProps) {
     const {
         id,
         author,
@@ -90,6 +92,8 @@ export default function Comment({ comment, onReply, isReplyingTo = false }: Comm
         </div>
     );
 }
+
+export default memo(Comment);
 
 const styles = {
     container: cn(

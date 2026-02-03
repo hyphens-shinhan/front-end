@@ -17,6 +17,9 @@ import PostCard from "@/components/community/feed/PostCard";
  * @returns {React.ReactNode} 커뮤니티 게시판 리스트 컴포넌트
  * @example
  * <PostList />
+ *
+ * 가상화: 현재 20개 단위 무한스크롤 + PostCard memo로 10~20개 구간은 충분. 아이템이 50개 이상 누적되고
+ * 스크롤/프레임 이슈가 생기면 @tanstack/react-virtual 도입 검토.
  */
 export default function PostList() {
     const {

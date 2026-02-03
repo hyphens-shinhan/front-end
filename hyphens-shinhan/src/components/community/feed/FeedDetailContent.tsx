@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState } from "react";
+import { useRef, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useFeedPost } from "@/hooks/posts/usePosts";
 import { useCreateComment } from "@/hooks/comments/useCommentMutations";
@@ -38,15 +38,14 @@ export default function FeedDetailContent({ postId }: FeedDetailContentProps) {
     // 전송 중복 방지 (isSubmitting 상태보다 먼저 체크)
     const sendingRef = useRef(false);
 
-    // 답글 달기 클릭 핸들러
-    const handleReply = (commentId: string, authorName: string) => {
-        // PWA/모바일: 사용자 제스처와 같은 호출 스택에서 먼저 focus() 호출해야 키보드가 뜸
+    // 답글 달기 클릭 핸들러 (참조 고정 → CommentList/Comment 불필요 리렌더 방지)
+    const handleReply = useCallback((commentId: string, authorName: string) => {
         const input = commentInputRef.current;
         if (input) {
             input.focus({ preventScroll: false });
         }
         setReplyTo({ commentId, authorName });
-    };
+    }, []);
 
     // 댓글 전송 핸들러 (연타/엔터+클릭 중복 요청 방지)
     const handleSendComment = () => {

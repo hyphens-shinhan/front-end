@@ -163,7 +163,7 @@ export const HEADER_CONFIG_BY_BOTTOM_NAV: Record<NavLink, HeaderConfig> = {
 export interface CustomHeaderConfig {
   type?: 'Center' | 'Left'
   btnType?: 'Back' | 'Close'
-  title: string
+  title?: string
   logo?: IconName
   img?: string | StaticImageData
   navItem?: HeaderNavItem
@@ -231,6 +231,12 @@ export const CUSTOM_HEADER_CONFIG: Record<string, CustomHeaderConfig> = {
     btnType: 'Back',
     navItem: HEADER_ITEMS[HEADER_NAV_ITEM_KEY.MORE],
     backHref: ROUTES.COMMUNITY.GROUP.MAIN,
+  },
+  /** MY활동 자치회 상세 페이지 (제목은 useHeaderStore.setCustomTitle으로 '4월 활동' 등 월별 표시) */
+  [ROUTES.SCHOLARSHIP.REPORT.ACTIVITY]: {
+    type: 'Left',
+    btnType: 'Back',
+    backHref: ROUTES.SCHOLARSHIP.MAIN,
   },
 } as const
 

@@ -1,13 +1,15 @@
 import { cn } from "@/utils/cn";
 import StatusTag from "../common/StatusTag";
 import { Icon } from "../common/Icon";
+import Link from "next/link";
+import { ROUTES } from "@/constants";
 
 /** MY활동 월별 활동 카드 컴포넌트 
  * 월, 학업 모니터링 태그, 월별 title, 상태 태그
 */
 export default function ActivityCard({ isCurrentMonth, isMonitoring }: { isCurrentMonth: boolean, isMonitoring: boolean }) {
     return (
-        <div className={cn(styles.container, isCurrentMonth && styles.currentMonth)}>
+        <Link href={`${ROUTES.SCHOLARSHIP.REPORT.ACTIVITY}/1`} className={cn(styles.container, isCurrentMonth && styles.currentMonth)}>
             <div className={styles.infoContainer}>
                 <p className={styles.month}>4월</p>
                 {/** 학업 모니터링 태그 */}
@@ -19,13 +21,13 @@ export default function ActivityCard({ isCurrentMonth, isMonitoring }: { isCurre
             </div>
             <p className={styles.title}>활동 계획과 규칙</p>
             <StatusTag status="completed" />
-        </div>
+        </Link>
     );
 }
 
 const styles = {
     container: cn(
-        'flex w-full flex-col gap-[7px]',
+        'flex w-full aspect-square flex-col justify-between',
         'p-3',
         'bg-grey-1-1 rounded-[16px]',
         'border border-grey-2',

@@ -1,6 +1,6 @@
 'use client'
 
-import React from "react";
+import React, { useCallback, memo } from "react";
 import { cn } from "@/utils/cn";
 import { useComments } from "@/hooks/comments/useComments";
 import { useToggleLike, useToggleScrap } from "@/hooks/posts/usePostMutations";
@@ -26,20 +26,20 @@ interface CommentListProps {
  * @example
  * <CommentList postId={post.id} post={post} />
  */
-export default function CommentList({ postId, post, onReply, replyToCommentId }: CommentListProps) {
+function CommentList({ postId, post, onReply, replyToCommentId }: CommentListProps) {
     const { data, isLoading, isError, refetch } = useComments(postId);
     const { mutate: toggleLike } = useToggleLike();
     const { mutate: toggleScrap } = useToggleScrap();
 
     const comments = data?.comments || [];
 
-    const handleLikeClick = () => {
+    const handleLikeClick = useCallback(() => {
         toggleLike(postId);
-    };
+    }, [postId, toggleLike]);
 
-    const handleScrapClick = () => {
+    const handleScrapClick = useCallback(() => {
         toggleScrap(postId);
-    };
+    }, [postId, toggleScrap]);
 
     return (
         <div className={styles.container}>
@@ -116,3 +116,5 @@ const styles = {
         'flex flex-row items-center',
     ),
 };
+
+export default memo(CommentList);

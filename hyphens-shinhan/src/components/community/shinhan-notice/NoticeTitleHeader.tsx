@@ -28,8 +28,12 @@ export default function NoticeTitleHeader({
     return (
         <header className={cn(styles.container, isCard && styles.containerCard, className)}>
             <TitleTag className={cn(styles.title, isCard && styles.titleCard)}>{title}</TitleTag>
-            {is_pinned && <Icon name="IconLBoldPin" size={20} className={styles.pinIcon} />}
-            {showNewBadge && <Icon name="IconMVectorNewbadge" size={20} />}
+            <div className={styles.iconWrapper}>
+                {/** 핀 아이콘 */}
+                {is_pinned && isCard && <Icon name="IconLBoldPin" size={20} className={styles.pinIcon} />}
+                {/** New 뱃지 */}
+                {showNewBadge && isCard && <Icon name="IconMVectorNewbadge" size={20} />}
+            </div>
         </header>
     );
 }
@@ -37,7 +41,8 @@ export default function NoticeTitleHeader({
 const styles = {
     container: cn('flex items-center gap-1 pr-4'),
     containerCard: cn('min-w-0'),
-    title: cn('title-18 text-grey-11'),
-    titleCard: cn('min-w-0 line-clamp-1'),
+    title: cn('title-18 text-grey-11 flex-1 min-w-0'),
+    titleCard: cn('line-clamp-1'),
+    iconWrapper: cn('flex items-center shrink-0 gap-0.5'),
     pinIcon: cn('text-grey-9'),
 };

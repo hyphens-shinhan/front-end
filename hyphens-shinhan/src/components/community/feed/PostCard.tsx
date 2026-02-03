@@ -1,3 +1,4 @@
+import { memo } from "react";
 import Link from "next/link";
 import { Icon } from "@/components/common/Icon";
 import { cn } from "@/utils/cn";
@@ -12,12 +13,34 @@ interface PostCardProps {
     post: FeedPostResponse;
 }
 
+/** 게시글 카드 컴포넌트 동일성 비교 함수 */
+function arePostPropsEqual(prev: PostCardProps, next: PostCardProps): boolean {
+    const a = prev.post;
+    const b = next.post;
+    if (a.id !== b.id) return false;
+    if (a.content !== b.content) return false;
+    if (a.created_at !== b.created_at) return false;
+    if (a.like_count !== b.like_count) return false;
+    if (a.comment_count !== b.comment_count) return false;
+    if (a.is_anonymous !== b.is_anonymous) return false;
+    const aUrls = a.image_urls ?? [];
+    const bUrls = b.image_urls ?? [];
+    if (aUrls.length !== bUrls.length) return false;
+    if (aUrls.some((url, i) => url !== bUrls[i])) return false;
+    const aAuthor = a.author;
+    const bAuthor = b.author;
+    if (aAuthor?.id !== bAuthor?.id) return false;
+    if (aAuthor?.name !== bAuthor?.name) return false;
+    if (aAuthor?.is_following !== bAuthor?.is_following) return false;
+    return true;
+}
+
 /** 커뮤니티 게시글 카드
  * @param {PostCardProps} props - 게시글 데이터
  * @example
  * <PostCard post={postData} />
  */
-export default function PostCard({ post }: PostCardProps) {
+function PostCard({ post }: PostCardProps) {
     const {
         id,
         author,
@@ -135,4 +158,6 @@ const styles = {
         'font-caption-caption3',
         'text-grey-9',
     ),
-}
+};
+
+export default memo(PostCard, arePostPropsEqual);

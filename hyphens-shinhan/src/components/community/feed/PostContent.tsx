@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import Image from 'next/image'
 import { cn } from '@/utils/cn'
 
@@ -19,7 +20,7 @@ interface PostContentProps {
  *
  * PostCard, FeedDetailContent 등에서 공통으로 사용
  */
-export default function PostContent({
+const PostContent = memo(function PostContent({
   content,
   imageUrls,
   lineClamp,
@@ -62,7 +63,9 @@ export default function PostContent({
       )}
     </div>
   )
-}
+})
+
+export default PostContent
 
 const styles = {
   container: cn('flex flex-col gap-4'),

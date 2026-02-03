@@ -1,4 +1,6 @@
 'use client';
+
+import { memo } from "react";
 import { ROUTES, NAV_ITEMS_BY_ROLE } from "@/constants";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -6,8 +8,14 @@ import { cn } from "@/utils/cn";
 import { UserRole } from "@/types";
 import { Icon } from "@/components/common/Icon";
 
-export default function BottomNav({ userRole = 'YB' }: { userRole?: UserRole }) {
-    const pathname = usePathname();
+/**
+ * pathname·userRole만 prop으로 받는 바텀네비 (라우터 훅 미사용).
+ * 레이아웃에서 pathname을 넘겨 쓰면 searchParams만 바뀔 때 리렌더되지 않음.
+ */
+export const BottomNavContent = memo(function BottomNavContent({
+    pathname,
+    userRole = 'YB',
+}: { pathname: string; userRole?: UserRole }) {
     const navItems = NAV_ITEMS_BY_ROLE[userRole];
 
     return (
@@ -40,6 +48,16 @@ export default function BottomNav({ userRole = 'YB' }: { userRole?: UserRole }) 
             </div>
         </nav>
     );
+});
+
+/** pathname 미전달 시 usePathname() 사용 (다른 페이지에서 사용용). */
+function BottomNav({
+    pathname: pathnameProp,
+    userRole = 'YB',
+}: { pathname?: string; userRole?: UserRole } = {}) {
+    const pathnameFromRouter = usePathname();
+    const pathname = pathnameProp ?? pathnameFromRouter;
+    return <BottomNavContent pathname={pathname} userRole={userRole} />;
 }
 
 const styles = {
@@ -59,4 +77,6 @@ const styles = {
         'font-caption-caption6',
         isActive ? 'text-grey-10' : 'text-grey-8',
     ),
-}
+};
+
+export default BottomNav;

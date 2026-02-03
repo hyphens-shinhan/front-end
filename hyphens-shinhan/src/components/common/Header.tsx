@@ -1,18 +1,17 @@
 'use client';
 
+import { memo } from "react";
 import { Icon } from "./Icon";
 import { cn } from "@/utils/cn";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { getHeaderConfig } from "@/utils/header";
 
-/**  
- * 헤더 컴포넌트
- * 현재 경로에 따라 자동으로 헤더 설정을 적용합니다.
- * @returns 헤더 컴포넌트 또는 null
+/**
+ * pathname만 prop으로 받는 헤더 (라우터 훅 미사용).
+ * 레이아웃에서 pathname을 넘겨 쓰면 searchParams만 바뀔 때 리렌더되지 않음.
  */
-export default function Header() {
-    const pathname = usePathname();
+export const HeaderContent = memo(function HeaderContent({ pathname }: { pathname: string }) {
     const headerConfig = getHeaderConfig(pathname);
 
     if (!headerConfig) {
@@ -48,6 +47,13 @@ export default function Header() {
             )}
         </header>
     );
+});
+
+/** 현재 경로에 따라 헤더 설정을 적용. pathname 미전달 시 usePathname() 사용 (다른 페이지에서 사용용). */
+function Header({ pathname: pathnameProp }: { pathname?: string } = {}) {
+    const pathnameFromRouter = usePathname();
+    const pathname = pathnameProp ?? pathnameFromRouter;
+    return <HeaderContent pathname={pathname} />;
 }
 
 const styles = {
@@ -65,4 +71,6 @@ const styles = {
         'flex items-center justify-center w-6 h-6',
         'text-grey-9',
     ),
-}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+};
+
+export default memo(Header);

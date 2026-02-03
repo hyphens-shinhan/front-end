@@ -25,7 +25,7 @@ export default function ActivityCard({ isCurrentMonth, isMonitoring }: { isCurre
 
 const styles = {
     container: cn(
-        'flex w-fit flex-col gap-[7px]',
+        'flex w-full flex-col gap-[7px]',
         'p-3',
         'bg-grey-1-1 rounded-[16px]',
         'border border-grey-2',

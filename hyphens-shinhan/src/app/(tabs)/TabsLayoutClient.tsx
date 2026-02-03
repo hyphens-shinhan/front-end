@@ -40,7 +40,7 @@ const styles = {
         'relative',
     ),
     content: cn(
-        'relative',
+        'relative overflow-y-auto scrollbar-hide',
         'h-full',
     ),
 };

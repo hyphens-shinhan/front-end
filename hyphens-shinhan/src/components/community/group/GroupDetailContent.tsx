@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { cn } from "@/utils/cn";
 import Button from "@/components/common/Button";
@@ -21,6 +21,8 @@ type DetailTab = '멤버' | '앨범';
 
 const DETAIL_TABS: DetailTab[] = ['멤버', '앨범'];
 
+const BOTTOM_BUTTON_HINT = <p className="font-caption-caption3 text-grey-9">소모임 채팅방에서 멤버와 대화할 수 있어요.</p>;
+
 interface GroupDetailContentProps {
     clubId: string;
 }
@@ -32,12 +34,16 @@ export default function GroupDetailContent({ clubId }: GroupDetailContentProps) 
     const searchParams = useSearchParams();
     const activeTab = (searchParams.get('tab') as DetailTab) || '멤버';
 
-    const handleTabClick = (tab: DetailTab) => {
-        router.replace(`${pathname}?tab=${tab}`, { scroll: false });
-    };
+    const handleTabClick = useCallback(
+        (tab: DetailTab) => {
+            router.replace(`${pathname}?tab=${tab}`, { scroll: false });
+        },
+        [pathname, router]
+    );
 
     const { data: club, isLoading, isError } = useClub(clubId);
     const { data: galleryData } = useGalleryImages(clubId);
+    const galleryImages = useMemo(() => galleryData?.images ?? [], [galleryData?.images]);
     const joinClub = useJoinClub();
     const { onOpen: openConfirmModal, updateOptions } = useConfirmModalStore();
     const [joinProfileType, setJoinProfileType] = useState<JoinProfileType>('realname');
@@ -157,7 +163,7 @@ export default function GroupDetailContent({ clubId }: GroupDetailContentProps) 
             {/** 탭별 콘텐츠 */}
             <div className={styles.tabContent}>
                 {activeTab === '멤버' && <MemberContent />}
-                {activeTab === '앨범' && <GalleryContent images={galleryData?.images ?? []} isMember={club.is_member} />}
+                {activeTab === '앨범' && <GalleryContent images={galleryImages} isMember={club.is_member} />}
             </div>
 
             {/** 하단 버튼 */}
@@ -168,7 +174,7 @@ export default function GroupDetailContent({ clubId }: GroupDetailContentProps) 
                 disabled={joinClub.isPending}
                 /** TODO: 멤버가 아니면 참여 모달, 멤버면 채팅방 이동 등 (TODO) */
                 onClick={club.is_member ? undefined : handleJoin}
-                bottomContent={<p className="font-caption-caption3 text-grey-9">소모임 채팅방에서 멤버와 대화할 수 있어요.</p>}
+                bottomContent={BOTTOM_BUTTON_HINT}
             />
         </div>
     );

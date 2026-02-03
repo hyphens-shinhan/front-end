@@ -1,3 +1,4 @@
+import { memo } from "react";
 import Image from "next/image";
 import { cn } from "@/utils/cn";
 import EmptyContent from "@/components/common/EmptyContent";
@@ -12,7 +13,7 @@ interface GalleryContentProps {
 }
 
 /** 소모임 앨범 컴포넌트 */
-export default function GalleryContent({ images, isMember }: GalleryContentProps) {
+function GalleryContent({ images, isMember }: GalleryContentProps) {
   if (!isMember) {
     return (
       <EmptyContent
@@ -48,6 +49,8 @@ export default function GalleryContent({ images, isMember }: GalleryContentProps
     </div>
   );
 }
+
+export default memo(GalleryContent);
 
 const styles = {
   container: cn("grid grid-cols-3 gap-1.5"),

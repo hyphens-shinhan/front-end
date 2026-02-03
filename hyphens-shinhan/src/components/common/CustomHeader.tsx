@@ -1,5 +1,6 @@
 'use client';
 
+import { useCallback, memo } from "react";
 import { HeaderNavItem } from "@/types";
 import { useHeaderStore } from "@/stores";
 import { Icon } from "./Icon";
@@ -51,68 +52,26 @@ function NavItemRenderer({ item, onClick }: NavItemRendererProps) {
     );
 }
 
-/**
- * 커스텀 헤더 컴포넌트
- *
- * ─────────────────────────────────────────────────────────────
- * - 정적 설정 (title, navItem 등): 경로 기반 설정 (CUSTOM_HEADER_CONFIG)
- * - 동적 핸들러 (onClick, onBack): useHeaderStore
- * ─────────────────────────────────────────────────────────────
- *
- * @example
- * // 레이아웃에서 사용
- * <CustomHeader />
- *
- * @example
- * // 페이지에서 핸들러 설정
- * const { setHandlers, resetHandlers } = useHeaderStore()
- *
- * useEffect(() => {
- *   setHandlers({ onClick: handleComplete })
- *   return () => resetHandlers()
- * }, [])
- */
-export default function CustomHeader() {
-    const router = useRouter();
-    const pathname = usePathname();
-
-    // ─────────────────────────────────────────────────────────────
-    // 설정: 경로 기반(정적) + store(핸들러)
-    // ─────────────────────────────────────────────────────────────
+/** pathname·handleBack·onClick만 prop으로 받는 헤더 (라우터/스토어 훅 미사용). searchParams만 바뀔 때 리렌더 방지용. */
+export const CustomHeaderContent = memo(function CustomHeaderContent({
+    pathname,
+    handleBack,
+    onClick,
+}: {
+    pathname: string;
+    handleBack: () => void;
+    onClick?: () => void;
+}) {
     const pathConfig = getCustomHeaderConfig(pathname);
-    const { onBack, onClick } = useHeaderStore((state) => state.handlers);
-
     const displayType = pathConfig?.type || 'Left';
     const displayBtnType = pathConfig?.btnType || 'Back';
     const displayTitle = pathConfig?.title || '';
     const displayLogo = pathConfig?.logo;
     const displayImg = pathConfig?.img;
     const displayNavItem = pathConfig?.navItem;
-    const displayBackHref = pathConfig?.backHref;
 
-    // ─────────────────────────────────────────────────────────────
-    // 뒤로가기 핸들러: onBack > backHref > router.back()
-    // ─────────────────────────────────────────────────────────────
-    const handleBack = () => {
-        if (onBack) {
-            onBack();
-            return;
-        }
-
-        if (displayBackHref) {
-            router.push(displayBackHref);
-            return;
-        }
-
-        router.back();
-    };
-
-    // ─────────────────────────────────────────────────────────────
-    // 렌더링
-    // ─────────────────────────────────────────────────────────────
     return (
         <header className={styles.container}>
-            {/* ─────────── 좌측: 뒤로가기/닫기 버튼 ─────────── */}
             <button onClick={handleBack} aria-label="뒤로가기">
                 <span aria-hidden="true">
                     {displayBtnType === 'Back' ? (
@@ -123,7 +82,6 @@ export default function CustomHeader() {
                 </span>
             </button>
 
-            {/* ─────────── 중앙: 로고/이미지 + 타이틀 ─────────── */}
             <div className={cn(styles.wrapper, styles[displayType])}>
                 {displayImg ? (
                     <div className={styles.logo}>
@@ -140,11 +98,45 @@ export default function CustomHeader() {
                 <h1 className={displayType === 'Center' ? styles.centerTitle : styles.title}>{displayTitle}</h1>
             </div>
 
-            {/* ─────────── 우측: 네비게이션 ─────────── */}
             {displayNavItem && (
                 <NavItemRenderer item={displayNavItem} onClick={onClick} />
             )}
         </header>
+    );
+});
+
+/**
+ * 커스텀 헤더 컴포넌트
+ *
+ * - 정적 설정: 경로 기반 (CUSTOM_HEADER_CONFIG)
+ * - 동적 핸들러: useHeaderStore
+ * - pathname 변경 시에만 Content 리렌더 (searchParams만 바뀔 때 방지)
+ */
+export default function CustomHeader() {
+    const router = useRouter();
+    const pathname = usePathname();
+    const { onBack, onClick } = useHeaderStore((state) => state.handlers);
+    const pathConfig = getCustomHeaderConfig(pathname);
+    const displayBackHref = pathConfig?.backHref;
+
+    const handleBack = useCallback(() => {
+        if (onBack) {
+            onBack();
+            return;
+        }
+        if (displayBackHref) {
+            router.push(displayBackHref);
+            return;
+        }
+        router.back();
+    }, [onBack, displayBackHref, router]);
+
+    return (
+        <CustomHeaderContent
+            pathname={pathname}
+            handleBack={handleBack}
+            onClick={onClick}
+        />
     );
 }
 

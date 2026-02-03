@@ -26,9 +26,9 @@ const styles = {
         'bg-white'
     ),
     main: cn(
-        'flex-1 min-h-0',
+        'flex-1 min-h-0 overflow-hidden',
     ),
     content: cn(
-        'flex-1 h-full min-h-0',
+        'flex-1 h-full min-h-0 overflow-y-auto overflow-x-hidden scrollbar-hide',
     ),
 };

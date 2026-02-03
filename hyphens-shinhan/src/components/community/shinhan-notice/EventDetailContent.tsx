@@ -150,7 +150,11 @@ export default function EventDetailContent({ eventId }: EventDetailContentProps)
 
 const styles = {
     imageContainer: cn('py-3 rounded-[16px] h-[158px] bg-grey-4'),
-    container: cn('flex flex-col gap-3', 'px-4 py-3'),
+    container: cn(
+        'flex flex-col gap-3',
+        'px-4 py-3',
+        'pb-40', // 하단 고정 버튼에 가리지 않도록 스크롤 여유 공간
+    ),
     contentTitle: cn('body-5 text-grey-11 pt-3'),
     content: cn('body-8 text-grey-11', 'whitespace-pre-wrap'),
     infoContainer: cn('flex flex-col gap-1.5'),

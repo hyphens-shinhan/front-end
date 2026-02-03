@@ -4,7 +4,6 @@ import { cn } from "@/utils/cn";
 import ActivityCard from "./ActivityCard";
 import YearSelector from "../common/YearSelector";
 import { useState } from "react";
-import ActivityBanner from "./ActivityBanner";
 import ActivityForm from "./ActivityForm";
 
 export default function ActivityList() {
@@ -22,7 +21,7 @@ export default function ActivityList() {
             {/** 활동 카드 리스트 */}
             <div className={styles.container}>
                 {Array.from({ length: 9 }).map((_, index) => (
-                    <ActivityCard key={index} />
+                    <ActivityCard key={index} isCurrentMonth={index === 0} isMonitoring={index === 0} />
                 ))}
             </div>
 

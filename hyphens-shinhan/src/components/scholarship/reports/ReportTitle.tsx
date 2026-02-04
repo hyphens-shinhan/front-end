@@ -8,6 +8,8 @@ interface ReportTitleProps {
     checkIcon?: boolean
     /** 체크 여부 */
     isChecked?: boolean
+    /** 컨테이너 클래스 이름 */
+    className?: string
 }
 /** 활동 정보 제목 컴포넌트
  * @param title - 제목
@@ -16,9 +18,9 @@ interface ReportTitleProps {
  * - ob 작성 페이지에서는 체크 표시 활성화
  * - yb, yb와 ob 완료 페이지에서는 체크 표시 비활성화
 */
-export default function ReportTitle({ title, checkIcon = false, isChecked = false }: ReportTitleProps) {
+export default function ReportTitle({ title, checkIcon = false, isChecked = false, className }: ReportTitleProps) {
     return (
-        <div className={styles.container}>
+        <div className={cn(styles.container, className)}>
             {/** 제목 */}
             <h2 className={styles.title}>{title}</h2>
             {/** 체크 표시 

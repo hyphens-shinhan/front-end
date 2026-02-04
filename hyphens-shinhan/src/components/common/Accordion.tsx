@@ -42,7 +42,7 @@ export default function Accordion({ title, iconName, isOpen = false, onClick }: 
 const styles = {
     container: cn(
         'flex items-center gap-2',
-        'px-4 py-2',
+        'py-2',
     ),
     icon: cn(
         'text-grey-9',

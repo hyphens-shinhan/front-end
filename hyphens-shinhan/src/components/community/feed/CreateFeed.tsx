@@ -167,8 +167,8 @@ export default function CreateFeed() {
 }
 
 const styles = {
-  container: cn('flex flex-col h-full relative overflow-y-auto scrollbar-hide'),
-  contentContainer: cn('flex flex-col p-4 gap-5.5'),
+  container: cn('flex flex-col h-full relative overflow-y-auto scrollbar-hide px-4'),
+  contentContainer: cn('flex flex-col gap-5.5'),
   contentInput: cn(
     'w-full',
     'body-6 text-grey-11',

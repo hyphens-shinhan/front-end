@@ -97,3 +97,17 @@ export type {
   AcademicMonitoringDisableResponse,
   AcademicMonitoringYearsResponse,
 } from './academic'
+
+// MARK: - Reports (활동 보고서) API 타입
+export type {
+  AttendanceStatus,
+  ConfirmationStatus,
+  ReceiptItemCreate,
+  ReceiptCreate,
+  AttendanceItem,
+  ReportCreate,
+  ReceiptItemResponse,
+  ReceiptResponse,
+  AttendanceResponse,
+  ReportResponse,
+} from './reports'

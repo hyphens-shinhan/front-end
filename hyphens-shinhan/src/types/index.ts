@@ -46,3 +46,17 @@ export interface InputBarConfig {
   sendButton?: boolean
   showAnonymous?: boolean // 익명 버튼 표시 여부
 }
+
+// MARK: - Activities (활동) API 타입
+export type {
+  CouncilReportStatus,
+  AcademicReportStatus,
+  MandatoryActivityType,
+  MandatoryActivityStatus,
+  MandatoryReportStatus,
+  AppliedEventStatus,
+  AppliedEventsStatus,
+  MonthlyActivityStatus,
+  YearlyActivitySummary,
+  ActivitiesSummaryResponse,
+} from './activities'

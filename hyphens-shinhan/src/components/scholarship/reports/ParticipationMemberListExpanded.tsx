@@ -8,36 +8,63 @@ import type { AttendanceResponse } from '@/types/reports'
 export type ParticipationVariant = 'YB_LEADER' | 'YB'
 
 interface ParticipationMemberListExpandedProps {
-  /** YB_LEADER: 팀장 뷰(팀장 pt-12 pb-18, 팀원 행에 불참 처리 아이콘) / YB: 팀원 뷰 */
+  /** YB_LEADER: 팀장 뷰(팀원 행에 출석 Toggle) / YB: 팀원 뷰 */
   variant: ParticipationVariant
   /** API 출석 목록 (user_id, status, confirmation) */
   attendance?: AttendanceResponse[]
+  /** 출석 여부 (user_id → 출석 여부). 부모에서 관리 */
+  attendanceStatusByUser: Record<string, boolean>
+  /** 출석 여부 변경 시 호출 */
+  onAttendanceChange: (userId: string, checked: boolean) => void
 }
 
 /** 버튼 클릭 시 펼쳐지는 멤버 목록. variant에 따라 팀장/팀원 영역 스타일·표시가 다름 */
 export default function ParticipationMemberListExpanded({
   variant,
   attendance = [],
+  attendanceStatusByUser,
+  onAttendanceChange,
 }: ParticipationMemberListExpandedProps) {
   const isLeader = variant === 'YB_LEADER'
-  const displayName = (userId: string) =>
-    userId.length > 8 ? `${userId.slice(0, 8)}…` : userId
+  const leader = attendance[0]
 
   return (
     <div className={styles.container}>
       <div className={styles.teamSection}>
-        <p className={styles.sectionLabel}>참여 멤버</p>
-        {attendance.length === 0 ? (
+        {/** 팀장 행 */}
+        {leader && (
+          <>
+            <p className={styles.sectionLabel}>팀장</p>
+            <ParticipationMemberRow
+              key={leader.user_id}
+              name={leader.user_id}
+              status={attendanceToDisplayStatus(leader)}
+              showToggle={isLeader}
+              attendanceStatus={attendanceStatusByUser[leader.user_id] ?? false}
+              onToggle={(checked) => onAttendanceChange(leader.user_id, checked)}
+            />
+          </>
+        )}
+        {/** 팀원 행 */}
+        <div className={styles.sectionContent}>
+          <p className={styles.sectionLabel}>팀원</p>
+          <p className={styles.sectionDescription}>활동에 불참한 팀원의 토글을 off 상태로 바꾸어주세요!</p>
+        </div>
+
+        {/** 팀원 목록 */}
+        {attendance.length <= 1 ? (
           <p className={cn(styles.sectionLabel, 'text-grey-6')}>
             참석 명단이 없습니다.
           </p>
         ) : (
-          attendance.map((a) => (
+          attendance.slice(1).map((a) => (
             <ParticipationMemberRow
               key={a.user_id}
-              name={displayName(a.user_id)}
+              name={a.user_id}
               status={attendanceToDisplayStatus(a)}
-              showCloseIcon={isLeader}
+              showToggle={isLeader}
+              attendanceStatus={attendanceStatusByUser[a.user_id] ?? false}
+              onToggle={(checked) => onAttendanceChange(a.user_id, checked)}
             />
           ))
         )}
@@ -52,4 +79,6 @@ const styles = {
   ),
   sectionLabel: cn('body-7 text-grey-8'),
   teamSection: cn('flex flex-col gap-4'),
+  sectionDescription: cn('body-8 text-grey-8'),
+  sectionContent: cn('flex flex-col gap-2'),
 }

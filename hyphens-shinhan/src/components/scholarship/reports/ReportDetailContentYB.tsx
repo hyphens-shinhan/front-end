@@ -16,6 +16,8 @@ import ActivityInfo from './ActivityInfo'
 import ActivityPhotos from './ActivityPhotos'
 import ParticipationStatus from './ParticipationStatus'
 import { cn } from '@/utils/cn'
+import Image from 'next/image'
+import characterImg from '@/assets/character.png'
 
 interface ReportDetailContentYBProps {
   /** 연도 (URL searchParams 또는 목록에서 전달) */
@@ -116,9 +118,14 @@ export default function ReportDetailContentYB({
         <EmptyContent
           variant="error"
           message={EMPTY_CONTENT_MESSAGES.ERROR.REPORT}
+          subMessage={
+            <div className={'flex items-center justify-center p-6'}>
+              <Image src={characterImg} alt="신한 캐릭터" width={100} height={100} />
+            </div>
+          }
           action={
             <Button
-              label="목록으로 돌아가기"
+              label="팀장에게 요청하기"
               size="M"
               type="primary"
               onClick={backToList}
@@ -142,8 +149,19 @@ export default function ReportDetailContentYB({
         location={report.location}
         content={report.content}
       />
-      {/* 등록된 사진 + 추가 업로드 (최대 5장) */}
-      <ActivityPhotos imageUrls={report.image_urls ?? undefined} />
+      {/* 등록된 사진 (없으면 EmptyContent) */}
+      {report.image_urls?.length ? (
+        <ActivityPhotos imageUrls={report.image_urls} />
+      ) : (
+        <div className={styles.photosSection}>
+          <h2 className={styles.photosSectionTitle}>활동 사진</h2>
+          <EmptyContent
+            variant="empty"
+            message={EMPTY_CONTENT_MESSAGES.EMPTY.ACTIVITY_PHOTOS}
+            className="py-6 border border-grey-2 rounded-[16px]"
+          />
+        </div>
+      )}
       <Separator />
       {/* 출석률, 참여 멤버 목록, 불참/출석 버튼 (미제출 시만) */}
       <ParticipationStatus
@@ -162,4 +180,6 @@ const styles = {
   container: cn('flex flex-col px-4 pb-40'),
   /** EmptyContent 아래 목록으로 돌아가기 버튼 래퍼 */
   actionWrap: cn('flex justify-center px-4 pb-8'),
+  photosSection: cn('pb-6'),
+  photosSectionTitle: cn('title-16 text-grey-11 py-4.5'),
 }

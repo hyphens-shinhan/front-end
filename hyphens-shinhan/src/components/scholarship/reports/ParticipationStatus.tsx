@@ -1,29 +1,74 @@
 'use client'
 
-import Button from "@/components/common/Button"
-import ParticipationMemberList from "./ParticipationMemberList"
-import { cn } from "@/utils/cn"
+import Button from '@/components/common/Button'
+import ParticipationMemberList from './ParticipationMemberList'
+import { cn } from '@/utils/cn'
+import { useConfirmAttendance, useRejectAttendance } from '@/hooks/reports/useReportsMutations'
+import type { AttendanceResponse } from '@/types/reports'
+
+interface ParticipationStatusProps {
+  reportId: string
+  attendance: AttendanceResponse[]
+  /** 제출 완료 시 true — 불참/출석 버튼 숨김 */
+  isSubmitted?: boolean
+}
 
 /** 활동 보고서 상세 - 참여 현황 섹션 (출석률, 참석 멤버 미리보기, 불참/출석 버튼) */
-export default function ParticipationStatus() {
-    return (
-        <div className={styles.section}>
-            <h2 className={styles.sectionTitle}>참여 현황</h2>
-            {/* 출석 진행률 - YB에서만 보이는 섹션 */}
-            <div className={styles.progressWrap}>
-                <p className={styles.progressLabel}>참석 확인 9 / 10</p>
-                <div className={styles.progressTrack} role="progressbar" aria-valuenow={9} aria-valuemin={0} aria-valuemax={10}>
-                    <div className={styles.progressFill} style={{ width: '90%' }} />
-                </div>
-            </div>
-            <ParticipationMemberList />
-            {/* 불참 / 출석 처리 버튼 - YB에서만 보이는 섹션 */}
-            <div className={styles.buttonRow}>
-                <Button label='불참' size='L' type='warning' fullWidth />
-                <Button label='출석' size='L' type='primary' fullWidth />
-            </div>
+export default function ParticipationStatus({
+  reportId,
+  attendance,
+  isSubmitted = false,
+}: ParticipationStatusProps) {
+  const confirmAttendance = useConfirmAttendance()
+  const rejectAttendance = useRejectAttendance()
+
+  const confirmedCount = attendance.filter((a) => a.confirmation === 'CONFIRMED').length
+  const totalCount = attendance.length
+  const progressPct = totalCount > 0 ? (confirmedCount / totalCount) * 100 : 0
+
+  return (
+    <div className={styles.section}>
+      <h2 className={styles.sectionTitle}>참여 현황</h2>
+      <div className={styles.progressWrap}>
+        <p className={styles.progressLabel}>
+          참석 확인 {confirmedCount} / {totalCount}
+        </p>
+        <div
+          className={styles.progressTrack}
+          role="progressbar"
+          aria-valuenow={confirmedCount}
+          aria-valuemin={0}
+          aria-valuemax={totalCount}
+        >
+          <div
+            className={styles.progressFill}
+            style={{ width: `${progressPct}%` }}
+          />
         </div>
-    )
+      </div>
+      <ParticipationMemberList attendance={attendance} />
+      {!isSubmitted && (
+        <div className={styles.buttonRow}>
+          <Button
+            label="불참"
+            size="L"
+            type="warning"
+            fullWidth
+            disabled={rejectAttendance.isPending}
+            onClick={() => rejectAttendance.mutate(reportId)}
+          />
+          <Button
+            label="출석"
+            size="L"
+            type="primary"
+            fullWidth
+            disabled={confirmAttendance.isPending}
+            onClick={() => confirmAttendance.mutate(reportId)}
+          />
+        </div>
+      )}
+    </div>
+  )
 }
 
 const styles = {

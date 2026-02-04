@@ -4,25 +4,35 @@ import { Icon } from "@/components/common/Icon"
 import { cn } from "@/utils/cn"
 
 interface MemberPreviewRowProps {
-    /** 멤버 목록 펼침 여부 */
-    isOpen: boolean
-    /** 펼침/접힘 토글 */
-    onToggle: () => void
+  /** 멤버 목록 펼침 여부 */
+  isOpen: boolean
+  /** 펼침/접힘 토글 */
+  onToggle: () => void
+  /** 출석 인원 수 (있으면 "N명" 표시) */
+  attendanceCount?: number
 }
 
 /** 참석 멤버 프로필 미리보기 한 줄 (겹친 아바타 + 이름 + 펼침 버튼) */
 export default function MemberPreviewRow({
-    isOpen,
-    onToggle,
+  isOpen,
+  onToggle,
+  attendanceCount = 0,
 }: MemberPreviewRowProps) {
-    return (
-        <div className={cn(styles.memberRow, styles.ybMemberRow)}>
-            <div className={styles.memberPreviewContainer}>
-                <div className={styles.memberPreviewItem} />
-                <div className={styles.memberPreviewItem} />
-                <div className={styles.memberPreviewItem} />
-            </div>
-            <p className={styles.memberNames}>오시온, 김지우 외 7명</p>
+  const label =
+    attendanceCount > 0
+      ? attendanceCount <= 3
+        ? `참석 멤버 ${attendanceCount}명`
+        : `참석 멤버 ${attendanceCount}명`
+      : '참석 멤버'
+
+  return (
+    <div className={cn(styles.memberRow, styles.ybMemberRow)}>
+      <div className={styles.memberPreviewContainer}>
+        <div className={styles.memberPreviewItem} />
+        <div className={styles.memberPreviewItem} />
+        <div className={styles.memberPreviewItem} />
+      </div>
+      <p className={styles.memberNames}>{label}</p>
             <button
                 type="button"
                 className={cn(styles.arrowWrap, isOpen && styles.arrowOpen)}

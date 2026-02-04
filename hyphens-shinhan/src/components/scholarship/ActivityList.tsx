@@ -1,18 +1,30 @@
 'use client';
 
-import { cn } from "@/utils/cn";
-import ActivityCard from "./ActivityCard";
-import YearSelector from "../common/YearSelector";
-import { useState, useMemo } from "react";
-import ActivityForm from "./ActivityForm";
-import { useActivitiesSummary } from "@/hooks/activities/useActivities";
+import { useMemo, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { cn } from '@/utils/cn'
+import ActivityCard from './ActivityCard'
+import YearSelector from '../common/YearSelector'
+import ActivityForm from './ActivityForm'
+import { useActivitiesSummary } from '@/hooks/activities/useActivities'
+import { ROUTES } from '@/constants'
 
-const MONTHS = Array.from({ length: 12 }, (_, i) => i + 1);
+/** 활동 보고서 월: 4월~12월 (9개) */
+const MONTHS = Array.from({ length: 9 }, (_, i) => i + 4);
 
 export default function ActivityList() {
+    const router = useRouter()
+    const searchParams = useSearchParams()
     const { data, isLoading, isError } = useActivitiesSummary();
+    const yearFromUrl = searchParams.get('year')
+    const parsedYear = yearFromUrl ? parseInt(yearFromUrl, 10) : null
     const [year, setYear] = useState<number | null>(null);
-    const resolvedYear = year ?? data?.max_year ?? new Date().getFullYear();
+    const resolvedYear = year ?? parsedYear ?? data?.max_year ?? new Date().getFullYear();
+
+    const handleYearChange = (nextYear: number) => {
+        setYear(nextYear)
+        router.replace(`${ROUTES.SCHOLARSHIP.MAIN}?year=${nextYear}`, { scroll: false })
+    }
 
     const { minYear, maxYear, yearlySummary } = useMemo(() => {
         if (!data) return { minYear: undefined, maxYear: undefined, yearlySummary: undefined };
@@ -42,14 +54,14 @@ export default function ActivityList() {
     }
 
     return (
-        <div>
+        <div className={styles.container}>
             <YearSelector
                 year={resolvedYear}
-                onYearChange={setYear}
+                onYearChange={handleYearChange}
                 minYear={minYear}
                 maxYear={maxYear}
             />
-            <div className={styles.container}>
+            <div className={styles.cardContainer}>
                 {MONTHS.map((monthNum) => {
                     const monthData = yearlySummary?.months.find((m) => m.month === monthNum);
                     const isCurrentMonth = now.year === resolvedYear && now.month === monthNum;
@@ -59,6 +71,7 @@ export default function ActivityList() {
                     return (
                         <ActivityCard
                             key={monthNum}
+                            year={resolvedYear}
                             month={monthNum}
                             title={title ?? undefined}
                             status={status}
@@ -78,6 +91,7 @@ export default function ActivityList() {
                     dateLabel: a.due_date,
                     status: a.is_submitted ? 'completed' : 'beforeStart',
                 }))}
+                emptyMessageKey="MANDATORY_ACTIVITY"
             />
 
             <div className={styles.space2} />
@@ -89,6 +103,7 @@ export default function ActivityList() {
                     dateLabel: e.event_date,
                     status: e.status === 'CLOSED' ? 'completed' : e.status === 'OPEN' ? 'inProgress' : 'scheduled',
                 }))}
+                emptyMessageKey="APPLIED_PROGRAMS"
             />
         </div>
     );
@@ -96,6 +111,9 @@ export default function ActivityList() {
 
 const styles = {
     container: cn(
+        'flex flex-col pb-40',
+    ),
+    cardContainer: cn(
         'grid grid-cols-3 gap-[10px] px-[21px] py-5',
     ),
     bannerContainer: cn(

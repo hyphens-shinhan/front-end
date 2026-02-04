@@ -10,32 +10,32 @@ const STATUS_LABEL: Record<string, { label: string; color: 'blue' | 'green' | 'g
 };
 
 interface ActivityBannerProps {
-    title?: string;
-    dateLabel?: string;
-    status?: 'inProgress' | 'scheduled' | 'completed' | 'beforeStart';
+  title: string
+  dateLabel: string
+  status: 'inProgress' | 'scheduled' | 'completed' | 'beforeStart'
 }
 
 /** MY활동 연간 필수 활동, 내가 신청한 프로그램 배너 컴포넌트 */
 export default function ActivityBanner({
-    title = '학업계획서 제출',
-    dateLabel = '2025.01.01 ~ 2025.12.31',
-    status = 'scheduled',
+  title,
+  dateLabel,
+  status,
 }: ActivityBannerProps) {
-    const statusConfig = STATUS_LABEL[status] ?? STATUS_LABEL.scheduled;
-    return (
-        <div className={styles.container}>
-            <div className={styles.infoContainer}>
-                <div className={styles.titleContainer}>
-                    <p className={styles.title}>{title}</p>
-                    <InfoTag label={statusConfig.label} color={statusConfig.color} />
-                </div>
-                <time className={styles.date}>{formatDateLabel(dateLabel)}</time>
-            </div>
-            <button type="button" className={styles.button}>
-                <Icon name="IconLLineArrowRight" size={24} />
-            </button>
+  const statusConfig = STATUS_LABEL[status]
+  return (
+    <div className={styles.container}>
+      <div className={styles.infoContainer}>
+        <div className={styles.titleContainer}>
+          <p className={styles.title}>{title}</p>
+          <InfoTag label={statusConfig.label} color={statusConfig.color} />
         </div>
-    );
+        <time className={styles.date}>{formatDateLabel(dateLabel)}</time>
+      </div>
+      <button type="button" className={styles.button}>
+        <Icon name="IconLLineArrowRight" size={24} />
+      </button>
+    </div>
+  )
 }
 
 function formatDateLabel(value: string): string {
@@ -50,7 +50,7 @@ function formatDateLabel(value: string): string {
 
 const styles = {
     container: cn(
-        'flex flex-colitems-center',
+        'flex items-center',
         'px-5 py-4',
         'border border-grey-2 rounded-[16px]',
     ),

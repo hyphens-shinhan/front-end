@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { ReportsService, type ReportMonth } from '@/services/reports'
+import { isValidReportMonth } from '@/utils/reports'
 
 /** Reports(활동 보고서) 쿼리 키 관리 객체 */
 export const reportKeys = {
@@ -8,9 +9,6 @@ export const reportKeys = {
   report: (councilId: string, year: number, month: number) =>
     [...reportKeys.all, 'report', councilId, year, month] as const,
 }
-
-const isValidMonth = (month: number): month is ReportMonth =>
-  Number.isInteger(month) && month >= 4 && month <= 12
 
 /**
  * 해당 회의의 지정 연·월 활동 보고서를 조회합니다.
@@ -28,6 +26,6 @@ export const useReport = (
     queryFn: () =>
       ReportsService.getReport(councilId, year, month as ReportMonth),
     enabled:
-      !!councilId && !!year && !!month && isValidMonth(month),
+      !!councilId && !!year && !!month && isValidReportMonth(month),
   })
 }

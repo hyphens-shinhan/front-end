@@ -1,43 +1,49 @@
-import { cn } from "@/utils/cn";
-import ActivityBanner from "./ActivityBanner";
+import { cn } from '@/utils/cn'
+import EmptyContent from '@/components/common/EmptyContent'
+import { EMPTY_CONTENT_MESSAGES } from '@/constants/emptyContent'
+import ActivityBanner from './ActivityBanner'
 
 export type ActivityFormItem = {
-    id: string;
-    title: string;
-    dateLabel: string;
-    status: 'inProgress' | 'scheduled' | 'completed' | 'beforeStart';
-};
-
-interface ActivityFormProps {
-    title: string;
-    /** 연동 시 목록이 있으면 배너로 렌더링, 없으면 빈 영역 또는 기본 배너 */
-    items?: ActivityFormItem[];
+  id: string
+  title: string
+  dateLabel: string
+  status: 'inProgress' | 'scheduled' | 'completed' | 'beforeStart'
 }
 
-export default function ActivityForm({ title, items }: ActivityFormProps) {
-    const list = items?.length ? items : [];
-    return (
-        <div className={styles.container}>
-            <h2 className={styles.title}>{title}</h2>
-            {list.length > 0 ? (
-                list.map((item) => (
-                    <ActivityBanner
-                        key={item.id}
-                        title={item.title}
-                        dateLabel={item.dateLabel}
-                        status={item.status}
-                    />
-                ))
-            ) : (
-                <>
-                    <ActivityBanner />
-                    <ActivityBanner />
-                    <ActivityBanner />
-                    <ActivityBanner />
-                </>
-            )}
-        </div>
-    );
+interface ActivityFormProps {
+  title: string
+  /** 연간 필수 활동 / 내가 신청한 프로그램 목록. 비어 있으면 EmptyContent 표시 */
+  items?: ActivityFormItem[]
+  /** 빈 상태 메시지 키 (EMPTY_CONTENT_MESSAGES.EMPTY 내 키) */
+  emptyMessageKey: keyof typeof EMPTY_CONTENT_MESSAGES.EMPTY
+}
+
+export default function ActivityForm({
+  title,
+  items = [],
+  emptyMessageKey,
+}: ActivityFormProps) {
+  return (
+    <div className={styles.container}>
+      <h2 className={styles.title}>{title}</h2>
+      {items.length > 0 ? (
+        items.map((item) => (
+          <ActivityBanner
+            key={item.id}
+            title={item.title}
+            dateLabel={item.dateLabel}
+            status={item.status}
+          />
+        ))
+      ) : (
+        <EmptyContent
+          variant="empty"
+          message={EMPTY_CONTENT_MESSAGES.EMPTY[emptyMessageKey]}
+          className="py-8"
+        />
+      )}
+    </div>
+  )
 }
 
 const styles = {

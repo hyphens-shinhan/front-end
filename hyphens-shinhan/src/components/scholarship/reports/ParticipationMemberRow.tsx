@@ -3,7 +3,7 @@
 import { Icon } from "@/components/common/Icon"
 import { cn } from "@/utils/cn"
 
-type AttendanceStatus = '출석' | '대기 중'
+type AttendanceStatus = '출석' | '대기 중' | '불참'
 
 interface ParticipationMemberRowProps {
     name: string
@@ -19,7 +19,11 @@ export default function ParticipationMemberRow({
     showCloseIcon = false,
 }: ParticipationMemberRowProps) {
     const statusColor =
-        status === '출석' ? 'text-state-green' : 'text-state-yellow'
+        status === '출석'
+          ? 'text-state-green'
+          : status === '불참'
+            ? 'text-state-red'
+            : 'text-state-yellow'
 
     return (
         <div className='flex w-full gap-3 items-center'>

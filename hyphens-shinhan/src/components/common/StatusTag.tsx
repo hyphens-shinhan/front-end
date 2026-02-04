@@ -24,7 +24,7 @@ const statusConfig = {
     },
     beforeStart: {
         label: '시작전',
-        bg: 'bg-grey-1-1',
+        bg: 'bg-grey-2',
         text: 'text-grey-9',
     },
 } as const;

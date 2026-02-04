@@ -19,15 +19,11 @@ export default function ActivityPhotos({ imageUrls }: ActivityPhotosProps) {
     handleImageSelect,
     handleRemoveImage,
     openFilePicker,
-    canAddMore,
   } = useImageUpload({
-    maxImages: Math.max(0, 5 - existingUrls.length),
+    maxImages: 0,
     bucket: 'posts',
     pathPrefix: 'feeds',
   })
-
-  const totalCount = existingUrls.length + images.length
-  const showAddButton = totalCount < 5 && canAddMore
 
   return (
     <div className={styles.section}>
@@ -51,7 +47,7 @@ export default function ActivityPhotos({ imageUrls }: ActivityPhotosProps) {
           onSelect={handleImageSelect}
           onRemove={handleRemoveImage}
           onAdd={openFilePicker}
-          canAddMore={showAddButton}
+          canAddMore={false}
           fileInputRef={fileInputRef}
         />
       </div>

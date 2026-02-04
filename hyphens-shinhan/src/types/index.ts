@@ -1,3 +1,7 @@
+/**
+ * 공통 타입 진입점
+ * - 라우트/네비/UI 설정 타입과 API 타입 re-export
+ */
 import { NavLink } from './routes'
 import { IconName } from '@/components/common/Icon'
 import { AllRoutePath } from './routes'
@@ -47,7 +51,7 @@ export interface InputBarConfig {
   showAnonymous?: boolean // 익명 버튼 표시 여부
 }
 
-// MARK: - Activities (활동) API 타입
+// MARK: - Activities (활동 요약/상태) API 타입
 export type {
   CouncilReportStatus,
   AcademicReportStatus,
@@ -60,3 +64,36 @@ export type {
   YearlyActivitySummary,
   ActivitiesSummaryResponse,
 } from './activities'
+
+// MARK: - 공통 (Mandatory / Academic 등에서 공통 사용)
+export type { AcademicGoalCategory } from './common'
+
+// MARK: - Mandatory (필수 활동) API 타입
+export type {
+  MandatoryActivityType as MandatoryApiActivityType,
+  MandatoryActivityCreate,
+  MandatoryActivityResponse,
+  MandatoryGoalCreate,
+  MandatoryGoalResponse,
+  GoalSubmissionCreate,
+  GoalSubmissionUpdate,
+  SimpleReportSubmissionCreate,
+  SimpleReportSubmissionUpdate,
+  MandatorySubmissionResponse,
+  MandatorySubmissionLookupResponse,
+  MandatoryActivitiesForYearResponse,
+} from './mandatory'
+
+// MARK: - Academic (월별 학업 보고서/모니터링) API 타입
+export type {
+  GoalCreate,
+  GoalResponse,
+  AcademicReportCreate,
+  AcademicReportUpdate,
+  AcademicReportResponse,
+  AcademicReportListResponse,
+  AcademicReportLookupResponse,
+  AcademicMonitoringEnableResponse,
+  AcademicMonitoringDisableResponse,
+  AcademicMonitoringYearsResponse,
+} from './academic'

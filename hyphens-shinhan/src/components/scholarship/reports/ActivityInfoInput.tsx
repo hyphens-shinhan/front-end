@@ -15,7 +15,7 @@ interface ActivityInfoInputProps {
     description: string
     setTitle: React.Dispatch<React.SetStateAction<string>>
     setDescription: React.Dispatch<React.SetStateAction<string>>
-    /** 제목 섹션 체크 상태 (글자 입력 시 true 등 부모에서 판단) */
+    /** 제목 섹션 체크 상태. 제목·활동 내역(설명) 둘 다 입력 시 true 권장 */
     isTitleChecked?: boolean
 }
 

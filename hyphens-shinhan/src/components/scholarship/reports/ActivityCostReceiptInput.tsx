@@ -23,6 +23,8 @@ export interface ActivityCostReceiptInputProps {
     onTotalCostChange?: (value: string) => void
     /** 영수증 이미지 변경 시 호출 (부모에서 저장용) */
     onImagesChange?: (files: File[]) => void
+    /** 영수증 1장 이상 + 총 비용 입력 시 true로 호출 (제출 버튼 활성화 등) */
+    onCheckedChange?: (checked: boolean) => void
 }
 
 /** 활동 비용과 영수증 첨부 컴포넌트 */
@@ -30,7 +32,7 @@ const ActivityCostReceiptInput = forwardRef<
     ActivityCostReceiptInputRef,
     ActivityCostReceiptInputProps
 >(function ActivityCostReceiptInput(
-    { totalCost, onTotalCostChange, onImagesChange },
+    { totalCost, onTotalCostChange, onImagesChange, onCheckedChange },
     ref
 ) {
     const [internalTotalCost, setInternalTotalCost] = useState("")
@@ -50,6 +52,11 @@ const ActivityCostReceiptInput = forwardRef<
         onImagesChange?.(images.map((img) => img.file))
     }, [images, onImagesChange])
 
+    const isReceiptChecked = images.length > 0 && totalCostValue.trim().length > 0
+    useEffect(() => {
+        onCheckedChange?.(isReceiptChecked)
+    }, [isReceiptChecked, onCheckedChange])
+
     useImperativeHandle(
         ref,
         () => ({
@@ -62,7 +69,7 @@ const ActivityCostReceiptInput = forwardRef<
 
     return (
         <div className={styles.container}>
-            <ReportTitle title="활동 비용과 영수증을 첨부해주세요" checkIcon={true} isChecked={false} className="py-0" />
+            <ReportTitle title="활동 비용과 영수증을 첨부해주세요" checkIcon={true} isChecked={isReceiptChecked} className="py-0" />
             {/** 영수증 추가 버튼 */}
             <div className={styles.imagePickerContainer}>
                 <ImagePicker
@@ -91,6 +98,8 @@ const ActivityCostReceiptInput = forwardRef<
                 />
                 <p className={styles.totalCostLabel}>영수증 금액과 일치해야 합니다.</p>
             </div>
+
+            {/** TODO: 세부 내역 입력칸 */}
         </div>
     )
 })

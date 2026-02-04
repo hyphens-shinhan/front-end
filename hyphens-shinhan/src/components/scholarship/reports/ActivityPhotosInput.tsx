@@ -1,6 +1,6 @@
 'use client'
 
-import { forwardRef, useImperativeHandle } from "react";
+import { forwardRef, useEffect, useImperativeHandle } from "react";
 import { cn } from "@/utils/cn";
 import ReportTitle from "./ReportTitle";
 import ImagePicker from "@/components/common/ImagePicker";
@@ -12,7 +12,12 @@ export interface ActivityPhotosInputRef {
     uploadImages: () => Promise<string[]>
 }
 
-const ActivityPhotosInput = forwardRef<ActivityPhotosInputRef, object>(function ActivityPhotosInput(_, ref) {
+export interface ActivityPhotosInputProps {
+    /** 사진 1장 이상일 때 true로 호출 (제출 버튼 활성화 등) */
+    onCheckedChange?: (checked: boolean) => void
+}
+
+const ActivityPhotosInput = forwardRef<ActivityPhotosInputRef, ActivityPhotosInputProps>(function ActivityPhotosInput({ onCheckedChange }, ref) {
     const {
         images,
         fileInputRef,
@@ -22,6 +27,10 @@ const ActivityPhotosInput = forwardRef<ActivityPhotosInputRef, object>(function 
         canAddMore,
         uploadImages,
     } = useImageUpload({ maxImages: 5 })
+
+    useEffect(() => {
+        onCheckedChange?.(images.length > 0)
+    }, [images.length, onCheckedChange])
 
     useImperativeHandle(ref, () => ({
         uploadImages,

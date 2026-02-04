@@ -151,7 +151,11 @@ export default function ReportDetailContentYB({
       />
       {/* 등록된 사진 (없으면 EmptyContent) */}
       {report.image_urls?.length ? (
-        <ActivityPhotos imageUrls={report.image_urls} />
+        <div className={styles.photosSection}>
+          <h2 className={styles.photosSectionTitle}>활동 사진</h2>
+          <div className='w-20 h-20 rounded-[16px] bg-grey-4' />
+        </div>
+        // <ActivityPhotos imageUrls={report.image_urls} />
       ) : (
         <div className={styles.photosSection}>
           <h2 className={styles.photosSectionTitle}>활동 사진</h2>

@@ -27,7 +27,7 @@ export default function ParticipationStatus({
   const progressPct = totalCount > 0 ? (confirmedCount / totalCount) * 100 : 0
 
   return (
-    <div className={styles.section}>
+    <div>
       <h2 className={styles.sectionTitle}>참여 현황</h2>
       <div className={styles.progressWrap}>
         <p className={styles.progressLabel}>
@@ -72,13 +72,12 @@ export default function ParticipationStatus({
 }
 
 const styles = {
-    section: cn('pb-6'),
-    sectionTitle: cn('title-16 text-grey-11 py-4.5'),
-    progressWrap: cn('py-2'),
-    progressLabel: cn('body-8 pb-2 text-grey-10'),
-    /** 진행 바 배경(트랙) */
-    progressTrack: cn('w-full h-2 rounded-[16px] bg-grey-2 overflow-hidden'),
-    /** 진행 바 채워진 부분 - primary 색상 */
-    progressFill: cn('h-full rounded-[16px] bg-primary-secondaryroyal'),
-    buttonRow: cn('flex gap-2 pt-2'),
+  sectionTitle: cn('title-16 text-grey-11 py-4.5'),
+  progressWrap: cn('pb-2'),
+  progressLabel: cn('body-8 pb-2 text-grey-10'),
+  /** 진행 바 배경(트랙) */
+  progressTrack: cn('w-full h-2 rounded-[16px] bg-grey-2 overflow-hidden'),
+  /** 진행 바 채워진 부분 - primary 색상 */
+  progressFill: cn('h-full rounded-[16px] bg-primary-secondaryroyal'),
+  buttonRow: cn('flex gap-2 pt-2'),
 }

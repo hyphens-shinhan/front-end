@@ -26,34 +26,33 @@ export default function MemberPreviewRow({
       : '참석 멤버'
 
   return (
-    <div className={cn(styles.memberRow, styles.ybMemberRow)}>
+    <div className={cn(styles.memberRow, isOpen && styles.memberRowOpen)}>
       <div className={styles.memberPreviewContainer}>
         <div className={styles.memberPreviewItem} />
         <div className={styles.memberPreviewItem} />
         <div className={styles.memberPreviewItem} />
       </div>
       <p className={styles.memberNames}>{label}</p>
-            <button
-                type="button"
-                className={cn(styles.arrowWrap, isOpen && styles.arrowOpen)}
-                onClick={onToggle}
-                aria-expanded={isOpen}
-                aria-label={isOpen ? '멤버 목록 접기' : '멤버 목록 펼치기'}
-            >
-                <Icon name='IconLLineArrowDown' size={24} />
-            </button>
-        </div>
-    )
+      <button
+        type="button"
+        className={cn(styles.arrowWrap, isOpen && styles.arrowOpen)}
+        onClick={onToggle}
+        aria-expanded={isOpen}
+        aria-label={isOpen ? '멤버 목록 접기' : '멤버 목록 펼치기'}
+      >
+        <Icon name='IconLLineArrowDown' size={24} />
+      </button>
+    </div>
+  )
 }
 
 const styles = {
-    memberRow: cn('flex items-center gap-3 py-2'),
-    /** YB 화면에서만 적용 - 상단 여백 */
-    ybMemberRow: cn('py-5'),
-    memberPreviewContainer: cn('flex -space-x-5'),
-    memberPreviewItem: cn('w-10 h-10 rounded-full bg-grey-3 border'),
-    memberNames: cn('body-6 text-grey-10'),
-    arrowWrap: cn('ml-auto text-grey-9'),
-    /** 펼쳤을 때 화살표 위로 */
-    arrowOpen: cn('rotate-180'),
+  memberRow: cn('flex items-center gap-3 py-3'),
+  memberPreviewContainer: cn('flex -space-x-5'),
+  memberPreviewItem: cn('w-10 h-10 rounded-full bg-grey-3 border'),
+  memberNames: cn('body-6 text-grey-10'),
+  arrowWrap: cn('ml-auto text-grey-9'),
+  /** 펼쳤을 때 화살표 위로 */
+  arrowOpen: cn('rotate-180'),
+  memberRowOpen: cn('py-5'),
 }

@@ -10,7 +10,7 @@ import type {
   AcademicMonitoringYearsResponse,
 } from '@/types/academic'
 
-const BASE = '/api/v1/reports/academic'
+const BASE = '/reports/academic'
 
 /**
  * Academic(월별 학업 보고서) API 서비스

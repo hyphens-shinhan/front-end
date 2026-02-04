@@ -6,7 +6,7 @@ import type {
 } from '@/types/reports'
 
 /** 회의(council) 활동 보고서 API 베이스 경로 */
-const BASE = '/api/v1/reports/council'
+const BASE = '/reports/council'
 
 /**
  * 활동 보고서 월 값.

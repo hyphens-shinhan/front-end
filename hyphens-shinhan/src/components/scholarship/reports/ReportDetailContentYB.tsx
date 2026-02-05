@@ -1,24 +1,24 @@
 'use client'
 
-import { useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import Button from '@/components/common/Button'
 import EmptyContent from '@/components/common/EmptyContent'
 import Separator from '@/components/common/Separator'
-import { useHeaderStore } from '@/stores'
 import { useReport } from '@/hooks/reports/useReports'
 import { useActivitiesSummary } from '@/hooks/activities/useActivities'
 import { EMPTY_CONTENT_MESSAGES } from '@/constants/emptyContent'
 import { ROUTES } from '@/constants'
 import type { ReportMonth } from '@/services/reports'
 import ActivityCostReceipt from './ActivityCostReceipt'
-import ActivityInfo from './ActivityInfo'
+import ActivityInfo from './view/ActivityInfo'
 import ActivityPhotos from './ActivityPhotos'
-import ParticipationStatus from './ParticipationStatus'
-import ReportTitle from './ReportTitle'
 import { cn } from '@/utils/cn'
 import Image from 'next/image'
 import characterImg from '@/assets/character.png'
+import ReportTitle from './ReportTitle'
+import ProgressBar from '@/components/common/ProgressBar'
+import MemberPreviewRow from './MemberPreviewRow'
 
 interface ReportDetailContentYBProps {
   /** 연도 (URL searchParams 또는 목록에서 전달) */
@@ -39,10 +39,6 @@ export default function ReportDetailContentYB({
   month,
 }: ReportDetailContentYBProps) {
   const router = useRouter()
-  const setCustomTitle = useHeaderStore((s) => s.setCustomTitle)
-  const setHandlers = useHeaderStore((s) => s.setHandlers)
-  const resetHandlers = useHeaderStore((s) => s.resetHandlers)
-
   /** 활동 요약에서 해당 연도의 자치회 ID 조회 (reports API용) */
   const { data: activitiesData } = useActivitiesSummary()
   const councilId = useMemo(
@@ -59,21 +55,6 @@ export default function ReportDetailContentYB({
 
   const activitiesLoading = activitiesData === undefined
   const hasNoCouncil = !activitiesLoading && !councilId
-
-  /** 헤더 백 버튼: MY활동 목록으로 이동 (연도 쿼리 유지) */
-  useEffect(() => {
-    const goToList = () => router.push(`${ROUTES.SCHOLARSHIP.MAIN}?year=${year}`)
-    setHandlers({ onBack: goToList })
-    return () => {
-      resetHandlers()
-      setCustomTitle(null)
-    }
-  }, [router, year, setHandlers, resetHandlers, setCustomTitle])
-
-  /** 보고서 로드 시 헤더 제목을 'N월 활동'으로 설정 */
-  useEffect(() => {
-    if (report) setCustomTitle(`${report.month}월 활동`)
-  }, [report, setCustomTitle])
 
   // ---------- 로딩 ----------
   if (activitiesLoading || (isLoading && councilId)) {
@@ -150,24 +131,33 @@ export default function ReportDetailContentYB({
         location={report.location}
         content={report.content}
       />
+
       {/* 등록된 사진 (없으면 EmptyContent) */}
-      {report.image_urls?.length ? (
-        <ActivityPhotos imageUrls={report.image_urls} />
-      ) : (
-        <EmptyContent
-          variant="empty"
-          message={EMPTY_CONTENT_MESSAGES.EMPTY.ACTIVITY_PHOTOS}
-          className="py-6 border border-grey-2 rounded-[16px]"
-        />
-      )}
+      <ActivityPhotos imageUrls={report.image_urls} />
       <Separator />
 
       {/* 출석률, 참여 멤버 목록, 불참/출석 버튼 (미제출 시만) */}
-      <ParticipationStatus
-        reportId={report.id}
-        attendance={report.attendance}
-        isSubmitted={isSubmitted}
-      />
+      <div>
+        <ReportTitle title="참여 현황" className="py-4.5" />
+        <div className='flex gap-2 body-8 text-grey-10'>
+          <p>참석 확인</p>
+          <p>9 / 10</p>
+        </div>
+        <ProgressBar value={50} max={100} className='my-2' />
+        {/* 참여 멤버 목록 - 제출 완료 뷰에서는 링크(오른쪽 화살표), 미제출은 토글 */}
+        <MemberPreviewRow
+          members={report.attendance.map((a) => a.name)}
+          isOpen={false}
+          onToggle={() => { }}
+          attendanceCount={report.attendance.length}
+          className="py-5"
+          href={
+            isSubmitted && councilId
+              ? `${ROUTES.SCHOLARSHIP.REPORT.PARTICIPATION}?year=${year}&month=${month}&councilId=${councilId}`
+              : undefined
+          }
+        />
+      </div>
       <Separator />
       {/* 총 비용·영수증 내역, 확인 완료 버튼 */}
       <ActivityCostReceipt receipts={report.receipts} />

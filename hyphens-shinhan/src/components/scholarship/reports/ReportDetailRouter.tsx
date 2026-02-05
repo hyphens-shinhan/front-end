@@ -1,8 +1,11 @@
 'use client'
 
-import { useUserStore } from '@/stores'
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { useUserStore, useHeaderStore } from '@/stores'
 import { useReport } from '@/hooks/reports/useReports'
 import { useActivitiesSummary } from '@/hooks/activities/useActivities'
+import { ROUTES } from '@/constants'
 import type { ReportMonth } from '@/services/reports'
 import ReportDetailContentYB from './ReportDetailContentYB'
 import ReportDetailContentYBLeader from './ReportDetailContentYBLeader'
@@ -39,9 +42,25 @@ export default function ReportDetailRouter({
     month
   )
 
+  const router = useRouter()
+  const setCustomTitle = useHeaderStore((s) => s.setCustomTitle)
+  const setHandlers = useHeaderStore((s) => s.setHandlers)
+  const resetHandlers = useHeaderStore((s) => s.resetHandlers)
+
   const isLeader = user?.role === 'YB_LEADER'
   /** is_submitted가 false면 무조건 작성 페이지(YBLeader). ActivityCard status와 무관. */
   const showLeaderDraft = isLeader && !report?.is_submitted
+
+  /** 활동 상세 공통 헤더: 제목 'N월 활동', 백 시 MY활동 목록(연도 쿼리 유지) */
+  useEffect(() => {
+    setCustomTitle(`${month}월 활동`)
+    const goToList = () => router.push(`${ROUTES.SCHOLARSHIP.MAIN}?year=${year}`)
+    setHandlers({ onBack: goToList })
+    return () => {
+      resetHandlers()
+      setCustomTitle(null)
+    }
+  }, [router, year, month, setHandlers, resetHandlers, setCustomTitle])
 
   // user가 아직 로드되지 않았으면 역할 분기하지 않음 (null일 때 isLeader가 false라 YB가 뜨는 것 방지)
   if (user === null) {

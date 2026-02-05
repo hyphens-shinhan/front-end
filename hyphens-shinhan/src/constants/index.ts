@@ -241,6 +241,12 @@ export const CUSTOM_HEADER_CONFIG: Record<string, CustomHeaderConfig> = {
     btnType: 'Back',
     backHref: ROUTES.SCHOLARSHIP.MAIN,
   },
+  /** 참여 멤버 상세 (제출 완료 뷰에서 이동, 백 버튼은 페이지에서 activity 쿼리 유지해 설정) */
+  [ROUTES.SCHOLARSHIP.REPORT.PARTICIPATION]: {
+    type: 'Left',
+    btnType: 'Back',
+    backHref: ROUTES.SCHOLARSHIP.REPORT.ACTIVITY,
+  },
 } as const
 
 /** 포스트 플로팅 액션 버튼 아이템 키 */

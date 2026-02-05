@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useBottomSheetStore, useHeaderStore } from '@/stores'
 import { useAutoResize } from '@/hooks/useAutoResize'
 import { useImageUpload } from '@/hooks/useImageUpload'
+import { IMAGE_UPLOAD } from '@/constants/imageUpload'
 import { useCreateFeedPost } from '@/hooks/posts/usePostMutations'
 import SelectableOption from '@/components/community/SelectableOption'
 import Accordion from '@/components/common/Accordion'
@@ -46,7 +47,11 @@ export default function CreateFeed() {
     openFilePicker,
     uploadImages,
     canAddMore,
-  } = useImageUpload({ maxImages: 5, bucket: 'posts', pathPrefix: 'feeds' })
+  } = useImageUpload({
+    maxImages: IMAGE_UPLOAD.MAX_IMAGES.FEED,
+    bucket: IMAGE_UPLOAD.BUCKET,
+    pathPrefix: IMAGE_UPLOAD.PATH_PREFIX.FEEDS,
+  })
 
   // 피드 생성 훅
   const { mutateAsync: createFeedPost, isPending } = useCreateFeedPost()

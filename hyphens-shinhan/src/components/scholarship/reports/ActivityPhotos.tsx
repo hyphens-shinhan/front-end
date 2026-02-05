@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import ImagePicker from '@/components/common/ImagePicker'
 import { useImageUpload } from '@/hooks/useImageUpload'
+import { IMAGE_UPLOAD } from '@/constants/imageUpload'
 import { cn } from '@/utils/cn'
 
 interface ActivityPhotosProps {
@@ -20,9 +21,9 @@ export default function ActivityPhotos({ imageUrls }: ActivityPhotosProps) {
     handleRemoveImage,
     openFilePicker,
   } = useImageUpload({
-    maxImages: 0,
-    bucket: 'posts',
-    pathPrefix: 'feeds',
+    maxImages: IMAGE_UPLOAD.MAX_IMAGES.VIEW_ONLY,
+    bucket: IMAGE_UPLOAD.BUCKET,
+    pathPrefix: IMAGE_UPLOAD.PATH_PREFIX.UPLOADS,
   })
 
   return (

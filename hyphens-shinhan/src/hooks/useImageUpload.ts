@@ -2,6 +2,7 @@
 
 import { useState, useRef, ChangeEvent, useCallback } from 'react'
 import { createClient } from '@/utils/supabase/client'
+import { IMAGE_UPLOAD } from '@/constants/imageUpload'
 
 interface ImageFile {
   file: File
@@ -44,7 +45,11 @@ interface UseImageUploadReturn {
 export function useImageUpload(
   options: UseImageUploadOptions = {},
 ): UseImageUploadReturn {
-  const { maxImages = 5, bucket = 'posts', pathPrefix = 'uploads' } = options
+  const {
+    maxImages = IMAGE_UPLOAD.MAX_IMAGES.ACTIVITY_PHOTOS,
+    bucket = IMAGE_UPLOAD.BUCKET,
+    pathPrefix = IMAGE_UPLOAD.PATH_PREFIX.UPLOADS,
+  } = options
 
   const supabase = createClient()
   const fileInputRef = useRef<HTMLInputElement>(null)

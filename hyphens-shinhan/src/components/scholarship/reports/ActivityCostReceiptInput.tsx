@@ -5,6 +5,7 @@ import { cn } from "@/utils/cn"
 import ReportTitle from "./ReportTitle"
 import ImagePicker from "@/components/common/ImagePicker"
 import { useImageUpload } from "@/hooks/useImageUpload"
+import { IMAGE_UPLOAD } from "@/constants/imageUpload"
 import { Icon } from "@/components/common/Icon"
 
 export interface ActivityCostReceiptInputRef {
@@ -46,7 +47,11 @@ const ActivityCostReceiptInput = forwardRef<
         handleRemoveImage,
         openFilePicker,
         uploadImages: doUploadImages,
-    } = useImageUpload({ maxImages: 3 })
+    } = useImageUpload({
+        maxImages: IMAGE_UPLOAD.MAX_IMAGES.RECEIPTS,
+        bucket: IMAGE_UPLOAD.BUCKET,
+        pathPrefix: IMAGE_UPLOAD.PATH_PREFIX.UPLOADS,
+    })
 
     useEffect(() => {
         onImagesChange?.(images.map((img) => img.file))

@@ -5,6 +5,7 @@ import { cn } from "@/utils/cn";
 import ReportTitle from "./ReportTitle";
 import ImagePicker from "@/components/common/ImagePicker";
 import { useImageUpload } from "@/hooks/useImageUpload";
+import { IMAGE_UPLOAD } from "@/constants/imageUpload";
 import { Icon } from "@/components/common/Icon";
 
 export interface ActivityPhotosInputRef {
@@ -17,6 +18,10 @@ export interface ActivityPhotosInputProps {
     onCheckedChange?: (checked: boolean) => void
 }
 
+/** 활동 사진 입력 컴포넌트
+ * @param onCheckedChange - 사진 1장 이상일 때 true로 호출 (제출 버튼 활성화 등)
+ * @returns 활동 사진 입력 컴포넌트
+ */
 const ActivityPhotosInput = forwardRef<ActivityPhotosInputRef, ActivityPhotosInputProps>(function ActivityPhotosInput({ onCheckedChange }, ref) {
     const {
         images,
@@ -26,7 +31,11 @@ const ActivityPhotosInput = forwardRef<ActivityPhotosInputRef, ActivityPhotosInp
         openFilePicker,
         canAddMore,
         uploadImages,
-    } = useImageUpload({ maxImages: 5 })
+    } = useImageUpload({
+        maxImages: IMAGE_UPLOAD.MAX_IMAGES.ACTIVITY_PHOTOS,
+        bucket: IMAGE_UPLOAD.BUCKET,
+        pathPrefix: IMAGE_UPLOAD.PATH_PREFIX.UPLOADS,
+    })
 
     useEffect(() => {
         onCheckedChange?.(images.length > 0)

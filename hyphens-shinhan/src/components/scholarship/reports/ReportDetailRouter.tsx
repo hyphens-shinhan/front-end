@@ -52,7 +52,14 @@ export default function ReportDetailRouter({
   }
 
   if (showLeaderDraft) {
-    return <ReportDetailContentYBLeader year={year} month={month} />
+    return (
+      <ReportDetailContentYBLeader
+        year={year}
+        month={month}
+        councilId={councilId}
+        initialReport={report ?? undefined}
+      />
+    )
   }
 
   return <ReportDetailContentYB year={year} month={month} />

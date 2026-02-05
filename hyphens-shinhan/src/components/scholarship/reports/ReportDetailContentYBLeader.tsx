@@ -45,14 +45,18 @@ export default function ReportDetailContentYBLeader({
     const [location, setLocation] = useState('')
     const [content, setContent] = useState('')
     const [attendance, setAttendance] = useState<AttendanceResponse[]>()
+    /** 활동 사진 1장 이상 선택 시 true (제출 버튼 활성화용) */
     const [isPhotosChecked, setIsPhotosChecked] = useState(false)
+    /** 영수증 1장 이상 + 총 비용 입력 시 true (제출 버튼 활성화용) */
     const [isReceiptChecked, setIsReceiptChecked] = useState(false)
     /** 제출 시 사용할 보고서 ID (initialReport.id 또는 첫 PATCH 성공 후 설정) */
     const [reportId, setReportId] = useState<string | null>(
         initialReport?.id ?? null
     )
 
+    /** 활동 사진: ref로 uploadImages() 호출 → 기존 URL + 새 업로드 URL 합쳐서 반환 */
     const photoInputRef = useRef<ActivityPhotosInputRef>(null)
+    /** 영수증: ref로 getReceipts() 호출 → 기존 + 새 업로드 합쳐 ReceiptCreate[] 반환 */
     const receiptInputRef = useRef<ActivityCostReceiptInputRef>(null)
 
     // ---------- API 뮤테이션 ----------
@@ -84,25 +88,20 @@ export default function ReportDetailContentYBLeader({
         isReceiptChecked
 
     // ---------- 임시 저장 (PATCH) ----------
+    /**
+     * 활동 사진·영수증은 ref로 각각 업로드 후 URL/ReceiptCreate[] 받아서 body에 담아 PATCH.
+     * - 활동 사진: 기존 표시 중인 URL + 이번에 새로 올린 파일 URL 합쳐서 image_urls로 전송.
+     * - 영수증: 기존 유지한 건 그대로 + 새로 올린 건 업로드 후 ReceiptCreate로 합쳐 receipts로 전송.
+     */
     const handleSaveDraft = async () => {
         if (!councilId) return
-        const [imageUrls, receiptUrls] = await Promise.all([
+        // 활동 사진: 기존 유지 URL + 새 파일 업로드 URL. 영수증: 기존 유지 + 새 업로드 → ReceiptCreate[]
+        const [imageUrls, receipts] = await Promise.all([
             photoInputRef.current?.uploadImages() ?? Promise.resolve([]),
-            receiptInputRef.current?.uploadImages() ?? Promise.resolve([]),
+            receiptInputRef.current?.getReceipts() ?? Promise.resolve([]),
         ])
-        const totalCost = receiptInputRef.current?.getTotalCost() ?? ''
-        const totalCostNum = totalCost.trim() ? Number(totalCost.replace(/,/g, '')) || 0 : 0
-        const receipts: ReceiptCreate[] | null =
-            receiptUrls.length > 0
-                ? receiptUrls.map((image_url, i) => ({
-                    store_name: '영수증',
-                    image_url,
-                    items:
-                        i === 0 && totalCostNum > 0
-                            ? [{ item_name: '총 비용', price: totalCostNum }]
-                            : [],
-                }))
-                : null
+        const receiptsPayload: ReceiptCreate[] | null =
+            receipts.length > 0 ? receipts : null
 
         updateReport.mutate(
             {
@@ -115,7 +114,7 @@ export default function ReportDetailContentYBLeader({
                     location: location || null,
                     content: content || null,
                     image_urls: imageUrls.length > 0 ? imageUrls : null,
-                    receipts,
+                    receipts: receiptsPayload,
                     attendance: attendance?.map((a) => ({
                         user_id: a.user_id,
                         status: a.status,
@@ -131,10 +130,10 @@ export default function ReportDetailContentYBLeader({
     }
 
     // ---------- 제출 (POST submit) ----------
+    /** reportId 없으면 임시 저장 먼저 호출(초안 생성 유도), 있으면 submit API 호출 */
     const handleSubmit = () => {
         const id = reportId ?? initialReport?.id
         if (!id) {
-            // 초안이 없으면 먼저 임시 저장 후 제출 유도하거나, 한 번 임시저장 후 버튼 활성화
             handleSaveDraft()
             return
         }
@@ -160,9 +159,10 @@ export default function ReportDetailContentYBLeader({
             />
             <Separator className="mx-4" />
 
-            {/* ---------- 활동 사진 (임시 저장 시 업로드 후 image_urls로 전달) ---------- */}
+            {/* ---------- 활동 사진 (기존 URL 표시 + 임시 저장 시 image_urls로 전달) ---------- */}
             <ActivityPhotosInput
                 ref={photoInputRef}
+                existingImageUrls={initialReport?.image_urls ?? undefined}
                 onCheckedChange={setIsPhotosChecked}
             />
             <Separator className="mx-4" />
@@ -176,9 +176,10 @@ export default function ReportDetailContentYBLeader({
             />
             <Separator className="mx-4" />
 
-            {/* ---------- 활동 비용·영수증 (임시 저장 시 업로드 후 receipts로 전달) ---------- */}
+            {/* ---------- 활동 비용·영수증 (기존 표시 + 임시 저장 시 receipts로 전달) ---------- */}
             <ActivityCostReceiptInput
                 ref={receiptInputRef}
+                existingReceipts={initialReport?.receipts ?? undefined}
                 onCheckedChange={setIsReceiptChecked}
             />
 

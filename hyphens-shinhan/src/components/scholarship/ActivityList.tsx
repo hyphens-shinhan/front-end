@@ -80,6 +80,7 @@ export default function ActivityList() {
                             key={monthNum}
                             year={resolvedYear}
                             month={monthNum}
+                            councilId={yearlySummary?.council_id ?? undefined}
                             title={title ?? undefined}
                             status={status}
                             isCurrentMonth={isCurrentMonth}

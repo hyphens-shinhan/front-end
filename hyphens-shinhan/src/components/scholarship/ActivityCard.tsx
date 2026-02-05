@@ -12,6 +12,8 @@ interface ActivityCardProps {
   year: number
   /** 월 (4–12) */
   month: number
+  /** 자치회 ID (상세에서 report 조회용, 링크 쿼리로 전달) */
+  councilId?: string | null
   /** 카드 제목 (자치회 보고서 제목 등) */
   title?: string | null
   /** 진행 상태 (진행중/완료/시작전 등) */
@@ -26,10 +28,13 @@ export default function ActivityCard({
   isMonitoring,
   year,
   month,
+  councilId,
   title = '',
   status = 'beforeStart',
 }: ActivityCardProps) {
-  const href = `${ROUTES.SCHOLARSHIP.REPORT.ACTIVITY}?year=${year}&month=${month}`
+  const params = new URLSearchParams({ year: String(year), month: String(month) })
+  if (councilId) params.set('councilId', councilId)
+  const href = `${ROUTES.SCHOLARSHIP.REPORT.ACTIVITY}?${params.toString()}`
 
   return (
     <Link href={href} className={cn(styles.container, isCurrentMonth && styles.currentMonth)}>

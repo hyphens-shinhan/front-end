@@ -111,3 +111,14 @@ export type {
   AttendanceResponse,
   ReportResponse,
 } from './reports'
+
+// MARK: - User (유저 프로필/프라이버시) API 타입
+export type {
+  UserHomeProfile,
+  UserMyProfile,
+  UserPublicProfile,
+  UserProfileUpdate,
+  UserPrivacySettings,
+  UserPrivacyUpdate,
+} from './user'
+export { AppRole, ScholarshipType } from './user'

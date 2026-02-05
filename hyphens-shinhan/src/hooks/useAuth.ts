@@ -3,6 +3,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
+import { useUserStore } from '@/stores'
 
 export const useLogin = () => {
   const router = useRouter()
@@ -35,6 +36,31 @@ export const useLogin = () => {
     onError: (error: Error) => {
       console.error('Login Error:', error.message)
       alert(`로그인 실패: ${error.message}`)
+    },
+  })
+}
+
+/** 로그아웃 (임시) — Supabase 세션 해제 후 로그인 페이지로 이동 */
+export const useLogout = () => {
+  const router = useRouter()
+  const supabase = createClient()
+  const queryClient = useQueryClient()
+  const setUser = useUserStore((s) => s.setUser)
+
+  return useMutation({
+    mutationFn: async () => {
+      const { error } = await supabase.auth.signOut()
+      if (error) throw new Error(error.message)
+    },
+    onSuccess: () => {
+      setUser(null)
+      queryClient.invalidateQueries()
+      router.push('/login')
+      router.refresh()
+    },
+    onError: (error: Error) => {
+      console.error('Logout Error:', error.message)
+      alert(`로그아웃 실패: ${error.message}`)
     },
   })
 }

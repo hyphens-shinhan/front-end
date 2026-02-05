@@ -14,8 +14,10 @@ import type {
     ReceiptCreate,
     ReportResponse,
 } from '@/types/reports'
+import { AttendanceStatus, ConfirmationStatus } from '@/types/reports'
 import type { ReportMonth } from '@/services/reports'
 import { useUpdateReport, useSubmitReport } from '@/hooks/reports/useReportsMutations'
+import { useCouncilMembers } from '@/hooks/councils/useCouncils'
 
 // ---------- Props ----------
 interface ReportDetailContentYBLeaderProps {
@@ -58,10 +60,16 @@ export default function ReportDetailContentYBLeader({
     const photoInputRef = useRef<ActivityPhotosInputRef>(null)
     /** 영수증: ref로 getReceipts() 호출 → 기존 + 새 업로드 합쳐 ReceiptCreate[] 반환 */
     const receiptInputRef = useRef<ActivityCostReceiptInputRef>(null)
+    /** 임시 저장/제출 시 항상 최신 출석 상태 사용 (토글 직후 클로저 스테일 방지) */
+    const attendanceRef = useRef<AttendanceResponse[] | undefined>(attendance)
+    attendanceRef.current = attendance
 
     // ---------- API 뮤테이션 ----------
     const updateReport = useUpdateReport()
     const submitReport = useSubmitReport()
+
+    // ---------- 회의 멤버 목록 (출석 없을 때 초기 명단 채우기) ----------
+    const { data: councilMembers } = useCouncilMembers(councilId)
 
     // ---------- 초안 데이터 반영 (GET → 폼 초기화) ----------
     /** 진행중인 월 진입 시 initialReport가 있으면 폼 필드에 채움 */
@@ -72,10 +80,44 @@ export default function ReportDetailContentYBLeader({
         setLocation(initialReport.location ?? '')
         setContent(initialReport.content ?? '')
         if (initialReport.attendance?.length) {
-            setAttendance(initialReport.attendance)
+            const next = initialReport.attendance
+            setAttendance(next)
+            attendanceRef.current = next
         }
         setReportId(initialReport.id)
     }, [initialReport?.id])
+
+    // ---------- 출석 명단 없을 때 회의 멤버 API로 초기 목록 채우기 ----------
+    useEffect(() => {
+        if (!councilId || !councilMembers?.length) return
+        const fromReport = initialReport?.attendance
+        if (fromReport?.length) return
+        if (attendance !== undefined && attendance.length > 0) return
+        const initial: AttendanceResponse[] = councilMembers.map((m) => ({
+            user_id: m.id,
+            name: m.name,
+            avatar_url: m.avatar_url,
+            status: AttendanceStatus.PRESENT,
+            confirmation: ConfirmationStatus.PENDING,
+            is_leader: m.is_leader,
+        }))
+        setAttendance(initial)
+        attendanceRef.current = initial
+    }, [councilId, councilMembers, initialReport?.attendance, attendance?.length])
+
+    /** 참석/불참 토글 시 부모 attendance 상태 반영 → 임시저장/제출 시 서버로 전달 */
+    const handleAttendanceStatusChange = (userId: string, present: boolean) => {
+        setAttendance((prev) => {
+            if (!prev?.length) return prev
+            const next = prev.map((a) =>
+                a.user_id === userId
+                    ? { ...a, status: present ? AttendanceStatus.PRESENT : AttendanceStatus.ABSENT }
+                    : a
+            )
+            attendanceRef.current = next
+            return next
+        })
+    }
 
     // ---------- 제출 가능 여부 (섹션별 체크) ----------
     const isActivityInfoChecked =
@@ -87,21 +129,20 @@ export default function ReportDetailContentYBLeader({
         isParticipationChecked &&
         isReceiptChecked
 
-    // ---------- 임시 저장 (PATCH) ----------
+    // ---------- 임시 저장 (PATCH) / 제출 공통: 최신 폼으로 PATCH 후 선택적으로 제출 ----------
     /**
      * 활동 사진·영수증은 ref로 각각 업로드 후 URL/ReceiptCreate[] 받아서 body에 담아 PATCH.
-     * - 활동 사진: 기존 표시 중인 URL + 이번에 새로 올린 파일 URL 합쳐서 image_urls로 전송.
-     * - 영수증: 기존 유지한 건 그대로 + 새로 올린 건 업로드 후 ReceiptCreate로 합쳐 receipts로 전송.
+     * 제출 시에도 먼저 이걸 호출해 최신 출석 상태를 서버에 반영한 뒤 submit 호출.
      */
-    const handleSaveDraft = async () => {
+    const saveDraftThen = async (afterSave?: (data: { id: string }) => void) => {
         if (!councilId) return
-        // 활동 사진: 기존 유지 URL + 새 파일 업로드 URL. 영수증: 기존 유지 + 새 업로드 → ReceiptCreate[]
         const [imageUrls, receipts] = await Promise.all([
             photoInputRef.current?.uploadImages() ?? Promise.resolve([]),
             receiptInputRef.current?.getReceipts() ?? Promise.resolve([]),
         ])
         const receiptsPayload: ReceiptCreate[] | null =
             receipts.length > 0 ? receipts : null
+        const latestAttendance = attendanceRef.current
 
         updateReport.mutate(
             {
@@ -115,7 +156,7 @@ export default function ReportDetailContentYBLeader({
                     content: content || null,
                     image_urls: imageUrls.length > 0 ? imageUrls : null,
                     receipts: receiptsPayload,
-                    attendance: attendance?.map((a) => ({
+                    attendance: latestAttendance?.map((a) => ({
                         user_id: a.user_id,
                         status: a.status,
                     })),
@@ -124,20 +165,22 @@ export default function ReportDetailContentYBLeader({
             {
                 onSuccess: (data) => {
                     setReportId(data.id)
+                    afterSave?.(data)
                 },
             }
         )
     }
 
-    // ---------- 제출 (POST submit) ----------
-    /** reportId 없으면 임시 저장 먼저 호출(초안 생성 유도), 있으면 submit API 호출 */
+    /** 임시 저장만 */
+    const handleSaveDraft = () => {
+        saveDraftThen()
+    }
+
+    /** 제출: 항상 최신 폼(출석 포함)으로 먼저 PATCH 후 submit 호출 */
     const handleSubmit = () => {
-        const id = reportId ?? initialReport?.id
-        if (!id) {
-            handleSaveDraft()
-            return
-        }
-        submitReport.mutate(id)
+        saveDraftThen((data) => {
+            submitReport.mutate(data.id)
+        })
     }
 
     // ---------- 버튼 활성/비활성 조건 ----------
@@ -170,6 +213,9 @@ export default function ReportDetailContentYBLeader({
             {/* ---------- 참여 멤버 (출석 명단). 팀장·미제출 시에만 행 토글 표시 ---------- */}
             <ParticipationMemberInput
                 attendance={attendance}
+                onAttendanceStatusChange={
+                    initialReport?.is_submitted ? undefined : handleAttendanceStatusChange
+                }
                 isChecked={isParticipationChecked}
                 isSubmitted={initialReport?.is_submitted ?? false}
             />

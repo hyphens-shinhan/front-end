@@ -32,11 +32,9 @@ export const reportEndpoints = {
   confirmAttendance: (reportId: string) =>
     `${BASE_COUNCIL}/${reportId}/confirm`,
   /** PATCH 내 출석 확인 취소 */
-  rejectAttendance: (reportId: string) =>
-    `${BASE_COUNCIL}/${reportId}/reject`,
+  rejectAttendance: (reportId: string) => `${BASE_COUNCIL}/${reportId}/reject`,
   /** POST 리포트 제출 (리더만) */
-  submitReport: (reportId: string) =>
-    `${BASE_COUNCIL}/${reportId}/submit`,
+  submitReport: (reportId: string) => `${BASE_COUNCIL}/${reportId}/submit`,
   /** POST 공개/비공개 전환 (리더만) */
   toggleVisibility: (reportId: string) =>
     `${BASE_REPORTS}/${reportId}/toggle-visibility`,
@@ -60,10 +58,10 @@ export const ReportsService = {
   getReport: async (
     councilId: string,
     year: number,
-    month: ReportMonth
+    month: ReportMonth,
   ): Promise<ReportResponse> => {
     const { data } = await apiClient.get<ReportResponse>(
-      reportEndpoints.getReport(councilId, year, month)
+      reportEndpoints.getReport(councilId, year, month),
     )
     return data
   },
@@ -75,11 +73,11 @@ export const ReportsService = {
     councilId: string,
     year: number,
     month: ReportMonth,
-    body: ReportUpdate
+    body: ReportUpdate,
   ): Promise<ReportResponse> => {
     const { data } = await apiClient.patch<ReportResponse>(
       reportEndpoints.updateReport(councilId, year, month),
-      body
+      body,
     )
     return data
   },
@@ -87,11 +85,9 @@ export const ReportsService = {
   /**
    * 내 출석 확인 (제출된 리포트에만 가능)
    */
-  confirmAttendance: async (
-    reportId: string
-  ): Promise<AttendanceResponse> => {
+  confirmAttendance: async (reportId: string): Promise<AttendanceResponse> => {
     const { data } = await apiClient.patch<AttendanceResponse>(
-      reportEndpoints.confirmAttendance(reportId)
+      reportEndpoints.confirmAttendance(reportId),
     )
     return data
   },
@@ -99,11 +95,9 @@ export const ReportsService = {
   /**
    * 내 출석 확인 취소
    */
-  rejectAttendance: async (
-    reportId: string
-  ): Promise<AttendanceResponse> => {
+  rejectAttendance: async (reportId: string): Promise<AttendanceResponse> => {
     const { data } = await apiClient.patch<AttendanceResponse>(
-      reportEndpoints.rejectAttendance(reportId)
+      reportEndpoints.rejectAttendance(reportId),
     )
     return data
   },
@@ -113,7 +107,7 @@ export const ReportsService = {
    */
   submitReport: async (reportId: string): Promise<ReportResponse> => {
     const { data } = await apiClient.post<ReportResponse>(
-      reportEndpoints.submitReport(reportId)
+      reportEndpoints.submitReport(reportId),
     )
     return data
   },
@@ -122,10 +116,10 @@ export const ReportsService = {
    * 리포트 공개/비공개 전환 (리더만). 공개 시 회원에게 REPORT_EXPORT 알림 전송.
    */
   toggleVisibility: async (
-    reportId: string
+    reportId: string,
   ): Promise<ToggleVisibilityResponse> => {
     const { data } = await apiClient.post<ToggleVisibilityResponse>(
-      reportEndpoints.toggleVisibility(reportId)
+      reportEndpoints.toggleVisibility(reportId),
     )
     return data
   },

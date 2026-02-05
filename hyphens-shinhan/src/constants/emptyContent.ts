@@ -17,7 +17,7 @@ export const EMPTY_CONTENT_MESSAGES = {
     MANDATORY_ACTIVITY: '연간 필수 활동이 없어요.',
     /** 내가 신청한 프로그램 없음 */
     APPLIED_PROGRAMS: '신청한 프로그램이 없어요.',
-    /** 해당 연도 이사회 정보 없음 (활동 보고서 상세) */
+    /** 해당 연도 자치회 정보 없음 (활동 보고서 상세) */
     REPORT_NO_COUNCIL: '해당 연도의 자치회 정보가 없어요.',
     /** 활동 보고서 - 등록된 사진 없음 */
     ACTIVITY_PHOTOS: '등록된 활동 사진이 없어요.',

@@ -105,7 +105,7 @@ export type {
   ReceiptItemCreate,
   ReceiptCreate,
   AttendanceItem,
-  ReportCreate,
+  ReportUpdate,
   ReceiptItemResponse,
   ReceiptResponse,
   AttendanceResponse,

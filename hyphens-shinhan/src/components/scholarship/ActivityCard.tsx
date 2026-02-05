@@ -13,7 +13,7 @@ interface ActivityCardProps {
   year: number
   /** 월 (4–12) */
   month: number
-  /** 카드 제목 (이사회 보고서 제목 등) */
+  /** 카드 제목 (자치회 보고서 제목 등) */
   title?: string | null
   /** 제출 완료 여부 */
   status?: StatusType

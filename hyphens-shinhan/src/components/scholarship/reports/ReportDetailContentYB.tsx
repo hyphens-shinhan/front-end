@@ -42,7 +42,7 @@ export default function ReportDetailContentYB({
   const setHandlers = useHeaderStore((s) => s.setHandlers)
   const resetHandlers = useHeaderStore((s) => s.resetHandlers)
 
-  /** 활동 요약에서 해당 연도의 이사회 ID 조회 (reports API용) */
+  /** 활동 요약에서 해당 연도의 자치회 ID 조회 (reports API용) */
   const { data: activitiesData } = useActivitiesSummary()
   const councilId = useMemo(
     () => activitiesData?.years?.find((y) => y.year === year)?.council_id ?? '',
@@ -90,7 +90,7 @@ export default function ReportDetailContentYB({
   /** EmptyContent 내 목록으로 돌아가기 버튼용 (연도 쿼리 유지) */
   const backToList = () => router.push(`${ROUTES.SCHOLARSHIP.MAIN}?year=${year}`)
 
-  // ---------- 해당 연도 이사회 없음 ----------
+  // ---------- 해당 연도 자치회 없음 ----------
   if (hasNoCouncil) {
     return (
       <div className={cn(styles.container, 'py-8')}>

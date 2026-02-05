@@ -67,7 +67,14 @@ export default function ActivityList() {
                     const isCurrentMonth = now.year === resolvedYear && now.month === monthNum;
                     const isMonitoring = (yearlySummary?.academic_is_monitored ?? false) && isCurrentMonth;
                     const title = monthData?.council_report?.title ?? null;
-                    const status = monthData?.council_report?.is_completed ? 'completed' : 'beforeStart';
+                    const cr = monthData?.council_report;
+                    const isSubmitted = cr?.is_submitted ?? cr?.is_completed;
+                    const status =
+                        isSubmitted
+                            ? 'completed'
+                            : cr?.exists === true && cr?.is_submitted === false
+                              ? 'inProgress'
+                              : 'beforeStart';
                     return (
                         <ActivityCard
                             key={monthNum}

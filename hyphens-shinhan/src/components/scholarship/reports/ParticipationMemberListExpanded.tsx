@@ -37,7 +37,7 @@ export default function ParticipationMemberListExpanded({
             <p className={styles.sectionLabel}>팀장</p>
             <ParticipationMemberRow
               key={leader.user_id}
-              name={leader.user_id}
+              name={leader.name}
               status={attendanceToDisplayStatus(leader)}
               showToggle={isLeader}
               attendanceStatus={attendanceStatusByUser[leader.user_id] ?? false}
@@ -60,7 +60,7 @@ export default function ParticipationMemberListExpanded({
           attendance.slice(1).map((a) => (
             <ParticipationMemberRow
               key={a.user_id}
-              name={a.user_id}
+              name={a.name}
               status={attendanceToDisplayStatus(a)}
               showToggle={isLeader}
               attendanceStatus={attendanceStatusByUser[a.user_id] ?? false}

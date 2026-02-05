@@ -5,13 +5,17 @@ import type { EventStatus } from './posts'
 // ========== Activity 관련 타입 ==========
 
 /**
- * 이사회 보고서 제출 상태
+ * 자치회 보고서 제출 상태
  */
 export interface CouncilReportStatus {
   /** 보고서 제목 (없을 수 있음) */
   title?: string | null
-  /** 제출 완료 여부 */
+  /** 제출 완료 여부 (레거시: is_submitted와 동일 의미) */
   is_completed: boolean
+  /** 해당 연·월 리포트(초안) 존재 여부. true이고 is_submitted가 false이면 진행중 */
+  exists?: boolean
+  /** 제출 완료 여부. exists true + is_submitted false → 진행중 */
+  is_submitted?: boolean
 }
 
 /**
@@ -75,12 +79,12 @@ export interface AppliedEventsStatus {
 }
 
 /**
- * 월별 활동 상태 (이사회·학술 보고 등)
+ * 월별 활동 상태 (자치회·학술 보고 등)
  */
 export interface MonthlyActivityStatus {
   /** 월 (1–12) */
   month: number
-  /** 이사회 보고서 상태 */
+  /** 자치회 보고서 상태 */
   council_report: CouncilReportStatus
   /** 학술 보고서 상태 */
   academic_report: AcademicReportStatus
@@ -92,11 +96,11 @@ export interface MonthlyActivityStatus {
 export interface YearlyActivitySummary {
   /** 연도 */
   year: number
-  /** 이사회 ID (UUID, 없을 수 있음) */
+  /** 자치회 ID (UUID, 없을 수 있음) */
   council_id?: string | null
   /** 월별 활동 상태 목록 */
   months: MonthlyActivityStatus[]
-  /** 해당 연도 이사회 보고 전체 완료 여부 */
+  /** 해당 연도 자치회 보고 전체 완료 여부 */
   council_all_completed: boolean
   /** 해당 연도 학술 보고 전체 완료 여부 */
   academic_all_completed: boolean

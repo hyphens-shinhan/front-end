@@ -1,5 +1,6 @@
 import CustomHeader from "@/components/common/CustomHeader";
 import { cn } from "@/utils/cn";
+import NoTabsLayoutClient from "./NoTabsLayoutClient";
 
 export default function NoTabsLayout({
     children,
@@ -7,15 +8,17 @@ export default function NoTabsLayout({
     children: React.ReactNode;
 }) {
     return (
-        <div className={styles.container}>
-            {/* 상단 고정 헤더 - 현재 경로에 따라 자동으로 설정됨 */}
-            <CustomHeader />
-            <main className={styles.main}>
-                <div className={styles.content}>
-                    {children}
-                </div>
-            </main>
-        </div>
+        <NoTabsLayoutClient>
+            <div className={styles.container}>
+                {/* 상단 고정 헤더 - 현재 경로에 따라 자동으로 설정됨 */}
+                <CustomHeader />
+                <main className={styles.main}>
+                    <div className={styles.content}>
+                        {children}
+                    </div>
+                </main>
+            </div>
+        </NoTabsLayoutClient>
     );
 }
 

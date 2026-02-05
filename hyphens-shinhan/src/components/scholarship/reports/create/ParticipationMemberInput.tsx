@@ -1,7 +1,7 @@
 import { cn } from "@/utils/cn"
-import ReportTitle from "./ReportTitle"
-import ParticipationMemberList from "./ParticipationMemberList"
-import type { ParticipationVariant } from "./ParticipationMemberList"
+import ReportTitle from "../ReportTitle"
+import ParticipationMemberList from "../ParticipationMemberList"
+import type { ParticipationVariant } from "../ParticipationMemberList"
 import type { AttendanceResponse } from "@/types/reports"
 
 export interface ParticipationMemberInputProps {

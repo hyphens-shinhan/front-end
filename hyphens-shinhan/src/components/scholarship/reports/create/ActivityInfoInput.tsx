@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { cn } from "@/utils/cn";
 import { useAutoResize } from "@/hooks/useAutoResize";
-import ReportTitle from "./ReportTitle";
+import ReportTitle from "../ReportTitle";
 import Accordion from "@/components/common/Accordion";
 import Separator from "@/components/common/Separator";
 

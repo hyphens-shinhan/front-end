@@ -2,7 +2,7 @@
 
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react"
 import { cn } from "@/utils/cn"
-import ReportTitle from "./ReportTitle"
+import ReportTitle from "../ReportTitle"
 import ImagePicker from "@/components/common/ImagePicker"
 import { useImageUpload } from "@/hooks/useImageUpload"
 import { IMAGE_UPLOAD } from "@/constants/imageUpload"

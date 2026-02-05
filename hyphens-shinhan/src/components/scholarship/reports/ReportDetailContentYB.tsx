@@ -15,6 +15,7 @@ import ActivityCostReceipt from './ActivityCostReceipt'
 import ActivityInfo from './ActivityInfo'
 import ActivityPhotos from './ActivityPhotos'
 import ParticipationStatus from './ParticipationStatus'
+import ReportTitle from './ReportTitle'
 import { cn } from '@/utils/cn'
 import Image from 'next/image'
 import characterImg from '@/assets/character.png'
@@ -151,22 +152,16 @@ export default function ReportDetailContentYB({
       />
       {/* 등록된 사진 (없으면 EmptyContent) */}
       {report.image_urls?.length ? (
-        <div className={styles.photosSection}>
-          <h2 className={styles.photosSectionTitle}>활동 사진</h2>
-          <div className='w-20 h-20 rounded-[16px] bg-grey-4' />
-        </div>
-        // <ActivityPhotos imageUrls={report.image_urls} />
+        <ActivityPhotos imageUrls={report.image_urls} />
       ) : (
-        <div className={styles.photosSection}>
-          <h2 className={styles.photosSectionTitle}>활동 사진</h2>
-          <EmptyContent
-            variant="empty"
-            message={EMPTY_CONTENT_MESSAGES.EMPTY.ACTIVITY_PHOTOS}
-            className="py-6 border border-grey-2 rounded-[16px]"
-          />
-        </div>
+        <EmptyContent
+          variant="empty"
+          message={EMPTY_CONTENT_MESSAGES.EMPTY.ACTIVITY_PHOTOS}
+          className="py-6 border border-grey-2 rounded-[16px]"
+        />
       )}
       <Separator />
+
       {/* 출석률, 참여 멤버 목록, 불참/출석 버튼 (미제출 시만) */}
       <ParticipationStatus
         reportId={report.id}
@@ -185,5 +180,4 @@ const styles = {
   /** EmptyContent 아래 목록으로 돌아가기 버튼 래퍼 */
   actionWrap: cn('flex justify-center px-4 pb-8'),
   photosSection: cn('pb-6'),
-  photosSectionTitle: cn('title-16 text-grey-11 py-4.5'),
 }

@@ -1,13 +1,13 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import ActivityInfoInput from './ActivityInfoInput'
+import ActivityInfoInput from './create/ActivityInfoInput'
 import Separator from '@/components/common/Separator'
-import ActivityPhotosInput, { type ActivityPhotosInputRef } from './ActivityPhotosInput'
-import ParticipationMemberInput from './ParticipationMemberInput'
+import ActivityPhotosInput, { type ActivityPhotosInputRef } from './create/ActivityPhotosInput'
+import ParticipationMemberInput from './create/ParticipationMemberInput'
 import ActivityCostReceiptInput, {
     type ActivityCostReceiptInputRef,
-} from './ActivityCostReceiptInput'
+} from './create/ActivityCostReceiptInput'
 import BottomFixedButton from '@/components/common/BottomFixedButton'
 import type {
     AttendanceResponse,

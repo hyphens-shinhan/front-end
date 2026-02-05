@@ -2,6 +2,7 @@
 
 import { cn } from '@/utils/cn'
 import { formatDateYMD } from '@/utils/date'
+import ReportTitle from '../ReportTitle'
 
 interface ActivityInfoProps {
   /** 활동 제목 */
@@ -25,7 +26,7 @@ export default function ActivityInfo({
 
   return (
     <div className={styles.section}>
-      <h2 className={styles.sectionTitle}>활동 정보</h2>
+      <ReportTitle title="활동 정보" className="py-4.5" />
       <div className={styles.card}>
         <h3 className={styles.cardTitle}>{title}</h3>
         {displayDate && <time className={styles.date}>{displayDate}</time>}

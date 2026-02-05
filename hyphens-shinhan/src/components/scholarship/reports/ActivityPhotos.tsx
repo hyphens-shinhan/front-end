@@ -5,6 +5,7 @@ import ImagePicker from '@/components/common/ImagePicker'
 import { useImageUpload } from '@/hooks/useImageUpload'
 import { IMAGE_UPLOAD } from '@/constants/imageUpload'
 import { cn } from '@/utils/cn'
+import ReportTitle from './ReportTitle'
 
 interface ActivityPhotosProps {
   /** 보고서에 이미 등록된 이미지 URL 목록 (서버에서 내려준 값) */
@@ -28,7 +29,7 @@ export default function ActivityPhotos({ imageUrls }: ActivityPhotosProps) {
 
   return (
     <div className={styles.section}>
-      <h2 className={styles.sectionTitle}>활동 사진</h2>
+      <ReportTitle title="활동 사진" className="py-4.5" />
       <div className={styles.imageRow}>
         {existingUrls.map((url, index) => (
           <div key={`existing-${index}`} className={styles.imageWrap}>
@@ -58,7 +59,6 @@ export default function ActivityPhotos({ imageUrls }: ActivityPhotosProps) {
 
 const styles = {
   section: cn('pb-6'),
-  sectionTitle: cn('title-16 text-grey-11 py-4.5'),
   imageRow: cn('flex flex-row flex-wrap gap-2'),
   imageWrap: cn('relative w-20 h-20'),
   imageInner: cn('relative w-full h-full rounded-[16px] overflow-hidden'),

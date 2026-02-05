@@ -150,7 +150,7 @@ export default function ReportDetailContentYB({
           isOpen={false}
           onToggle={() => { }}
           attendanceCount={report.attendance.length}
-          className="py-5"
+          className="pt-2 pb-4"
           href={
             isSubmitted && councilId
               ? `${ROUTES.SCHOLARSHIP.REPORT.PARTICIPATION}?year=${year}&month=${month}&councilId=${councilId}`
@@ -159,6 +159,7 @@ export default function ReportDetailContentYB({
         />
       </div>
       <Separator />
+
       {/* 총 비용·영수증 내역, 확인 완료 버튼 */}
       <ActivityCostReceipt receipts={report.receipts} />
     </div>

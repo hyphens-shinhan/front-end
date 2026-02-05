@@ -2,14 +2,10 @@
 
 import { cn } from '@/utils/cn'
 import { attendanceToDisplayStatus } from '@/utils/reports'
-import ParticipationMemberRow from './ParticipationMemberRow'
+import ParticipationMemberRow from '../ParticipationMemberRow'
 import type { AttendanceResponse } from '@/types/reports'
 
-export type ParticipationVariant = 'YB_LEADER' | 'YB'
-
 interface ParticipationMemberListExpandedProps {
-  /** YB_LEADER: 팀장 뷰(팀원 행에 출석 Toggle) / YB: 팀원 뷰 */
-  variant: ParticipationVariant
   /** API 출석 목록 (user_id, status, confirmation) */
   attendance?: AttendanceResponse[]
   /** 출석 여부 (user_id → 출석 여부). 부모에서 관리 */
@@ -18,14 +14,12 @@ interface ParticipationMemberListExpandedProps {
   onAttendanceChange: (userId: string, checked: boolean) => void
 }
 
-/** 버튼 클릭 시 펼쳐지는 멤버 목록. variant에 따라 팀장/팀원 영역 스타일·표시가 다름 */
+/** 버튼 클릭 시 펼쳐지는 멤버 목록 (YB_LEADER 작성 화면 전용) */
 export default function ParticipationMemberListExpanded({
-  variant,
   attendance = [],
   attendanceStatusByUser,
   onAttendanceChange,
 }: ParticipationMemberListExpandedProps) {
-  const isLeader = variant === 'YB_LEADER'
   const leader = attendance[0]
 
   return (
@@ -39,7 +33,7 @@ export default function ParticipationMemberListExpanded({
               key={leader.user_id}
               name={leader.name}
               status={attendanceToDisplayStatus(leader)}
-              showToggle={isLeader}
+              showToggle={true}
               attendanceStatus={attendanceStatusByUser[leader.user_id] ?? false}
               onToggle={(checked) => onAttendanceChange(leader.user_id, checked)}
             />
@@ -62,7 +56,7 @@ export default function ParticipationMemberListExpanded({
               key={a.user_id}
               name={a.name}
               status={attendanceToDisplayStatus(a)}
-              showToggle={isLeader}
+              showToggle={true}
               attendanceStatus={attendanceStatusByUser[a.user_id] ?? false}
               onToggle={(checked) => onAttendanceChange(a.user_id, checked)}
             />

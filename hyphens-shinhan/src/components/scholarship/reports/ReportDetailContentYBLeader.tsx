@@ -171,7 +171,6 @@ export default function ReportDetailContentYBLeader({
             <ParticipationMemberInput
                 attendance={attendance}
                 isChecked={isParticipationChecked}
-                variant="YB_LEADER"
                 isSubmitted={initialReport?.is_submitted ?? false}
             />
             <Separator className="mx-4" />

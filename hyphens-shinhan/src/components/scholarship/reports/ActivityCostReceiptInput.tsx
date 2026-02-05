@@ -49,8 +49,8 @@ const ActivityCostReceiptInput = forwardRef<
         uploadImages: doUploadImages,
     } = useImageUpload({
         maxImages: IMAGE_UPLOAD.MAX_IMAGES.RECEIPTS,
-        bucket: IMAGE_UPLOAD.BUCKET,
-        pathPrefix: IMAGE_UPLOAD.PATH_PREFIX.UPLOADS,
+        bucket: IMAGE_UPLOAD.BUCKET.REPORTS,
+        pathPrefix: IMAGE_UPLOAD.PATH_PREFIX.REPORT_RECEIPTS,
     })
 
     useEffect(() => {

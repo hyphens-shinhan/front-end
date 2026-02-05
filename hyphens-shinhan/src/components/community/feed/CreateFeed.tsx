@@ -49,7 +49,7 @@ export default function CreateFeed() {
     canAddMore,
   } = useImageUpload({
     maxImages: IMAGE_UPLOAD.MAX_IMAGES.FEED,
-    bucket: IMAGE_UPLOAD.BUCKET,
+    bucket: IMAGE_UPLOAD.BUCKET.POSTS,
     pathPrefix: IMAGE_UPLOAD.PATH_PREFIX.FEEDS,
   })
 

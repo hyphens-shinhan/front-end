@@ -1,13 +1,19 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import ActivityInfoInput from './ActivityInfoInput'
 import Separator from '@/components/common/Separator'
-import ActivityPhotosInput from './ActivityPhotosInput'
+import ActivityPhotosInput, { type ActivityPhotosInputRef } from './ActivityPhotosInput'
 import ParticipationMemberInput from './ParticipationMemberInput'
-import ActivityCostReceiptInput from './ActivityCostReceiptInput'
+import ActivityCostReceiptInput, {
+    type ActivityCostReceiptInputRef,
+} from './ActivityCostReceiptInput'
 import BottomFixedButton from '@/components/common/BottomFixedButton'
-import type { AttendanceResponse, ReportResponse } from '@/types/reports'
+import type {
+    AttendanceResponse,
+    ReceiptCreate,
+    ReportResponse,
+} from '@/types/reports'
 import type { ReportMonth } from '@/services/reports'
 import { useUpdateReport, useSubmitReport } from '@/hooks/reports/useReportsMutations'
 
@@ -46,6 +52,9 @@ export default function ReportDetailContentYBLeader({
         initialReport?.id ?? null
     )
 
+    const photoInputRef = useRef<ActivityPhotosInputRef>(null)
+    const receiptInputRef = useRef<ActivityCostReceiptInputRef>(null)
+
     // ---------- API 뮤테이션 ----------
     const updateReport = useUpdateReport()
     const submitReport = useSubmitReport()
@@ -75,8 +84,26 @@ export default function ReportDetailContentYBLeader({
         isReceiptChecked
 
     // ---------- 임시 저장 (PATCH) ----------
-    const handleSaveDraft = () => {
+    const handleSaveDraft = async () => {
         if (!councilId) return
+        const [imageUrls, receiptUrls] = await Promise.all([
+            photoInputRef.current?.uploadImages() ?? Promise.resolve([]),
+            receiptInputRef.current?.uploadImages() ?? Promise.resolve([]),
+        ])
+        const totalCost = receiptInputRef.current?.getTotalCost() ?? ''
+        const totalCostNum = totalCost.trim() ? Number(totalCost.replace(/,/g, '')) || 0 : 0
+        const receipts: ReceiptCreate[] | null =
+            receiptUrls.length > 0
+                ? receiptUrls.map((image_url, i) => ({
+                    store_name: '영수증',
+                    image_url,
+                    items:
+                        i === 0 && totalCostNum > 0
+                            ? [{ item_name: '총 비용', price: totalCostNum }]
+                            : [],
+                }))
+                : null
+
         updateReport.mutate(
             {
                 councilId,
@@ -87,6 +114,8 @@ export default function ReportDetailContentYBLeader({
                     activity_date: activityDate || null,
                     location: location || null,
                     content: content || null,
+                    image_urls: imageUrls.length > 0 ? imageUrls : null,
+                    receipts,
                     attendance: attendance?.map((a) => ({
                         user_id: a.user_id,
                         status: a.status,
@@ -131,8 +160,11 @@ export default function ReportDetailContentYBLeader({
             />
             <Separator className="mx-4" />
 
-            {/* ---------- 활동 사진 ---------- */}
-            <ActivityPhotosInput onCheckedChange={setIsPhotosChecked} />
+            {/* ---------- 활동 사진 (임시 저장 시 업로드 후 image_urls로 전달) ---------- */}
+            <ActivityPhotosInput
+                ref={photoInputRef}
+                onCheckedChange={setIsPhotosChecked}
+            />
             <Separator className="mx-4" />
 
             {/* ---------- 참여 멤버 (출석 명단). 팀장·미제출 시에만 행 토글 표시 ---------- */}
@@ -144,8 +176,11 @@ export default function ReportDetailContentYBLeader({
             />
             <Separator className="mx-4" />
 
-            {/* ---------- 활동 비용·영수증 ---------- */}
-            <ActivityCostReceiptInput onCheckedChange={setIsReceiptChecked} />
+            {/* ---------- 활동 비용·영수증 (임시 저장 시 업로드 후 receipts로 전달) ---------- */}
+            <ActivityCostReceiptInput
+                ref={receiptInputRef}
+                onCheckedChange={setIsReceiptChecked}
+            />
 
             {/* ---------- 제출 / 임시 저장 버튼 ---------- */}
             <BottomFixedButton

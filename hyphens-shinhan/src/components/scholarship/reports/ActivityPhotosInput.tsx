@@ -33,8 +33,8 @@ const ActivityPhotosInput = forwardRef<ActivityPhotosInputRef, ActivityPhotosInp
         uploadImages,
     } = useImageUpload({
         maxImages: IMAGE_UPLOAD.MAX_IMAGES.ACTIVITY_PHOTOS,
-        bucket: IMAGE_UPLOAD.BUCKET,
-        pathPrefix: IMAGE_UPLOAD.PATH_PREFIX.UPLOADS,
+        bucket: IMAGE_UPLOAD.BUCKET.REPORTS,
+        pathPrefix: IMAGE_UPLOAD.PATH_PREFIX.REPORT_PHOTOS,
     })
 
     useEffect(() => {

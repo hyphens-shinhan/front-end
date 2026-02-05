@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect } from "react";
 import { cn } from "@/utils/cn";
 import { useAutoResize } from "@/hooks/useAutoResize";
 import ReportTitle from "./ReportTitle";
@@ -31,6 +32,11 @@ interface ActivityInfoInputProps {
  */
 export default function ActivityInfoInput({ title, date, location, description, setDescription, setTitle, isTitleChecked = false }: ActivityInfoInputProps) {
     const { textareaRef, handleResize } = useAutoResize()
+
+    // GET으로 불러온 내용 등 description이 바뀔 때 textarea 높이 맞춤
+    useEffect(() => {
+        handleResize()
+    }, [description, handleResize])
 
     const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setDescription(e.target.value)

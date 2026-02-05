@@ -115,6 +115,20 @@ export type {
   ReportApi,
 } from './reports'
 
+// MARK: - Councils API 타입
+export type {
+  CouncilCreate,
+  CouncilUpdate,
+  CouncilMemberAddRequest,
+  CouncilResponse,
+  CouncilListResponse,
+  CouncilMemberResponse,
+  MonthActivityStatus,
+  CouncilActivity,
+  CouncilActivityResponse,
+  CouncilMessageResponse,
+} from './councils'
+
 // MARK: - User (유저 프로필/프라이버시) API 타입
 export type {
   UserHomeProfile,

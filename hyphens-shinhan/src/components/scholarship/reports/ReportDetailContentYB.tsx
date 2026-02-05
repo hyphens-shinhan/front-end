@@ -6,7 +6,12 @@ import Button from '@/components/common/Button'
 import EmptyContent from '@/components/common/EmptyContent'
 import Separator from '@/components/common/Separator'
 import { useReport } from '@/hooks/reports/useReports'
+import {
+  useConfirmAttendance,
+  useRejectAttendance,
+} from '@/hooks/reports/useReportsMutations'
 import { useActivitiesSummary } from '@/hooks/activities/useActivities'
+import { useUserStore } from '@/stores'
 import { EMPTY_CONTENT_MESSAGES } from '@/constants/emptyContent'
 import { ROUTES } from '@/constants'
 import type { ReportMonth } from '@/services/reports'
@@ -119,25 +124,44 @@ export default function ReportDetailContentYB({
   }
 
   const isSubmitted = !!report.submitted_at
+  const user = useUserStore((s) => s.user)
+  const confirmAttendance = useConfirmAttendance()
+  const rejectAttendance = useRejectAttendance()
+
+  const attendance = report.attendance ?? []
+  const receipts = report.receipts ?? []
+  const myAttendance = attendance.find((a) => a.user_id === user?.id)
+  const hasConfirmed = myAttendance?.confirmation === 'CONFIRMED'
+  const canConfirm = isSubmitted && !hasConfirmed && !!report.id
+  const isConfirming = confirmAttendance.isPending || rejectAttendance.isPending
+
+  const handleConfirm = () => {
+    if (!report.id) return
+    confirmAttendance.mutate(report.id)
+  }
+  const handleReject = () => {
+    if (!report.id) return
+    rejectAttendance.mutate(report.id)
+  }
 
   // ---------- 정상: 보고서 내용 렌더 ----------
   return (
     <div className={styles.container}>
       {/* 활동 제목·일자·장소·내용 */}
       <ActivityInfo
-        title={report.title}
+        title={report.title ?? ''}
         activityDate={report.activity_date}
         location={report.location}
         content={report.content}
       />
 
       {/* 등록된 사진 (없으면 EmptyContent) */}
-      <ActivityPhotos imageUrls={report.image_urls} />
+      <ActivityPhotos imageUrls={report.image_urls ?? null} />
       <Separator />
 
       {/* 참석자 현황 (참석 확인 수, 진행바, 멤버 미리보기/상세 링크) */}
       <ParticipationMemberStatus
-        attendance={report.attendance}
+        attendance={attendance}
         isSubmitted={isSubmitted}
         councilId={councilId}
         year={year}
@@ -145,20 +169,25 @@ export default function ReportDetailContentYB({
       />
       <Separator />
 
-      {/* 총 비용·영수증 내역, 확인 완료 버튼 */}
-      <ActivityCostReceipt receipts={report.receipts} />
+      {/* 총 비용·영수증 내역 */}
+      <ActivityCostReceipt receipts={receipts} />
 
       {/** 확인 완료, 수정 요청 하단 고정 버튼 */}
       <BottomFixedButton
         label="확인 완료"
         size="L"
         type="primary"
-        onClick={() => { }}
+        disabled={!canConfirm || isConfirming}
+        onClick={handleConfirm}
         secondLabel="수정 요청"
         secondType="warning"
-        secondDisabled={!isSubmitted}
-        onSecondClick={() => { }}
-        topContent={<p className='font-caption-caption3 text-grey-9'>보고서 내용이 사실과 다름없나요?</p>}
+        secondDisabled={!isSubmitted || isConfirming}
+        onSecondClick={handleReject}
+        topContent={
+          <p className="font-caption-caption3 text-grey-9">
+            보고서 내용이 사실과 다름없나요?
+          </p>
+        }
       />
     </div>
   )

@@ -110,6 +110,8 @@ export interface AttendanceResponse {
   status: AttendanceStatus
   /** 내 출석 확인 여부 (제출된 보고서에서만 의미 있음) */
   confirmation: ConfirmationStatus
+  /** 팀장 여부 (기본 false) */
+  is_leader?: boolean
 }
 
 /**
@@ -133,6 +135,8 @@ export interface ReportResponse {
   location: string | null
   /** 제출 여부 (리더가 submit 한 경우 true) */
   is_submitted: boolean
+  /** 공개 여부 */
+  is_public: boolean
   /** 제출 시각 (ISO 8601 datetime) */
   submitted_at: string
   /** 영수증 목록 */

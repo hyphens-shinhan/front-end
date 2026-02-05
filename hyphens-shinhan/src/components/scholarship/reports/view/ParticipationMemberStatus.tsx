@@ -28,23 +28,24 @@ export default function ParticipationMemberStatus({
     year,
     month,
 }: ParticipationMemberStatusProps) {
-    const attendanceCount = attendance.length
+    const totalCount = attendance.length
+    /** 확인 완료한 인원(confirmation === 'CONFIRMED'). 진행바는 이 값 기준 */
     const confirmedCount = attendance.filter((a) => a.confirmation === 'CONFIRMED').length
-    const progressValue = attendanceCount > 0 ? Math.round((confirmedCount / attendanceCount) * 100) : 0
+    const progressValue = totalCount > 0 ? Math.round((confirmedCount / totalCount) * 100) : 0
 
     return (
         <div>
             <ReportTitle title="참석자 현황" className="py-4.5" />
             <div className="flex gap-2 body-8 text-grey-10">
-                <p>참석 확인</p>
-                <p>{confirmedCount} / {attendanceCount}</p>
+                <p>확인 완료</p>
+                <p>{confirmedCount} / {totalCount}</p>
             </div>
             <ProgressBar value={progressValue} max={100} className="my-2" />
             <MemberPreviewRow
                 members={attendance.map((a) => a.name)}
                 isOpen={false}
                 onToggle={() => { }}
-                attendanceCount={attendanceCount}
+                attendanceCount={totalCount}
                 className="pt-2 pb-4"
                 href={
                     isSubmitted && councilId

@@ -20,7 +20,10 @@ export default function ParticipationMemberListExpanded({
   attendanceStatusByUser,
   onAttendanceChange,
 }: ParticipationMemberListExpandedProps) {
-  const leader = attendance[0]
+  const leader = attendance.find((a) => a.is_leader) ?? attendance[0]
+  const members = leader
+    ? attendance.filter((a) => a.user_id !== leader.user_id)
+    : attendance
 
   return (
     <div className={styles.container}>
@@ -46,12 +49,12 @@ export default function ParticipationMemberListExpanded({
         </div>
 
         {/** 팀원 목록 */}
-        {attendance.length <= 1 ? (
+        {members.length === 0 ? (
           <p className={cn(styles.sectionLabel, 'text-grey-6')}>
             참석 명단이 없습니다.
           </p>
         ) : (
-          attendance.slice(1).map((a) => (
+          members.map((a) => (
             <ParticipationMemberRow
               key={a.user_id}
               name={a.name}

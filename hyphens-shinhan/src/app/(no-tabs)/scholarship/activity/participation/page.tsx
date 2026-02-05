@@ -1,4 +1,4 @@
-import ParticipationPageContent from '@/components/scholarship/reports/ParticipationPageContent'
+import ParticipationPageContent from '@/components/scholarship/reports/view/ParticipationPageContent'
 import { toReportMonth } from '@/utils/reports'
 
 type SearchParams = { year?: string; month?: string; councilId?: string }

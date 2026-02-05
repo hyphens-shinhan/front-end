@@ -99,9 +99,8 @@ export type {
 } from './academic'
 
 // MARK: - Reports (활동 보고서) API 타입
+export { AttendanceStatus, ConfirmationStatus } from './reports'
 export type {
-  AttendanceStatus,
-  ConfirmationStatus,
   ReceiptItemCreate,
   ReceiptCreate,
   AttendanceItem,
@@ -110,6 +109,10 @@ export type {
   ReceiptResponse,
   AttendanceResponse,
   ReportResponse,
+  PublicAttendanceResponse,
+  PublicReportResponse,
+  ToggleVisibilityResponse,
+  ReportApi,
 } from './reports'
 
 // MARK: - User (유저 프로필/프라이버시) API 타입

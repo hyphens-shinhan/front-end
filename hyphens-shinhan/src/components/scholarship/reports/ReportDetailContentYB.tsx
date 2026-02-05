@@ -9,6 +9,7 @@ import { useReport } from '@/hooks/reports/useReports'
 import {
   useConfirmAttendance,
   useRejectAttendance,
+  useToggleVisibility,
 } from '@/hooks/reports/useReportsMutations'
 import { useActivitiesSummary } from '@/hooks/activities/useActivities'
 import { useUserStore } from '@/stores'
@@ -127,6 +128,7 @@ export default function ReportDetailContentYB({
   const user = useUserStore((s) => s.user)
   const confirmAttendance = useConfirmAttendance()
   const rejectAttendance = useRejectAttendance()
+  const toggleVisibility = useToggleVisibility()
 
   const attendance = report.attendance ?? []
   const receipts = report.receipts ?? []
@@ -134,6 +136,7 @@ export default function ReportDetailContentYB({
   const hasConfirmed = myAttendance?.confirmation === 'CONFIRMED'
   const canConfirm = isSubmitted && !hasConfirmed && !!report.id
   const isConfirming = confirmAttendance.isPending || rejectAttendance.isPending
+  const isExporting = toggleVisibility.isPending
 
   const handleConfirm = () => {
     if (!report.id) return
@@ -142,6 +145,10 @@ export default function ReportDetailContentYB({
   const handleReject = () => {
     if (!report.id) return
     rejectAttendance.mutate(report.id)
+  }
+  const handleExport = () => {
+    if (!report.id) return
+    toggleVisibility.mutate(report.id)
   }
 
   // ---------- 정상: 보고서 내용 렌더 ----------
@@ -172,23 +179,33 @@ export default function ReportDetailContentYB({
       {/* 총 비용·영수증 내역 */}
       <ActivityCostReceipt receipts={receipts} />
 
-      {/** 확인 완료, 수정 요청 하단 고정 버튼 */}
-      <BottomFixedButton
-        label="확인 완료"
-        size="L"
-        type="primary"
-        disabled={!canConfirm || isConfirming}
-        onClick={handleConfirm}
-        secondLabel="수정 요청"
-        secondType="warning"
-        secondDisabled={!isSubmitted || isConfirming}
-        onSecondClick={handleReject}
-        topContent={
-          <p className="font-caption-caption3 text-grey-9">
-            보고서 내용이 사실과 다름없나요?
-          </p>
-        }
-      />
+      {/** 팀원(YB) 전용: 확인 완료 / 수정 요청. 리더(YB_LEADER)는 다른 버튼 사용 예정 */}
+      {user?.role !== 'YB_LEADER' ? (
+        <BottomFixedButton
+          label="확인 완료"
+          size="L"
+          type="primary"
+          disabled={!canConfirm || isConfirming}
+          onClick={handleConfirm}
+          secondLabel="수정 요청"
+          secondType="warning"
+          secondDisabled={!isSubmitted || isConfirming}
+          onSecondClick={handleReject}
+          topContent={
+            <p className="font-caption-caption3 text-grey-9">
+              보고서 내용이 사실과 다름없나요?
+            </p>
+          }
+        />
+      ) : (
+        <BottomFixedButton
+          label={report.is_public ? '글 내리기' : '글 올리기'}
+          size="L"
+          type="secondary"
+          disabled={!report.id || isExporting}
+          onClick={handleExport}
+        />
+      )}
     </div>
   )
 }

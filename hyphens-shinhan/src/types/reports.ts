@@ -1,8 +1,8 @@
 /**
- * Report API 타입 (서버 app/schemas/report.py 기준)
+ * Report API 타입 (Plimate 서버 스펙 기준)
  *
  * - Base path: /api/v1/reports
- * - 회의(council) 활동 보고서 조회/초안 수정/제출, 출석 확인·취소 등에 사용
+ * - 회의(council) 활동 보고서 조회/초안 수정/제출, 출석 확인·취소, 공개 전환 등
  */
 
 // ========== Enums ==========
@@ -147,4 +147,67 @@ export interface ReportResponse {
   content: string | null
   /** 활동 사진 URL 목록 (없으면 null) */
   image_urls: string[] | null
+}
+
+// ========== 공개 피드용 (영수증/확인상태 제외) ==========
+
+/** 공개 피드용 출석 정보 (이름만) */
+export interface PublicAttendanceResponse {
+  name: string
+}
+
+/** 공개 피드용 리포트 (영수증·확인상태 제외) */
+export interface PublicReportResponse {
+  id: string
+  title: string
+  activity_date: string | null
+  location: string | null
+  content: string | null
+  image_urls: string[] | null
+  attendance: PublicAttendanceResponse[]
+  /** 제출 시각 (ISO 8601 datetime) */
+  submitted_at: string
+}
+
+/** 공개/비공개 전환 응답 */
+export interface ToggleVisibilityResponse {
+  is_public: boolean
+  message: string
+}
+
+// ========== 엔드포인트별 API 매핑 (선택) ==========
+
+/** 엔드포인트별 method / body / response 타입 */
+export interface ReportApi {
+  getReport: {
+    method: 'GET'
+    path: (councilId: string, year: number, month: number) => string
+    response: ReportResponse
+  }
+  updateReport: {
+    method: 'PATCH'
+    path: (councilId: string, year: number, month: number) => string
+    body: ReportUpdate
+    response: ReportResponse
+  }
+  confirmAttendance: {
+    method: 'PATCH'
+    path: (reportId: string) => string
+    response: AttendanceResponse
+  }
+  rejectAttendance: {
+    method: 'PATCH'
+    path: (reportId: string) => string
+    response: AttendanceResponse
+  }
+  submitReport: {
+    method: 'POST'
+    path: (reportId: string) => string
+    response: ReportResponse
+  }
+  toggleVisibility: {
+    method: 'POST'
+    path: (reportId: string) => string
+    response: ToggleVisibilityResponse
+  }
 }

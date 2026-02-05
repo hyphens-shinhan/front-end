@@ -77,3 +77,18 @@ export const useRejectAttendance = () => {
     },
   })
 }
+
+// ---------- 공개/비공개 전환 (리더만) ----------
+
+/**
+ * 리포트 공개/비공개 전환 (리더만). 공개 시 회원에게 REPORT_EXPORT 알림 전송.
+ */
+export const useToggleVisibility = () => {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (reportId: string) => ReportsService.toggleVisibility(reportId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: reportKeys.all })
+    },
+  })
+}

@@ -4,6 +4,7 @@ import Button from '@/components/common/Button'
 import { Icon } from '@/components/common/Icon'
 import { cn } from '@/utils/cn'
 import type { ReceiptResponse } from '@/types/reports'
+import ReportTitle from '../ReportTitle'
 
 interface ActivityCostReceiptProps {
   receipts: ReceiptResponse[]
@@ -21,7 +22,7 @@ export default function ActivityCostReceipt({ receipts }: ActivityCostReceiptPro
 
   return (
     <>
-      <h2 className={styles.sectionTitle}>활동 비용과 영수증</h2>
+      <ReportTitle title="활동 비용과 영수증" className="py-4.5" />
       <div className={styles.card}>
         <div>
           <div className={styles.totalRow}>
@@ -40,20 +41,17 @@ export default function ActivityCostReceipt({ receipts }: ActivityCostReceiptPro
           <Icon name="IconLBoldReceipt" size={24} />
         </div>
       </div>
-      <div className={styles.submitWrap}>
-        <Button label="확인 완료" size="L" type="primary" fullWidth />
-      </div>
     </>
   )
 }
 
 const styles = {
-    sectionTitle: cn('title-16 text-grey-11 py-4.5'),
-    card: cn('flex items-center justify-between px-4 py-3.5 bg-grey-1-1 rounded-[16px]'),
-    totalRow: cn('flex items-center gap-[7px]'),
-    totalLabel: cn('body-8 text-grey-10'),
-    totalAmount: cn('body-5 font-bold text-grey-10'),
-    detailLine: cn('body-8 text-grey-9'),
-    receiptIcon: cn('flex items-center justify-center p-2.5 bg-grey-3 rounded-full text-grey-8'),
-    submitWrap: cn('py-4'),
+  sectionTitle: cn('title-16 text-grey-11 py-4.5'),
+  card: cn('flex items-center justify-between px-4 py-3.5 bg-grey-1-1 rounded-[16px]'),
+  totalRow: cn('flex items-center gap-[7px]'),
+  totalLabel: cn('body-8 text-grey-10'),
+  totalAmount: cn('body-5 font-bold text-grey-10'),
+  detailLine: cn('body-8 text-grey-9'),
+  receiptIcon: cn('flex items-center justify-center p-2.5 bg-grey-3 rounded-full text-grey-8'),
+  submitWrap: cn('py-4'),
 }

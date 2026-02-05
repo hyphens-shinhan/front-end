@@ -9,7 +9,7 @@ import EmptyContent from '@/components/common/EmptyContent'
 import { EMPTY_CONTENT_MESSAGES } from '@/constants/emptyContent'
 import { cn } from '@/utils/cn'
 import ReportTitle from './ReportTitle'
-import ParticipationMemberListExpanded from './ParticipationMemberListExpanded'
+import ParticipationMemberListExpanded from './create/ParticipationMemberListExpanded'
 import type { ReportMonth } from '@/services/reports'
 
 interface ParticipationPageContentProps {
@@ -92,10 +92,9 @@ export default function ParticipationPageContent({
     <div className={styles.container}>
       <ReportTitle title="참여 현황" className="pb-4" />
       <ParticipationMemberListExpanded
-        variant="YB"
         attendance={report.attendance}
         attendanceStatusByUser={attendanceStatusByUser}
-        onAttendanceChange={() => {}}
+        onAttendanceChange={() => { }}
       />
     </div>
   )

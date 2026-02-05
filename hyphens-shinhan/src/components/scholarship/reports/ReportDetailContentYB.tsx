@@ -10,15 +10,14 @@ import { useActivitiesSummary } from '@/hooks/activities/useActivities'
 import { EMPTY_CONTENT_MESSAGES } from '@/constants/emptyContent'
 import { ROUTES } from '@/constants'
 import type { ReportMonth } from '@/services/reports'
-import ActivityCostReceipt from './ActivityCostReceipt'
+import ActivityCostReceipt from './view/ActivityCostReceipt'
 import ActivityInfo from './view/ActivityInfo'
 import ActivityPhotos from './ActivityPhotos'
 import { cn } from '@/utils/cn'
 import Image from 'next/image'
 import characterImg from '@/assets/character.png'
-import ReportTitle from './ReportTitle'
-import ProgressBar from '@/components/common/ProgressBar'
-import MemberPreviewRow from './MemberPreviewRow'
+import ParticipationMemberStatus from './view/ParticipationMemberStatus'
+import BottomFixedButton from '@/components/common/BottomFixedButton'
 
 interface ReportDetailContentYBProps {
   /** 연도 (URL searchParams 또는 목록에서 전달) */
@@ -136,32 +135,31 @@ export default function ReportDetailContentYB({
       <ActivityPhotos imageUrls={report.image_urls} />
       <Separator />
 
-      {/* 출석률, 참여 멤버 목록, 불참/출석 버튼 (미제출 시만) */}
-      <div>
-        <ReportTitle title="참여 현황" className="py-4.5" />
-        <div className='flex gap-2 body-8 text-grey-10'>
-          <p>참석 확인</p>
-          <p>9 / 10</p>
-        </div>
-        <ProgressBar value={50} max={100} className='my-2' />
-        {/* 참여 멤버 목록 - 제출 완료 뷰에서는 링크(오른쪽 화살표), 미제출은 토글 */}
-        <MemberPreviewRow
-          members={report.attendance.map((a) => a.name)}
-          isOpen={false}
-          onToggle={() => { }}
-          attendanceCount={report.attendance.length}
-          className="pt-2 pb-4"
-          href={
-            isSubmitted && councilId
-              ? `${ROUTES.SCHOLARSHIP.REPORT.PARTICIPATION}?year=${year}&month=${month}&councilId=${councilId}`
-              : undefined
-          }
-        />
-      </div>
+      {/* 참석자 현황 (참석 확인 수, 진행바, 멤버 미리보기/상세 링크) */}
+      <ParticipationMemberStatus
+        attendance={report.attendance}
+        isSubmitted={isSubmitted}
+        councilId={councilId}
+        year={year}
+        month={month}
+      />
       <Separator />
 
       {/* 총 비용·영수증 내역, 확인 완료 버튼 */}
       <ActivityCostReceipt receipts={report.receipts} />
+
+      {/** 확인 완료, 수정 요청 하단 고정 버튼 */}
+      <BottomFixedButton
+        label="확인 완료"
+        size="L"
+        type="primary"
+        onClick={() => { }}
+        secondLabel="수정 요청"
+        secondType="warning"
+        secondDisabled={!isSubmitted}
+        onSecondClick={() => { }}
+        topContent={<p className='font-caption-caption3 text-grey-9'>보고서 내용이 사실과 다름없나요?</p>}
+      />
     </div>
   )
 }

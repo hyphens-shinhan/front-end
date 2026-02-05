@@ -8,15 +8,26 @@ import ParticipationMemberInput from "./ParticipationMemberInput";
 import ActivityCostReceiptInput from "./ActivityCostReceiptInput";
 import BottomFixedButton from "@/components/common/BottomFixedButton";
 import type { AttendanceResponse } from "@/types/reports";
+import type { ReportMonth } from "@/services/reports";
 
 const DEFAULT_ATTENDANCE: AttendanceResponse[] = [
-    { user_id: '김지우', status: 'PRESENT', confirmation: 'CONFIRMED' },
-    { user_id: '나동규', status: 'PRESENT', confirmation: 'CONFIRMED' },
-    { user_id: '박근경', status: 'PRESENT', confirmation: 'CONFIRMED' },
-    { user_id: '아노', status: 'PRESENT', confirmation: 'CONFIRMED' },
+    { user_id: '김지우', name: '김지우', avatar_url: null, status: 'PRESENT', confirmation: 'CONFIRMED' },
+    { user_id: '나동규', name: '나동규', avatar_url: null, status: 'PRESENT', confirmation: 'CONFIRMED' },
+    { user_id: '박근경', name: '박근경', avatar_url: null, status: 'PRESENT', confirmation: 'CONFIRMED' },
+    { user_id: '아노', name: '아노', avatar_url: null, status: 'PRESENT', confirmation: 'CONFIRMED' },
 ]
 
-export default function ReportDetailContentYBLeader() {
+interface ReportDetailContentYBLeaderProps {
+  /** 연도 (제출/저장 시 사용) */
+  year: number
+  /** 월 4–12 (제출/저장 시 사용) */
+  month: ReportMonth
+}
+
+export default function ReportDetailContentYBLeader({
+  year,
+  month,
+}: ReportDetailContentYBLeaderProps) {
     const [description, setDescription] = useState('')
     const [title, setTitle] = useState('')
     const [attendance] = useState<AttendanceResponse[]>(DEFAULT_ATTENDANCE)

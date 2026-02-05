@@ -1,4 +1,4 @@
-import ReportDetailContentYB from '@/components/scholarship/reports/ReportDetailContentYB'
+import ReportDetailRouter from '@/components/scholarship/reports/ReportDetailRouter'
 import { toReportMonth } from '@/utils/reports'
 
 type SearchParams = { year?: string; month?: string }
@@ -14,7 +14,7 @@ export default async function ScholarshipReportDetailPage({
 
   return (
     <div>
-      <ReportDetailContentYB year={year} month={toReportMonth(month)} />
+      <ReportDetailRouter year={year} month={toReportMonth(month)} />
     </div>
   )
 }

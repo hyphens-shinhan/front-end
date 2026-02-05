@@ -1,8 +1,9 @@
 import { cn } from "@/utils/cn";
 import { Icon } from "../common/Icon";
 import InfoTag from "../common/InfoTag";
+import type { ActivityStatusType } from "@/types";
 
-const STATUS_LABEL: Record<string, { label: string; color: 'blue' | 'green' | 'grey' }> = {
+const STATUS_LABEL: Record<ActivityStatusType, { label: string; color: 'blue' | 'green' | 'grey' }> = {
     inProgress: { label: '진행중', color: 'blue' },
     scheduled: { label: '참여 예정', color: 'blue' },
     completed: { label: '완료', color: 'green' },
@@ -12,7 +13,7 @@ const STATUS_LABEL: Record<string, { label: string; color: 'blue' | 'green' | 'g
 interface ActivityBannerProps {
   title: string
   dateLabel: string
-  status: 'inProgress' | 'scheduled' | 'completed' | 'beforeStart'
+  status: ActivityStatusType
 }
 
 /** MY활동 연간 필수 활동, 내가 신청한 프로그램 배너 컴포넌트 */

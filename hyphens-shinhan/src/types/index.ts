@@ -66,7 +66,7 @@ export type {
 } from './activities'
 
 // MARK: - 공통 (Mandatory / Academic 등에서 공통 사용)
-export type { AcademicGoalCategory } from './common'
+export type { ActivityStatusType, AcademicGoalCategory } from './common'
 
 // MARK: - Mandatory (필수 활동) API 타입
 export type {

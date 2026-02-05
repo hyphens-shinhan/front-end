@@ -1,9 +1,8 @@
 import { cn } from "@/utils/cn";
-
-type StatusType = 'inProgress' | 'scheduled' | 'completed' | 'beforeStart';
+import type { ActivityStatusType } from "@/types";
 
 interface PropsType {
-    status: StatusType;
+    status: ActivityStatusType;
 }
 
 const statusConfig = {

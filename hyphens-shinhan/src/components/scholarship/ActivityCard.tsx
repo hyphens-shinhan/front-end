@@ -3,8 +3,7 @@ import StatusTag from "../common/StatusTag";
 import { Icon } from "../common/Icon";
 import Link from "next/link";
 import { ROUTES } from "@/constants";
-
-type StatusType = 'completed' | 'beforeStart';
+import type { ActivityStatusType } from "@/types";
 
 interface ActivityCardProps {
   isCurrentMonth: boolean
@@ -15,8 +14,8 @@ interface ActivityCardProps {
   month: number
   /** 카드 제목 (자치회 보고서 제목 등) */
   title?: string | null
-  /** 제출 완료 여부 */
-  status?: StatusType
+  /** 진행 상태 (진행중/완료/시작전 등) */
+  status?: ActivityStatusType
 }
 
 /** MY활동 월별 활동 카드 컴포넌트

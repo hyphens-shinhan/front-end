@@ -2,12 +2,13 @@ import { cn } from '@/utils/cn'
 import EmptyContent from '@/components/common/EmptyContent'
 import { EMPTY_CONTENT_MESSAGES } from '@/constants/emptyContent'
 import ActivityBanner from './ActivityBanner'
+import type { ActivityStatusType } from '@/types'
 
 export type ActivityFormItem = {
   id: string
   title: string
   dateLabel: string
-  status: 'inProgress' | 'scheduled' | 'completed' | 'beforeStart'
+  status: ActivityStatusType
 }
 
 interface ActivityFormProps {

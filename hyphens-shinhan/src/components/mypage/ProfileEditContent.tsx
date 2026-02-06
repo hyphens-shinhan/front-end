@@ -33,8 +33,8 @@ export default function ProfileEditContent({ onCancel }: { onCancel: () => void 
         clearImages: clearAvatarImages,
     } = useImageUpload({
         maxImages: 1,
-        bucket: IMAGE_UPLOAD.BUCKET.POSTS,
-        pathPrefix: 'avatars', // 프로필 이미지 경로
+        bucket: IMAGE_UPLOAD.BUCKET.AVATARS,
+        pathPrefix: '', // 프로필 이미지는 버킷 루트에 저장
     });
 
     // 프로필 이미지 미리보기 URL (로컬 state로 관리)

@@ -45,19 +45,24 @@ export default function Avatar({
     const finalWidth = width || size || 40;
     const finalHeight = height || size || 40;
 
+    // URL의 슬래시 중복 제거 (avatars// -> avatars/)
+    const normalizedSrc = src?.replace(/([^:]\/)\/+/g, '$1') || null;
+
     // src가 변경되면 imageError 리셋
     useEffect(() => {
-        if (src) {
+        if (normalizedSrc) {
             resetError();
         }
-    }, [src, resetError]);
+    }, [normalizedSrc, resetError]);
 
     if (fill) {
+        // fill 모드일 때 containerClassName이 없으면 부모 크기를 채우도록 설정
+        const fillContainerClassName = containerClassName || 'w-full h-full';
         return (
-            <div className={cn(styles.container, containerClassName)}>
-                {src && !imageError ? (
+            <div className={cn(styles.container, fillContainerClassName)}>
+                {normalizedSrc && !imageError ? (
                     <Image
-                        src={src}
+                        src={normalizedSrc}
                         alt={alt}
                         fill
                         className={cn('rounded-full object-cover', className)}
@@ -73,9 +78,9 @@ export default function Avatar({
 
     return (
         <div className={cn(styles.container, containerClassName)}>
-            {src && !imageError ? (
+            {normalizedSrc && !imageError ? (
                 <Image
-                    src={src}
+                    src={normalizedSrc}
                     alt={alt}
                     width={finalWidth}
                     height={finalHeight}

@@ -90,6 +90,7 @@ function PostCard({ post, detailHref, disableProfileInteraction = false }: PostC
                         src={author?.avatar_url}
                         alt={author?.name || '프로필'}
                         fill
+                        containerClassName="w-full h-full"
                     />
                     {/** 프로필 상호작용이 비활성화되지 않았고, 익명이 아니고, 팔로우하지 않은 경우에만 팔로우 버튼 표시 */}
                     {!disableProfileInteraction && !is_anonymous && author && !author.is_following && (
@@ -104,6 +105,7 @@ function PostCard({ post, detailHref, disableProfileInteraction = false }: PostC
                         src={author?.avatar_url}
                         alt={author?.name || '프로필'}
                         fill
+                        containerClassName="w-full h-full"
                     />
                     {/** 프로필 상호작용이 비활성화되지 않았고, 익명이 아니고, 팔로우하지 않은 경우에만 팔로우 버튼 표시 */}
                     {!disableProfileInteraction && !is_anonymous && author && !author.is_following && (

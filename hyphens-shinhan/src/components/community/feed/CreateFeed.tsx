@@ -87,8 +87,8 @@ export default function CreateFeed() {
         image_urls: imageUrls.length > 0 ? imageUrls : null,
       })
 
-      // 3. 생성된 게시글 상세로 이동
-      router.push(`/community/feed/${result.id}`)
+      // 3. 생성된 게시글 상세로 이동 (히스토리에서 작성 페이지 제거)
+      router.replace(`/community/feed/${result.id}`)
     } catch (error) {
       console.error('게시글 생성 실패:', error)
       alert('게시글 생성에 실패했습니다. 네트워크 연결을 확인해주세요.')

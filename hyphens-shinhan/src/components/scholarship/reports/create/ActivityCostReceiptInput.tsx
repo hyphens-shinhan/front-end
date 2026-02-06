@@ -1,6 +1,6 @@
 'use client'
 
-import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react"
+import { forwardRef, memo, useEffect, useImperativeHandle, useRef, useState } from "react"
 import { cn } from "@/utils/cn"
 import ReportTitle from "../ReportTitle"
 import ImagePicker from "@/components/common/ImagePicker"
@@ -211,7 +211,7 @@ const ActivityCostReceiptInput = forwardRef<
     )
 })
 
-export default ActivityCostReceiptInput
+export default memo(ActivityCostReceiptInput)
 
 const styles = {
     container: cn('flex flex-col px-4 pt-6'),

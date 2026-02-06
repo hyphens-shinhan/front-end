@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useCallback, useMemo, memo } from 'react'
 import { useRouter } from 'next/navigation'
 import Button from '@/components/common/Button'
 import EmptyContent from '@/components/common/EmptyContent'
@@ -25,7 +25,7 @@ import characterImg from '@/assets/character.png'
 import ParticipationMemberStatus from './view/ParticipationMemberStatus'
 import BottomFixedButton from '@/components/common/BottomFixedButton'
 
-interface ReportDetailContentYBProps {
+export interface ReportDetailContentYBProps {
   /** 연도 (URL searchParams 또는 목록에서 전달) */
   year: number
   /** 월 (4–12, ReportMonth) */
@@ -39,7 +39,7 @@ interface ReportDetailContentYBProps {
  * - council_id는 api/v1/activities 요약에서 해당 연도로 조회 후 reports API에 사용
  * - 헤더 백·목록으로 돌아가기 시 /scholarship?year={year} 로 이동해 선택 연도 유지
  */
-export default function ReportDetailContentYB({
+function ReportDetailContentYB({
   year,
   month,
 }: ReportDetailContentYBProps) {
@@ -75,7 +75,10 @@ export default function ReportDetailContentYB({
   }
 
   /** EmptyContent 내 목록으로 돌아가기 버튼용 (연도 쿼리 유지) */
-  const backToList = () => router.push(`${ROUTES.SCHOLARSHIP.MAIN}?year=${year}`)
+  const backToList = useCallback(
+    () => router.push(`${ROUTES.SCHOLARSHIP.MAIN}?year=${year}`),
+    [router, year]
+  )
 
   // ---------- 해당 연도 자치회 없음 ----------
   if (hasNoCouncil) {
@@ -138,18 +141,18 @@ export default function ReportDetailContentYB({
   const isConfirming = confirmAttendance.isPending || rejectAttendance.isPending
   const isExporting = toggleVisibility.isPending
 
-  const handleConfirm = () => {
+  const handleConfirm = useCallback(() => {
     if (!report.id) return
     confirmAttendance.mutate(report.id)
-  }
-  const handleReject = () => {
+  }, [report.id, confirmAttendance])
+  const handleReject = useCallback(() => {
     if (!report.id) return
     rejectAttendance.mutate(report.id)
-  }
-  const handleExport = () => {
+  }, [report.id, rejectAttendance])
+  const handleExport = useCallback(() => {
     if (!report.id) return
     toggleVisibility.mutate(report.id)
-  }
+  }, [report.id, toggleVisibility])
 
   // ---------- 정상: 보고서 내용 렌더 ----------
   return (
@@ -209,6 +212,8 @@ export default function ReportDetailContentYB({
     </div>
   )
 }
+
+export default memo(ReportDetailContentYB)
 
 const styles = {
   container: cn('flex flex-col px-4 pb-40'),

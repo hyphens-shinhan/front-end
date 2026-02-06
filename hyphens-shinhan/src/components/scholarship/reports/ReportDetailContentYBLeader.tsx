@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback, memo } from 'react'
 import ActivityInfoInput from './create/ActivityInfoInput'
 import Separator from '@/components/common/Separator'
 import ActivityPhotosInput, { type ActivityPhotosInputRef } from './create/ActivityPhotosInput'
@@ -20,7 +20,7 @@ import { useUpdateReport, useSubmitReport } from '@/hooks/reports/useReportsMuta
 import { useCouncilMembers } from '@/hooks/councils/useCouncils'
 
 // ---------- Props ----------
-interface ReportDetailContentYBLeaderProps {
+export interface ReportDetailContentYBLeaderProps {
     year: number
     month: ReportMonth
     /** 회의 ID (PATCH/GET 경로용). 없으면 임시저장·제출 비활성화 */
@@ -35,7 +35,7 @@ interface ReportDetailContentYBLeaderProps {
  * - 임시 저장 → PATCH (초안 생성 또는 수정).
  * - 제출 → POST submit (reportId 필요, 초안 저장 후 또는 initialReport.id).
  */
-export default function ReportDetailContentYBLeader({
+function ReportDetailContentYBLeader({
     year,
     month,
     councilId,
@@ -106,7 +106,7 @@ export default function ReportDetailContentYBLeader({
     }, [councilId, councilMembers, initialReport?.attendance, attendance?.length])
 
     /** 참석/불참 토글 시 부모 attendance 상태 반영 → 임시저장/제출 시 서버로 전달 */
-    const handleAttendanceStatusChange = (userId: string, present: boolean) => {
+    const handleAttendanceStatusChange = useCallback((userId: string, present: boolean) => {
         setAttendance((prev) => {
             if (!prev?.length) return prev
             const next = prev.map((a) =>
@@ -117,7 +117,7 @@ export default function ReportDetailContentYBLeader({
             attendanceRef.current = next
             return next
         })
-    }
+    }, [])
 
     // ---------- 제출 가능 여부 (섹션별 체크) ----------
     const isActivityInfoChecked =
@@ -243,3 +243,5 @@ export default function ReportDetailContentYBLeader({
         </div>
     )
 }
+
+export default memo(ReportDetailContentYBLeader)

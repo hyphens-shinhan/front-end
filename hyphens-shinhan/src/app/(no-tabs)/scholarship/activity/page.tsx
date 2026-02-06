@@ -1,5 +1,22 @@
-import ReportDetailRouter from '@/components/scholarship/reports/ReportDetailRouter'
+import dynamic from 'next/dynamic'
+import EmptyContent from '@/components/common/EmptyContent'
+import { EMPTY_CONTENT_MESSAGES } from '@/constants'
 import { toReportMonth } from '@/utils/reports'
+
+const ReportDetailRouter = dynamic(
+  () => import('@/components/scholarship/reports/ReportDetailRouter'),
+  {
+    loading: () => (
+      <div className="flex flex-col py-20 pb-40">
+        <EmptyContent
+          variant="loading"
+          message={EMPTY_CONTENT_MESSAGES.LOADING.DEFAULT}
+        />
+      </div>
+    ),
+    ssr: true,
+  }
+)
 
 type SearchParams = { year?: string; month?: string; councilId?: string }
 

@@ -270,3 +270,64 @@ export interface ToggleScrapResponse {
   scrapped: boolean
   scrap_count: number
 }
+
+// MARK: - 내가 작성한 포스트 관련 타입
+
+/**
+ * 내가 작성한 포스트 아이템 타입
+ */
+export const MyPostItemType = {
+  FEED: 'FEED',
+  COUNCIL_REPORT: 'COUNCIL_REPORT',
+} as const
+
+export type MyPostItemType =
+  (typeof MyPostItemType)[keyof typeof MyPostItemType]
+
+/**
+ * 내가 작성한 포스트 아이템 (Feed + Council Report 통합)
+ * GET /posts/me
+ */
+export interface MyPostItem {
+  id: string
+  type: MyPostItemType
+  created_at: string // ISO datetime
+  content?: string | null
+  title?: string | null // Council Report에만 있음
+  image_urls?: string[] | null
+  like_count: number
+  comment_count: number
+}
+
+/**
+ * 내가 작성한 포스트 목록 응답
+ * GET /posts/me
+ */
+export interface MyPostsResponse {
+  posts: MyPostItem[]
+  total: number
+}
+
+// MARK: - 공개 리포트 피드 관련 타입
+
+/**
+ * 공개 리포트 피드용 출석 정보
+ */
+export interface PublicAttendanceResponse {
+  name: string
+}
+
+/**
+ * 공개 리포트 피드 응답
+ * GET /posts/council
+ */
+export interface PublicReportResponse {
+  id: string
+  title: string
+  activity_date: string | null // ISO date
+  location: string | null
+  content: string | null
+  image_urls: string[] | null
+  attendance: PublicAttendanceResponse[]
+  submitted_at: string // ISO datetime
+}

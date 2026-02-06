@@ -15,6 +15,8 @@ import {
   EventCancelApplyResponse,
   ToggleLikeResponse,
   ToggleScrapResponse,
+  MyPostsResponse,
+  PublicReportResponse,
 } from '@/types/posts'
 
 /**
@@ -268,6 +270,41 @@ export const PostService = {
   toggleScrap: async (postId: string): Promise<ToggleScrapResponse> => {
     const response = await apiClient.post<ToggleScrapResponse>(
       `/posts/${postId}/scrap`,
+    )
+    return response.data
+  },
+
+  // --- MY POSTS API ---
+
+  /**
+   * 내가 작성한 포스트 목록 조회 (Feed + Council Report 통합)
+   * @param limit 가져올 개수
+   * @param offset 시작 위치
+   */
+  getMyPosts: async (
+    limit = 20,
+    offset = 0,
+  ): Promise<MyPostsResponse> => {
+    const response = await apiClient.get<MyPostsResponse>('/posts/me', {
+      params: { limit, offset },
+    })
+    return response.data
+  },
+
+  /**
+   * 공개 리포트 피드 조회
+   * @param limit 가져올 개수
+   * @param offset 시작 위치
+   */
+  getPublicReportsFeed: async (
+    limit = 20,
+    offset = 0,
+  ): Promise<PublicReportResponse[]> => {
+    const response = await apiClient.get<PublicReportResponse[]>(
+      '/posts/council',
+      {
+        params: { limit, offset },
+      },
     )
     return response.data
   },

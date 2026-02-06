@@ -1,23 +1,67 @@
 import InfoTag from "../common/InfoTag";
 import { cn } from "@/utils/cn";
+import Image from "next/image";
+import type { UserMyProfile } from "@/types/user";
+import { AppRole, ScholarshipType } from "@/types/user";
+
+interface ProfileCardProps {
+    profile: UserMyProfile;
+}
+
+/** 역할 표시 라벨 매핑 */
+const ROLE_LABELS: Record<AppRole, string> = {
+    YB: 'YB',
+    YB_LEADER: 'YB 리더',
+    OB: 'OB',
+    MENTOR: '멘토',
+    ADMIN: '관리자',
+};
+
+/** 장학 유형 표시 라벨 매핑 */
+const SCHOLARSHIP_TYPE_LABELS: Record<ScholarshipType, string> = {
+    GENERAL: '일반장학',
+    VETERAN_CHILD: '국가유공자자녀',
+    SELF_RELIANCE: '자립',
+    LAW_SCHOOL: '로스쿨',
+    EXCHANGE_STUDENT: '교환학생',
+    LEADER_DEVELOPMENT: '리더십',
+};
 
 /** 마이페이지 프로필 카드 컴포넌트
  * 마이프로필, 퍼블릭 프로필에서 사용
  */
-export default function ProfileCard() {
+export default function ProfileCard({ profile }: ProfileCardProps) {
+    const roleLabel = ROLE_LABELS[profile.role] || profile.role;
+    const scholarshipLabel = profile.scholarship_type
+        ? SCHOLARSHIP_TYPE_LABELS[profile.scholarship_type]
+        : null;
+
     return (
         <div className={styles.container}>
             {/** 프로필 이미지 */}
             <div className={styles.imageContainer}>
-                {/* <Image src={profileImage ?? ''} alt="profile" width={20} height={20} /> */}
+                {profile.avatar_url ? (
+                    <Image
+                        src={profile.avatar_url}
+                        alt={profile.name}
+                        width={80}
+                        height={80}
+                        className={styles.image}
+                        unoptimized
+                    />
+                ) : null}
             </div>
             {/** 이름과 역할, 장학 유형, 기수 정보 표시 */}
             <div className={styles.infoContainer}>
-                <h2 className={styles.name}>오시온</h2>
+                <h2 className={styles.name}>{profile.name}</h2>
                 <div className={styles.infoTags}>
-                    <InfoTag label="YB 리더" color="blue" />
-                    <InfoTag label="1기" color="yellow" />
-                    <InfoTag label="일반장학" color="green" />
+                    <InfoTag label={roleLabel} color="blue" />
+                    {profile.scholarship_batch && (
+                        <InfoTag label={`${profile.scholarship_batch}기`} color="yellow" />
+                    )}
+                    {scholarshipLabel && (
+                        <InfoTag label={scholarshipLabel} color="green" />
+                    )}
                 </div>
             </div>
         </div>
@@ -26,7 +70,8 @@ export default function ProfileCard() {
 
 const styles = {
     container: cn("flex gap-6 items-center"),
-    imageContainer: cn("w-20 h-20 rounded-full bg-grey-8"),
+    imageContainer: cn("w-20 h-20 rounded-full bg-grey-8 overflow-hidden relative"),
+    image: cn("w-full h-full object-cover"),
     name: cn("body-1 font-bold text-grey-11"),
     infoContainer: cn("flex flex-col gap-3"),
     infoTags: cn("flex gap-1.5"),

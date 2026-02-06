@@ -97,7 +97,7 @@ function PostCard({ post }: PostCardProps) {
                 />
 
                 {/** 좋아요 버튼, 댓글 버튼 */}
-                <footer className={styles.footerWrapper}>
+                <footer className={cn(styles.footerWrapper, image_urls && image_urls.length > 0 && '-mt-2.5')}>
                     {/** 좋아요 버튼 */}
                     <div className={styles.footerButton}>
                         <Icon name='IconMBoldHeart' />
@@ -147,8 +147,7 @@ const styles = {
         'mt-1 gap-3',
     ),
     footerWrapper: cn(
-        'flex flex-row items-center gap-2.5 justify-end',
-        '-mt-2.5',
+        'flex flex-row items-center gap-2.5 justify-end mt-2',
     ),
     footerButton: cn(
         'flex flex-row items-center gap-1',

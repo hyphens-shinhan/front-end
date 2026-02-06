@@ -19,10 +19,11 @@ interface FeedListProps {
     isMyPage?: boolean;
     userName?: string;
     userId?: string; // 퍼블릭 페이지일 경우 사용자 ID
+    userAvatarUrl?: string | null; // 퍼블릭 페이지일 경우 사용자 프로필 이미지 URL
     hideTitle?: boolean; // 제목 숨김 여부
 }
 
-export default function FeedList({ isMyPage = true, userName, userId, hideTitle = false }: FeedListProps) {
+export default function FeedList({ isMyPage = true, userName, userId, userAvatarUrl, hideTitle = false }: FeedListProps) {
     const { data, isLoading, error, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteMyPosts(20);
     const { data: myProfile } = useMyProfile(); // 현재 사용자 프로필 정보
 
@@ -92,7 +93,13 @@ export default function FeedList({ isMyPage = true, userName, userId, hideTitle 
                                 color="grey"
                             />
                         </div>
-                        <FeedPostItem post={post} currentUser={isMyPage ? myProfile : null} />
+                        <FeedPostItem 
+                            post={post} 
+                            currentUser={isMyPage ? myProfile : null}
+                            userName={userName}
+                            userId={userId}
+                            userAvatarUrl={userAvatarUrl}
+                        />
                     </div>
                     {index < allPosts.length - 1 && <Separator className="mx-4" />}
                 </div>
@@ -113,12 +120,24 @@ export default function FeedList({ isMyPage = true, userName, userId, hideTitle 
 }
 
 /** Feed 타입 포스트 아이템 (게시판 + 자치회 리포트 모두 동일 컴포넌트 사용) */
-function FeedPostItem({ post, currentUser }: { post: MyPostItem; currentUser?: UserMyProfile | null }) {
+function FeedPostItem({ 
+    post, 
+    currentUser,
+    userName,
+    userId,
+    userAvatarUrl
+}: { 
+    post: MyPostItem; 
+    currentUser?: UserMyProfile | null;
+    userName?: string;
+    userId?: string;
+    userAvatarUrl?: string | null;
+}) {
     // MyPostItem을 FeedPostResponse로 변환
     // 자치회 리포트의 경우 title이 있을 수 있으므로, content가 없으면 title 사용
     const content = post.content || post.title || '';
 
-    // 작성자 정보: API에서 받은 정보가 있으면 사용, 없으면 현재 사용자 정보 사용
+    // 작성자 정보: API에서 받은 정보가 있으면 사용, 없으면 현재 사용자 정보 또는 전달된 사용자 정보 사용
     let author: PostAuthor | null = null;
     if (post.author) {
         author = post.author;
@@ -127,6 +146,14 @@ function FeedPostItem({ post, currentUser }: { post: MyPostItem; currentUser?: U
             id: currentUser.id,
             name: currentUser.name,
             avatar_url: currentUser.avatar_url || null,
+            is_following: false,
+        };
+    } else if (userName && userId) {
+        // 퍼블릭 프로필의 경우 전달된 사용자 정보 사용
+        author = {
+            id: userId,
+            name: userName,
+            avatar_url: userAvatarUrl || null,
             is_following: false,
         };
     }

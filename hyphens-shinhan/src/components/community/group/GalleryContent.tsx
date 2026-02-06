@@ -2,7 +2,9 @@ import { memo } from "react";
 import Image from "next/image";
 import { cn } from "@/utils/cn";
 import EmptyContent from "@/components/common/EmptyContent";
+import ImageErrorPlaceholder from "@/components/common/ImageErrorPlaceholder";
 import { EMPTY_CONTENT_MESSAGES } from "@/constants";
+import { useMultipleImageErrorById } from "@/hooks/useMultipleImageError";
 import type { GalleryImageResponse } from "@/types/clubs";
 
 interface GalleryContentProps {
@@ -14,6 +16,8 @@ interface GalleryContentProps {
 
 /** 소모임 앨범 컴포넌트 */
 function GalleryContent({ images, isMember }: GalleryContentProps) {
+  const { handleImageError, isFailed } = useMultipleImageErrorById()
+
   if (!isMember) {
     return (
       <EmptyContent
@@ -24,7 +28,9 @@ function GalleryContent({ images, isMember }: GalleryContentProps) {
     );
   }
 
-  if (!images.length) {
+  const validImages = images.filter(({ id }) => !isFailed(id))
+
+  if (!validImages.length) {
     return (
       <EmptyContent
         variant="empty"
@@ -35,17 +41,28 @@ function GalleryContent({ images, isMember }: GalleryContentProps) {
 
   return (
     <div className={styles.container}>
-      {images.map(({ id, image_url }) => (
-        <div key={id} className={styles.imageWrapper}>
-          <Image
-            src={image_url}
-            alt="앨범 이미지"
-            fill
-            className={styles.image}
-            sizes="(max-width: 768px) 33vw, 200px"
-          />
-        </div>
-      ))}
+      {images.map(({ id, image_url }) => {
+        if (!isFailed(id)) {
+          return (
+            <div key={id} className={styles.imageWrapper}>
+              <ImageErrorPlaceholder />
+            </div>
+          )
+        }
+        return (
+          <div key={id} className={styles.imageWrapper}>
+            <Image
+              src={image_url}
+              alt="앨범 이미지"
+              fill
+              className={styles.image}
+              sizes="(max-width: 768px) 33vw, 200px"
+              onError={() => handleImageError(id)}
+              unoptimized
+            />
+          </div>
+        )
+      })}
     </div>
   );
 }

@@ -2,7 +2,9 @@
 
 import Image from 'next/image'
 import ImagePicker from '@/components/common/ImagePicker'
+import ImageErrorPlaceholder from '@/components/common/ImageErrorPlaceholder'
 import { useImageUpload } from '@/hooks/useImageUpload'
+import { useMultipleImageError } from '@/hooks/useMultipleImageError'
 import { IMAGE_UPLOAD } from '@/constants/imageUpload'
 import { cn } from '@/utils/cn'
 import ReportTitle from './ReportTitle'
@@ -14,6 +16,7 @@ interface ActivityPhotosProps {
 
 /** 활동 보고서 상세 - 활동 사진 섹션 (기존 이미지 표시 + 추가 업로드, 최대 5장) */
 export default function ActivityPhotos({ imageUrls }: ActivityPhotosProps) {
+  const { handleImageError, isFailed } = useMultipleImageError()
   const existingUrls = imageUrls?.filter(Boolean) ?? []
   const {
     images,
@@ -31,19 +34,31 @@ export default function ActivityPhotos({ imageUrls }: ActivityPhotosProps) {
     <div className={styles.section}>
       <ReportTitle title="활동 사진" className="py-4.5" />
       <div className={styles.imageRow}>
-        {existingUrls.map((url, index) => (
-          <div key={`existing-${index}`} className={styles.imageWrap}>
-            <div className={styles.imageInner}>
-              <Image
-                src={url}
-                alt={`활동 사진 ${index + 1}`}
-                fill
-                className={styles.image}
-                unoptimized={url.startsWith('blob:') || url.includes('supabase')}
-              />
+        {existingUrls.map((url, index) => {
+          if (isFailed(index)) {
+            return (
+              <div key={`existing-${index}`} className={styles.imageWrap}>
+                <div className={styles.imageInner}>
+                  <ImageErrorPlaceholder />
+                </div>
+              </div>
+            )
+          }
+          return (
+            <div key={`existing-${index}`} className={styles.imageWrap}>
+              <div className={styles.imageInner}>
+                <Image
+                  src={url}
+                  alt={`활동 사진 ${index + 1}`}
+                  fill
+                  className={styles.image}
+                  unoptimized={url.startsWith('blob:') || url.includes('supabase')}
+                  onError={() => handleImageError(index)}
+                />
+              </div>
             </div>
-          </div>
-        ))}
+          )
+        })}
         <ImagePicker
           images={images}
           onSelect={handleImageSelect}

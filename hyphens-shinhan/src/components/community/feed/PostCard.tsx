@@ -1,5 +1,6 @@
 import { memo } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Icon } from "@/components/common/Icon";
 import { cn } from "@/utils/cn";
 import { formatDateKrWithTime } from "@/utils/date";
@@ -43,6 +44,7 @@ function arePostPropsEqual(prev: PostCardProps, next: PostCardProps): boolean {
  * <PostCard post={postData} />
  */
 function PostCard({ post }: PostCardProps) {
+    const router = useRouter();
     const {
         id,
         author,
@@ -56,9 +58,17 @@ function PostCard({ post }: PostCardProps) {
 
     const currentUser = useUserStore((s) => s.user);
     const isMyPost = currentUser?.id === author?.id;
-    const profileLink = !is_anonymous && author && !isMyPost 
+    const profileLink = !is_anonymous && author && !isMyPost
         ? ROUTES.MYPAGE.PUBLIC_PROFILE(author.id)
         : null;
+
+    const handleProfileClick = (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (profileLink) {
+            router.push(profileLink);
+        }
+    };
 
     return (
         <div className={styles.container}>
@@ -102,17 +112,13 @@ function PostCard({ post }: PostCardProps) {
                 <div className={styles.infoWrapper}>
                     {/** 유저 이름 */}
                     {profileLink ? (
-                        <Link
-                            href={profileLink}
-                            onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                window.location.href = profileLink;
-                            }}
+                        <button
+                            type="button"
+                            onClick={handleProfileClick}
                             className={styles.userName}
                         >
                             {is_anonymous ? '익명' : (author?.name || '알 수 없음')}
-                        </Link>
+                        </button>
                     ) : (
                         <p className={styles.userName}>
                             {is_anonymous ? '익명' : (author?.name || '알 수 없음')}

@@ -132,3 +132,18 @@ export interface ClubLeaveResponse {
 export interface GalleryDeleteResponse {
   message: 'Gallery image deleted'
 }
+
+// ========== Members ==========
+
+/** 소모임 멤버 응답 (GET /clubs/{club_id}/members) */
+export interface ClubMemberResponse {
+  id: string
+  name: string
+  avatar_url: string | null
+}
+
+/** 소모임 멤버 목록 응답 */
+export interface ClubMemberListResponse {
+  members: ClubMemberResponse[]
+  total: number
+}

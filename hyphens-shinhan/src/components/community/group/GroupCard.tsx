@@ -1,7 +1,9 @@
 import { memo } from "react";
+import Image from "next/image";
 import { cn } from "@/utils/cn";
 import { Icon } from "@/components/common/Icon";
 import InfoTag from "@/components/common/InfoTag";
+import { useMultipleImageErrorById } from "@/hooks/useMultipleImageError";
 import type { ClubResponse, ClubCategory } from "@/types/clubs";
 
 const CATEGORY_LABEL: Record<ClubCategory, string> = {
@@ -41,6 +43,8 @@ function areGroupCardPropsEqual(prev: GroupCardProps, next: GroupCardProps): boo
  * <GroupCard club={clubData} variant="detail" />
  */
 function GroupCard({ club, variant = 'card' }: GroupCardProps) {
+  const { handleImageError, isFailed } = useMultipleImageErrorById()
+
   const {
     name,
     description,
@@ -77,14 +81,34 @@ function GroupCard({ club, variant = 'card' }: GroupCardProps) {
         {/** 소모임 멤버 미리보기: 카드일 때만 표시 (동그라미 3개) */}
         {isCard && (
           <div className={styles.memberPreviewContainer}>
-            <div
-              className={styles.memberPreviewItem}
-              style={slot1 ? { backgroundImage: `url(${slot1})`, backgroundSize: 'cover' } : undefined}
-            />
-            <div
-              className={styles.memberPreviewItem}
-              style={slot2 ? { backgroundImage: `url(${slot2})`, backgroundSize: 'cover' } : undefined}
-            />
+            {slot1 && !isFailed(slot1) ? (
+              <div className={styles.memberPreviewItem}>
+                <Image
+                  src={slot1}
+                  alt="멤버 프로필"
+                  fill
+                  className="rounded-full object-cover"
+                  onError={() => handleImageError(slot1)}
+                  unoptimized
+                />
+              </div>
+            ) : (
+              <div className={styles.memberPreviewItem} />
+            )}
+            {slot2 && !isFailed(slot2) ? (
+              <div className={styles.memberPreviewItem}>
+                <Image
+                  src={slot2}
+                  alt="멤버 프로필"
+                  fill
+                  className="rounded-full object-cover"
+                  onError={() => handleImageError(slot2)}
+                  unoptimized
+                />
+              </div>
+            ) : (
+              <div className={styles.memberPreviewItem} />
+            )}
             <div className={styles.memberCountItem}>{member_count}</div>
           </div>
         )}
@@ -120,7 +144,7 @@ const styles = {
     'flex flex-col -space-y-6.5',
   ),
   memberPreviewItem: cn(
-    'w-10 h-10 rounded-full bg-grey-3 border',
+    'relative w-10 h-10 rounded-full bg-grey-3 border overflow-hidden',
   ),
   memberCountItem: cn(
     'w-10 h-10 rounded-full bg-grey-8',

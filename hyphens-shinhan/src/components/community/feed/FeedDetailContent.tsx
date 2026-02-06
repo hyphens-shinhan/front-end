@@ -8,6 +8,7 @@ import CommentList from "@/components/community/feed/CommentList";
 import PostContent from "@/components/community/feed/PostContent";
 import Button from "@/components/common/Button";
 import EmptyContent from "@/components/common/EmptyContent";
+import Avatar from "@/components/common/Avatar";
 import { cn } from "@/utils/cn";
 import { formatDateKrWithTime } from "@/utils/date";
 import FollowButton from "../FollowButton";
@@ -110,17 +111,12 @@ export default function FeedDetailContent({ postId }: FeedDetailContentProps) {
             <div className={styles.scrollArea} onClick={handleScrollAreaClick}>
                 {/** 유저 정보, 시간, 팔로우 버튼 */}
                 <div className={styles.userInfoWrapper}>
-                    <div className={styles.userProfileWrapper}>
-                        {/* {!is_anonymous && author?.avatar_url && (
-                            <Image
-                                src={author.avatar_url}
-                                alt={author.name || '프로필'}
-                                fill
-                                sizes="40px"
-                                className="rounded-full object-cover"
-                            />
-                        )} */}
-                    </div>
+                    <Avatar
+                        src={is_anonymous ? null : author?.avatar_url}
+                        alt={is_anonymous ? '익명' : (author?.name || '프로필')}
+                        fill
+                        containerClassName={styles.userProfileWrapper}
+                    />
                     <div className={styles.userNameWrapper}>
                         <p className={styles.userName}>
                             {is_anonymous ? '익명' : (author?.name || '알 수 없음')}

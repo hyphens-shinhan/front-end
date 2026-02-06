@@ -1,3 +1,5 @@
+'use client';
+
 import { cn } from "@/utils/cn";
 import PostCard from "../community/feed/PostCard";
 import { FeedPostResponse, PostType, MyPostItem, MyPostItemType } from "@/types/posts";

@@ -129,6 +129,7 @@ export const HEADER_ITEMS: Record<HEADER_NAV_ITEM_KEY, HeaderNavItem> = {
   [HEADER_NAV_ITEM_KEY.MORE]: {
     icon: 'IconLLine3DotVertical',
     ariaLabel: '더보기',
+    href: ROUTES.MYPAGE.SETTING.MAIN,
   },
 } as const
 
@@ -158,7 +159,7 @@ export const HEADER_CONFIG_BY_BOTTOM_NAV: Record<NavLink, HeaderConfig> = {
   },
   [ROUTES.MYPAGE.MAIN]: {
     title: '프로필',
-    navItems: [HEADER_ITEMS.NOTIFICATIONS],
+    navItems: [HEADER_ITEMS.MORE],
   },
 } as const
 
@@ -246,6 +247,13 @@ export const CUSTOM_HEADER_CONFIG: Record<string, CustomHeaderConfig> = {
     type: 'Left',
     btnType: 'Back',
     backHref: ROUTES.SCHOLARSHIP.REPORT.ACTIVITY,
+  },
+  /** 마이페이지 설정 페이지 */
+  [ROUTES.MYPAGE.SETTING.MAIN]: {
+    title: '설정',
+    type: 'Left',
+    btnType: 'Back',
+    backHref: ROUTES.MYPAGE.MAIN,
   },
 } as const
 

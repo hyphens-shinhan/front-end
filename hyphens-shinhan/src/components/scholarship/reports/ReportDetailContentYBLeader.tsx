@@ -18,6 +18,7 @@ import { AttendanceStatus, ConfirmationStatus } from '@/types/reports'
 import type { ReportMonth } from '@/services/reports'
 import { useUpdateReport, useSubmitReport } from '@/hooks/reports/useReportsMutations'
 import { useCouncilMembers } from '@/hooks/councils/useCouncils'
+import { useConfirmModalStore } from '@/stores'
 
 // ---------- Props ----------
 export interface ReportDetailContentYBLeaderProps {
@@ -67,6 +68,7 @@ function ReportDetailContentYBLeader({
     // ---------- API 뮤테이션 ----------
     const updateReport = useUpdateReport()
     const submitReport = useSubmitReport()
+    const openConfirmModal = useConfirmModalStore((s) => s.onOpen)
 
     // ---------- 회의 멤버 목록 (출석 없을 때 초기 명단 채우기) ----------
     const { data: councilMembers } = useCouncilMembers(councilId)
@@ -176,10 +178,17 @@ function ReportDetailContentYBLeader({
         saveDraftThen()
     }
 
-    /** 제출: 항상 최신 폼(출석 포함)으로 먼저 PATCH 후 submit 호출 */
+    /** 제출: 확인 모달 띄운 뒤, 확인 시 최신 폼으로 PATCH 후 submit 호출 */
     const handleSubmit = () => {
-        saveDraftThen((data) => {
-            submitReport.mutate(data.id)
+        openConfirmModal({
+            title: '모두 잘 입력했나요?',
+            content: <div className="flex items-center justify-center body-7 text-grey-10">제출 후에는 임의로 수정할 수 없어요.</div>,
+            confirmText: '제출하기',
+            onConfirm: () => {
+                saveDraftThen((data) => {
+                    submitReport.mutate(data.id)
+                })
+            },
         })
     }
 

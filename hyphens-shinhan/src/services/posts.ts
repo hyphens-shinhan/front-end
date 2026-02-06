@@ -312,4 +312,15 @@ export const PostService = {
     )
     return response.data
   },
+
+  /**
+   * 자치회 리포트 상세 조회
+   * @param postId 게시글 ID
+   */
+  getCouncilReport: async (postId: string): Promise<PublicReportResponse> => {
+    const response = await apiClient.get<PublicReportResponse>(
+      `/council/${postId}`,
+    )
+    return response.data
+  },
 }

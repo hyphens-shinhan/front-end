@@ -199,3 +199,15 @@ export const usePublicReportsFeed = (limit = 20, offset = 0) => {
     queryFn: () => PostService.getPublicReportsFeed(limit, offset),
   })
 }
+
+/**
+ * 자치회 리포트 상세 조회
+ * @param postId 게시글 ID
+ */
+export const useCouncilReport = (postId: string) => {
+  return useQuery({
+    queryKey: [...postKeys.all, 'council', postId],
+    queryFn: () => PostService.getCouncilReport(postId),
+    enabled: !!postId,
+  })
+}

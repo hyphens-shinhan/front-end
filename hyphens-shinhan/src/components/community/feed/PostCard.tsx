@@ -14,6 +14,8 @@ import Avatar from "@/components/common/Avatar";
 
 interface PostCardProps {
     post: FeedPostResponse;
+    /** 커스텀 상세보기 링크 (기본값: FEED.DETAIL/{id}) */
+    detailHref?: string;
 }
 
 /** 게시글 카드 컴포넌트 동일성 비교 함수 */
@@ -43,7 +45,7 @@ function arePostPropsEqual(prev: PostCardProps, next: PostCardProps): boolean {
  * @example
  * <PostCard post={postData} />
  */
-function PostCard({ post }: PostCardProps) {
+function PostCard({ post, detailHref }: PostCardProps) {
     const router = useRouter();
     const {
         id,
@@ -55,6 +57,9 @@ function PostCard({ post }: PostCardProps) {
         image_urls,
         is_anonymous,
     } = post;
+
+    // 상세보기 링크 (커스텀 링크가 있으면 사용, 없으면 기본 피드 상세보기 링크)
+    const detailLink = detailHref || `${ROUTES.COMMUNITY.FEED.DETAIL}/${id}`;
 
     const currentUser = useUserStore((s) => s.user);
     const isMyPost = currentUser?.id === author?.id;
@@ -107,7 +112,7 @@ function PostCard({ post }: PostCardProps) {
             )}
 
             {/** 유저 정보, 본문 영역 */}
-            <Link href={`${ROUTES.COMMUNITY.FEED.DETAIL}/${id}`} className={styles.postContent}>
+            <Link href={detailLink} className={styles.postContent}>
                 {/** 유저 이름, 시간, 팔로우 버튼, 더보기 버튼 */}
                 <div className={styles.infoWrapper}>
                     {/** 유저 이름 */}

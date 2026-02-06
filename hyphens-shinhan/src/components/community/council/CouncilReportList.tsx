@@ -6,7 +6,7 @@ import Button from "@/components/common/Button";
 import EmptyContent from "@/components/common/EmptyContent";
 import Separator from "@/components/common/Separator";
 import PostFAB from "@/components/common/PostFAB";
-import { EMPTY_CONTENT_MESSAGES, POST_FAB_ITEM_KEY } from "@/constants";
+import { EMPTY_CONTENT_MESSAGES, POST_FAB_ITEM_KEY, ROUTES } from "@/constants";
 import { useInfinitePublicReportsFeed } from "@/hooks/posts/usePosts";
 import React from "react";
 import PostCard from "@/components/community/feed/PostCard";
@@ -116,10 +116,16 @@ function CouncilReportItem({ report }: { report: PublicReportResponse }) {
         scrap_count: 0,
         comment_count: 0,
         is_scrapped: false,
-        author: null, // 자치회 리포트는 작성자 정보가 없음
+        author: report.author || null, // API에서 받은 작성자 정보 사용
     };
 
-    return <PostCard post={feedPost} />;
+    // PostCard에 자치회 리포트 상세보기 링크 전달
+    return (
+        <PostCard 
+            post={feedPost} 
+            detailHref={`${ROUTES.COMMUNITY.COUNCIL.DETAIL}/${report.id}`}
+        />
+    );
 }
 
 const styles = {

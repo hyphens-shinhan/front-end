@@ -366,6 +366,8 @@ export interface PublicReportResponse {
   image_urls?: string[] | null
   attendance: PublicAttendanceResponse[]
   submitted_at: string // ISO datetime
+  /** 작성자 정보 */
+  author?: PostAuthor | null
 }
 
 /**

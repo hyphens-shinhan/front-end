@@ -13,6 +13,7 @@ import { useImageLoadTracking } from "@/hooks/useImageLoadTracking";
 import EmptyContent from "../common/EmptyContent";
 import { EMPTY_CONTENT_MESSAGES, ROUTES } from "@/constants";
 import { useMyProfile } from "@/hooks/user/useUser";
+import { useUserStore } from "@/stores";
 import type { UserMyProfile } from "@/types/user";
 
 interface FeedListProps {
@@ -26,6 +27,7 @@ interface FeedListProps {
 export default function FeedList({ isMyPage = true, userName, userId, userAvatarUrl, hideTitle = false }: FeedListProps) {
     const { data, isLoading, error, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteMyPosts(20);
     const { data: myProfile } = useMyProfile(); // 현재 사용자 프로필 정보
+    const currentUser = useUserStore((s) => s.user); // 현재 사용자 정보 (ID 비교용)
 
     const titleText = hideTitle ? null : (isMyPage ? '내가 쓴 글' : `${userName || '사용자'}님의 글`);
 
@@ -99,6 +101,7 @@ export default function FeedList({ isMyPage = true, userName, userId, userAvatar
                             userName={userName}
                             userId={userId}
                             userAvatarUrl={userAvatarUrl}
+                            currentUserId={currentUser?.id}
                         />
                     </div>
                     {index < allPosts.length - 1 && <Separator className="mx-4" />}
@@ -125,13 +128,15 @@ function FeedPostItem({
     currentUser,
     userName,
     userId,
-    userAvatarUrl
+    userAvatarUrl,
+    currentUserId
 }: { 
     post: MyPostItem; 
     currentUser?: UserMyProfile | null;
     userName?: string;
     userId?: string;
     userAvatarUrl?: string | null;
+    currentUserId?: string;
 }) {
     // MyPostItem을 FeedPostResponse로 변환
     // 자치회 리포트의 경우 title이 있을 수 있으므로, content가 없으면 title 사용
@@ -158,6 +163,14 @@ function FeedPostItem({
         };
     }
 
+    // 내 게시글인지 확인 (퍼블릭 프로필 페이지에서 내 게시글인 경우 프로필 상호작용 비활성화)
+    // author가 있고, 현재 사용자 ID와 작성자 ID가 일치하면 내 게시글
+    const isMyPost = Boolean(
+        currentUserId && 
+        author?.id && 
+        currentUserId === author.id
+    );
+
     const feedPost: FeedPostResponse = {
         id: post.id,
         created_at: post.created_at,
@@ -178,7 +191,8 @@ function FeedPostItem({
         ? `${ROUTES.COMMUNITY.COUNCIL.DETAIL}/${post.id}`
         : undefined;
 
-    return <PostCard post={feedPost} detailHref={detailHref} disableProfileInteraction={true} />;
+    // 내 게시글이면 프로필 상호작용 비활성화, 아니면 활성화
+    return <PostCard post={feedPost} detailHref={detailHref} disableProfileInteraction={isMyPost} />;
 }
 
 const styles = {

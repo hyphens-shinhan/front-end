@@ -65,9 +65,8 @@ function PostCard({ post, detailHref, disableProfileInteraction = false }: PostC
 
     const currentUser = useUserStore((s) => s.user);
     const isMyPost = currentUser?.id === author?.id;
-    // 프로필 상호작용이 비활성화되어 있거나 익명이거나 작성자가 없으면 프로필 링크 없음
-    // 내 게시글인 경우에도 퍼블릭 프로필로 이동 가능하도록 허용
-    const profileLink = !disableProfileInteraction && !is_anonymous && author
+    // 프로필 상호작용이 비활성화되어 있거나, 내 게시글이거나, 익명이거나, 작성자가 없으면 프로필 링크 없음
+    const profileLink = !disableProfileInteraction && !isMyPost && !is_anonymous && author
         ? ROUTES.MYPAGE.PUBLIC_PROFILE(author.id)
         : null;
 

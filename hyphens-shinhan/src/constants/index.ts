@@ -227,6 +227,13 @@ export const CUSTOM_HEADER_CONFIG: Record<string, CustomHeaderConfig> = {
     btnType: 'Back',
     navItem: HEADER_ITEMS[HEADER_NAV_ITEM_KEY.MORE],
   },
+  /** 자치회 리포트 상세 보기 */
+  [ROUTES.COMMUNITY.COUNCIL.DETAIL]: {
+    title: '게시글',
+    type: 'Center',
+    btnType: 'Back',
+    navItem: HEADER_ITEMS[HEADER_NAV_ITEM_KEY.MORE],
+  },
   /** 커뮤니티 소모임 상세 보기 */
   [ROUTES.COMMUNITY.GROUP.DETAIL]: {
     title: '소모임',

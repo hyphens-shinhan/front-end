@@ -333,6 +333,8 @@ export interface MyPostItem {
   image_urls?: string[] | null
   like_count: number
   comment_count: number
+  /** 작성자 정보 */
+  author?: PostAuthor | null
 }
 
 /**
@@ -368,6 +370,16 @@ export interface PublicReportResponse {
   submitted_at: string // ISO datetime
   /** 작성자 정보 */
   author?: PostAuthor | null
+  /** 좋아요 수 */
+  like_count?: number
+  /** 현재 사용자가 좋아요를 눌렀는지 여부 */
+  is_liked?: boolean
+  /** 댓글 수 */
+  comment_count?: number
+  /** 스크랩 수 */
+  scrap_count?: number
+  /** 현재 사용자가 스크랩했는지 여부 */
+  is_scrapped?: boolean
 }
 
 /**

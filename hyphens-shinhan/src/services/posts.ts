@@ -187,20 +187,19 @@ export const PostService = {
     limit = 20,
     offset = 0,
   ): Promise<PostListResponse<EventPostResponse>> => {
-    const response = await apiClient.get<
-      PostListResponse<EventPostResponse>
-    >('/posts/event/me/applied', {
-      params: { limit, offset },
-    })
+    const response = await apiClient.get<PostListResponse<EventPostResponse>>(
+      '/posts/event/me/applied',
+      {
+        params: { limit, offset },
+      },
+    )
     return response.data
   },
 
   /**
    * [EVENT] 이벤트 신청
    */
-  applyEventPost: async (
-    postId: string,
-  ): Promise<EventApplyResponse> => {
+  applyEventPost: async (postId: string): Promise<EventApplyResponse> => {
     const response = await apiClient.post<EventApplyResponse>(
       `/posts/event/${postId}/apply`,
     )
@@ -252,9 +251,7 @@ export const PostService = {
    * 게시글 삭제 (본인 게시글만 가능)
    */
   deletePost: async (postId: string): Promise<MessageResponse> => {
-    const response = await apiClient.delete<MessageResponse>(
-      `/posts/${postId}`,
-    )
+    const response = await apiClient.delete<MessageResponse>(`/posts/${postId}`)
     return response.data
   },
 
@@ -285,10 +282,7 @@ export const PostService = {
    * @param limit 가져올 개수
    * @param offset 시작 위치
    */
-  getMyPosts: async (
-    limit = 20,
-    offset = 0,
-  ): Promise<MyPostsResponse> => {
+  getMyPosts: async (limit = 20, offset = 0): Promise<MyPostsResponse> => {
     const response = await apiClient.get<MyPostsResponse>('/posts/me', {
       params: { limit, offset },
     })
@@ -319,7 +313,7 @@ export const PostService = {
    */
   getCouncilReport: async (postId: string): Promise<PublicReportResponse> => {
     const response = await apiClient.get<PublicReportResponse>(
-      `/council/${postId}`,
+      `/posts/council/${postId}`,
     )
     return response.data
   },

@@ -2,7 +2,7 @@
 
 import { useRef, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { useFeedPost } from "@/hooks/posts/usePosts";
+import { useFeedPost, useCouncilReport } from "@/hooks/posts/usePosts";
 import { useCreateComment } from "@/hooks/comments/useCommentMutations";
 import CommentList from "@/components/community/feed/CommentList";
 import PostContent from "@/components/community/feed/PostContent";
@@ -14,20 +14,51 @@ import { formatDateKrWithTime } from "@/utils/date";
 import FollowButton from "../FollowButton";
 import MessageInput from "@/components/common/MessageInput";
 import { EMPTY_CONTENT_MESSAGES, INPUT_BAR_TYPE, ROUTES } from "@/constants";
+import { FeedPostResponse, PostType, PublicReportResponse } from "@/types/posts";
 
 interface FeedDetailContentProps {
     postId: string;
+    /** 게시글 타입 ('feed' | 'council') */
+    postType?: 'feed' | 'council';
 }
 
-/** 피드 상세 페이지 클라이언트 컴포넌트
- * @param {FeedDetailContentProps} props - postId 필요
+/** 피드 상세 페이지 클라이언트 컴포넌트 (피드 + 자치회 리포트 공통)
+ * @param {FeedDetailContentProps} props - postId 필요, postType은 선택 (기본값: 'feed')
  * @example
  * <FeedDetailContent postId="abc-123" />
+ * <FeedDetailContent postId="abc-123" postType="council" />
  */
-export default function FeedDetailContent({ postId }: FeedDetailContentProps) {
+export default function FeedDetailContent({ postId, postType = 'feed' }: FeedDetailContentProps) {
     const router = useRouter();
-    const { data: post, isLoading, isError } = useFeedPost(postId);
+    const { data: feedPost, isLoading: isLoadingFeed, isError: isErrorFeed } = useFeedPost(postId, { enabled: postType === 'feed' });
+    const { data: councilReport, isLoading: isLoadingCouncil, isError: isErrorCouncil } = useCouncilReport(postId, { enabled: postType === 'council' });
     const { mutate: createComment, isPending: isSubmitting } = useCreateComment();
+
+    // 타입에 따라 적절한 데이터와 로딩/에러 상태 사용
+    const isLoading = postType === 'council' ? isLoadingCouncil : isLoadingFeed;
+    const isError = postType === 'council' ? isErrorCouncil : isErrorFeed;
+
+    // 자치회 리포트인 경우 FeedPostResponse로 변환
+    let post: FeedPostResponse | null = null;
+    if (postType === 'council' && councilReport) {
+        const content = councilReport.content || councilReport.title || '';
+        post = {
+            id: councilReport.id,
+            created_at: councilReport.submitted_at,
+            like_count: councilReport.like_count ?? 0,
+            is_liked: councilReport.is_liked ?? false,
+            image_urls: councilReport.image_urls || [],
+            type: PostType.FEED,
+            content: content,
+            is_anonymous: false,
+            scrap_count: councilReport.scrap_count ?? 0,
+            comment_count: councilReport.comment_count ?? 0,
+            is_scrapped: councilReport.is_scrapped ?? false,
+            author: councilReport.author || null,
+        };
+    } else if (feedPost) {
+        post = feedPost;
+    }
 
     // 댓글 입력 상태
     const [comment, setComment] = useState('');
@@ -91,7 +122,7 @@ export default function FeedDetailContent({ postId }: FeedDetailContentProps) {
                         label="목록으로 돌아가기"
                         size="M"
                         type="primary"
-                        onClick={() => router.push(ROUTES.COMMUNITY.MAIN)}
+                        onClick={() => router.back()}
                     />
                 }
             />

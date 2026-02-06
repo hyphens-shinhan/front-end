@@ -107,15 +107,15 @@ function CouncilReportItem({ report }: { report: PublicReportResponse }) {
     const feedPost: FeedPostResponse = {
         id: report.id,
         created_at: report.submitted_at,
-        like_count: 0,
-        is_liked: false,
+        like_count: report.like_count ?? 0,
+        is_liked: report.is_liked ?? false,
         image_urls: report.image_urls || [],
         type: PostType.FEED,
         content: content,
         is_anonymous: false,
-        scrap_count: 0,
-        comment_count: 0,
-        is_scrapped: false,
+        scrap_count: report.scrap_count ?? 0,
+        comment_count: report.comment_count ?? 0,
+        is_scrapped: report.is_scrapped ?? false,
         author: report.author || null, // API에서 받은 작성자 정보 사용
     };
 

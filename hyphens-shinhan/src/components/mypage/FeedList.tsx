@@ -2,12 +2,14 @@
 
 import { cn } from "@/utils/cn";
 import PostCard from "../community/feed/PostCard";
-import { FeedPostResponse, PostType, MyPostItem, MyPostItemType } from "@/types/posts";
+import { FeedPostResponse, PostType, MyPostItem, MyPostItemType, PostAuthor } from "@/types/posts";
 import InfoTag from "../common/InfoTag";
 import Separator from "../common/Separator";
 import { useInfiniteMyPosts } from "@/hooks/posts/usePosts";
 import EmptyContent from "../common/EmptyContent";
-import { EMPTY_CONTENT_MESSAGES } from "@/constants";
+import { EMPTY_CONTENT_MESSAGES, ROUTES } from "@/constants";
+import { useMyProfile } from "@/hooks/user/useUser";
+import type { UserMyProfile } from "@/types/user";
 
 interface FeedListProps {
     isMyPage?: boolean;
@@ -18,6 +20,7 @@ interface FeedListProps {
 
 export default function FeedList({ isMyPage = true, userName, userId, hideTitle = false }: FeedListProps) {
     const { data, isLoading, error, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteMyPosts(20);
+    const { data: myProfile } = useMyProfile(); // 현재 사용자 프로필 정보
 
     const titleText = hideTitle ? null : (isMyPage ? '내가 쓴 글' : `${userName || '사용자'}님의 글`);
 
@@ -65,7 +68,7 @@ export default function FeedList({ isMyPage = true, userName, userId, hideTitle 
                                 color="grey"
                             />
                         </div>
-                        <FeedPostItem post={post} />
+                        <FeedPostItem post={post} currentUser={isMyPage ? myProfile : null} />
                     </div>
                     {index < allPosts.length - 1 && <Separator className="mx-4" />}
                 </div>
@@ -86,10 +89,23 @@ export default function FeedList({ isMyPage = true, userName, userId, hideTitle 
 }
 
 /** Feed 타입 포스트 아이템 (게시판 + 자치회 리포트 모두 동일 컴포넌트 사용) */
-function FeedPostItem({ post }: { post: MyPostItem }) {
+function FeedPostItem({ post, currentUser }: { post: MyPostItem; currentUser?: UserMyProfile | null }) {
     // MyPostItem을 FeedPostResponse로 변환
     // 자치회 리포트의 경우 title이 있을 수 있으므로, content가 없으면 title 사용
     const content = post.content || post.title || '';
+
+    // 작성자 정보: API에서 받은 정보가 있으면 사용, 없으면 현재 사용자 정보 사용
+    let author: PostAuthor | null = null;
+    if (post.author) {
+        author = post.author;
+    } else if (currentUser) {
+        author = {
+            id: currentUser.id,
+            name: currentUser.name,
+            avatar_url: currentUser.avatar_url || null,
+            is_following: false,
+        };
+    }
 
     const feedPost: FeedPostResponse = {
         id: post.id,
@@ -103,10 +119,15 @@ function FeedPostItem({ post }: { post: MyPostItem }) {
         scrap_count: 0,
         comment_count: post.comment_count,
         is_scrapped: false,
-        author: null, // 마이페이지에서는 작성자 정보가 없음
+        author: author,
     };
 
-    return <PostCard post={feedPost} />;
+    // 자치회 리포트인 경우 상세보기 링크를 자치회 리포트 상세로 설정
+    const detailHref = post.type === MyPostItemType.COUNCIL_REPORT
+        ? `${ROUTES.COMMUNITY.COUNCIL.DETAIL}/${post.id}`
+        : undefined;
+
+    return <PostCard post={feedPost} detailHref={detailHref} />;
 }
 
 const styles = {

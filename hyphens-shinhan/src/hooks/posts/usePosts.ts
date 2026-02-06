@@ -95,12 +95,16 @@ export const useInfiniteEventPosts = (status?: EventStatus, limit = 20) => {
 /**
  * [FEED] 피드 게시글 상세 조회
  * @param postId 게시글 ID
+ * @param options 옵션 (enabled: 쿼리 활성화 여부)
  */
-export const useFeedPost = (postId: string) => {
+export const useFeedPost = (
+  postId: string,
+  options?: { enabled?: boolean },
+) => {
   return useQuery({
     queryKey: postKeys.detail(postId),
     queryFn: () => PostService.getFeedPost(postId),
-    enabled: !!postId,
+    enabled: options?.enabled !== undefined ? options.enabled : !!postId,
   })
 }
 
@@ -204,10 +208,13 @@ export const usePublicReportsFeed = (limit = 20, offset = 0) => {
  * 자치회 리포트 상세 조회
  * @param postId 게시글 ID
  */
-export const useCouncilReport = (postId: string) => {
+export const useCouncilReport = (
+  postId: string,
+  options?: { enabled?: boolean },
+) => {
   return useQuery({
     queryKey: [...postKeys.all, 'council', postId],
     queryFn: () => PostService.getCouncilReport(postId),
-    enabled: !!postId,
+    enabled: options?.enabled !== undefined ? options.enabled : !!postId,
   })
 }

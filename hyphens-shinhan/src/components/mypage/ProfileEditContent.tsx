@@ -47,6 +47,18 @@ export default function ProfileEditContent({ onCancel }: { onCancel: () => void 
         bio: profile?.bio || '',
     });
 
+    // profile이 변경되면 formData 업데이트
+    useEffect(() => {
+        if (profile) {
+            setFormData({
+                affiliation: profile.affiliation || '',
+                location: profile.location || '',
+                email: profile.email || '',
+                bio: profile.bio || '',
+            });
+        }
+    }, [profile]);
+
     const [privacyData, setPrivacyData] = useState({
         is_location_public: privacy?.is_location_public ?? true,
         is_contact_public: privacy?.is_contact_public ?? true,

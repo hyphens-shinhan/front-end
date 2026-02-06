@@ -4,6 +4,9 @@ import {
   NoticePostResponse,
   EventPostResponse,
   PostListResponse,
+  FeedPostListResponse,
+  NoticePostListResponse,
+  EventPostListResponse,
   FeedPostCreate,
   FeedPostUpdate,
   NoticePostCreate,
@@ -17,6 +20,7 @@ import {
   ToggleScrapResponse,
   MyPostsResponse,
   PublicReportResponse,
+  MessageResponse,
 } from '@/types/posts'
 
 /**
@@ -247,8 +251,8 @@ export const PostService = {
   /**
    * 게시글 삭제 (본인 게시글만 가능)
    */
-  deletePost: async (postId: string): Promise<{ message: string }> => {
-    const response = await apiClient.delete<{ message: string }>(
+  deletePost: async (postId: string): Promise<MessageResponse> => {
+    const response = await apiClient.delete<MessageResponse>(
       `/posts/${postId}`,
     )
     return response.data

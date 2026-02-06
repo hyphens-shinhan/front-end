@@ -89,7 +89,7 @@ export default function EventDetailContent({ eventId }: EventDetailContentProps)
         daysUntil < 0 ? null : daysUntil === 0 ? 'D-Day' : `D-${daysUntil}`;
 
     const handleApplyClick = () => {
-        if (is_applied) {
+        if (is_applied === true) {
             cancelApplyMutation.mutate(eventId);
         } else {
             applyMutation.mutate(eventId);

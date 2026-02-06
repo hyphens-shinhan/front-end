@@ -4,10 +4,10 @@ import { formatDateYMD, formatTime } from './date'
 export interface GetEventDetailBottomContentParams {
   /** API에서 반환하는 신청 기간 기준 상태 */
   application_status: ApplicationStatus
-  application_start: string | null
-  application_end: string | null
+  application_start?: string | null
+  application_end?: string | null
   deadlineDate: string
-  is_applied: boolean
+  is_applied?: boolean
   isApplying: boolean
 }
 
@@ -41,7 +41,7 @@ export function getEventDetailBottomContent({
   const buttonLabel =
     application_status === 'CLOSED'
       ? '마감됨'
-      : is_applied
+      : is_applied === true
         ? '신청 취소하기'
         : '신청하기'
 

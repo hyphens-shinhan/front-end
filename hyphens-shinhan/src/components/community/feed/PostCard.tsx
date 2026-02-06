@@ -16,6 +16,8 @@ interface PostCardProps {
     post: FeedPostResponse;
     /** 커스텀 상세보기 링크 (기본값: FEED.DETAIL/{id}) */
     detailHref?: string;
+    /** 프로필 상호작용 비활성화 (마이페이지 등에서 사용) */
+    disableProfileInteraction?: boolean;
 }
 
 /** 게시글 카드 컴포넌트 동일성 비교 함수 */
@@ -45,7 +47,7 @@ function arePostPropsEqual(prev: PostCardProps, next: PostCardProps): boolean {
  * @example
  * <PostCard post={postData} />
  */
-function PostCard({ post, detailHref }: PostCardProps) {
+function PostCard({ post, detailHref, disableProfileInteraction = false }: PostCardProps) {
     const router = useRouter();
     const {
         id,
@@ -63,14 +65,15 @@ function PostCard({ post, detailHref }: PostCardProps) {
 
     const currentUser = useUserStore((s) => s.user);
     const isMyPost = currentUser?.id === author?.id;
-    const profileLink = !is_anonymous && author && !isMyPost
+    // 프로필 상호작용이 비활성화되어 있거나 내 게시글이면 프로필 링크 없음
+    const profileLink = !disableProfileInteraction && !is_anonymous && author && !isMyPost
         ? ROUTES.MYPAGE.PUBLIC_PROFILE(author.id)
         : null;
 
     const handleProfileClick = (e: React.MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
-        if (profileLink) {
+        if (profileLink && !disableProfileInteraction) {
             router.push(profileLink);
         }
     };
@@ -88,8 +91,8 @@ function PostCard({ post, detailHref }: PostCardProps) {
                         alt={author?.name || '프로필'}
                         fill
                     />
-                    {/** 익명이 아니고, 팔로우하지 않은 경우에만 팔로우 버튼 표시 */}
-                    {!is_anonymous && author && !author.is_following && (
+                    {/** 프로필 상호작용이 비활성화되지 않았고, 익명이 아니고, 팔로우하지 않은 경우에만 팔로우 버튼 표시 */}
+                    {!disableProfileInteraction && !is_anonymous && author && !author.is_following && (
                         <div className={styles.followButton}>
                             <FollowButton type="addIcon" />
                         </div>
@@ -102,8 +105,8 @@ function PostCard({ post, detailHref }: PostCardProps) {
                         alt={author?.name || '프로필'}
                         fill
                     />
-                    {/** 익명이 아니고, 팔로우하지 않은 경우에만 팔로우 버튼 표시 */}
-                    {!is_anonymous && author && !author.is_following && (
+                    {/** 프로필 상호작용이 비활성화되지 않았고, 익명이 아니고, 팔로우하지 않은 경우에만 팔로우 버튼 표시 */}
+                    {!disableProfileInteraction && !is_anonymous && author && !author.is_following && (
                         <div className={styles.followButton}>
                             <FollowButton type="addIcon" />
                         </div>
@@ -116,7 +119,7 @@ function PostCard({ post, detailHref }: PostCardProps) {
                 {/** 유저 이름, 시간, 팔로우 버튼, 더보기 버튼 */}
                 <div className={styles.infoWrapper}>
                     {/** 유저 이름 */}
-                    {profileLink ? (
+                    {profileLink && !disableProfileInteraction ? (
                         <button
                             type="button"
                             onClick={handleProfileClick}

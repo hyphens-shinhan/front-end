@@ -151,7 +151,7 @@ function FeedPostItem({ post, currentUser }: { post: MyPostItem; currentUser?: U
         ? `${ROUTES.COMMUNITY.COUNCIL.DETAIL}/${post.id}`
         : undefined;
 
-    return <PostCard post={feedPost} detailHref={detailHref} />;
+    return <PostCard post={feedPost} detailHref={detailHref} disableProfileInteraction={true} />;
 }
 
 const styles = {

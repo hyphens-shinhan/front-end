@@ -1,11 +1,15 @@
 'use client';
 
 import { cn } from "@/utils/cn";
+import { useMemo } from "react";
+import React from "react";
 import PostCard from "../community/feed/PostCard";
+import PostCardSkeleton from "../community/feed/PostCardSkeleton";
 import { FeedPostResponse, PostType, MyPostItem, MyPostItemType, PostAuthor } from "@/types/posts";
 import InfoTag from "../common/InfoTag";
 import Separator from "../common/Separator";
 import { useInfiniteMyPosts } from "@/hooks/posts/usePosts";
+import { useImageLoadTracking } from "@/hooks/useImageLoadTracking";
 import EmptyContent from "../common/EmptyContent";
 import { EMPTY_CONTENT_MESSAGES, ROUTES } from "@/constants";
 import { useMyProfile } from "@/hooks/user/useUser";
@@ -24,11 +28,33 @@ export default function FeedList({ isMyPage = true, userName, userId, hideTitle 
 
     const titleText = hideTitle ? null : (isMyPage ? '내가 쓴 글' : `${userName || '사용자'}님의 글`);
 
-    if (isLoading) {
+    const allPosts = data?.pages.flatMap(page => page.posts) || [];
+
+    // 모든 포스트의 이미지 URL 수집
+    const allImageUrls = useMemo(() => {
+        return allPosts.flatMap(post => post.image_urls || [])
+    }, [allPosts])
+
+    // 이미지 로드 상태 추적
+    const { allImagesLoaded } = useImageLoadTracking(allImageUrls)
+
+    // 데이터 로딩 중이거나 이미지가 아직 로드되지 않았으면 로딩 표시
+    const isContentLoading = isLoading || (allPosts.length > 0 && !allImagesLoaded)
+
+    if (isContentLoading) {
         return (
             <div className={styles.articleContainer}>
                 {titleText && <h2 className={styles.articleTitle}>{titleText}</h2>}
-                <EmptyContent variant="loading" message={EMPTY_CONTENT_MESSAGES.LOADING.DEFAULT} />
+                {Array.from({ length: 5 }).map((_, index) => (
+                    <React.Fragment key={index}>
+                        <div className={styles.article}>
+                            <div className={styles.articleType}>
+                            </div>
+                            <PostCardSkeleton />
+                        </div>
+                        {index < 4 && <Separator className="mx-4" />}
+                    </React.Fragment>
+                ))}
             </div>
         );
     }
@@ -41,8 +67,6 @@ export default function FeedList({ isMyPage = true, userName, userId, hideTitle 
             </div>
         );
     }
-
-    const allPosts = data?.pages.flatMap(page => page.posts) || [];
 
     if (allPosts.length === 0) {
         return (

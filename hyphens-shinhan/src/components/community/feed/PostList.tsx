@@ -1,6 +1,7 @@
 'use client'
 
 import { cn } from "@/utils/cn";
+import { useMemo } from "react";
 
 import PostCardSkeleton from "@/components/community/feed/PostCardSkeleton";
 import ShinhanNoticeCard from "@/components/community/ShinhanNoticeCard";
@@ -10,6 +11,7 @@ import Separator from "@/components/common/Separator";
 import PostFAB from "@/components/common/PostFAB";
 import { EMPTY_CONTENT_MESSAGES, POST_FAB_ITEM_KEY } from "@/constants";
 import { useInfiniteFeedPosts } from "@/hooks/posts/usePosts";
+import { useImageLoadTracking } from "@/hooks/useImageLoadTracking";
 import React from "react";
 import PostCard from "@/components/community/feed/PostCard";
 
@@ -32,7 +34,20 @@ export default function PostList() {
         refetch,
     } = useInfiniteFeedPosts();
 
-    if (isLoading) {
+    const allPosts = data?.pages.flatMap(page => page.posts) || [];
+
+    // 모든 포스트의 이미지 URL 수집
+    const allImageUrls = useMemo(() => {
+        return allPosts.flatMap(post => post.image_urls || [])
+    }, [allPosts])
+
+    // 이미지 로드 상태 추적
+    const { allImagesLoaded } = useImageLoadTracking(allImageUrls)
+
+    // 데이터 로딩 중이거나 이미지가 아직 로드되지 않았으면 로딩 표시
+    const isContentLoading = isLoading || (allPosts.length > 0 && !allImagesLoaded)
+
+    if (isContentLoading) {
         return (
             <div className={styles.container}>
                 {/** 신한 공지사항 카드 */}
@@ -67,8 +82,6 @@ export default function PostList() {
             />
         );
     }
-
-    const allPosts = data?.pages.flatMap(page => page.posts) || [];
 
     return (
         <div className={styles.container}>

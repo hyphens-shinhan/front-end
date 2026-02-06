@@ -1,9 +1,8 @@
 import { memo } from "react";
-import Image from "next/image";
 import { cn } from "@/utils/cn";
 import { Icon } from "@/components/common/Icon";
 import InfoTag from "@/components/common/InfoTag";
-import { useMultipleImageErrorById } from "@/hooks/useMultipleImageError";
+import Avatar from "@/components/common/Avatar";
 import type { ClubResponse, ClubCategory } from "@/types/clubs";
 
 const CATEGORY_LABEL: Record<ClubCategory, string> = {
@@ -43,8 +42,6 @@ function areGroupCardPropsEqual(prev: GroupCardProps, next: GroupCardProps): boo
  * <GroupCard club={clubData} variant="detail" />
  */
 function GroupCard({ club, variant = 'card' }: GroupCardProps) {
-  const { handleImageError, isFailed } = useMultipleImageErrorById()
-
   const {
     name,
     description,
@@ -81,35 +78,23 @@ function GroupCard({ club, variant = 'card' }: GroupCardProps) {
         {/** 소모임 멤버 미리보기: 카드일 때만 표시 (동그라미 3개) */}
         {isCard && (
           <div className={styles.memberPreviewContainer}>
-            {slot1 && !isFailed(slot1) ? (
-              <div className={styles.memberPreviewItem}>
-                <Image
-                  src={slot1}
-                  alt="멤버 프로필"
-                  fill
-                  className="rounded-full object-cover"
-                  onError={() => handleImageError(slot1)}
-                  unoptimized
-                />
-              </div>
-            ) : (
-              <div className={styles.memberPreviewItem} />
-            )}
-            {slot2 && !isFailed(slot2) ? (
-              <div className={styles.memberPreviewItem}>
-                <Image
-                  src={slot2}
-                  alt="멤버 프로필"
-                  fill
-                  className="rounded-full object-cover"
-                  onError={() => handleImageError(slot2)}
-                  unoptimized
-                />
-              </div>
-            ) : (
-              <div className={styles.memberPreviewItem} />
-            )}
-            <div className={styles.memberCountItem}>{member_count}</div>
+            <div className={styles.memberPreviewItem}>
+              <Avatar
+                src={slot1}
+                alt="멤버 프로필"
+                fill
+                containerClassName="w-10 h-10"
+              />
+            </div>
+            <div className={styles.memberPreviewItem}>
+              <Avatar
+                src={slot2}
+                alt="멤버 프로필"
+                fill
+                containerClassName="w-10 h-10"
+              />
+            </div>
+            <div className={styles.memberCountItem}>+{member_count}</div>
           </div>
         )}
       </div>
@@ -144,12 +129,14 @@ const styles = {
     'flex flex-col -space-y-6.5',
   ),
   memberPreviewItem: cn(
-    'relative w-10 h-10 rounded-full bg-grey-3 border overflow-hidden',
+    'relative w-10 h-10 rounded-full bg-grey-3 overflow-hidden',
+    'z-0',
   ),
   memberCountItem: cn(
-    'w-10 h-10 rounded-full bg-grey-8',
+    'relative w-10 h-10 rounded-full bg-primary-secondaryroyal',
     'flex items-center justify-center',
-    'body-10 font-caption-caption-1 text-grey-2',
+    'font-caption-caption1 text-grey-2',
+    'z-10',
   ),
 };
 

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { cn } from "@/utils/cn";
 import Button from "../common/Button";
 import Profile from "./Profile";
+import ProfileSkeleton from "./ProfileSkeleton";
 import ProfileEditContent from "./ProfileEditContent";
 import FeedList from "./FeedList";
 import { useMyProfile } from "@/hooks/user/useUser";
@@ -15,7 +16,15 @@ export default function MypageContent() {
     const [isEditing, setIsEditing] = useState(false);
 
     if (isLoading) {
-        return <EmptyContent variant="loading" message={EMPTY_CONTENT_MESSAGES.LOADING.DEFAULT} />;
+        return (
+            <div className={styles.container}>
+                {/** 프로필 스켈레톤 */}
+                <ProfileSkeleton />
+                
+                {/** 피드 리스트 (자체적으로 스켈레톤 표시) */}
+                <FeedList isMyPage={true} />
+            </div>
+        );
     }
 
     if (error || !profile) {
@@ -39,11 +48,11 @@ export default function MypageContent() {
 
             {/** 마이페이지 : 프로필 편집 */}
             <div className={styles.button} >
-                <Button 
-                    label="프로필 편집" 
-                    size="L" 
-                    type="secondary" 
-                    fullWidth 
+                <Button
+                    label="프로필 편집"
+                    size="L"
+                    type="secondary"
+                    fullWidth
                     className='bg-grey-1-1'
                     onClick={() => setIsEditing(true)}
                 />

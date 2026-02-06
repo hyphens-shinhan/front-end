@@ -16,10 +16,14 @@ interface HeaderHandlers {
 
 interface HeaderState {
   handlers: HeaderHandlers
+  /** 경로 기반 title을 오버라이드할 제목 (예: '4월 활동') */
+  customTitle: string | null
   /** 핸들러 설정 */
   setHandlers: (handlers: HeaderHandlers) => void
   /** 핸들러 초기화 */
   resetHandlers: () => void
+  /** 동적 헤더 제목 설정 (상세 페이지 등) */
+  setCustomTitle: (title: string | null) => void
 }
 
 /**
@@ -37,6 +41,8 @@ interface HeaderState {
  */
 export const useHeaderStore = create<HeaderState>((set) => ({
   handlers: {},
+  customTitle: null,
   setHandlers: (handlers) => set({ handlers }),
   resetHandlers: () => set({ handlers: {} }),
+  setCustomTitle: (title) => set({ customTitle: title }),
 }))

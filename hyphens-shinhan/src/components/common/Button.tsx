@@ -53,7 +53,7 @@ const typeStyles = {
     primary: 'bg-primary-shinhanblue text-white hover:bg-primary-dark',
     secondary: 'bg-white text-grey-9 border-0.5 border-grey-3 hover:bg-grey-2',
     danger: 'bg-state-error text-white hover:bg-state-error-dark',
-    warning: 'bg-white text-state-error border-0.5 border-grey-3 hover:bg-grey-2',
+    warning: 'bg-white text-state-red border-0.5 border-grey-3 hover:bg-grey-2',
 }
 
 const disabledStyles = 'cursor-not-allowed bg-grey-3 text-grey-6 hover:bg-grey-3 hover:text-grey-6'

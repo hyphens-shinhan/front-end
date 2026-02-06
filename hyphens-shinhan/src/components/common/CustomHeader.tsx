@@ -52,20 +52,22 @@ function NavItemRenderer({ item, onClick }: NavItemRendererProps) {
     );
 }
 
-/** pathname·handleBack·onClick만 prop으로 받는 헤더 (라우터/스토어 훅 미사용). searchParams만 바뀔 때 리렌더 방지용. */
+/** pathname·handleBack·onClick·customTitle만 prop으로 받는 헤더 (라우터/스토어 훅 미사용). searchParams만 바뀔 때 리렌더 방지용. */
 export const CustomHeaderContent = memo(function CustomHeaderContent({
     pathname,
     handleBack,
     onClick,
+    customTitle,
 }: {
     pathname: string;
     handleBack: () => void;
     onClick?: () => void;
+    customTitle?: string | null;
 }) {
     const pathConfig = getCustomHeaderConfig(pathname);
     const displayType = pathConfig?.type || 'Left';
     const displayBtnType = pathConfig?.btnType || 'Back';
-    const displayTitle = pathConfig?.title || '';
+    const displayTitle = (customTitle != null ? customTitle : pathConfig?.title) || '';
     const displayLogo = pathConfig?.logo;
     const displayImg = pathConfig?.img;
     const displayNavItem = pathConfig?.navItem;
@@ -116,6 +118,7 @@ export default function CustomHeader() {
     const router = useRouter();
     const pathname = usePathname();
     const { onBack, onClick } = useHeaderStore((state) => state.handlers);
+    const customTitle = useHeaderStore((state) => state.customTitle);
     const pathConfig = getCustomHeaderConfig(pathname);
     const displayBackHref = pathConfig?.backHref;
 
@@ -136,6 +139,7 @@ export default function CustomHeader() {
             pathname={pathname}
             handleBack={handleBack}
             onClick={onClick}
+            customTitle={customTitle}
         />
     );
 }

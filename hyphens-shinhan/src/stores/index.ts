@@ -4,3 +4,4 @@ export {
   useConfirmModalStore,
   useAlertModalStore,
 } from './useModalStore'
+export { useUserStore, toNavRole } from './useUserStore'

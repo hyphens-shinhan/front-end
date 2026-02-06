@@ -17,6 +17,9 @@ export { ROUTES } from './routes'
 /** EmptyContent(로딩/빈/에러) 문구 상수 */
 export { EMPTY_CONTENT_MESSAGES } from './emptyContent'
 
+/** 이미지 업로드(Supabase Storage) bucket / pathPrefix 상수 */
+export { IMAGE_UPLOAD } from './imageUpload'
+
 /** 바텀 네비게이션 아이템 상수
  * 사용자 역할에 따라 바텀 네비게이션 아이템 상수를 반환합니다.
  */
@@ -163,7 +166,7 @@ export const HEADER_CONFIG_BY_BOTTOM_NAV: Record<NavLink, HeaderConfig> = {
 export interface CustomHeaderConfig {
   type?: 'Center' | 'Left'
   btnType?: 'Back' | 'Close'
-  title: string
+  title?: string
   logo?: IconName
   img?: string | StaticImageData
   navItem?: HeaderNavItem
@@ -231,6 +234,18 @@ export const CUSTOM_HEADER_CONFIG: Record<string, CustomHeaderConfig> = {
     btnType: 'Back',
     navItem: HEADER_ITEMS[HEADER_NAV_ITEM_KEY.MORE],
     backHref: ROUTES.COMMUNITY.GROUP.MAIN,
+  },
+  /** MY활동 자치회 상세 페이지 (제목은 useHeaderStore.setCustomTitle으로 '4월 활동' 등 월별 표시) */
+  [ROUTES.SCHOLARSHIP.REPORT.ACTIVITY]: {
+    type: 'Left',
+    btnType: 'Back',
+    backHref: ROUTES.SCHOLARSHIP.MAIN,
+  },
+  /** 참여 멤버 상세 (제출 완료 뷰에서 이동, 백 버튼은 페이지에서 activity 쿼리 유지해 설정) */
+  [ROUTES.SCHOLARSHIP.REPORT.PARTICIPATION]: {
+    type: 'Left',
+    btnType: 'Back',
+    backHref: ROUTES.SCHOLARSHIP.REPORT.ACTIVITY,
   },
 } as const
 

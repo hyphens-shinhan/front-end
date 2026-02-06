@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import Image from 'next/image';
 import { cn } from '@/utils/cn';
 import { useImageError } from '@/hooks/useImageError';
@@ -39,10 +40,17 @@ export default function Avatar({
     className,
     containerClassName,
 }: AvatarProps) {
-    const { imageError, handleImageError } = useImageError();
+    const { imageError, handleImageError, resetError } = useImageError();
 
     const finalWidth = width || size || 40;
     const finalHeight = height || size || 40;
+
+    // src가 변경되면 imageError 리셋
+    useEffect(() => {
+        if (src) {
+            resetError();
+        }
+    }, [src, resetError]);
 
     if (fill) {
         return (

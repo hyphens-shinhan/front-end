@@ -24,13 +24,13 @@ export default function PublicProfileContent({ userId }: PublicProfileContentPro
     }
 
     if (error || !profile) {
-        return <EmptyContent variant="error" message="프로필을 불러올 수 없어요." />;
+        return <EmptyContent variant="error" message={EMPTY_CONTENT_MESSAGES.ERROR.PROFILE} />;
     }
 
     return (
         <div className={styles.container}>
-            {/** 프로필 */}
-            <Profile profile={profile} />
+            {/** 프로필 (공개 설정에 따라 필터링된 정보만 표시) */}
+            <Profile profile={profile} isMyProfile={isMyProfile} />
 
             {/** 퍼블릭 페이지 : 팔로우 요청 */}
             {!isMyProfile && (

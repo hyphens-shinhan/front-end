@@ -247,12 +247,26 @@ export const CUSTOM_HEADER_CONFIG: Record<string, CustomHeaderConfig> = {
     btnType: 'Back',
     backHref: ROUTES.SCHOLARSHIP.REPORT.ACTIVITY,
   },
-  /** 마이페이지 설정 페이지 */
+  /** 마이페이지 설정 메인 페이지 */
   [ROUTES.MYPAGE.SETTING.MAIN]: {
     title: '설정',
     type: 'Left',
     btnType: 'Back',
     backHref: ROUTES.MYPAGE.MAIN,
+  },
+  /** 마이페이지 개인정보 공개 설정 페이지 */
+  [ROUTES.MYPAGE.SETTING.PRIVACY]: {
+    title: '개인정보 공개 설정',
+    type: 'Left',
+    btnType: 'Back',
+    backHref: ROUTES.MYPAGE.SETTING.MAIN,
+  },
+  /** 마이페이지 스크랩 페이지 */
+  [ROUTES.MYPAGE.SETTING.SCRAP]: {
+    title: '내가 스크랩한 글',
+    type: 'Left',
+    btnType: 'Back',
+    backHref: ROUTES.MYPAGE.SETTING.MAIN,
   },
 } as const
 

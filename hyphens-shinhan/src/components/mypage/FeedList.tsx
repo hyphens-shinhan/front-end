@@ -13,17 +13,18 @@ interface FeedListProps {
     isMyPage?: boolean;
     userName?: string;
     userId?: string; // 퍼블릭 페이지일 경우 사용자 ID
+    hideTitle?: boolean; // 제목 숨김 여부
 }
 
-export default function FeedList({ isMyPage = true, userName, userId }: FeedListProps) {
+export default function FeedList({ isMyPage = true, userName, userId, hideTitle = false }: FeedListProps) {
     const { data, isLoading, error, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteMyPosts(20);
+
+    const titleText = hideTitle ? null : (isMyPage ? '내가 쓴 글' : `${userName || '사용자'}님의 글`);
 
     if (isLoading) {
         return (
             <div className={styles.articleContainer}>
-                <h2 className={styles.articleTitle}>
-                    {isMyPage ? '내가 쓴 글' : `${userName || '사용자'}님의 글`}
-                </h2>
+                {titleText && <h2 className={styles.articleTitle}>{titleText}</h2>}
                 <EmptyContent variant="loading" message={EMPTY_CONTENT_MESSAGES.LOADING.DEFAULT} />
             </div>
         );
@@ -32,9 +33,7 @@ export default function FeedList({ isMyPage = true, userName, userId }: FeedList
     if (error) {
         return (
             <div className={styles.articleContainer}>
-                <h2 className={styles.articleTitle}>
-                    {isMyPage ? '내가 쓴 글' : `${userName || '사용자'}님의 글`}
-                </h2>
+                {titleText && <h2 className={styles.articleTitle}>{titleText}</h2>}
                 <EmptyContent variant="error" message={EMPTY_CONTENT_MESSAGES.ERROR.FEED} />
             </div>
         );
@@ -45,9 +44,7 @@ export default function FeedList({ isMyPage = true, userName, userId }: FeedList
     if (allPosts.length === 0) {
         return (
             <div className={styles.articleContainer}>
-                <h2 className={styles.articleTitle}>
-                    {isMyPage ? '내가 쓴 글' : `${userName || '사용자'}님의 글`}
-                </h2>
+                {titleText && <h2 className={styles.articleTitle}>{titleText}</h2>}
                 <EmptyContent
                     variant="empty"
                     message={isMyPage ? '작성한 글이 없어요.' : `${userName || '사용자'}님이 작성한 글이 없어요.`}
@@ -58,9 +55,7 @@ export default function FeedList({ isMyPage = true, userName, userId }: FeedList
 
     return (
         <div className={styles.articleContainer}>
-            <h2 className={styles.articleTitle}>
-                {isMyPage ? '내가 쓴 글' : `${userName || '사용자'}님의 글`}
-            </h2>
+            {titleText && <h2 className={styles.articleTitle}>{titleText}</h2>}
             {allPosts.map((post, index) => (
                 <div key={post.id}>
                     <div className={styles.article}>

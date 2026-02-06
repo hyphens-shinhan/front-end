@@ -6,6 +6,8 @@ import Avatar from "../common/Avatar";
 
 interface ProfileCardProps {
     profile: UserMyProfile | UserPublicProfile;
+    /** 내 프로필인지 여부 (내 프로필이면 모든 정보 표시) */
+    isMyProfile?: boolean;
 }
 
 /** 역할 표시 라벨 매핑 */
@@ -29,8 +31,10 @@ const SCHOLARSHIP_TYPE_LABELS: Record<ScholarshipType, string> = {
 
 /** 마이페이지 프로필 카드 컴포넌트
  * 마이프로필, 퍼블릭 프로필에서 사용
+ * - 내 프로필: 모든 정보 표시
+ * - 다른 사용자 프로필: 공개 설정에 따라 필터링된 정보만 표시 (API에서 이미 필터링됨)
  */
-export default function ProfileCard({ profile }: ProfileCardProps) {
+export default function ProfileCard({ profile, isMyProfile = false }: ProfileCardProps) {
     const roleLabel = ROLE_LABELS[profile.role] || profile.role;
     const scholarshipLabel = profile.scholarship_type
         ? SCHOLARSHIP_TYPE_LABELS[profile.scholarship_type]
@@ -52,6 +56,7 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
                 <h2 className={styles.name}>{profile.name}</h2>
                 <div className={styles.infoTags}>
                     <InfoTag label={roleLabel} color="blue" />
+                    {/** 장학 정보: 공개 설정에 따라 표시 (API에서 이미 필터링됨) */}
                     {profile.scholarship_batch && (
                         <InfoTag label={`${profile.scholarship_batch}기`} color="yellow" />
                     )}

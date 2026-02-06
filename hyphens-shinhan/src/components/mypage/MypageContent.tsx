@@ -16,13 +16,13 @@ export default function MypageContent() {
     }
 
     if (error || !profile) {
-        return <EmptyContent variant="error" message="프로필을 불러올 수 없어요." />;
+        return <EmptyContent variant="error" message={EMPTY_CONTENT_MESSAGES.ERROR.PROFILE} />;
     }
 
     return (
         <div className={styles.container}>
-            {/** 프로필 */}
-            <Profile profile={profile} />
+            {/** 프로필 (내 프로필이므로 모든 정보 표시) */}
+            <Profile profile={profile} isMyProfile={true} />
 
             {/** 마이페이지 : 프로필 편집 */}
             <div className={styles.button} >

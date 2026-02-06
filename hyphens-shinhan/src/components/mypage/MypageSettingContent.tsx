@@ -54,7 +54,7 @@ export default function MypageSettingContent() {
                         key={item.title}
                     >
                         <p className={styles.itemTitle}>
-                            {logoutMutation.isPending ? '로그아웃 중...' : item.title}
+                            {item.title}
                         </p>
                         <div>
                             <Icon name='IconLLineArrowRight' />

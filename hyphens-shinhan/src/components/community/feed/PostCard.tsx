@@ -8,6 +8,8 @@ import FollowButton from "@/components/community/FollowButton";
 import MoreButton from "@/components/community/MoreButton";
 import PostContent from "@/components/community/feed/PostContent";
 import { FeedPostResponse } from "@/types/posts";
+import { useUserStore } from "@/stores";
+import Avatar from "@/components/common/Avatar";
 
 interface PostCardProps {
     post: FeedPostResponse;
@@ -52,34 +54,70 @@ function PostCard({ post }: PostCardProps) {
         is_anonymous,
     } = post;
 
+    const currentUser = useUserStore((s) => s.user);
+    const isMyPost = currentUser?.id === author?.id;
+    const profileLink = !is_anonymous && author && !isMyPost 
+        ? ROUTES.MYPAGE.PUBLIC_PROFILE(author.id)
+        : null;
+
     return (
-        <Link href={`${ROUTES.COMMUNITY.FEED.DETAIL}/${id}`} className={styles.container}>
+        <div className={styles.container}>
             {/** 유저 프로필 사진 */}
-            <div className={styles.userProfileWrapper}>
-                {/* {author?.avatar_url ? (
-                    <Image
-                        src={author.avatar_url}
-                        alt={author.name}
+            {profileLink ? (
+                <Link
+                    href={profileLink}
+                    className={styles.userProfileWrapper}
+                >
+                    <Avatar
+                        src={author?.avatar_url}
+                        alt={author?.name || '프로필'}
                         fill
-                        className="rounded-full object-cover"
                     />
-                ) : null} */}
-                {/** 익명이 아니고, 팔로우하지 않은 경우에만 팔로우 버튼 표시 */}
-                {!is_anonymous && author && !author.is_following && (
-                    <div className={styles.followButton}>
-                        <FollowButton type="addIcon" />
-                    </div>
-                )}
-            </div>
+                    {/** 익명이 아니고, 팔로우하지 않은 경우에만 팔로우 버튼 표시 */}
+                    {!is_anonymous && author && !author.is_following && (
+                        <div className={styles.followButton}>
+                            <FollowButton type="addIcon" />
+                        </div>
+                    )}
+                </Link>
+            ) : (
+                <div className={styles.userProfileWrapper}>
+                    <Avatar
+                        src={author?.avatar_url}
+                        alt={author?.name || '프로필'}
+                        fill
+                    />
+                    {/** 익명이 아니고, 팔로우하지 않은 경우에만 팔로우 버튼 표시 */}
+                    {!is_anonymous && author && !author.is_following && (
+                        <div className={styles.followButton}>
+                            <FollowButton type="addIcon" />
+                        </div>
+                    )}
+                </div>
+            )}
 
             {/** 유저 정보, 본문 영역 */}
-            <div className={styles.postContent}>
+            <Link href={`${ROUTES.COMMUNITY.FEED.DETAIL}/${id}`} className={styles.postContent}>
                 {/** 유저 이름, 시간, 팔로우 버튼, 더보기 버튼 */}
                 <div className={styles.infoWrapper}>
                     {/** 유저 이름 */}
-                    <p className={styles.userName}>
-                        {is_anonymous ? '익명' : (author?.name || '알 수 없음')}
-                    </p>
+                    {profileLink ? (
+                        <Link
+                            href={profileLink}
+                            onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                window.location.href = profileLink;
+                            }}
+                            className={styles.userName}
+                        >
+                            {is_anonymous ? '익명' : (author?.name || '알 수 없음')}
+                        </Link>
+                    ) : (
+                        <p className={styles.userName}>
+                            {is_anonymous ? '익명' : (author?.name || '알 수 없음')}
+                        </p>
+                    )}
                     {/** 시간 */}
                     <time className={styles.time}>{formatDateKrWithTime(created_at)}</time>
                     {/** 팔로우 버튼, 더보기 버튼 */}
@@ -109,8 +147,8 @@ function PostCard({ post }: PostCardProps) {
                         <span className={styles.footerButtonText}>{comment_count}</span>
                     </div>
                 </footer>
-            </div>
-        </Link>
+            </Link>
+        </div>
     );
 }
 
@@ -139,6 +177,7 @@ const styles = {
     userName: cn(
         'title-16',
         'text-grey-11',
+        'hover:underline',
     ),
     time: cn(
         'font-caption-caption4 text-gray-8',

@@ -3,10 +3,14 @@
 import Link from 'next/link'
 import { Icon } from "@/components/common/Icon"
 import { cn } from "@/utils/cn"
+import Avatar from "@/components/common/Avatar"
+import type { AttendanceResponse } from "@/types/reports"
 
 interface MemberPreviewRowProps {
-  /** 멤버 목록 */
-  members: string[]
+  /** 멤버 목록 (이름만) - 기존 호환성 유지 */
+  members?: string[]
+  /** 출석 목록 (아바타 포함) - members보다 우선 */
+  attendance?: AttendanceResponse[]
   /** 멤버 목록 펼침 여부 (href 없을 때만 사용) */
   isOpen?: boolean
   /** 펼침/접힘 토글 (href 없을 때만 사용) */
@@ -25,26 +29,49 @@ interface MemberPreviewRowProps {
 /** 참석 멤버 프로필 미리보기 한 줄 (겹친 아바타 + 이름 + 펼침 버튼 또는 링크) */
 export default function MemberPreviewRow({
   members,
+  attendance,
   isOpen = false,
   onToggle = () => {},
   attendanceCount = 0,
   className,
   href,
 }: MemberPreviewRowProps) {
+  // attendance가 있으면 사용, 없으면 members 사용 (기존 호환성)
+  const memberNames = attendance?.map(a => a.name) || members || []
+  const memberAvatars = attendance?.map(a => a.avatar_url) || []
+  const actualCount = attendanceCount || memberNames.length
+
   const label =
-    attendanceCount > 0
-      ? attendanceCount <= 3
-        ? `${members.slice(0, 2).join(', ')}`
-        : `${members.slice(0, 2).join(', ')} 외 ${members.length - 2}명`
+    actualCount > 0
+      ? actualCount <= 3
+        ? `${memberNames.slice(0, 2).join(', ')}`
+        : `${memberNames.slice(0, 2).join(', ')} 외 ${memberNames.length - 2}명`
       : '참석한 멤버가 없어요'
+
+  // 최대 3개의 아바타만 표시
+  const previewAvatars = memberAvatars.slice(0, 3)
 
   const content = (
     <>
-      {/** TODO: 사진 추가 필요 */}
       <div className={styles.memberPreviewContainer}>
-        <div className={cn(styles.memberPreviewItem, 'bg-grey-7')} />
-        <div className={cn(styles.memberPreviewItem, 'bg-grey-8')} />
-        <div className={cn(styles.memberPreviewItem, 'bg-grey-9')} />
+        {previewAvatars.length > 0 ? (
+          previewAvatars.map((avatarUrl, index) => (
+            <Avatar
+              key={avatarUrl || `avatar-${index}`}
+              src={avatarUrl}
+              alt="멤버 프로필"
+              fill
+              containerClassName={styles.memberPreviewItem}
+            />
+          ))
+        ) : (
+          // 아바타가 없을 때는 회색 배경 표시
+          <>
+            <div className={cn(styles.memberPreviewItem, 'bg-grey-7')} />
+            <div className={cn(styles.memberPreviewItem, 'bg-grey-8')} />
+            <div className={cn(styles.memberPreviewItem, 'bg-grey-9')} />
+          </>
+        )}
       </div>
       <p className={styles.memberNames}>{label}</p>
       {href ? (
@@ -81,10 +108,11 @@ export default function MemberPreviewRow({
 const styles = {
   memberRow: cn('flex items-center gap-3'),
   memberPreviewContainer: cn('flex -space-x-5'),
-  memberPreviewItem: cn('w-9 h-9 rounded-full'),
+  memberPreviewItem: cn('relative w-9 h-9 rounded-full overflow-hidden'),
   memberNames: cn('body-6 text-grey-10'),
   arrowWrap: cn('ml-auto text-grey-9'),
   /** 펼쳤을 때 화살표 위로 */
   arrowOpen: cn('rotate-180'),
   memberRowOpen: cn('py-5'),
 }
+

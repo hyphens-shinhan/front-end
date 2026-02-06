@@ -1,10 +1,10 @@
 import { cn } from "@/utils/cn";
 import ProfileInfoCard from "./ProfileInfoCard";
 import ProfileCard from "./ProfileCard";
-import type { UserMyProfile } from "@/types/user";
+import type { UserMyProfile, UserPublicProfile } from "@/types/user";
 
 interface ProfileProps {
-    profile: UserMyProfile;
+    profile: UserMyProfile | UserPublicProfile;
 }
 
 /** 마이프로필 사용자 정보 카드 컴포넌트 

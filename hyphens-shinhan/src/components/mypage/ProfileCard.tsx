@@ -1,11 +1,11 @@
 import InfoTag from "../common/InfoTag";
 import { cn } from "@/utils/cn";
-import Image from "next/image";
-import type { UserMyProfile } from "@/types/user";
+import type { UserMyProfile, UserPublicProfile } from "@/types/user";
 import { AppRole, ScholarshipType } from "@/types/user";
+import Avatar from "../common/Avatar";
 
 interface ProfileCardProps {
-    profile: UserMyProfile;
+    profile: UserMyProfile | UserPublicProfile;
 }
 
 /** 역할 표시 라벨 매핑 */
@@ -39,18 +39,14 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
     return (
         <div className={styles.container}>
             {/** 프로필 이미지 */}
-            <div className={styles.imageContainer}>
-                {profile.avatar_url ? (
-                    <Image
-                        src={profile.avatar_url}
-                        alt={profile.name}
-                        width={80}
-                        height={80}
-                        className={styles.image}
-                        unoptimized
-                    />
-                ) : null}
-            </div>
+            <Avatar
+                src={profile.avatar_url}
+                alt={profile.name}
+                width={80}
+                height={80}
+                containerClassName={styles.imageContainer}
+                className={styles.image}
+            />
             {/** 이름과 역할, 장학 유형, 기수 정보 표시 */}
             <div className={styles.infoContainer}>
                 <h2 className={styles.name}>{profile.name}</h2>

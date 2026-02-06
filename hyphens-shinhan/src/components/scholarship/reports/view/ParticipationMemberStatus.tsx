@@ -42,7 +42,7 @@ export default function ParticipationMemberStatus({
             </div>
             <ProgressBar value={progressValue} max={100} className="my-2" />
             <MemberPreviewRow
-                members={attendance.map((a) => a.name)}
+                attendance={attendance}
                 isOpen={false}
                 onToggle={() => { }}
                 attendanceCount={totalCount}

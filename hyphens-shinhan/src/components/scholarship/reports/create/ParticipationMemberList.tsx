@@ -50,7 +50,7 @@ export default function ParticipationMemberList({
   return (
     <>
       <MemberPreviewRow
-        members={attendance.map((a) => a.name)}
+        attendance={attendance}
         isOpen={isOpen}
         onToggle={() => setIsOpen((prev) => !prev)}
         attendanceCount={attendance.length}

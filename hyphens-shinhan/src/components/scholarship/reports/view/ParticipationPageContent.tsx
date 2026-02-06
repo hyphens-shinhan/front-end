@@ -11,6 +11,7 @@ import { EMPTY_CONTENT_MESSAGES } from '@/constants/emptyContent'
 import { cn } from '@/utils/cn'
 import type { ReportMonth } from '@/services/reports'
 import type { AttendanceResponse } from '@/types/reports'
+import Avatar from '@/components/common/Avatar'
 
 interface ParticipationPageContentProps {
   year: number
@@ -118,49 +119,12 @@ export default function ParticipationPageContent({
               member.confirmation === 'CONFIRMED' ? '확인' : '대기 중'
 
             return (
-              <div key={member.user_id} className={styles.memberRow}>
-                <div className={styles.memberInfo}>
-                  <div className={styles.avatar}>
-                    {member.avatar_url ? (
-                      <Image
-                        src={member.avatar_url}
-                        alt={member.name}
-                        fill
-                        className={styles.avatarImage}
-                        unoptimized
-                      />
-                    ) : null}
-                  </div>
-                  <p className={styles.memberName}>
-                    {member.name}
-                    {member.is_leader && (
-                      <span className={styles.leaderBadge}> (팀장)</span>
-                    )}
-                  </p>
-                </div>
-                <div className={styles.statusGroup}>
-                  <p
-                    className={cn(
-                      styles.statusCell,
-                      attendanceStatus === '출석'
-                        ? styles.statusPresent
-                        : styles.statusAbsent
-                    )}
-                  >
-                    {attendanceStatus}
-                  </p>
-                  <p
-                    className={cn(
-                      styles.statusCell,
-                      confirmationStatus === '확인'
-                        ? styles.statusConfirmed
-                        : styles.statusPending
-                    )}
-                  >
-                    {confirmationStatus}
-                  </p>
-                </div>
-              </div>
+              <MemberAvatarRow
+                key={member.user_id}
+                member={member}
+                attendanceStatus={attendanceStatus}
+                confirmationStatus={confirmationStatus}
+              />
             )
           })
         )}
@@ -195,4 +159,57 @@ const styles = {
   statusConfirmed: cn('text-primary-secondaryroyal'),
   statusPending: cn('text-grey-8'),
   emptyMessage: cn('body-7 text-grey-6 py-8'),
+}
+
+/** 멤버 아바타 행 컴포넌트 (이미지 에러 처리 포함) */
+function MemberAvatarRow({
+  member,
+  attendanceStatus,
+  confirmationStatus,
+}: {
+  member: AttendanceResponse
+  attendanceStatus: string
+  confirmationStatus: string
+}) {
+  return (
+    <div className={styles.memberRow}>
+      <div className={styles.memberInfo}>
+        <Avatar
+          src={member.avatar_url}
+          alt={member.name}
+          fill
+          containerClassName={styles.avatar}
+          className={styles.avatarImage}
+        />
+        <p className={styles.memberName}>
+          {member.name}
+          {member.is_leader && (
+            <span className={styles.leaderBadge}> (팀장)</span>
+          )}
+        </p>
+      </div>
+      <div className={styles.statusGroup}>
+        <p
+          className={cn(
+            styles.statusCell,
+            attendanceStatus === '출석'
+              ? styles.statusPresent
+              : styles.statusAbsent
+          )}
+        >
+          {attendanceStatus}
+        </p>
+        <p
+          className={cn(
+            styles.statusCell,
+            confirmationStatus === '확인'
+              ? styles.statusConfirmed
+              : styles.statusPending
+          )}
+        >
+          {confirmationStatus}
+        </p>
+      </div>
+    </div>
+  )
 }

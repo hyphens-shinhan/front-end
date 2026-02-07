@@ -62,7 +62,7 @@ export default function MoreButton({
   const handleMoreButtonClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (type === 'post' && onOpenMenu) {
+    if (onOpenMenu && (type === 'post' || type === 'comment')) {
       onOpenMenu();
       return;
     }

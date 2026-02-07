@@ -16,6 +16,10 @@ export const TOAST_MESSAGES = {
     IMAGE_UPLOAD_ERROR:
       '이미지 업로드에 실패했어요 네트워크 연결을 확인해주세요',
     COMMENT_CREATE_ERROR: '댓글 작성에 실패했어요',
+    COMMENT_UPDATE_SUCCESS: '댓글이 수정되었어요',
+    COMMENT_UPDATE_ERROR: '댓글 수정에 실패했어요',
+    COMMENT_DELETE_SUCCESS: '댓글이 삭제되었어요',
+    COMMENT_DELETE_ERROR: '댓글 삭제에 실패했어요',
   },
   /** 소모임 */
   GROUP: {

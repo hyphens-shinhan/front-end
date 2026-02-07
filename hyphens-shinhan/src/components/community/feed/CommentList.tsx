@@ -1,8 +1,9 @@
 'use client'
 
-import React, { useCallback, memo } from "react";
+import React, { useCallback, memo, useState } from "react";
 import { cn } from "@/utils/cn";
 import { useComments } from "@/hooks/comments/useComments";
+import { useUpdateComment } from "@/hooks/comments/useCommentMutations";
 import { useToggleLike, useToggleScrap } from "@/hooks/posts/usePostMutations";
 import Comment from "@/components/community/feed/Comment";
 import Button from "@/components/common/Button";
@@ -10,7 +11,10 @@ import EmptyContent from "@/components/common/EmptyContent";
 import Separator from "@/components/common/Separator";
 import PostInteraction from "@/components/community/feed/PostInteraction";
 import { EMPTY_CONTENT_MESSAGES } from "@/constants";
+import { TOAST_MESSAGES } from "@/constants/toast";
+import { useToast } from "@/hooks/useToast";
 import { FeedPostResponse } from "@/types/posts";
+import { CommentResponse } from "@/types/comments";
 
 interface CommentListProps {
     postId: string;
@@ -30,6 +34,9 @@ function CommentList({ postId, post, onReply, replyToCommentId }: CommentListPro
     const { data, isLoading, isError, refetch } = useComments(postId);
     const { mutate: toggleLike } = useToggleLike();
     const { mutate: toggleScrap } = useToggleScrap();
+    const { mutateAsync: updateComment } = useUpdateComment();
+    const toast = useToast();
+    const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
 
     const comments = data?.comments || [];
 
@@ -40,6 +47,43 @@ function CommentList({ postId, post, onReply, replyToCommentId }: CommentListPro
     const handleScrapClick = useCallback(() => {
         toggleScrap(postId);
     }, [postId, toggleScrap]);
+
+    const handleSaveEdit = useCallback(
+        async (commentId: string, content: string) => {
+            try {
+                await updateComment({ postId, commentId, data: { content } });
+                setEditingCommentId(null);
+                toast.show(TOAST_MESSAGES.FEED.COMMENT_UPDATE_SUCCESS);
+            } catch (error) {
+                console.error('댓글 수정 실패:', error);
+                toast.error(TOAST_MESSAGES.FEED.COMMENT_UPDATE_ERROR);
+            }
+        },
+        [postId, updateComment, toast],
+    );
+
+    const renderComment = useCallback(
+        (comment: CommentResponse) => (
+            <Comment
+                key={comment.id}
+                comment={comment}
+                postId={postId}
+                onReply={onReply}
+                isReplyingTo={replyToCommentId === comment.id}
+                isEditing={editingCommentId === comment.id}
+                onRequestEdit={() => setEditingCommentId(comment.id)}
+                onSaveEdit={(content) => handleSaveEdit(comment.id, content)}
+                onCancelEdit={() => setEditingCommentId(null)}
+            />
+        ),
+        [
+            postId,
+            onReply,
+            replyToCommentId,
+            editingCommentId,
+            handleSaveEdit,
+        ],
+    );
 
     return (
         <div className={styles.container}>
@@ -80,16 +124,10 @@ function CommentList({ postId, post, onReply, replyToCommentId }: CommentListPro
                     {comments.map((comment) => (
                         <React.Fragment key={comment.id}>
                             {/** 댓글 */}
-                            <Comment
-                                comment={comment}
-                                onReply={onReply}
-                                isReplyingTo={replyToCommentId === comment.id}
-                            />
+                            {renderComment(comment)}
 
                             {/** 대댓글 */}
-                            {comment.replies?.map((reply) => (
-                                <Comment key={reply.id} comment={reply} />
-                            ))}
+                            {comment.replies?.map((reply) => renderComment(reply))}
                         </React.Fragment>
                     ))}
                 </div>

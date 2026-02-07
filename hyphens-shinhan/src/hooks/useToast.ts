@@ -11,18 +11,23 @@ import {
  * @example
  * const toast = useToast();
  * toast.show('저장되었습니다.');
- * toast.show('출석 확인이 완료되었어요', { position: 'bottom' });
- * toast.show('아이콘 없이', { showIcon: false, duration: 2000 });
+ * toast.error('저장에 실패했어요.');
+ * toast.show('메시지', { position: 'bottom-above-tabs' });
  * toast.hide();
  */
 export function useToast() {
   const show = useToastStore((s) => s.show)
+  const error = useToastStore((s) => s.error)
   const hide = useToastStore((s) => s.hide)
 
   return {
     show: useCallback(
       (message: string, options?: ToastOptions) => show(message, options),
       [show]
+    ),
+    error: useCallback(
+      (message: string, options?: Omit<ToastOptions, 'variant'>) => error(message, options),
+      [error]
     ),
     hide: useCallback(() => hide(), [hide]),
   }

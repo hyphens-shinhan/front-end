@@ -12,6 +12,7 @@ export default function ToastContainer() {
   const message = useToastStore((s) => s.message);
   const position = useToastStore((s) => s.position);
   const showIcon = useToastStore((s) => s.showIcon);
+  const variant = useToastStore((s) => s.variant);
 
   if (!isOpen) return null;
 
@@ -20,6 +21,7 @@ export default function ToastContainer() {
       message={message}
       position={position}
       showIcon={showIcon}
+      variant={variant}
     />
   );
 }

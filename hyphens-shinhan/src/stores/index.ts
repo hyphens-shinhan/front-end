@@ -5,5 +5,5 @@ export {
   useAlertModalStore,
 } from './useModalStore'
 export { useToastStore } from './useToastStore'
-export type { ToastOptions } from './useToastStore'
+export type { ToastOptions, ToastPosition } from './useToastStore'
 export { useUserStore, toNavRole } from './useUserStore'

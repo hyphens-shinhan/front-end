@@ -49,8 +49,8 @@ jobs:
 
       - name: Verify build output
         run: |
-          ls -la hyphens-shinhan/.vercel/output || (echo "No .vercel/output" && exit 1)
-          du -sh hyphens-shinhan/.vercel/output
+          ls -la .vercel/output || (echo "No .vercel/output" && exit 1)
+          du -sh .vercel/output
 
       - name: Deploy Project Artifacts to Vercel
         # --archive=tgz: 단일 아카이브로 업로드하여 "Missing files" 등 업로드 검증 오류 완화

@@ -85,7 +85,7 @@ export default function GroupDetailContent({ clubId }: GroupDetailContentProps) 
             {
                 onSuccess: () => toast.show(TOAST_MESSAGES.GROUP.JOIN_SUCCESS),
                 onError: (error) => {
-                    toast.error(error instanceof Error ? error.message : TOAST_MESSAGES.GROUP.JOIN_ERROR);
+                    toast.error(TOAST_MESSAGES.GROUP.JOIN_ERROR);
                 },
             }
         );

@@ -53,8 +53,15 @@ jobs:
           # Serwist와 Turbopack 충돌 방지를 위한 환경 변수
           SERWIST_SUPRESS_TURBOPACK_WARNING: 1
 
+      # prebuilt 배포 시 서버에서 "Missing files" 방지: 출력 디렉터리 존재 확인
+      - name: Verify build output
+        run: |
+          ls -la .vercel/output || (echo "No .vercel/output" && exit 1)
+          echo "Build output size:" && du -sh .vercel/output
+
       - name: Deploy Project Artifacts to Vercel
-        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+        # --archive=tgz: 단일 아카이브로 업로드하여 "Missing files" 등 업로드 검증 오류 완화
+        run: vercel deploy --prebuilt --prod --archive=tgz --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}

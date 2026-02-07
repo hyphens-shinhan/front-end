@@ -7,7 +7,9 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    # vercel pull/build/deploy는 저장소 루트에서 실행 (대시보드 Root Directory=hyphens-shinhan과 일치)
+    defaults:
+      run:
+        working-directory: ./hyphens-shinhan
 
     steps:
       - name: Checkout Project
@@ -21,11 +23,9 @@ jobs:
           cache-dependency-path: "./hyphens-shinhan/package-lock.json"
 
       - name: Install dependencies
-        working-directory: ./hyphens-shinhan
         run: npm ci
 
       - name: Generate Design Tokens
-        working-directory: ./hyphens-shinhan
         run: node scripts/process-tokens.js
 
       - name: Install Vercel CLI
@@ -47,13 +47,7 @@ jobs:
           NEXT_PUBLIC_API_BASE_URL: ${{ secrets.NEXT_PUBLIC_API_BASE_URL }}
           SERWIST_SUPRESS_TURBOPACK_WARNING: 1
 
-      - name: Verify build output
-        run: |
-          ls -la .vercel/output || (echo "No .vercel/output" && exit 1)
-          du -sh .vercel/output
-
       - name: Deploy Project Artifacts to Vercel
-        # --archive=tgz: 단일 아카이브로 업로드하여 "Missing files" 등 업로드 검증 오류 완화
         run: vercel deploy --prebuilt --prod --archive=tgz --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}

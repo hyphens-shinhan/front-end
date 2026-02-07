@@ -74,6 +74,9 @@ function PostCard({ post, detailHref, disableProfileInteraction = false, postTyp
     const profileLink = !disableProfileInteraction && !isMyPost && !is_anonymous && author
         ? ROUTES.MYPAGE.PUBLIC_PROFILE(author.id)
         : null;
+    // 내 글이 아니고, 프로필 상호작용 가능하고, 익명이 아니고, 작성자가 있으며, 아직 팔로우하지 않은 경우에만 팔로우 버튼 표시
+    const showFollowButton =
+        !isMyPost && !disableProfileInteraction && !is_anonymous && !!author && !author.is_following;
 
     const handleProfileClick = (e: React.MouseEvent) => {
         e.preventDefault();
@@ -100,8 +103,7 @@ function PostCard({ post, detailHref, disableProfileInteraction = false, postTyp
                         fill
                         containerClassName="w-full h-full"
                     />
-                    {/** 프로필 상호작용이 비활성화되지 않았고, 익명이 아니고, 팔로우하지 않은 경우에만 팔로우 버튼 표시 */}
-                    {!disableProfileInteraction && !is_anonymous && author && !author.is_following && (
+                    {showFollowButton && (
                         <div className={styles.followButton}>
                             <FollowButton type="addIcon" />
                         </div>
@@ -115,8 +117,7 @@ function PostCard({ post, detailHref, disableProfileInteraction = false, postTyp
                         fill
                         containerClassName="w-full h-full"
                     />
-                    {/** 프로필 상호작용이 비활성화되지 않았고, 익명이 아니고, 팔로우하지 않은 경우에만 팔로우 버튼 표시 */}
-                    {!disableProfileInteraction && !is_anonymous && author && !author.is_following && (
+                    {showFollowButton && (
                         <div className={styles.followButton}>
                             <FollowButton type="addIcon" />
                         </div>

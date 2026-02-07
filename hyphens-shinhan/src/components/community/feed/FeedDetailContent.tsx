@@ -31,6 +31,7 @@ interface FeedDetailContentProps {
  */
 export default function FeedDetailContent({ postId, postType = 'feed' }: FeedDetailContentProps) {
     const router = useRouter();
+    const currentUser = useUserStore((s) => s.user);
     const { data: feedPost, isLoading: isLoadingFeed, isError: isErrorFeed } = useFeedPost(postId, { enabled: postType === 'feed' });
     const { data: councilReport, isLoading: isLoadingCouncil, isError: isErrorCouncil } = useCouncilReport(postId, { enabled: postType === 'council' });
     const { mutate: createComment, isPending: isSubmitting } = useCreateComment();
@@ -131,7 +132,6 @@ export default function FeedDetailContent({ postId, postType = 'feed' }: FeedDet
     }
 
     const { author, created_at, is_anonymous } = post;
-    const currentUser = useUserStore((s) => s.user);
     const isMyPost = currentUser?.id === author?.id;
 
     // 다른 영역 클릭 시 답글 선택 해제

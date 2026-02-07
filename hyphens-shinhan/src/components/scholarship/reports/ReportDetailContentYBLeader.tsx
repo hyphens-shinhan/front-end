@@ -101,7 +101,7 @@ function ReportDetailContentYBLeader({
             avatar_url: m.avatar_url,
             status: AttendanceStatus.PRESENT,
             confirmation: ConfirmationStatus.PENDING,
-            is_leader: m.is_leader,
+            is_leader: m.is_leader ?? false,
         }))
         setAttendance(initial)
         attendanceRef.current = initial

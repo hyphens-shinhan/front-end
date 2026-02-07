@@ -16,11 +16,13 @@ interface MoreButtonProps {
   type?: MoreMenuType;
   /** 작성자 여부. true일 때만 수정/삭제 메뉴 노출 */
   isAuthor?: boolean;
-  /** 게시글/댓글 수정 클릭 시 (작성자만 노출되는 메뉴) */
+  /** 게시글용: 이걸 넘기면 버튼 클릭 시 이 함수만 호출 (useFeedPostMoreMenu 등 공통 로직 사용 시) */
+  onOpenMenu?: () => void;
+  /** 게시글/댓글 수정 클릭 시 (onOpenMenu 없을 때만 사용) */
   onEdit?: () => void;
-  /** 게시글/댓글 삭제 클릭 시 (작성자만 노출되는 메뉴) */
+  /** 게시글/댓글 삭제 클릭 시 (onOpenMenu 없을 때만 사용) */
   onDelete?: () => void;
-  /** 신고 클릭 시 */
+  /** 신고 클릭 시 (onOpenMenu 없을 때만 사용) */
   onReport?: () => void;
 }
 
@@ -35,6 +37,7 @@ interface MoreButtonProps {
 export default function MoreButton({
   type = 'post',
   isAuthor = false,
+  onOpenMenu,
   onEdit,
   onDelete,
   onReport,
@@ -51,7 +54,6 @@ export default function MoreButton({
 
   const handleMenuAction = (value: string) => {
     onClose(); // 먼저 시트 닫기 (닫은 뒤에 이동해야 시트가 상세 페이지까지 따라오지 않음)
-
     if (value === 'edit') onEdit?.();
     else if (value === 'delete') onDelete?.();
     else if (value === 'report') onReport?.();
@@ -60,6 +62,10 @@ export default function MoreButton({
   const handleMoreButtonClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    if (type === 'post' && onOpenMenu) {
+      onOpenMenu();
+      return;
+    }
     onOpen({
       closeOnOverlayClick: true,
       content: (

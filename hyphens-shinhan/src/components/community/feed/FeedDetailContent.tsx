@@ -1,9 +1,10 @@
 'use client'
 
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useFeedPost, useCouncilReport } from "@/hooks/posts/usePosts";
 import { useCreateComment } from "@/hooks/comments/useCommentMutations";
+import { useFeedPostMoreMenu } from "@/hooks/useFeedPostMoreMenu";
 import CommentList from "@/components/community/feed/CommentList";
 import PostContent from "@/components/community/feed/PostContent";
 import Button from "@/components/common/Button";
@@ -17,7 +18,7 @@ import { EMPTY_CONTENT_MESSAGES, INPUT_BAR_TYPE, ROUTES } from "@/constants";
 import { TOAST_MESSAGES } from "@/constants/toast";
 import { useToast } from "@/hooks/useToast";
 import { FeedPostResponse, PostType, PublicReportResponse } from "@/types/posts";
-import { useUserStore } from "@/stores";
+import { useUserStore, useHeaderStore } from "@/stores";
 
 interface FeedDetailContentProps {
     postId: string;
@@ -37,6 +38,8 @@ export default function FeedDetailContent({ postId, postType = 'feed' }: FeedDet
     const { data: feedPost, isLoading: isLoadingFeed, isError: isErrorFeed } = useFeedPost(postId, { enabled: postType === 'feed' });
     const { data: councilReport, isLoading: isLoadingCouncil, isError: isErrorCouncil } = useCouncilReport(postId, { enabled: postType === 'council' });
     const { mutate: createComment, isPending: isSubmitting } = useCreateComment();
+    const setHandlers = useHeaderStore((s) => s.setHandlers);
+    const resetHandlers = useHeaderStore((s) => s.resetHandlers);
     const toast = useToast();
 
     // 타입에 따라 적절한 데이터와 로딩/에러 상태 사용
@@ -64,6 +67,18 @@ export default function FeedDetailContent({ postId, postType = 'feed' }: FeedDet
     } else if (feedPost) {
         post = feedPost;
     }
+
+    // 훅은 조건부 return 이전에 항상 호출 (Rules of Hooks)
+    const isMyPost = !!post && currentUser?.id === post.author?.id;
+    const { openMenu: openFeedMoreMenu } = useFeedPostMoreMenu(postId, isMyPost, {
+        afterDeleteNavigateTo: ROUTES.COMMUNITY.MAIN,
+    });
+
+    useEffect(() => {
+        if (postType !== 'feed' || !post) return;
+        setHandlers({ onClick: openFeedMoreMenu });
+        return () => resetHandlers();
+    }, [postType, post?.id, setHandlers, resetHandlers, openFeedMoreMenu]);
 
     // 댓글 입력 상태
     const [comment, setComment] = useState('');
@@ -135,7 +150,6 @@ export default function FeedDetailContent({ postId, postType = 'feed' }: FeedDet
     }
 
     const { author, created_at, is_anonymous } = post;
-    const isMyPost = currentUser?.id === author?.id;
 
     // 다른 영역 클릭 시 답글 선택 해제
     const handleScrollAreaClick = () => {

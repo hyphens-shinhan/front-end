@@ -6,7 +6,7 @@ import ShortcutMenuList from '@/components/home/ShortcutMenuList';
 import { cn } from '@/utils/cn';
 
 const styles = {
-  card: 'flex min-h-0 flex-1 flex-col rounded-t-[32px] bg-white pt-9',
+  card: 'flex min-h-0 flex-1 flex-col rounded-t-[32px] bg-white pt-9 pb-20',
   shortcut: 'mt-7',
   summaryWrap: 'px-4',
 } as const;

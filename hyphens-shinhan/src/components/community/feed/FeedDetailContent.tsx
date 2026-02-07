@@ -15,6 +15,7 @@ import FollowButton from "../FollowButton";
 import MessageInput from "@/components/common/MessageInput";
 import { EMPTY_CONTENT_MESSAGES, INPUT_BAR_TYPE, ROUTES } from "@/constants";
 import { FeedPostResponse, PostType, PublicReportResponse } from "@/types/posts";
+import { useUserStore } from "@/stores";
 
 interface FeedDetailContentProps {
     postId: string;
@@ -130,6 +131,8 @@ export default function FeedDetailContent({ postId, postType = 'feed' }: FeedDet
     }
 
     const { author, created_at, is_anonymous } = post;
+    const currentUser = useUserStore((s) => s.user);
+    const isMyPost = currentUser?.id === author?.id;
 
     // 다른 영역 클릭 시 답글 선택 해제
     const handleScrollAreaClick = () => {
@@ -154,8 +157,8 @@ export default function FeedDetailContent({ postId, postType = 'feed' }: FeedDet
                         </p>
                         <time className={styles.time}>{formatDateKrWithTime(created_at)}</time>
                     </div>
-                    {/** 익명이 아니고, 팔로우하지 않은 경우에만 팔로우 버튼 표시 */}
-                    {!is_anonymous && author && !author.is_following && (
+                    {/** 익명이 아니고, 내 글이 아니고, 팔로우하지 않은 경우에만 팔로우 버튼 표시 */}
+                    {!is_anonymous && author && !isMyPost && !author.is_following && (
                         <div className={styles.followButtonWrapper}>
                             <FollowButton type="button" />
                         </div>
@@ -199,7 +202,7 @@ const styles = {
         'flex flex-col h-full',
     ),
     scrollArea: cn(
-        'flex-1 flex flex-col',
+        'flex-1 flex flex-col pb-40',
         'overflow-x-hidden overflow-y-auto scrollbar-hide',
     ),
     userInfoWrapper: cn(

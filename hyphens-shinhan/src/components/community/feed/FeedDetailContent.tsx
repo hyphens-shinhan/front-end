@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useFeedPost, useCouncilReport } from "@/hooks/posts/usePosts";
 import { useCreateComment } from "@/hooks/comments/useCommentMutations";
 import { useFeedPostMoreMenu } from "@/hooks/useFeedPostMoreMenu";
+import { useCouncilReportMoreMenu } from "@/hooks/useCouncilReportMoreMenu";
 import CommentList from "@/components/community/feed/CommentList";
 import PostContent from "@/components/community/feed/PostContent";
 import Button from "@/components/common/Button";
@@ -73,12 +74,14 @@ export default function FeedDetailContent({ postId, postType = 'feed' }: FeedDet
     const { openMenu: openFeedMoreMenu } = useFeedPostMoreMenu(postId, isMyPost, {
         afterDeleteNavigateTo: ROUTES.COMMUNITY.MAIN,
     });
+    const { openMenu: openCouncilMoreMenu } = useCouncilReportMoreMenu(postId);
 
     useEffect(() => {
-        if (postType !== 'feed' || !post) return;
-        setHandlers({ onClick: openFeedMoreMenu });
+        if (!post) return;
+        const openMenu = postType === 'council' ? openCouncilMoreMenu : openFeedMoreMenu;
+        setHandlers({ onClick: openMenu });
         return () => resetHandlers();
-    }, [postType, post?.id, setHandlers, resetHandlers, openFeedMoreMenu]);
+    }, [postType, post?.id, setHandlers, resetHandlers, openFeedMoreMenu, openCouncilMoreMenu]);
 
     // 댓글 입력 상태
     const [comment, setComment] = useState('');

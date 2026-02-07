@@ -11,6 +11,7 @@ import PostContent from "@/components/community/feed/PostContent";
 import { FeedPostResponse } from "@/types/posts";
 import { useUserStore } from "@/stores";
 import { useFeedPostMoreMenu } from "@/hooks/useFeedPostMoreMenu";
+import { useCouncilReportMoreMenu } from "@/hooks/useCouncilReportMoreMenu";
 import Avatar from "@/components/common/Avatar";
 
 interface PostCardProps {
@@ -19,6 +20,8 @@ interface PostCardProps {
     detailHref?: string;
     /** 프로필 상호작용 비활성화 (마이페이지 등에서 사용) */
     disableProfileInteraction?: boolean;
+    /** 'council'이면 더보기에 게시물 공유만 노출 (자치회 카드/상세) */
+    postType?: 'feed' | 'council';
 }
 
 /** 게시글 카드 컴포넌트 동일성 비교 함수 */
@@ -40,6 +43,7 @@ function arePostPropsEqual(prev: PostCardProps, next: PostCardProps): boolean {
     if (aAuthor?.id !== bAuthor?.id) return false;
     if (aAuthor?.name !== bAuthor?.name) return false;
     if (aAuthor?.is_following !== bAuthor?.is_following) return false;
+    if (prev.postType !== next.postType) return false;
     return true;
 }
 
@@ -48,7 +52,7 @@ function arePostPropsEqual(prev: PostCardProps, next: PostCardProps): boolean {
  * @example
  * <PostCard post={postData} />
  */
-function PostCard({ post, detailHref, disableProfileInteraction = false }: PostCardProps) {
+function PostCard({ post, detailHref, disableProfileInteraction = false, postType = 'feed' }: PostCardProps) {
     const router = useRouter();
     const {
         id,
@@ -80,6 +84,7 @@ function PostCard({ post, detailHref, disableProfileInteraction = false }: PostC
     };
 
     const { openMenu: openFeedMoreMenu } = useFeedPostMoreMenu(id, isMyPost);
+    const { openMenu: openCouncilMoreMenu } = useCouncilReportMoreMenu(id);
 
     return (
         <div className={styles.container}>
@@ -144,7 +149,7 @@ function PostCard({ post, detailHref, disableProfileInteraction = false }: PostC
                         <MoreButton
                             type="post"
                             isAuthor={isMyPost}
-                            onOpenMenu={openFeedMoreMenu}
+                            onOpenMenu={postType === 'council' ? openCouncilMoreMenu : openFeedMoreMenu}
                         />
                     </div>
                 </div>

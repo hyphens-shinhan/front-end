@@ -3,7 +3,7 @@
 import { motion, useMotionValue, animate } from 'framer-motion';
 import ProfileCard from "../mypage/ProfileCard";
 import { useMyProfile } from "@/hooks/user/useUser";
-import ProfileSkeleton from "../mypage/ProfileSkeleton";
+import ProfileCardWithQRSkeleton from "./ProfileCardWithQRSkeleton";
 import EmptyContent from "../common/EmptyContent";
 import { EMPTY_CONTENT_MESSAGES } from "@/constants";
 import { cn } from "@/utils/cn";
@@ -20,7 +20,7 @@ export default function ProfileCardWithQR() {
     animate(y, 0, { type: 'spring', stiffness: 300, damping: 30 });
   };
 
-  if (isLoading) return <ProfileSkeleton />;
+  if (isLoading) return <ProfileCardWithQRSkeleton />;
   if (error) return <EmptyContent variant="error" message={EMPTY_CONTENT_MESSAGES.ERROR.PROFILE} />;
   if (!profile) return <EmptyContent variant="error" message={EMPTY_CONTENT_MESSAGES.ERROR.PROFILE} />;
 

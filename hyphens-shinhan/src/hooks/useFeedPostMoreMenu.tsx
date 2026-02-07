@@ -7,6 +7,7 @@ import { TOAST_MESSAGES } from '@/constants/toast'
 import { useBottomSheetStore, useConfirmModalStore } from '@/stores'
 import { useDeletePost } from '@/hooks/posts/usePostMutations'
 import { useToast } from '@/hooks/useToast'
+import { copyToClipboard } from '@/utils/copyToClipboard'
 import { cn } from '@/utils/cn'
 
 const menuStyles = {
@@ -25,7 +26,7 @@ interface UseFeedPostMoreMenuOptions {
 }
 
 /**
- * 게시글 더보기 메뉴(수정/삭제/신고) 로직 공통 훅
+ * 게시글 더보기 메뉴(수정/삭제/공유) 로직 공통 훅
  * - 리스트(PostCard)와 상세(FeedDetailContent)에서 동일한 바텀시트 메뉴·동작 사용
  */
 export function useFeedPostMoreMenu(
@@ -46,7 +47,7 @@ export function useFeedPostMoreMenu(
         { value: 'edit', label: '게시글 수정' },
         { value: 'delete', label: '게시글 삭제' },
       ] : []),
-      { value: 'report', label: '신고' },
+      { value: 'share', label: '공유' },
     ]
 
     openBottomSheet({
@@ -84,8 +85,18 @@ export function useFeedPostMoreMenu(
                       }
                     },
                   })
-                } else if (item.value === 'report') {
-                  // TODO: 신고
+                } else if (item.value === 'share') {
+                  const url =
+                    typeof window !== 'undefined'
+                      ? `${window.location.origin}${ROUTES.COMMUNITY.FEED.DETAIL}/${postId}`
+                      : ''
+                  if (url) {
+                    copyToClipboard(url).then((ok) =>
+                      ok
+                        ? toast.show(TOAST_MESSAGES.FEED.LINK_COPY_SUCCESS)
+                        : toast.error(TOAST_MESSAGES.FEED.LINK_COPY_ERROR),
+                    )
+                  }
                 }
               }}
             >

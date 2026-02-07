@@ -108,10 +108,12 @@ function Comment({
                     </p>
                     {/** 시간 */}
                     <time className={styles.time}>{formatDateKrWithTime(created_at)}</time>
-                    {/** 더보기 버튼 */}
-                    <div className={styles.moreButtonWrapper}>
-                        <MoreButton type="comment" isAuthor={isMyComment} onOpenMenu={openMenu} />
-                    </div>
+                    {/** 더보기 버튼 (내 댓글일 때만) */}
+                    {isMyComment && (
+                        <div className={styles.moreButtonWrapper}>
+                            <MoreButton type="comment" isAuthor={isMyComment} onOpenMenu={openMenu} />
+                        </div>
+                    )}
                 </div>
 
                 {/** 댓글 본문 영역 (수정 모드일 때는 입력창 + 저장/취소) */}
@@ -190,7 +192,7 @@ const styles = {
         'text-grey-6',
     ),
     commentContent: cn(
-        'flex-1 flex-col',
+        'flex-1 flex flex-col min-w-0',
     ),
     userProfileWrapper: cn(
         'relative w-9 h-9 rounded-full',
@@ -214,12 +216,12 @@ const styles = {
         'font-caption-caption4 text-gray-8',
     ),
     contentWrapper: cn(
-        'flex flex-col mt-1',
+        'flex flex-col mt-1 min-w-0 overflow-hidden',
     ),
     contentText: cn(
         'pr-7',
-        'body-8',
-        'text-grey-11',
+        'body-8 text-grey-11',
+        'break-words',
     ),
     editWrapper: cn(
         'flex flex-col gap-2',
@@ -238,7 +240,7 @@ const styles = {
         'py-2',
     ),
     replyButton: cn(
-        'flex flex-col mt-1',
+        'flex flex-col mt-1 text-left',
     ),
     replyText: cn(
         'font-caption-caption4',

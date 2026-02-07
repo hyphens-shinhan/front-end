@@ -22,14 +22,14 @@ interface MoreButtonProps {
   onEdit?: () => void;
   /** 게시글/댓글 삭제 클릭 시 (onOpenMenu 없을 때만 사용) */
   onDelete?: () => void;
-  /** 신고 클릭 시 (onOpenMenu 없을 때만 사용) */
-  onReport?: () => void;
+  /** 공유(링크 복사) 클릭 시 (onOpenMenu 없을 때만 사용) */
+  onShare?: () => void;
 }
 
 /** 더보기 버튼
  * - 클릭 시 바텀시트로 더보기 메뉴 노출
  * - type에 따라 게시글/댓글 메뉴 항목 분기
- * - 수정/삭제는 작성자(isAuthor)에게만 노출, 신고는 모두에게 노출
+ * - 수정/삭제는 작성자(isAuthor)에게만 노출, 공유는 모두에게 노출
  * @example
  * <MoreButton type="post" isAuthor={isMyPost} />
  * <MoreButton type="comment" isAuthor={isMyComment} />
@@ -40,7 +40,7 @@ export default function MoreButton({
   onOpenMenu,
   onEdit,
   onDelete,
-  onReport,
+  onShare,
 }: MoreButtonProps) {
   const { onOpen, onClose } = useBottomSheetStore();
   const labels = EDIT_DELETE_LABELS[type];
@@ -49,14 +49,14 @@ export default function MoreButton({
       { value: 'edit', label: labels.edit },
       { value: 'delete', label: labels.delete },
     ] : []),
-    { value: 'report', label: '신고' },
+    { value: 'share', label: '공유' },
   ];
 
   const handleMenuAction = (value: string) => {
     onClose(); // 먼저 시트 닫기 (닫은 뒤에 이동해야 시트가 상세 페이지까지 따라오지 않음)
     if (value === 'edit') onEdit?.();
     else if (value === 'delete') onDelete?.();
-    else if (value === 'report') onReport?.();
+    else if (value === 'share') onShare?.();
   };
 
   const handleMoreButtonClick = (e: React.MouseEvent) => {

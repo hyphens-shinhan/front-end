@@ -20,6 +20,8 @@ export const TOAST_MESSAGES = {
     COMMENT_UPDATE_ERROR: '댓글 수정에 실패했어요',
     COMMENT_DELETE_SUCCESS: '댓글이 삭제되었어요',
     COMMENT_DELETE_ERROR: '댓글 삭제에 실패했어요',
+    LINK_COPY_SUCCESS: '링크가 복사되었어요',
+    LINK_COPY_ERROR: '링크 복사에 실패했어요',
   },
   /** 소모임 */
   GROUP: {

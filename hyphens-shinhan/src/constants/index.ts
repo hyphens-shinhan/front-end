@@ -145,7 +145,7 @@ export interface HeaderConfig {
 /** 바텀 네비게이션 아이템 키에 따른 헤더 설정 상수 */
 export const HEADER_CONFIG_BY_BOTTOM_NAV: Record<NavLink, HeaderConfig> = {
   [ROUTES.HOME.MAIN]: {
-    title: '홈',
+    title: '',
     navItems: [HEADER_ITEMS.CHAT, HEADER_ITEMS.NOTIFICATIONS],
   },
   [ROUTES.SCHOLARSHIP.MAIN]: {

@@ -6,13 +6,16 @@ import { cn } from "@/utils/cn";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { getHeaderConfig } from "@/utils/header";
+import { ROUTES } from "@/constants";
 
 /**
  * pathname만 prop으로 받는 헤더 (라우터 훅 미사용).
  * 레이아웃에서 pathname을 넘겨 쓰면 searchParams만 바뀔 때 리렌더되지 않음.
+ * 홈(/)일 때는 그라데이션 배경에 맞춰 투명 배경·흰색 텍스트 스타일이 적용됩니다.
  */
 export const HeaderContent = memo(function HeaderContent({ pathname }: { pathname: string }) {
     const headerConfig = getHeaderConfig(pathname);
+    const isHome = pathname === ROUTES.HOME.MAIN;
 
     if (!headerConfig) {
         return null;
@@ -21,9 +24,9 @@ export const HeaderContent = memo(function HeaderContent({ pathname }: { pathnam
     const { title, navItems } = headerConfig;
 
     return (
-        <header className={styles.container}>
+        <header className={cn(styles.container, isHome && styles.containerHome)}>
             { /** 헤더 타이틀 */}
-            <h1 className={styles.title}>
+            <h1 className={cn(styles.title, isHome && styles.titleHome)}>
                 {title}
             </h1>
             { /** 헤더 네비게이션 */}
@@ -33,7 +36,7 @@ export const HeaderContent = memo(function HeaderContent({ pathname }: { pathnam
                         <Link
                             href={item.href ?? '/'}
                             key={item.href}
-                            className={styles.navItem}
+                            className={cn(styles.navItem, isHome && styles.navItemHome)}
                             aria-label={item.ariaLabel}
                         >
                             {item.icon && (
@@ -59,18 +62,17 @@ function Header({ pathname: pathnameProp }: { pathname?: string } = {}) {
 const styles = {
     container: cn(
         'flex flex-row justify-between items-center',
-        'px-4 py-3'
+        'px-4 py-3',
     ),
-    title: cn(
-        'shinhan-title-1 text-grey-11',
-    ),
-    nav: cn(
-        'flex flex-row gap-x-4',
-    ),
-    navItem: cn(
-        'flex items-center justify-center w-6 h-6',
-        'text-grey-9',
-    ),
-};
+    /** 홈 화면: 그라데이션에 맞춰 투명 배경 */
+    containerHome: 'bg-transparent',
+    title: 'shinhan-title-1 text-grey-11',
+    /** 홈 화면: 흰색 타이틀 */
+    titleHome: 'text-white',
+    nav: 'flex flex-row gap-x-4',
+    navItem: 'flex items-center justify-center w-6 h-6 text-grey-9',
+    /** 홈 화면: 흰색 아이콘 */
+    navItemHome: 'text-white',
+} as const;
 
 export default memo(Header);

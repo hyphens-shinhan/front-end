@@ -200,18 +200,20 @@ export default function FeedDetailContent({ postId, postType = 'feed' }: FeedDet
                     />
                 </div>
             </div>
-            {/** 댓글 작성 영역 (하단 고정) */}
+            {/** 댓글 작성 영역 (하단 고정, 데스크탑에서 최대 너비 제한) */}
             <div className={styles.inputWrapper}>
-                <MessageInput
-                    type={INPUT_BAR_TYPE.COMMENT}
-                    inputRef={commentInputRef}
-                    value={comment}
-                    onChange={setComment}
-                    onSend={handleSendComment}
-                    isSubmitting={isSubmitting}
-                    isAnonymous={isAnonymous}
-                    onAnonymousToggle={() => setIsAnonymous(!isAnonymous)}
-                />
+                <div className={styles.inputInner}>
+                    <MessageInput
+                        type={INPUT_BAR_TYPE.COMMENT}
+                        inputRef={commentInputRef}
+                        value={comment}
+                        onChange={setComment}
+                        onSend={handleSendComment}
+                        isSubmitting={isSubmitting}
+                        isAnonymous={isAnonymous}
+                        onAnonymousToggle={() => setIsAnonymous(!isAnonymous)}
+                    />
+                </div>
             </div>
         </div>
     );
@@ -254,5 +256,8 @@ const styles = {
     inputWrapper: cn(
         'flex flex-col fixed bottom-0 left-0 right-0',
         'bg-white',
+    ),
+    inputInner: cn(
+        'w-full max-w-md mx-auto',
     ),
 }

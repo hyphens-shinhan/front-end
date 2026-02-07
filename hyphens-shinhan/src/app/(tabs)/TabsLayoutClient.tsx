@@ -70,7 +70,7 @@ const styles = {
         'relative',
     ),
     content: cn(
-        'relative overflow-y-auto scrollbar-hide',
+        'relative overflow-y-auto scrollbar-hide overscroll-y-none',
         'h-full',
     ),
 };

@@ -175,6 +175,8 @@ export interface CustomHeaderConfig {
   img?: string | StaticImageData
   navItem?: HeaderNavItem
   backHref?: string
+  /** 있으면 pathname을 이 패턴으로 매칭 (동적 경로용, 키는 startsWith에 사용 안 함) */
+  pathPattern?: RegExp
 }
 
 /** 상세 페이지 헤더 설정 상수 */
@@ -229,6 +231,14 @@ export const CUSTOM_HEADER_CONFIG: Record<string, CustomHeaderConfig> = {
     type: 'Center',
     btnType: 'Back',
     navItem: HEADER_ITEMS[HEADER_NAV_ITEM_KEY.MORE],
+  },
+  /** 게시글 수정 페이지 (동적 경로라 pathPattern으로 매칭) */
+  [ROUTES.COMMUNITY.FEED.EDIT]: {
+    pathPattern: /^\/community\/feed\/[^/]+\/edit$/,
+    title: '게시글 수정',
+    type: 'Left',
+    btnType: 'Back',
+    navItem: HEADER_ITEMS[HEADER_NAV_ITEM_KEY.COMPLETE],
   },
   /** 자치회 리포트 상세 보기 */
   [ROUTES.COMMUNITY.COUNCIL.DETAIL]: {

@@ -7,6 +7,7 @@ import { Icon } from "@/components/common/Icon";
 import MoreButton from "@/components/community/MoreButton";
 import Avatar from "@/components/common/Avatar";
 import { CommentResponse } from "@/types/comments";
+import { useUserStore } from "@/stores";
 
 interface CommentProps {
     comment: CommentResponse;
@@ -34,6 +35,9 @@ function Comment({ comment, onReply, isReplyingTo = false }: CommentProps) {
 
     // 대댓글 여부 (parent_id가 있으면 대댓글)
     const isReply = !!parent_id;
+
+    const currentUser = useUserStore((s) => s.user);
+    const isMyComment = currentUser?.id === author?.id;
 
     // TODO: 삭제된 댓글 처리
 
@@ -71,7 +75,7 @@ function Comment({ comment, onReply, isReplyingTo = false }: CommentProps) {
                     <time className={styles.time}>{formatDateKrWithTime(created_at)}</time>
                     {/** 더보기 버튼 */}
                     <div className={styles.moreButtonWrapper}>
-                        <MoreButton />
+                        <MoreButton type="comment" isAuthor={isMyComment} />
                     </div>
                 </div>
 

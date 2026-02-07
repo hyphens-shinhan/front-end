@@ -136,9 +136,13 @@ function PostCard({ post, detailHref, disableProfileInteraction = false }: PostC
                     )}
                     {/** 시간 */}
                     <time className={styles.time}>{formatDateKrWithTime(created_at)}</time>
-                    {/** 팔로우 버튼, 더보기 버튼 */}
-                    <div className={styles.moreButtonWrapper}>
-                        <MoreButton />
+                    {/** 팔로우 버튼, 더보기 버튼 (클릭 시 상세 이동 방지) */}
+                    <div className={styles.moreButtonWrapper} onClick={(e) => e.stopPropagation()}>
+                        <MoreButton
+                        type="post"
+                        isAuthor={isMyPost}
+                        onEdit={() => router.push(`${ROUTES.COMMUNITY.FEED.DETAIL}/${id}/edit`)}
+                    />
                     </div>
                 </div>
                 {/** 중앙: 이미지/본문 영역 */}

@@ -167,7 +167,7 @@ export default function ProfileEditContent({ onCancel }: { onCancel: () => void 
             />
 
             {/** 프로필 카드 */}
-            <ProfileCard 
+            <ProfileCard
                 profile={profile}
                 isMyProfile={true}
                 showEditIcon={true}
@@ -199,7 +199,7 @@ export default function ProfileEditContent({ onCancel }: { onCancel: () => void 
                     onToggleChange={(checked) => handlePrivacyToggle('is_location_public', checked)}
                 />
 
-                {/** 이메일 */}
+                {/** 이메일 (수정 불가) */}
                 <ProfileEditItem
                     icon="EMAIL"
                     label="이메일"
@@ -209,6 +209,7 @@ export default function ProfileEditContent({ onCancel }: { onCancel: () => void 
                     showToggle={true}
                     toggleChecked={privacyData.is_contact_public}
                     onToggleChange={(checked) => handlePrivacyToggle('is_contact_public', checked)}
+                    disabled={true}
                 />
 
                 {/** 소개글 */}

@@ -84,13 +84,14 @@ export default function MypageSettingPrivacyContent() {
                     onChange={(checked) => handleToggle('is_scholarship_public', checked)}
                     disabled={updatePrivacy.isPending}
                 />
-                <SettingItem
+                {/** TODO: 팔로워 목록 공개 기능 지금은 필요 없음 */}
+                {/* <SettingItem
                     label="팔로워 목록"
                     description="내 팔로워 목록을 다른 사용자에게 공개합니다."
                     checked={safeCurrentState.is_follower_public}
                     onChange={(checked) => handleToggle('is_follower_public', checked)}
                     disabled={updatePrivacy.isPending}
-                />
+                /> */}
             </div>
         </div>
     );

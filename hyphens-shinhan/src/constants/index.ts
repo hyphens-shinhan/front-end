@@ -225,12 +225,13 @@ export const CUSTOM_HEADER_CONFIG: Record<string, CustomHeaderConfig> = {
     title: '추가하기',
     type: 'Left',
   },
-  /** 게시글 상세 보기 */
+  /** 게시글 상세 보기 (공유 링크 진입 시 뒤로가기 = 커뮤니티로) */
   [ROUTES.COMMUNITY.FEED.DETAIL]: {
     title: '게시글',
     type: 'Center',
     btnType: 'Back',
     navItem: HEADER_ITEMS[HEADER_NAV_ITEM_KEY.MORE],
+    backHref: ROUTES.COMMUNITY.MAIN,
   },
   /** 게시글 수정 페이지 (동적 경로라 pathPattern으로 매칭) */
   [ROUTES.COMMUNITY.FEED.EDIT]: {
@@ -240,12 +241,13 @@ export const CUSTOM_HEADER_CONFIG: Record<string, CustomHeaderConfig> = {
     btnType: 'Back',
     navItem: HEADER_ITEMS[HEADER_NAV_ITEM_KEY.COMPLETE],
   },
-  /** 자치회 리포트 상세 보기 */
+  /** 자치회 리포트 상세 보기 (공유 링크 진입 시 뒤로가기 = 커뮤니티로) */
   [ROUTES.COMMUNITY.COUNCIL.DETAIL]: {
     title: '게시글',
     type: 'Center',
     btnType: 'Back',
     navItem: HEADER_ITEMS[HEADER_NAV_ITEM_KEY.MORE],
+    backHref: ROUTES.COMMUNITY.MAIN,
   },
   /** 커뮤니티 소모임 상세 보기 */
   [ROUTES.COMMUNITY.GROUP.DETAIL]: {

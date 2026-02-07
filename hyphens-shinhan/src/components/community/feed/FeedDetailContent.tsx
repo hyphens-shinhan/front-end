@@ -1,9 +1,11 @@
 'use client'
 
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useFeedPost, useCouncilReport } from "@/hooks/posts/usePosts";
 import { useCreateComment } from "@/hooks/comments/useCommentMutations";
+import { useFeedPostMoreMenu } from "@/hooks/useFeedPostMoreMenu";
+import { useCouncilReportMoreMenu } from "@/hooks/useCouncilReportMoreMenu";
 import CommentList from "@/components/community/feed/CommentList";
 import PostContent from "@/components/community/feed/PostContent";
 import Button from "@/components/common/Button";
@@ -14,8 +16,10 @@ import { formatDateKrWithTime } from "@/utils/date";
 import FollowButton from "../FollowButton";
 import MessageInput from "@/components/common/MessageInput";
 import { EMPTY_CONTENT_MESSAGES, INPUT_BAR_TYPE, ROUTES } from "@/constants";
+import { TOAST_MESSAGES } from "@/constants/toast";
+import { useToast } from "@/hooks/useToast";
 import { FeedPostResponse, PostType, PublicReportResponse } from "@/types/posts";
-import { useUserStore } from "@/stores";
+import { useUserStore, useHeaderStore } from "@/stores";
 
 interface FeedDetailContentProps {
     postId: string;
@@ -35,6 +39,9 @@ export default function FeedDetailContent({ postId, postType = 'feed' }: FeedDet
     const { data: feedPost, isLoading: isLoadingFeed, isError: isErrorFeed } = useFeedPost(postId, { enabled: postType === 'feed' });
     const { data: councilReport, isLoading: isLoadingCouncil, isError: isErrorCouncil } = useCouncilReport(postId, { enabled: postType === 'council' });
     const { mutate: createComment, isPending: isSubmitting } = useCreateComment();
+    const setHandlers = useHeaderStore((s) => s.setHandlers);
+    const resetHandlers = useHeaderStore((s) => s.resetHandlers);
+    const toast = useToast();
 
     // 타입에 따라 적절한 데이터와 로딩/에러 상태 사용
     const isLoading = postType === 'council' ? isLoadingCouncil : isLoadingFeed;
@@ -61,6 +68,20 @@ export default function FeedDetailContent({ postId, postType = 'feed' }: FeedDet
     } else if (feedPost) {
         post = feedPost;
     }
+
+    // 훅은 조건부 return 이전에 항상 호출 (Rules of Hooks)
+    const isMyPost = !!post && currentUser?.id === post.author?.id;
+    const { openMenu: openFeedMoreMenu } = useFeedPostMoreMenu(postId, isMyPost, {
+        afterDeleteNavigateTo: ROUTES.COMMUNITY.MAIN,
+    });
+    const { openMenu: openCouncilMoreMenu } = useCouncilReportMoreMenu(postId);
+
+    useEffect(() => {
+        if (!post) return;
+        const openMenu = postType === 'council' ? openCouncilMoreMenu : openFeedMoreMenu;
+        setHandlers({ onClick: openMenu });
+        return () => resetHandlers();
+    }, [postType, post?.id, setHandlers, resetHandlers, openFeedMoreMenu, openCouncilMoreMenu]);
 
     // 댓글 입력 상태
     const [comment, setComment] = useState('');
@@ -104,7 +125,7 @@ export default function FeedDetailContent({ postId, postType = 'feed' }: FeedDet
             },
             onError: (error) => {
                 console.error('댓글 작성 실패:', error);
-                alert('댓글 작성에 실패했습니다.');
+                toast.error(TOAST_MESSAGES.FEED.COMMENT_CREATE_ERROR);
                 sendingRef.current = false;
             },
         });
@@ -132,7 +153,6 @@ export default function FeedDetailContent({ postId, postType = 'feed' }: FeedDet
     }
 
     const { author, created_at, is_anonymous } = post;
-    const isMyPost = currentUser?.id === author?.id;
 
     // 다른 영역 클릭 시 답글 선택 해제
     const handleScrollAreaClick = () => {
@@ -180,18 +200,20 @@ export default function FeedDetailContent({ postId, postType = 'feed' }: FeedDet
                     />
                 </div>
             </div>
-            {/** 댓글 작성 영역 (하단 고정) */}
+            {/** 댓글 작성 영역 (하단 고정, 데스크탑에서 최대 너비 제한) */}
             <div className={styles.inputWrapper}>
-                <MessageInput
-                    type={INPUT_BAR_TYPE.COMMENT}
-                    inputRef={commentInputRef}
-                    value={comment}
-                    onChange={setComment}
-                    onSend={handleSendComment}
-                    isSubmitting={isSubmitting}
-                    isAnonymous={isAnonymous}
-                    onAnonymousToggle={() => setIsAnonymous(!isAnonymous)}
-                />
+                <div className={styles.inputInner}>
+                    <MessageInput
+                        type={INPUT_BAR_TYPE.COMMENT}
+                        inputRef={commentInputRef}
+                        value={comment}
+                        onChange={setComment}
+                        onSend={handleSendComment}
+                        isSubmitting={isSubmitting}
+                        isAnonymous={isAnonymous}
+                        onAnonymousToggle={() => setIsAnonymous(!isAnonymous)}
+                    />
+                </div>
             </div>
         </div>
     );
@@ -234,5 +256,8 @@ const styles = {
     inputWrapper: cn(
         'flex flex-col fixed bottom-0 left-0 right-0',
         'bg-white',
+    ),
+    inputInner: cn(
+        'w-full max-w-md mx-auto',
     ),
 }

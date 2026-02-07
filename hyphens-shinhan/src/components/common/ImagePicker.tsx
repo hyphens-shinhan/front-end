@@ -1,6 +1,6 @@
 'use client'
 
-import { ChangeEvent, ReactNode, RefObject } from 'react'
+import { ChangeEvent, Fragment, ReactNode, RefObject } from 'react'
 import Image from 'next/image'
 import { cn } from '@/utils/cn'
 import { Icon } from './Icon'
@@ -35,6 +35,8 @@ interface ImagePickerProps {
   accept?: string
   /** className */
   className?: string
+  /** true면 최상위 div 대신 Fragment로 자식만 렌더 (부모와 한 flex 행에 묶을 때 사용) */
+  noWrapper?: boolean
 }
 
 /**
@@ -55,11 +57,12 @@ export default function ImagePicker({
   size = 80,
   accept = 'image/*',
   className,
+  noWrapper = false,
 }: ImagePickerProps) {
   const sizeStyle = { width: size, height: size }
 
-  return (
-    <div className={cn(styles.container, className)}>
+  const content = (
+    <>
       {/** 이미지 미리보기 영역 */}
       {images.map((img, index) => (
         <div key={index} className={styles.imageWrapper} style={sizeStyle}>
@@ -108,8 +111,11 @@ export default function ImagePicker({
         className="hidden"
         onChange={onSelect}
       />
-    </div>
+    </>
   )
+
+  if (noWrapper) return content
+  return <div className={cn(styles.container, className)}>{content}</div>
 }
 
 const styles = {

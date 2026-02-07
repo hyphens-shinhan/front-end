@@ -128,8 +128,23 @@ export default function CustomHeader() {
             return;
         }
         if (displayBackHref) {
-            router.push(displayBackHref);
-            return;
+            // 공유 링크로 진입한 경우(히스토리 1개 또는 외부 referrer) backHref로 이동, 아니면 router.back()
+            const canGoBack =
+                typeof window !== 'undefined' && window.history.length > 1;
+            const referrer = typeof document !== 'undefined' ? document.referrer : '';
+            let isSameOriginReferrer = false;
+            if (referrer) {
+                try {
+                    const referrerOrigin = new URL(referrer, window.location.origin).origin;
+                    isSameOriginReferrer = referrerOrigin === window.location.origin;
+                } catch {
+                    isSameOriginReferrer = false;
+                }
+            }
+            if (!canGoBack || !isSameOriginReferrer) {
+                router.replace(displayBackHref);
+                return;
+            }
         }
         router.back();
     }, [onBack, displayBackHref, router]);

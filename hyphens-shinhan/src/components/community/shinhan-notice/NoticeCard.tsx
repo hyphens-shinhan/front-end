@@ -66,7 +66,7 @@ function NoticeCard({ notice }: NoticeCardProps) {
             {/** 본문 내용 */}
             <p className={styles.content}>{content}</p>
 
-            {/** 첨부 파일 */}
+            {/** 첨부 파일 (리스트 카드에서는 표시만, 다운로드는 상세 페이지에서) */}
             {file_urls && file_urls.length > 0 && (
                 <div className={styles.attachmentContainer}>
                     <Icon name='IconMBoldDocumentText' />

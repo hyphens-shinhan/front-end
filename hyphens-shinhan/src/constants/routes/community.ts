@@ -19,6 +19,8 @@ export const COMMUNITY_ROUTES = {
   FEED: {
     CREATE: '/community/feed/create',
     DETAIL: '/community/feed',
+    /** 게시글 수정 경로 패턴 - 헤더 설정 매칭용. 실제 이동 시에는 `${DETAIL}/${id}/edit` 사용 */
+    EDIT: '/community/feed/[id]/edit',
   },
   COUNCIL: {
     /** 자치회 리포트 상세 베이스 - 링크 시 `${DETAIL}/${id}` 사용 */

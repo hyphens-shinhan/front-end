@@ -52,6 +52,17 @@ export default function NoticeDetailContent({ noticeId }: NoticeDetailContentPro
     const { title, content, is_pinned, view_count, file_urls, created_at } = notice;
     const getFileName = (url: string) => url.split('/').pop() || url;
 
+    const handleAttachmentClick = (e: React.MouseEvent) => {
+        e.preventDefault();
+        if (!file_urls?.[0]) return;
+        const a = document.createElement('a');
+        a.href = file_urls[0];
+        a.download = getFileName(file_urls[0]);
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        a.click();
+    };
+
     return (
         <article className={styles.container}>
             <div className={styles.titleContainer}>
@@ -74,12 +85,17 @@ export default function NoticeDetailContent({ noticeId }: NoticeDetailContentPro
             {/** 본문 내용 */}
             <div className={styles.content}>{content}</div>
 
-            {/** 첨부 파일 */}
+            {/** 첨부 파일 (상세에서만 다운로드) */}
             {file_urls && file_urls.length > 0 && (
-                <div className={styles.attachmentContainer}>
+                <button
+                    type="button"
+                    onClick={handleAttachmentClick}
+                    className={styles.attachmentContainer}
+                    aria-label={`첨부파일 다운로드: ${getFileName(file_urls[0])}`}
+                >
                     <Icon name="IconMBoldDocumentText" />
                     {getFileName(file_urls[0])}
-                </div>
+                </button>
             )}
         </article>
     );
@@ -91,9 +107,11 @@ const styles = {
     content: cn('body-6 text-grey-11', 'whitespace-pre-wrap', 'py-4'),
     attachmentContainer: cn(
         'flex items-center gap-2.5',
-        'bg-grey-2 rounded-[6px] border border-grey-3',
-        'body-8 text-grey-9 underline',
-        'px-3 py-2'
+        'bg-grey-2 rounded-[6px]',
+        'body-8 text-grey-9',
+        'px-3 py-2',
+        'cursor-pointer hover:bg-grey-3 transition-colors text-left underline',
+        'border-0 border border-grey-3 hover:cursor-pointer',
     ),
     infoContainer: cn('flex items-center gap-4', 'font-caption-caption4 text-grey-8'),
 };

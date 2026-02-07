@@ -40,12 +40,22 @@ export function getHeaderConfig(pathname: string): HeaderConfig | null {
 export function getCustomHeaderConfig(
   pathname: string,
 ): CustomHeaderConfig | null {
-  // 경로 길이 순으로 정렬 (긴 경로가 먼저 오도록)
-  const entries = Object.entries(CUSTOM_HEADER_CONFIG).sort(
-    ([routeA], [routeB]) => routeB.length - routeA.length,
-  )
+  const entries = Object.entries(CUSTOM_HEADER_CONFIG)
 
-  for (const [route, config] of entries) {
+  // pathPattern이 있는 항목은 패턴 매칭 (동적 경로, 상세와 구분하기 위해 먼저 체크)
+  for (const [, config] of entries) {
+    if (config.pathPattern?.test(pathname)) {
+      const { pathPattern: _, ...rest } = config
+      return rest
+    }
+  }
+
+  // 경로 길이 순으로 정렬 (긴 경로가 먼저 오도록)
+  const sortedEntries = entries
+    .filter(([, config]) => !config.pathPattern)
+    .sort(([routeA], [routeB]) => routeB.length - routeA.length)
+
+  for (const [route, config] of sortedEntries) {
     if (pathname.startsWith(route)) {
       return config
     }

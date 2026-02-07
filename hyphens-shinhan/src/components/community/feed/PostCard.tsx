@@ -10,6 +10,8 @@ import MoreButton from "@/components/community/MoreButton";
 import PostContent from "@/components/community/feed/PostContent";
 import { FeedPostResponse } from "@/types/posts";
 import { useUserStore } from "@/stores";
+import { useFeedPostMoreMenu } from "@/hooks/useFeedPostMoreMenu";
+import { useCouncilReportMoreMenu } from "@/hooks/useCouncilReportMoreMenu";
 import Avatar from "@/components/common/Avatar";
 
 interface PostCardProps {
@@ -18,6 +20,8 @@ interface PostCardProps {
     detailHref?: string;
     /** 프로필 상호작용 비활성화 (마이페이지 등에서 사용) */
     disableProfileInteraction?: boolean;
+    /** 'council'이면 더보기에 게시물 공유만 노출 (자치회 카드/상세) */
+    postType?: 'feed' | 'council';
 }
 
 /** 게시글 카드 컴포넌트 동일성 비교 함수 */
@@ -39,6 +43,7 @@ function arePostPropsEqual(prev: PostCardProps, next: PostCardProps): boolean {
     if (aAuthor?.id !== bAuthor?.id) return false;
     if (aAuthor?.name !== bAuthor?.name) return false;
     if (aAuthor?.is_following !== bAuthor?.is_following) return false;
+    if (prev.postType !== next.postType) return false;
     return true;
 }
 
@@ -47,7 +52,7 @@ function arePostPropsEqual(prev: PostCardProps, next: PostCardProps): boolean {
  * @example
  * <PostCard post={postData} />
  */
-function PostCard({ post, detailHref, disableProfileInteraction = false }: PostCardProps) {
+function PostCard({ post, detailHref, disableProfileInteraction = false, postType = 'feed' }: PostCardProps) {
     const router = useRouter();
     const {
         id,
@@ -69,6 +74,9 @@ function PostCard({ post, detailHref, disableProfileInteraction = false }: PostC
     const profileLink = !disableProfileInteraction && !isMyPost && !is_anonymous && author
         ? ROUTES.MYPAGE.PUBLIC_PROFILE(author.id)
         : null;
+    // 내 글이 아니고, 프로필 상호작용 가능하고, 익명이 아니고, 작성자가 있으며, 아직 팔로우하지 않은 경우에만 팔로우 버튼 표시
+    const showFollowButton =
+        !isMyPost && !disableProfileInteraction && !is_anonymous && !!author && !author.is_following;
 
     const handleProfileClick = (e: React.MouseEvent) => {
         e.preventDefault();
@@ -77,6 +85,9 @@ function PostCard({ post, detailHref, disableProfileInteraction = false }: PostC
             router.push(profileLink);
         }
     };
+
+    const { openMenu: openFeedMoreMenu } = useFeedPostMoreMenu(id, isMyPost);
+    const { openMenu: openCouncilMoreMenu } = useCouncilReportMoreMenu(id);
 
     return (
         <div className={styles.container}>
@@ -92,8 +103,7 @@ function PostCard({ post, detailHref, disableProfileInteraction = false }: PostC
                         fill
                         containerClassName="w-full h-full"
                     />
-                    {/** 프로필 상호작용이 비활성화되지 않았고, 익명이 아니고, 팔로우하지 않은 경우에만 팔로우 버튼 표시 */}
-                    {!disableProfileInteraction && !is_anonymous && author && !author.is_following && (
+                    {showFollowButton && (
                         <div className={styles.followButton}>
                             <FollowButton type="addIcon" />
                         </div>
@@ -107,8 +117,7 @@ function PostCard({ post, detailHref, disableProfileInteraction = false }: PostC
                         fill
                         containerClassName="w-full h-full"
                     />
-                    {/** 프로필 상호작용이 비활성화되지 않았고, 익명이 아니고, 팔로우하지 않은 경우에만 팔로우 버튼 표시 */}
-                    {!disableProfileInteraction && !is_anonymous && author && !author.is_following && (
+                    {showFollowButton && (
                         <div className={styles.followButton}>
                             <FollowButton type="addIcon" />
                         </div>
@@ -136,9 +145,13 @@ function PostCard({ post, detailHref, disableProfileInteraction = false }: PostC
                     )}
                     {/** 시간 */}
                     <time className={styles.time}>{formatDateKrWithTime(created_at)}</time>
-                    {/** 팔로우 버튼, 더보기 버튼 */}
-                    <div className={styles.moreButtonWrapper}>
-                        <MoreButton />
+                    {/** 팔로우 버튼, 더보기 버튼 (클릭 시 상세 이동 방지) */}
+                    <div className={styles.moreButtonWrapper} onClick={(e) => e.stopPropagation()}>
+                        <MoreButton
+                            type="post"
+                            isAuthor={isMyPost}
+                            onOpenMenu={postType === 'council' ? openCouncilMoreMenu : openFeedMoreMenu}
+                        />
                     </div>
                 </div>
                 {/** 중앙: 이미지/본문 영역 */}

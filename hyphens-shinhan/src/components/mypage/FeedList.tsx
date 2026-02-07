@@ -186,13 +186,21 @@ function FeedPostItem({
         author: author,
     };
 
-    // 자치회 리포트인 경우 상세보기 링크를 자치회 리포트 상세로 설정
+    // 자치회 리포트인 경우 상세보기 링크를 자치회 리포트 상세로 설정, 더보기 메뉴는 공유만 노출
     const detailHref = post.type === MyPostItemType.COUNCIL_REPORT
         ? `${ROUTES.COMMUNITY.COUNCIL.DETAIL}/${post.id}`
         : undefined;
+    const postType = post.type === MyPostItemType.COUNCIL_REPORT ? 'council' : 'feed';
 
     // 내 게시글이면 프로필 상호작용 비활성화, 아니면 활성화
-    return <PostCard post={feedPost} detailHref={detailHref} disableProfileInteraction={isMyPost} />;
+    return (
+        <PostCard
+            post={feedPost}
+            detailHref={detailHref}
+            postType={postType}
+            disableProfileInteraction={isMyPost}
+        />
+    );
 }
 
 const styles = {

@@ -36,11 +36,18 @@ export default function BottomModal() {
 
   const { title, content, closeOnOverlayClick = true } = options
 
-  // 열림/닫힘 상태 관리
+  // 열림/닫힘 상태 관리 (스토어 isOpen이 false가 되면 닫힘 애니메이션 실행)
   useEffect(() => {
     if (isOpen) {
       setShouldRender(true)
       setIsClosing(false)
+    } else if (shouldRender) {
+      setIsClosing(true)
+      const t = setTimeout(() => {
+        setShouldRender(false)
+        setIsClosing(false)
+      }, ANIMATION_DURATION)
+      return () => clearTimeout(t)
     }
   }, [isOpen])
 

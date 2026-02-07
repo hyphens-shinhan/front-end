@@ -112,7 +112,7 @@ const styles = {
     'flex gap-1.5',
   ),
   contentWrapper: cn(
-    'flex gap-8',
+    'flex gap-8 justify-between',
   ),
   contentContainer: cn(
     'flex flex-col gap-3',

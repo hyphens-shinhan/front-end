@@ -119,11 +119,12 @@ function CouncilReportItem({ report }: { report: PublicReportResponse }) {
         author: report.author || null, // API에서 받은 작성자 정보 사용
     };
 
-    // PostCard에 자치회 리포트 상세보기 링크 전달
+    // PostCard에 자치회 리포트 상세보기 링크 + 더보기 메뉴(게시물 내리기·공유) 전달
     return (
-        <PostCard 
-            post={feedPost} 
+        <PostCard
+            post={feedPost}
             detailHref={`${ROUTES.COMMUNITY.COUNCIL.DETAIL}/${report.id}`}
+            postType="council"
         />
     );
 }

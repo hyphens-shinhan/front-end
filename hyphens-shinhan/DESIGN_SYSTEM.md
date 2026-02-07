@@ -16,11 +16,11 @@
 
 ## 디자인 시스템 개요
 
-디자인 토큰은 `tokens.json` 파일에 저장되어 있으며, `scripts/process-tokens.js` 스크립트를 통해 자동으로 Tailwind CSS 유틸리티 클래스로 변환됩니다.
+디자인 토큰은 `tokens.json` 파일에 저장되어 있으며, `scripts/process-tokens.js` 스크립트를 통해 `src/styles/variables.css`로 변환됩니다. **폰트·컬러·스페이싱 등 실제 값과 유틸리티 클래스는 `variables.css`의 `:root` 변수 및 `@utility` 블록을 기준으로 합니다.**
 
 - **토큰 파일**: `tokens.json`
 - **생성 스크립트**: `scripts/process-tokens.js`
-- **생성된 CSS**: `src/styles/variables.css`
+- **생성된 CSS (기준)**: `src/styles/variables.css`
 - **글로벌 스타일**: `src/app/globals.css`
 
 ---
@@ -62,6 +62,9 @@ import StatusTag from '@/components/common/StatusTag';
 #### Title 스타일
 
 ```tsx
+// 대형 제목 (48px, Bold) - variables.css font-text48
+<h1 className="font-text48">대형 제목</h1>
+
 // 큰 제목 (28px, Regular)
 <h1 className="title-28">큰 제목</h1>
 
@@ -125,7 +128,7 @@ import StatusTag from '@/components/common/StatusTag';
 #### Caption 스타일
 
 ```tsx
-// Caption 1 (10px, Regular)
+// Caption 1 (14px, SemiBold) - variables.css font-caption-caption1
 <span className="font-caption-caption1">캡션 1</span>
 
 // Caption 2 (14px, Regular)
@@ -139,6 +142,9 @@ import StatusTag from '@/components/common/StatusTag';
 
 // Caption 5 (10px, SemiBold)
 <span className="font-caption-caption5">작은 굵은 캡션</span>
+
+// Caption 6 (10px, Regular) - variables.css font-caption-caption6
+<span className="font-caption-caption6">작은 캡션</span>
 ```
 
 ### 2. 폰트 패밀리만 사용하기
@@ -153,10 +159,11 @@ import StatusTag from '@/components/common/StatusTag';
 <div className="font-shinhan">OneShinhan 폰트</div>
 ```
 
-### 3. 폰트 스타일 상세 정보
+### 3. 폰트 스타일 상세 정보 (variables.css @utility 기준)
 
 | 클래스                  | 폰트 패밀리 | 크기 | 굵기           | 줄간격 |
 | ----------------------- | ----------- | ---- | -------------- | ------ |
+| `font-text48`           | Wanted Sans | 48px | 700 (Bold)     | 54px   |
 | `title-28`              | Wanted Sans | 28px | 400 (Regular)  | 20px   |
 | `title-20`              | Wanted Sans | 20px | 700 (Bold)     | 20px   |
 | `title-18`              | Wanted Sans | 18px | 700 (Bold)     | 22px   |
@@ -174,11 +181,12 @@ import StatusTag from '@/components/common/StatusTag';
 | `body-8`                | Wanted Sans | 14px | 400 (Regular)  | 20px   |
 | `body-9`                | Wanted Sans | 12px | 600 (SemiBold) | 18px   |
 | `body-10`               | Wanted Sans | 12px | 400 (Regular)  | 18px   |
-| `font-caption-caption1` | Wanted Sans | 14px | 600 (Regular)  | 14px   |
+| `font-caption-caption1` | Wanted Sans | 14px | 600 (SemiBold) | 20px   |
 | `font-caption-caption2` | Wanted Sans | 14px | 400 (Regular)  | 20px   |
 | `font-caption-caption3` | Wanted Sans | 12px | 600 (SemiBold) | 14px   |
 | `font-caption-caption4` | Wanted Sans | 12px | 400 (Regular)  | 14px   |
 | `font-caption-caption5` | Wanted Sans | 10px | 600 (SemiBold) | 11px   |
+| `font-caption-caption6` | Wanted Sans | 10px | 400 (Regular)  | 11px   |
 
 ---
 
@@ -238,6 +246,10 @@ import StatusTag from '@/components/common/StatusTag';
 <div className="bg-state-yellow text-grey-11">옐로우</div>
 <div className="bg-state-yellow-light text-state-yellow-dark">밝은 옐로우</div>
 <div className="bg-state-yellow-dark text-white">어두운 옐로우</div>
+
+// 파이어 레드/오렌지 (variables.css state-firered, state-fireorange)
+<div className="bg-state-firered text-white">파이어 레드</div>
+<div className="bg-state-fireorange text-white">파이어 오렌지</div>
 ```
 
 ### 사용 가능한 컬러 목록
@@ -265,6 +277,8 @@ import StatusTag from '@/components/common/StatusTag';
 | `bg-state-yellow` / `text-state-yellow`               | #FFC637           | 옐로우 (경고)         |
 | `bg-state-yellow-light`                               | #FFEAD3           | 밝은 옐로우           |
 | `bg-state-yellow-dark`                                | #F59E0B           | 어두운 옐로우         |
+| `bg-state-firered` / `text-state-firered`             | #FF8484           | 파이어 레드           |
+| `bg-state-fireorange` / `text-state-fireorange`       | #FF9D52           | 파이어 오렌지         |
 
 ---
 
@@ -370,12 +384,12 @@ import StatusTag from '@/components/common/StatusTag';
 
 ## 전체 유틸리티 클래스 목록
 
-### 폰트 유틸리티
+### 폰트 유틸리티 (variables.css @utility 기준)
 
-- **Title**: `title-28`, `title-20`, `title-18`, `title-16`, `title-14`
+- **Text/Title**: `font-text48`, `title-28`, `title-20`, `title-18`, `title-16`, `title-14`
 - **신한 Title**: `shinhan-title-1`, `shinhan-title-2`
 - **Body**: `body-1` ~ `body-10`
-- **Caption**: `font-caption-caption1` ~ `font-caption-caption5`
+- **Caption**: `font-caption-caption1` ~ `font-caption-caption6`
 - **폰트 패밀리**: `font-sans`, `font-shinhan`
 
 ### 컬러 유틸리티
@@ -386,6 +400,7 @@ import StatusTag from '@/components/common/StatusTag';
 - **State Red**: `bg-state-red`, `bg-state-red-light`, `bg-state-red-dark`
 - **State Green**: `bg-state-green`, `bg-state-green-light`, `bg-state-green-dark`
 - **State Yellow**: `bg-state-yellow`, `bg-state-yellow-light`, `bg-state-yellow-dark`
+- **State Fire**: `bg-state-firered`, `bg-state-fireorange` (variables.css @theme)
 - **텍스트 컬러**: 모든 배경색에 대응하는 `text-*` 클래스 사용 가능
 
 ---

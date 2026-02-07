@@ -1,15 +1,15 @@
 :root {
-  --font-teext48-fontsize: 48px;
-  --font-teext48-textdecoration: none;
-  --font-teext48-fontfamily: Wanted Sans Variable;
-  --font-teext48-fontweight: 700;
-  --font-teext48-fontstyle: normal;
-  --font-teext48-fontstretch: normal;
-  --font-teext48-letterspacing: 0px;
-  --font-teext48-lineheight: 54px;
-  --font-teext48-paragraphindent: 0px;
-  --font-teext48-paragraphspacing: 0px;
-  --font-teext48-textcase: none;
+  --font-text48-fontsize: 48px;
+  --font-text48-textdecoration: none;
+  --font-text48-fontfamily: Wanted Sans Variable;
+  --font-text48-fontweight: 700;
+  --font-text48-fontstyle: normal;
+  --font-text48-fontstretch: normal;
+  --font-text48-letterspacing: 0px;
+  --font-text48-lineheight: 54px;
+  --font-text48-paragraphindent: 0px;
+  --font-text48-paragraphspacing: 0px;
+  --font-text48-textcase: none;
   --font-title-title28-fontsize: 28px;
   --font-title-title28-textdecoration: none;
   --font-title-title28-fontfamily: Wanted Sans Variable;
@@ -325,17 +325,17 @@
   --typography-height-24: 24px;
   --typography-height-29: 29px;
   --typography-height-54: 54px;
-  --typography-teext48-fontsize: 48px;
-  --typography-teext48-textdecoration: none;
-  --typography-teext48-fontfamily: Wanted Sans Variable;
-  --typography-teext48-fontweight: 700;
-  --typography-teext48-fontstyle: normal;
-  --typography-teext48-fontstretch: normal;
-  --typography-teext48-letterspacing: 0px;
-  --typography-teext48-lineheight: 54px;
-  --typography-teext48-paragraphindent: 0px;
-  --typography-teext48-paragraphspacing: 0px;
-  --typography-teext48-textcase: none;
+  --typography-text48-fontsize: 48px;
+  --typography-text48-textdecoration: none;
+  --typography-text48-fontfamily: Wanted Sans Variable;
+  --typography-text48-fontweight: 700;
+  --typography-text48-fontstyle: normal;
+  --typography-text48-fontstretch: normal;
+  --typography-text48-letterspacing: 0px;
+  --typography-text48-lineheight: 54px;
+  --typography-text48-paragraphindent: 0px;
+  --typography-text48-paragraphspacing: 0px;
+  --typography-text48-textcase: none;
   --typography-title-title28-fontsize: 28px;
   --typography-title-title28-textdecoration: none;
   --typography-title-title28-fontfamily: Wanted Sans Variable;
@@ -704,7 +704,7 @@
   --color-state-fireorange: var(--color-state-fireorange);
 }
 
-@utility font-teext48 {
+@utility font-text48 {
   font-family: Wanted Sans Variable;
   font-size: 48px;
   font-weight: 700;

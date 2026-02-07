@@ -18,7 +18,6 @@ export default function DocumentGuideCard() {
           label="지금 제출하러 가기"
           size="L"
           type="primary"
-          className={styles.button}
         />
       </div>
     </article>

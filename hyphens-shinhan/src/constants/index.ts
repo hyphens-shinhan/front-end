@@ -129,6 +129,7 @@ export const HEADER_ITEMS: Record<HEADER_NAV_ITEM_KEY, HeaderNavItem> = {
   [HEADER_NAV_ITEM_KEY.MORE]: {
     icon: 'IconLLine3DotVertical',
     ariaLabel: '더보기',
+    href: ROUTES.MYPAGE.SETTING.MAIN,
   },
 } as const
 
@@ -158,7 +159,7 @@ export const HEADER_CONFIG_BY_BOTTOM_NAV: Record<NavLink, HeaderConfig> = {
   },
   [ROUTES.MYPAGE.MAIN]: {
     title: '프로필',
-    navItems: [HEADER_ITEMS.NOTIFICATIONS],
+    navItems: [HEADER_ITEMS.MORE],
   },
 } as const
 
@@ -225,7 +226,13 @@ export const CUSTOM_HEADER_CONFIG: Record<string, CustomHeaderConfig> = {
     type: 'Center',
     btnType: 'Back',
     navItem: HEADER_ITEMS[HEADER_NAV_ITEM_KEY.MORE],
-    backHref: ROUTES.COMMUNITY.MAIN,
+  },
+  /** 자치회 리포트 상세 보기 */
+  [ROUTES.COMMUNITY.COUNCIL.DETAIL]: {
+    title: '게시글',
+    type: 'Center',
+    btnType: 'Back',
+    navItem: HEADER_ITEMS[HEADER_NAV_ITEM_KEY.MORE],
   },
   /** 커뮤니티 소모임 상세 보기 */
   [ROUTES.COMMUNITY.GROUP.DETAIL]: {
@@ -246,6 +253,27 @@ export const CUSTOM_HEADER_CONFIG: Record<string, CustomHeaderConfig> = {
     type: 'Left',
     btnType: 'Back',
     backHref: ROUTES.SCHOLARSHIP.REPORT.ACTIVITY,
+  },
+  /** 마이페이지 설정 메인 페이지 */
+  [ROUTES.MYPAGE.SETTING.MAIN]: {
+    title: '설정',
+    type: 'Left',
+    btnType: 'Back',
+    backHref: ROUTES.MYPAGE.MAIN,
+  },
+  /** 마이페이지 개인정보 공개 설정 페이지 */
+  [ROUTES.MYPAGE.SETTING.PRIVACY]: {
+    title: '개인정보 공개 설정',
+    type: 'Left',
+    btnType: 'Back',
+    backHref: ROUTES.MYPAGE.SETTING.MAIN,
+  },
+  /** 마이페이지 스크랩 페이지 */
+  [ROUTES.MYPAGE.SETTING.SCRAP]: {
+    title: '내가 스크랩한 글',
+    type: 'Left',
+    btnType: 'Back',
+    backHref: ROUTES.MYPAGE.SETTING.MAIN,
   },
 } as const
 

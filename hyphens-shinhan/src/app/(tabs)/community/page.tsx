@@ -3,6 +3,7 @@
 import CommunityTabs from "@/components/community/CommunityTabs";
 import GroupList from "@/components/community/group/GroupList";
 import PostList from "@/components/community/feed/PostList";
+import CouncilReportList from "@/components/community/council/CouncilReportList";
 import { cn } from "@/utils/cn";
 import { use } from "react";
 
@@ -16,7 +17,7 @@ export default function CommunityPage({ searchParams }: { searchParams: Promise<
             <div className={styles.contentContainer}>
                 {currentTab === '게시판' && <PostList />}
                 {currentTab === '소모임' && <GroupList />}
-                {currentTab === '자치회' && <div>자치회</div>}
+                {currentTab === '자치회' && <CouncilReportList />}
             </div>
         </div>
     );

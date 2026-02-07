@@ -5,6 +5,7 @@ import { cn } from "@/utils/cn";
 import { formatDateKrWithTime } from "@/utils/date";
 import { Icon } from "@/components/common/Icon";
 import MoreButton from "@/components/community/MoreButton";
+import Avatar from "@/components/common/Avatar";
 import { CommentResponse } from "@/types/comments";
 
 interface CommentProps {
@@ -50,7 +51,12 @@ function Comment({ comment, onReply, isReplyingTo = false }: CommentProps) {
                     <Icon name="IconLLineArrowSend2" className={styles.replyIcon} />
                 )}
                 {/** 유저 프로필 사진 */}
-                <div className={cn(styles.userProfileWrapper, isReply && styles.replyProfileWrapper)} />
+                <Avatar
+                    src={is_anonymous ? null : author?.avatar_url}
+                    alt={is_anonymous ? '익명' : (author?.name || '프로필')}
+                    size={isReply ? 28 : 36}
+                    containerClassName={cn(styles.userProfileWrapper, isReply && styles.replyProfileWrapper)}
+                />
             </div>
 
             {/** 유저 정보, 본문 영역 */}
@@ -118,10 +124,11 @@ const styles = {
     ),
     userProfileWrapper: cn(
         'relative w-9 h-9 rounded-full',
-        'bg-grey-5',
+        'bg-grey-5 overflow-hidden',
     ),
     replyProfileWrapper: cn(
-        'w-7 h-7', // 대댓글은 프로필 사진이 작음
+        'relative w-7 h-7 rounded-full', // 대댓글은 프로필 사진이 작음
+        'bg-grey-5 overflow-hidden',
     ),
     infoWrapper: cn(
         'flex flex-row items-center gap-2',

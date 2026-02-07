@@ -4,6 +4,9 @@ import {
   NoticePostResponse,
   EventPostResponse,
   PostListResponse,
+  FeedPostListResponse,
+  NoticePostListResponse,
+  EventPostListResponse,
   FeedPostCreate,
   FeedPostUpdate,
   NoticePostCreate,
@@ -15,6 +18,9 @@ import {
   EventCancelApplyResponse,
   ToggleLikeResponse,
   ToggleScrapResponse,
+  MyPostsResponse,
+  PublicReportResponse,
+  MessageResponse,
 } from '@/types/posts'
 
 /**
@@ -181,20 +187,19 @@ export const PostService = {
     limit = 20,
     offset = 0,
   ): Promise<PostListResponse<EventPostResponse>> => {
-    const response = await apiClient.get<
-      PostListResponse<EventPostResponse>
-    >('/posts/event/me/applied', {
-      params: { limit, offset },
-    })
+    const response = await apiClient.get<PostListResponse<EventPostResponse>>(
+      '/posts/event/me/applied',
+      {
+        params: { limit, offset },
+      },
+    )
     return response.data
   },
 
   /**
    * [EVENT] 이벤트 신청
    */
-  applyEventPost: async (
-    postId: string,
-  ): Promise<EventApplyResponse> => {
+  applyEventPost: async (postId: string): Promise<EventApplyResponse> => {
     const response = await apiClient.post<EventApplyResponse>(
       `/posts/event/${postId}/apply`,
     )
@@ -245,10 +250,8 @@ export const PostService = {
   /**
    * 게시글 삭제 (본인 게시글만 가능)
    */
-  deletePost: async (postId: string): Promise<{ message: string }> => {
-    const response = await apiClient.delete<{ message: string }>(
-      `/posts/${postId}`,
-    )
+  deletePost: async (postId: string): Promise<MessageResponse> => {
+    const response = await apiClient.delete<MessageResponse>(`/posts/${postId}`)
     return response.data
   },
 
@@ -268,6 +271,49 @@ export const PostService = {
   toggleScrap: async (postId: string): Promise<ToggleScrapResponse> => {
     const response = await apiClient.post<ToggleScrapResponse>(
       `/posts/${postId}/scrap`,
+    )
+    return response.data
+  },
+
+  // --- MY POSTS API ---
+
+  /**
+   * 내가 작성한 포스트 목록 조회 (Feed + Council Report 통합)
+   * @param limit 가져올 개수
+   * @param offset 시작 위치
+   */
+  getMyPosts: async (limit = 20, offset = 0): Promise<MyPostsResponse> => {
+    const response = await apiClient.get<MyPostsResponse>('/posts/me', {
+      params: { limit, offset },
+    })
+    return response.data
+  },
+
+  /**
+   * 공개 리포트 피드 조회
+   * @param limit 가져올 개수
+   * @param offset 시작 위치
+   */
+  getPublicReportsFeed: async (
+    limit = 20,
+    offset = 0,
+  ): Promise<PublicReportResponse[]> => {
+    const response = await apiClient.get<PublicReportResponse[]>(
+      '/posts/council',
+      {
+        params: { limit, offset },
+      },
+    )
+    return response.data
+  },
+
+  /**
+   * 자치회 리포트 상세 조회
+   * @param postId 게시글 ID
+   */
+  getCouncilReport: async (postId: string): Promise<PublicReportResponse> => {
+    const response = await apiClient.get<PublicReportResponse>(
+      `/posts/council/${postId}`,
     )
     return response.data
   },

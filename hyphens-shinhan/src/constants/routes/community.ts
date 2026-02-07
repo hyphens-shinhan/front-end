@@ -20,6 +20,10 @@ export const COMMUNITY_ROUTES = {
     CREATE: '/community/feed/create',
     DETAIL: '/community/feed',
   },
+  COUNCIL: {
+    /** 자치회 리포트 상세 베이스 - 링크 시 `${DETAIL}/${id}` 사용 */
+    DETAIL: '/community/council',
+  },
   GROUP: {
     /** 이벤트 목록 = 공지 페이지 이벤트 탭 (뒤로가기/목록으로용) */
     MAIN: '/community?tab=소모임',

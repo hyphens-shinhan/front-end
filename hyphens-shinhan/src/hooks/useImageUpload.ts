@@ -114,7 +114,8 @@ export function useImageUpload(
       for (const { file } of images) {
         const fileExt = file.name.split('.').pop()
         const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`
-        const filePath = `${pathPrefix}/${fileName}`
+        // pathPrefix가 빈 문자열이면 슬래시 없이 파일명만 사용
+        const filePath = pathPrefix ? `${pathPrefix}/${fileName}` : fileName
 
         const { error } = await supabase.storage
           .from(bucket)

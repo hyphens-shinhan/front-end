@@ -15,6 +15,9 @@ export const clubKeys = {
   /** 갤러리 목록 쿼리 키 */
   gallery: (clubId: string, filters?: { limit?: number; offset?: number }) =>
     [...clubKeys.detail(clubId), 'gallery', filters] as const,
+  /** 멤버 목록 쿼리 키 */
+  members: (clubId: string) =>
+    [...clubKeys.detail(clubId), 'members'] as const,
 }
 
 /**
@@ -64,6 +67,17 @@ export const useGalleryImages = (
   return useQuery({
     queryKey: clubKeys.gallery(clubId, query),
     queryFn: () => ClubService.getGalleryImages(clubId, query),
+    enabled: !!clubId,
+  })
+}
+
+/**
+ * 소모임 멤버 목록 조회
+ */
+export const useClubMembers = (clubId: string) => {
+  return useQuery({
+    queryKey: clubKeys.members(clubId),
+    queryFn: () => ClubService.getClubMembers(clubId),
     enabled: !!clubId,
   })
 }

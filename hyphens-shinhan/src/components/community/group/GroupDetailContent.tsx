@@ -162,7 +162,7 @@ export default function GroupDetailContent({ clubId }: GroupDetailContentProps) 
 
             {/** 탭별 콘텐츠 */}
             <div className={styles.tabContent}>
-                {activeTab === '멤버' && <MemberContent />}
+                {activeTab === '멤버' && <MemberContent clubId={clubId} />}
                 {activeTab === '앨범' && <GalleryContent images={galleryImages} isMember={club.is_member} />}
             </div>
 

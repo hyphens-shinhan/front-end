@@ -2,31 +2,65 @@
 
 import { useRef, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { useFeedPost } from "@/hooks/posts/usePosts";
+import { useFeedPost, useCouncilReport } from "@/hooks/posts/usePosts";
 import { useCreateComment } from "@/hooks/comments/useCommentMutations";
 import CommentList from "@/components/community/feed/CommentList";
 import PostContent from "@/components/community/feed/PostContent";
 import Button from "@/components/common/Button";
 import EmptyContent from "@/components/common/EmptyContent";
+import Avatar from "@/components/common/Avatar";
 import { cn } from "@/utils/cn";
 import { formatDateKrWithTime } from "@/utils/date";
 import FollowButton from "../FollowButton";
 import MessageInput from "@/components/common/MessageInput";
 import { EMPTY_CONTENT_MESSAGES, INPUT_BAR_TYPE, ROUTES } from "@/constants";
+import { FeedPostResponse, PostType, PublicReportResponse } from "@/types/posts";
+import { useUserStore } from "@/stores";
 
 interface FeedDetailContentProps {
     postId: string;
+    /** 게시글 타입 ('feed' | 'council') */
+    postType?: 'feed' | 'council';
 }
 
-/** 피드 상세 페이지 클라이언트 컴포넌트
- * @param {FeedDetailContentProps} props - postId 필요
+/** 피드 상세 페이지 클라이언트 컴포넌트 (피드 + 자치회 리포트 공통)
+ * @param {FeedDetailContentProps} props - postId 필요, postType은 선택 (기본값: 'feed')
  * @example
  * <FeedDetailContent postId="abc-123" />
+ * <FeedDetailContent postId="abc-123" postType="council" />
  */
-export default function FeedDetailContent({ postId }: FeedDetailContentProps) {
+export default function FeedDetailContent({ postId, postType = 'feed' }: FeedDetailContentProps) {
     const router = useRouter();
-    const { data: post, isLoading, isError } = useFeedPost(postId);
+    const currentUser = useUserStore((s) => s.user);
+    const { data: feedPost, isLoading: isLoadingFeed, isError: isErrorFeed } = useFeedPost(postId, { enabled: postType === 'feed' });
+    const { data: councilReport, isLoading: isLoadingCouncil, isError: isErrorCouncil } = useCouncilReport(postId, { enabled: postType === 'council' });
     const { mutate: createComment, isPending: isSubmitting } = useCreateComment();
+
+    // 타입에 따라 적절한 데이터와 로딩/에러 상태 사용
+    const isLoading = postType === 'council' ? isLoadingCouncil : isLoadingFeed;
+    const isError = postType === 'council' ? isErrorCouncil : isErrorFeed;
+
+    // 자치회 리포트인 경우 FeedPostResponse로 변환
+    let post: FeedPostResponse | null = null;
+    if (postType === 'council' && councilReport) {
+        const content = councilReport.content || councilReport.title || '';
+        post = {
+            id: councilReport.id,
+            created_at: councilReport.submitted_at,
+            like_count: councilReport.like_count ?? 0,
+            is_liked: councilReport.is_liked ?? false,
+            image_urls: councilReport.image_urls || [],
+            type: PostType.FEED,
+            content: content,
+            is_anonymous: false,
+            scrap_count: councilReport.scrap_count ?? 0,
+            comment_count: councilReport.comment_count ?? 0,
+            is_scrapped: councilReport.is_scrapped ?? false,
+            author: councilReport.author || null,
+        };
+    } else if (feedPost) {
+        post = feedPost;
+    }
 
     // 댓글 입력 상태
     const [comment, setComment] = useState('');
@@ -90,7 +124,7 @@ export default function FeedDetailContent({ postId }: FeedDetailContentProps) {
                         label="목록으로 돌아가기"
                         size="M"
                         type="primary"
-                        onClick={() => router.push(ROUTES.COMMUNITY.MAIN)}
+                        onClick={() => router.back()}
                     />
                 }
             />
@@ -98,6 +132,7 @@ export default function FeedDetailContent({ postId }: FeedDetailContentProps) {
     }
 
     const { author, created_at, is_anonymous } = post;
+    const isMyPost = currentUser?.id === author?.id;
 
     // 다른 영역 클릭 시 답글 선택 해제
     const handleScrollAreaClick = () => {
@@ -110,25 +145,20 @@ export default function FeedDetailContent({ postId }: FeedDetailContentProps) {
             <div className={styles.scrollArea} onClick={handleScrollAreaClick}>
                 {/** 유저 정보, 시간, 팔로우 버튼 */}
                 <div className={styles.userInfoWrapper}>
-                    <div className={styles.userProfileWrapper}>
-                        {/* {!is_anonymous && author?.avatar_url && (
-                            <Image
-                                src={author.avatar_url}
-                                alt={author.name || '프로필'}
-                                fill
-                                sizes="40px"
-                                className="rounded-full object-cover"
-                            />
-                        )} */}
-                    </div>
+                    <Avatar
+                        src={is_anonymous ? null : author?.avatar_url}
+                        alt={is_anonymous ? '익명' : (author?.name || '프로필')}
+                        fill
+                        containerClassName={styles.userProfileWrapper}
+                    />
                     <div className={styles.userNameWrapper}>
                         <p className={styles.userName}>
                             {is_anonymous ? '익명' : (author?.name || '알 수 없음')}
                         </p>
                         <time className={styles.time}>{formatDateKrWithTime(created_at)}</time>
                     </div>
-                    {/** 익명이 아니고, 팔로우하지 않은 경우에만 팔로우 버튼 표시 */}
-                    {!is_anonymous && author && !author.is_following && (
+                    {/** 익명이 아니고, 내 글이 아니고, 팔로우하지 않은 경우에만 팔로우 버튼 표시 */}
+                    {!is_anonymous && author && !isMyPost && !author.is_following && (
                         <div className={styles.followButtonWrapper}>
                             <FollowButton type="button" />
                         </div>
@@ -172,7 +202,7 @@ const styles = {
         'flex flex-col h-full',
     ),
     scrollArea: cn(
-        'flex-1 flex flex-col',
+        'flex-1 flex flex-col pb-40',
         'overflow-x-hidden overflow-y-auto scrollbar-hide',
     ),
     userInfoWrapper: cn(

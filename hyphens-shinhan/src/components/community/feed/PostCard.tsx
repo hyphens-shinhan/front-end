@@ -5,11 +5,15 @@ import { Icon } from "@/components/common/Icon";
 import { cn } from "@/utils/cn";
 import { formatDateKrWithTime } from "@/utils/date";
 import { ROUTES } from "@/constants";
+import { TOAST_MESSAGES } from "@/constants/toast";
 import FollowButton from "@/components/community/FollowButton";
 import MoreButton from "@/components/community/MoreButton";
 import PostContent from "@/components/community/feed/PostContent";
 import { FeedPostResponse } from "@/types/posts";
 import { useUserStore } from "@/stores";
+import { useConfirmModalStore } from "@/stores";
+import { useDeletePost } from "@/hooks/posts/usePostMutations";
+import { useToast } from "@/hooks/useToast";
 import Avatar from "@/components/common/Avatar";
 
 interface PostCardProps {
@@ -78,6 +82,30 @@ function PostCard({ post, detailHref, disableProfileInteraction = false }: PostC
         }
     };
 
+    const { onOpen: openConfirmModal, onClose: closeConfirmModal } = useConfirmModalStore();
+    const { mutateAsync: deletePost } = useDeletePost();
+    const toast = useToast();
+
+    const handleOpenDeleteConfirm = () => {
+        openConfirmModal({
+            title: '게시글을 삭제할까요?',
+            message: '삭제된 게시글은 복구할 수 없어요.',
+            confirmText: '삭제',
+            cancelText: '취소',
+            isDanger: true,
+            onConfirm: async () => {
+                try {
+                    await deletePost(id);
+                    closeConfirmModal();
+                    toast.show(TOAST_MESSAGES.FEED.POST_DELETE_SUCCESS);
+                } catch (error) {
+                    console.error('게시글 삭제 실패:', error);
+                    toast.error(TOAST_MESSAGES.FEED.POST_DELETE_ERROR);
+                }
+            },
+        });
+    };
+
     return (
         <div className={styles.container}>
             {/** 유저 프로필 사진 */}
@@ -139,10 +167,11 @@ function PostCard({ post, detailHref, disableProfileInteraction = false }: PostC
                     {/** 팔로우 버튼, 더보기 버튼 (클릭 시 상세 이동 방지) */}
                     <div className={styles.moreButtonWrapper} onClick={(e) => e.stopPropagation()}>
                         <MoreButton
-                        type="post"
-                        isAuthor={isMyPost}
-                        onEdit={() => router.push(`${ROUTES.COMMUNITY.FEED.DETAIL}/${id}/edit`)}
-                    />
+                            type="post"
+                            isAuthor={isMyPost}
+                            onEdit={() => router.push(`${ROUTES.COMMUNITY.FEED.DETAIL}/${id}/edit`)}
+                            onDelete={handleOpenDeleteConfirm}
+                        />
                     </div>
                 </div>
                 {/** 중앙: 이미지/본문 영역 */}

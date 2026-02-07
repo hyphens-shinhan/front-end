@@ -115,6 +115,9 @@ export default function ConfirmModal() {
         {/** 커스텀 컨텐츠 */}
         {content != null && <div>{content}</div>}
 
+        {/** 메시지 */}
+        {message && <p className={styles.messageStyle}>{message}</p>}
+
         {/** 버튼 영역 */}
         <div className={styles.buttonWrapper}>
           <Button
@@ -148,6 +151,10 @@ const styles = {
   ),
   titleWrapper: cn(
     'relative flex items-start justify-center px-12 pb-4',
+  ),
+  messageStyle: cn(
+    'body-7 text-grey-10',
+    'text-center',
   ),
   titleTextWrapper: cn(
     'flex flex-col items-center text-center',

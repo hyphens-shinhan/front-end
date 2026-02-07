@@ -10,6 +10,8 @@ export const TOAST_MESSAGES = {
     POST_CREATE_ERROR: '네트워크 연결을 확인해주세요',
     POST_UPDATE_SUCCESS: '게시글이 수정되었어요',
     POST_UPDATE_ERROR: '게시글 수정에 실패했어요',
+    POST_DELETE_SUCCESS: '게시글이 삭제되었어요',
+    POST_DELETE_ERROR: '게시글 삭제에 실패했어요',
     CONTENT_REQUIRED: '내용을 입력해주세요',
     IMAGE_UPLOAD_ERROR:
       '이미지 업로드에 실패했어요 네트워크 연결을 확인해주세요',

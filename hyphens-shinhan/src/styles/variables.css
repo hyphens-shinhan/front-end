@@ -1,4 +1,15 @@
 :root {
+  --font-teext48-fontsize: 48px;
+  --font-teext48-textdecoration: none;
+  --font-teext48-fontfamily: Wanted Sans Variable;
+  --font-teext48-fontweight: 700;
+  --font-teext48-fontstyle: normal;
+  --font-teext48-fontstretch: normal;
+  --font-teext48-letterspacing: 0px;
+  --font-teext48-lineheight: 54px;
+  --font-teext48-paragraphindent: 0px;
+  --font-teext48-paragraphspacing: 0px;
+  --font-teext48-textcase: none;
   --font-title-title28-fontsize: 28px;
   --font-title-title28-textdecoration: none;
   --font-title-title28-fontfamily: Wanted Sans Variable;
@@ -273,6 +284,7 @@
   --color-primary-secondaryroyal: #2878f5ff;
   --color-primary-secondarynavy: #00236eff;
   --color-primary-lighter: #e6f2ffff;
+  --color-primary-middlelight: #c5e1ffff;
   --color-state-red: #ef4444ff;
   --color-state-green: #10b981ff;
   --color-state-yellow: #ffc637ff;
@@ -313,6 +325,17 @@
   --typography-height-24: 24px;
   --typography-height-29: 29px;
   --typography-height-54: 54px;
+  --typography-teext48-fontsize: 48px;
+  --typography-teext48-textdecoration: none;
+  --typography-teext48-fontfamily: Wanted Sans Variable;
+  --typography-teext48-fontweight: 700;
+  --typography-teext48-fontstyle: normal;
+  --typography-teext48-fontstretch: normal;
+  --typography-teext48-letterspacing: 0px;
+  --typography-teext48-lineheight: 54px;
+  --typography-teext48-paragraphindent: 0px;
+  --typography-teext48-paragraphspacing: 0px;
+  --typography-teext48-textcase: none;
   --typography-title-title28-fontsize: 28px;
   --typography-title-title28-textdecoration: none;
   --typography-title-title28-fontfamily: Wanted Sans Variable;
@@ -667,6 +690,7 @@
   --color-primary-secondaryroyal: var(--color-primary-secondaryroyal);
   --color-primary-secondarynavy: var(--color-primary-secondarynavy);
   --color-primary-lighter: var(--color-primary-lighter);
+  --color-primary-middlelight: var(--color-primary-middlelight);
   --color-state-red: var(--color-state-red);
   --color-state-green: var(--color-state-green);
   --color-state-yellow: var(--color-state-yellow);
@@ -678,6 +702,13 @@
   --color-state-red-light: var(--color-state-red-light);
   --color-state-firered: var(--color-state-firered);
   --color-state-fireorange: var(--color-state-fireorange);
+}
+
+@utility font-teext48 {
+  font-family: Wanted Sans Variable;
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 54px;
 }
 
 @utility title-28 {

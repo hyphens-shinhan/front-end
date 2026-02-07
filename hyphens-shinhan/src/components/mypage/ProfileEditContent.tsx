@@ -94,6 +94,7 @@ export default function ProfileEditContent({ onCancel }: { onCancel: () => void 
 
     const handleSubmit = useCallback(async () => {
         if (!profile) return;
+        if (updateProfile.isPending || updatePrivacy.isPending) return;
 
         try {
             let avatarUrl = profile.avatar_url;

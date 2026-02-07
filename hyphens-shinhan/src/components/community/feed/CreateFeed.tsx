@@ -63,6 +63,7 @@ export default function CreateFeed() {
   // 완료 버튼 클릭 핸들러
   // ─────────────────────────────────────────────────────────────
   const handleComplete = async () => {
+    if (isPending || isUploading) return
     if (!content.trim()) {
       toast.error(TOAST_MESSAGES.FEED.CONTENT_REQUIRED)
       return

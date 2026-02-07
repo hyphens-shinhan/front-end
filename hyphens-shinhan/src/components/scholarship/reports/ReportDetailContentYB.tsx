@@ -15,6 +15,8 @@ import { useActivitiesSummary } from '@/hooks/activities/useActivities'
 import { useUserStore } from '@/stores'
 import { EMPTY_CONTENT_MESSAGES } from '@/constants/emptyContent'
 import { ROUTES } from '@/constants'
+import { TOAST_MESSAGES } from '@/constants/toast'
+import { useToast } from '@/hooks/useToast'
 import type { ReportMonth } from '@/services/reports'
 import ActivityCostReceipt from './view/ActivityCostReceipt'
 import ActivityInfo from './view/ActivityInfo'
@@ -58,6 +60,7 @@ function ReportDetailContentYB({
     month
   )
 
+  const toast = useToast()
   const activitiesLoading = activitiesData === undefined
   const hasNoCouncil = !activitiesLoading && !councilId
 
@@ -143,16 +146,22 @@ function ReportDetailContentYB({
 
   const handleConfirm = useCallback(() => {
     if (!report.id) return
-    confirmAttendance.mutate(report.id)
-  }, [report.id, confirmAttendance])
+    confirmAttendance.mutate(report.id, {
+      onError: () => toast.error(TOAST_MESSAGES.REPORT.ATTENDANCE_ERROR),
+    })
+  }, [report.id, confirmAttendance, toast])
   const handleReject = useCallback(() => {
     if (!report.id) return
-    rejectAttendance.mutate(report.id)
-  }, [report.id, rejectAttendance])
+    rejectAttendance.mutate(report.id, {
+      onError: () => toast.error(TOAST_MESSAGES.REPORT.ATTENDANCE_ERROR),
+    })
+  }, [report.id, rejectAttendance, toast])
   const handleExport = useCallback(() => {
     if (!report.id) return
-    toggleVisibility.mutate(report.id)
-  }, [report.id, toggleVisibility])
+    toggleVisibility.mutate(report.id, {
+      onError: () => toast.error(TOAST_MESSAGES.REPORT.ATTENDANCE_ERROR),
+    })
+  }, [report.id, toggleVisibility, toast])
 
   // ---------- 정상: 보고서 내용 렌더 ----------
   return (

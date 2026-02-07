@@ -7,6 +7,8 @@ import { useAutoResize } from '@/hooks/useAutoResize'
 import { useImageUpload } from '@/hooks/useImageUpload'
 import { IMAGE_UPLOAD } from '@/constants/imageUpload'
 import { useCreateFeedPost } from '@/hooks/posts/usePostMutations'
+import { useToast } from '@/hooks/useToast'
+import { TOAST_MESSAGES } from '@/constants/toast'
 import SelectableOption from '@/components/community/SelectableOption'
 import Accordion from '@/components/common/Accordion'
 import ImagePicker from '@/components/common/ImagePicker'
@@ -55,14 +57,14 @@ export default function CreateFeed() {
 
   // 피드 생성 훅
   const { mutateAsync: createFeedPost, isPending } = useCreateFeedPost()
+  const toast = useToast()
 
   // ─────────────────────────────────────────────────────────────
   // 완료 버튼 클릭 핸들러
   // ─────────────────────────────────────────────────────────────
   const handleComplete = async () => {
     if (!content.trim()) {
-      // TODO: 에러 메시지 표시 - toast 만들어서 쓰는게 좋지 않을까 ?
-      alert('내용을 입력해주세요.')
+      toast.error(TOAST_MESSAGES.FEED.CONTENT_REQUIRED)
       return
     }
 
@@ -74,8 +76,7 @@ export default function CreateFeed() {
           imageUrls = await uploadImages()
         } catch (uploadError) {
           console.error('이미지 업로드 실패:', uploadError)
-          // TODO: toast 만들어서 쓰는게 좋지 않을까 ?
-          alert('이미지 업로드에 실패했습니다. 네트워크 연결을 확인해주세요.')
+          toast.error(TOAST_MESSAGES.FEED.IMAGE_UPLOAD_ERROR)
           return // 피드 생성 중단
         }
       }
@@ -91,7 +92,7 @@ export default function CreateFeed() {
       router.replace(`/community/feed/${result.id}`)
     } catch (error) {
       console.error('게시글 생성 실패:', error)
-      alert('게시글 생성에 실패했습니다. 네트워크 연결을 확인해주세요.')
+      toast.error(TOAST_MESSAGES.FEED.POST_CREATE_ERROR)
     }
   }
 

@@ -14,6 +14,8 @@ import { formatDateKrWithTime } from "@/utils/date";
 import FollowButton from "../FollowButton";
 import MessageInput from "@/components/common/MessageInput";
 import { EMPTY_CONTENT_MESSAGES, INPUT_BAR_TYPE, ROUTES } from "@/constants";
+import { TOAST_MESSAGES } from "@/constants/toast";
+import { useToast } from "@/hooks/useToast";
 import { FeedPostResponse, PostType, PublicReportResponse } from "@/types/posts";
 import { useUserStore } from "@/stores";
 
@@ -35,6 +37,7 @@ export default function FeedDetailContent({ postId, postType = 'feed' }: FeedDet
     const { data: feedPost, isLoading: isLoadingFeed, isError: isErrorFeed } = useFeedPost(postId, { enabled: postType === 'feed' });
     const { data: councilReport, isLoading: isLoadingCouncil, isError: isErrorCouncil } = useCouncilReport(postId, { enabled: postType === 'council' });
     const { mutate: createComment, isPending: isSubmitting } = useCreateComment();
+    const toast = useToast();
 
     // 타입에 따라 적절한 데이터와 로딩/에러 상태 사용
     const isLoading = postType === 'council' ? isLoadingCouncil : isLoadingFeed;
@@ -104,7 +107,7 @@ export default function FeedDetailContent({ postId, postType = 'feed' }: FeedDet
             },
             onError: (error) => {
                 console.error('댓글 작성 실패:', error);
-                alert('댓글 작성에 실패했습니다.');
+                toast.error(TOAST_MESSAGES.FEED.COMMENT_CREATE_ERROR);
                 sendingRef.current = false;
             },
         });

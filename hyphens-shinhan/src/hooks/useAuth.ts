@@ -4,6 +4,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
 import { useUserStore } from '@/stores'
+import { useToastStore } from '@/stores/useToastStore'
+import { TOAST_MESSAGES } from '@/constants/toast'
 
 export const useLogin = () => {
   const router = useRouter()
@@ -35,7 +37,7 @@ export const useLogin = () => {
     // 실패 시 처리
     onError: (error: Error) => {
       console.error('Login Error:', error.message)
-      alert(`로그인 실패: ${error.message}`)
+      useToastStore.getState().error(TOAST_MESSAGES.AUTH.LOGIN_ERROR)
     },
   })
 }
@@ -60,7 +62,7 @@ export const useLogout = () => {
     },
     onError: (error: Error) => {
       console.error('Logout Error:', error.message)
-      alert(`로그아웃 실패: ${error.message}`)
+      useToastStore.getState().error(TOAST_MESSAGES.AUTH.LOGOUT_ERROR)
     },
   })
 }

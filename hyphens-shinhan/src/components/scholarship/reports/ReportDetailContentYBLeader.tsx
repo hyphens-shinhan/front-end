@@ -19,6 +19,8 @@ import type { ReportMonth } from '@/services/reports'
 import { useUpdateReport, useSubmitReport } from '@/hooks/reports/useReportsMutations'
 import { useCouncilMembers } from '@/hooks/councils/useCouncils'
 import { useConfirmModalStore } from '@/stores'
+import { useToast } from '@/hooks/useToast'
+import { TOAST_MESSAGES } from '@/constants/toast'
 
 // ---------- Props ----------
 export interface ReportDetailContentYBLeaderProps {
@@ -69,6 +71,7 @@ function ReportDetailContentYBLeader({
     const updateReport = useUpdateReport()
     const submitReport = useSubmitReport()
     const openConfirmModal = useConfirmModalStore((s) => s.onOpen)
+    const toast = useToast()
 
     // ---------- 회의 멤버 목록 (출석 없을 때 초기 명단 채우기) ----------
     const { data: councilMembers } = useCouncilMembers(councilId)
@@ -167,8 +170,10 @@ function ReportDetailContentYBLeader({
             {
                 onSuccess: (data) => {
                     setReportId(data.id)
+                    if (!afterSave) toast.show(TOAST_MESSAGES.REPORT.DRAFT_SAVE_SUCCESS)
                     afterSave?.(data)
                 },
+                onError: () => toast.error(TOAST_MESSAGES.REPORT.DRAFT_SAVE_ERROR),
             }
         )
     }
@@ -186,7 +191,10 @@ function ReportDetailContentYBLeader({
             confirmText: '제출하기',
             onConfirm: () => {
                 saveDraftThen((data) => {
-                    submitReport.mutate(data.id)
+                    submitReport.mutate(data.id, {
+                        onSuccess: () => toast.show(TOAST_MESSAGES.REPORT.SUBMIT_SUCCESS),
+                        onError: () => toast.error(TOAST_MESSAGES.REPORT.SUBMIT_ERROR),
+                    })
                 })
             },
         })

@@ -50,10 +50,11 @@ export default function MoreButton({
   ];
 
   const handleMenuAction = (value: string) => {
+    onClose(); // 먼저 시트 닫기 (닫은 뒤에 이동해야 시트가 상세 페이지까지 따라오지 않음)
+
     if (value === 'edit') onEdit?.();
     else if (value === 'delete') onDelete?.();
     else if (value === 'report') onReport?.();
-    onClose();
   };
 
   const handleMoreButtonClick = (e: React.MouseEvent) => {

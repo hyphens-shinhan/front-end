@@ -5,6 +5,7 @@ import RQProvider from '@/providers/rq-provider'
 import BottomModal from '@/components/common/BottomModal'
 import ConfirmModal from '@/components/common/ConfirmModal'
 import AlertModal from '@/components/common/AlertModal'
+import ToastContainer from '@/components/common/ToastContainer'
 
 const APP_NAME = 'Hyphen'
 const APP_DEFAULT_TITLE = 'Hyphen APP'
@@ -77,6 +78,7 @@ export default function RootLayout({
           <BottomModal />
           <ConfirmModal />
           <AlertModal />
+          <ToastContainer />
         </RQProvider>
       </body>
     </html>

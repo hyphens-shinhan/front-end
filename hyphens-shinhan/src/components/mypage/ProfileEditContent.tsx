@@ -11,10 +11,11 @@ import { useUpdateMyProfile } from "@/hooks/user/useUserMutations";
 import { useMyPrivacy } from "@/hooks/user/useUser";
 import { useUpdateMyPrivacy } from "@/hooks/user/useUserMutations";
 import EmptyContent from "../common/EmptyContent";
-import { EMPTY_CONTENT_MESSAGES } from "@/constants";
+import { EMPTY_CONTENT_MESSAGES, TOAST_MESSAGES } from "@/constants";
 import { useAutoResize } from "@/hooks/useAutoResize";
 import { useImageUpload } from "@/hooks/useImageUpload";
 import { IMAGE_UPLOAD } from "@/constants/imageUpload";
+import { useToast } from "@/hooks/useToast";
 
 /** 프로필 편집 컨텐츠 */
 export default function ProfileEditContent({ onCancel }: { onCancel: () => void }) {
@@ -22,6 +23,7 @@ export default function ProfileEditContent({ onCancel }: { onCancel: () => void 
     const { data: privacy } = useMyPrivacy();
     const updateProfile = useUpdateMyProfile();
     const updatePrivacy = useUpdateMyPrivacy();
+    const toast = useToast();
 
     // 프로필 이미지 업로드 훅 (단일 이미지)
     const {
@@ -124,12 +126,13 @@ export default function ProfileEditContent({ onCancel }: { onCancel: () => void 
                 URL.revokeObjectURL(avatarPreviewUrl);
                 setAvatarPreviewUrl(null);
             }
-
+            toast.show(TOAST_MESSAGES.PROFILE.SAVE_SUCCESS, { position: 'top-default-header' });
             onCancel();
         } catch (error) {
             console.error('프로필 업데이트 실패:', error);
+            toast.error(TOAST_MESSAGES.PROFILE.SAVE_ERROR);
         }
-    }, [profile, formData, privacyData, avatarImages, uploadAvatar, updateProfile, updatePrivacy, onCancel, clearAvatarImages, avatarPreviewUrl]);
+    }, [profile, formData, privacyData, avatarImages, uploadAvatar, updateProfile, updatePrivacy, onCancel, clearAvatarImages, avatarPreviewUrl, toast]);
 
     if (isLoading) {
         return <EmptyContent variant="loading" message={EMPTY_CONTENT_MESSAGES.LOADING.DEFAULT} />;

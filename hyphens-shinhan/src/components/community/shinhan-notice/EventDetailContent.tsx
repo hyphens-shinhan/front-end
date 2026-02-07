@@ -11,6 +11,8 @@ import { useEventPost } from "@/hooks/posts/usePosts";
 import { useApplyEventPost, useCancelApplyEventPost } from "@/hooks/posts/usePostMutations";
 import EventTitleHeader from "./EventTitleHeader";
 import { EMPTY_CONTENT_MESSAGES, ROUTES } from "@/constants";
+import { TOAST_MESSAGES } from "@/constants/toast";
+import { useToast } from "@/hooks/useToast";
 import Separator from "@/components/common/Separator";
 import BottomFixedButton from "@/components/common/BottomFixedButton";
 
@@ -24,6 +26,7 @@ export default function EventDetailContent({ eventId }: EventDetailContentProps)
     const { data: event, isLoading, isError, error } = useEventPost(eventId);
     const applyMutation = useApplyEventPost();
     const cancelApplyMutation = useCancelApplyEventPost();
+    const toast = useToast();
 
     if (isLoading) {
         return <EmptyContent variant="loading" message={EMPTY_CONTENT_MESSAGES.LOADING.DEFAULT} />;
@@ -90,9 +93,15 @@ export default function EventDetailContent({ eventId }: EventDetailContentProps)
 
     const handleApplyClick = () => {
         if (is_applied === true) {
-            cancelApplyMutation.mutate(eventId);
+            cancelApplyMutation.mutate(eventId, {
+                onSuccess: () => toast.show(TOAST_MESSAGES.EVENT.CANCEL_SUCCESS),
+                onError: () => toast.error(TOAST_MESSAGES.EVENT.CANCEL_ERROR),
+            });
         } else {
-            applyMutation.mutate(eventId);
+            applyMutation.mutate(eventId, {
+                onSuccess: () => toast.show(TOAST_MESSAGES.EVENT.APPLY_SUCCESS),
+                onError: () => toast.error(TOAST_MESSAGES.EVENT.APPLY_ERROR),
+            });
         }
     };
 

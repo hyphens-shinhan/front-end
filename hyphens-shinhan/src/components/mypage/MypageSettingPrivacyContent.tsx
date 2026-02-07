@@ -6,6 +6,8 @@ import { useUpdateMyPrivacy } from "@/hooks/user/useUserMutations";
 import Toggle from "@/components/common/Toggle";
 import EmptyContent from "@/components/common/EmptyContent";
 import { EMPTY_CONTENT_MESSAGES } from "@/constants";
+import { TOAST_MESSAGES } from "@/constants/toast";
+import { useToast } from "@/hooks/useToast";
 import { useState, useCallback } from "react";
 import type { UserPrivacySettings } from "@/types/user";
 
@@ -13,6 +15,7 @@ import type { UserPrivacySettings } from "@/types/user";
 export default function MypageSettingPrivacyContent() {
     const { data: privacy, isLoading, error } = useMyPrivacy();
     const updatePrivacy = useUpdateMyPrivacy();
+    const toast = useToast();
 
     const [localState, setLocalState] = useState<UserPrivacySettings | null>(null);
 
@@ -33,10 +36,14 @@ export default function MypageSettingPrivacyContent() {
         setLocalState(newState);
 
         // API 호출
-        updatePrivacy.mutate({
-            [key]: value,
-        });
-    }, [privacy, localState, updatePrivacy]);
+        updatePrivacy.mutate(
+            { [key]: value },
+            {
+                onSuccess: () => toast.show(TOAST_MESSAGES.SETTING.PRIVACY_SAVE_SUCCESS),
+                onError: () => toast.error(TOAST_MESSAGES.SETTING.PRIVACY_SAVE_ERROR),
+            }
+        );
+    }, [privacy, localState, updatePrivacy, toast]);
 
     if (isLoading) {
         return (

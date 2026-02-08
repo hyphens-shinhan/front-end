@@ -6,6 +6,7 @@ import type {
   UserProfileUpdate,
   UserPrivacySettings,
   UserPrivacyUpdate,
+  ScholarshipEligibilityResponse,
 } from '@/types'
 
 const BASE = '/users'
@@ -79,6 +80,21 @@ export const UserService = {
     const response = await apiClient.patch<UserPrivacySettings>(
       `${BASE}/me/privacy`,
       data,
+    )
+    return response.data
+  },
+
+  /**
+   * 장학 유지 요건 요약 조회 (GET /users/me/scholarship-eligibility)
+   * @param year - 조회 연도 (2000~2100, 미입력 시 현재 연도)
+   */
+  getScholarshipEligibility: async (
+    year?: number,
+  ): Promise<ScholarshipEligibilityResponse> => {
+    const params = year != null ? { year } : undefined
+    const response = await apiClient.get<ScholarshipEligibilityResponse>(
+      `${BASE}/me/scholarship-eligibility`,
+      { params },
     )
     return response.data
   },

@@ -139,5 +139,6 @@ export type {
   UserProfileUpdate,
   UserPrivacySettings,
   UserPrivacyUpdate,
+  ScholarshipEligibilityResponse,
 } from './user'
 export { AppRole, ScholarshipType } from './user'

@@ -15,6 +15,9 @@ export const userKeys = {
   /** 다른 유저 공개 프로필 (GET /users/{user_id}) */
   publicProfile: (userId: string) =>
     [...userKeys.all, 'public', userId] as const,
+  /** 장학 유지 요건 요약 (GET /users/me/scholarship-eligibility) */
+  scholarshipEligibility: (year?: number) =>
+    [...userKeys.all, 'me', 'scholarship-eligibility', year] as const,
 }
 
 /**
@@ -55,5 +58,16 @@ export const usePublicProfile = (userId: string) => {
     queryKey: userKeys.publicProfile(userId),
     queryFn: () => UserService.getPublicProfile(userId),
     enabled: !!userId,
+  })
+}
+
+/**
+ * 장학 유지 요건 요약 조회 (GET /users/me/scholarship-eligibility)
+ * @param year - 조회 연도 (2000~2100, 미입력 시 현재 연도)
+ */
+export const useScholarshipEligibility = (year?: number) => {
+  return useQuery({
+    queryKey: userKeys.scholarshipEligibility(year),
+    queryFn: () => UserService.getScholarshipEligibility(year),
   })
 }

@@ -15,14 +15,14 @@ const styles = {
 }
 
 export default function MonitoringPeriodNotice({
-  periodLabel = '4월 학업 달성 기간은',
-  periodRange = '3월 31일부터 4월 29일까지',
+  periodLabel,
+  periodRange
 }: MonitoringPeriodNoticeProps) {
   return (
     <div className={styles.wrapper}>
       <div className={styles.box}>
         <p className={styles.message}>
-          {periodLabel}
+          {periodLabel}{' '}
           <span className={styles.highlight}>{periodRange}</span>
           입니다
         </p>

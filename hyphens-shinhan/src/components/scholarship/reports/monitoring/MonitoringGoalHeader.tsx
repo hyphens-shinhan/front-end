@@ -5,14 +5,16 @@ import ReportTitle from '../ReportTitle'
 interface MonitoringGoalHeaderProps {
   /** 목표 추가 버튼 클릭 핸들러 */
   onAddGoal?: () => void
+  /** 학습 목표 2개 이상 + 각 목표 내용 작성 완료 여부 (체크 표시) */
+  isChecked?: boolean
 }
 
-export default function MonitoringGoalHeader({ onAddGoal }: MonitoringGoalHeaderProps) {
+export default function MonitoringGoalHeader({ onAddGoal, isChecked = false }: MonitoringGoalHeaderProps) {
   return (
     <div className={styles.container}>
       {/** 학습 목표 라벨 */}
       <div className={styles.labelWrapper}>
-        <ReportTitle title='학습 목표를 설정해주세요' checkIcon={true} className='py-0' />
+        <ReportTitle title='학습 목표를 설정해주세요' checkIcon isChecked={isChecked} className='py-0' />
         <p className={styles.caption}>최소 2개의 목표가 필요해요</p>
       </div>
 

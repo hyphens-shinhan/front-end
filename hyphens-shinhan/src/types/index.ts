@@ -56,7 +56,6 @@ export type {
   CouncilReportStatus,
   AcademicReportStatus,
   MandatoryActivityType,
-  MandatoryActivityStatus,
   MandatoryReportStatus,
   AppliedEventStatus,
   AppliedEventsStatus,
@@ -142,3 +141,22 @@ export type {
   ScholarshipEligibilityResponse,
 } from './user'
 export { AppRole, ScholarshipType } from './user'
+
+// MARK: - Maintenance (유지심사 상세: 필수활동 현황, 봉사시간)
+export type {
+  MandatoryStatusActivity,
+  MandatoryStatusResponse,
+  VolunteerHoursResponse,
+  VolunteerHoursUpdate,
+} from './maintenance'
+
+// MARK: - Grades (학점/GPA)
+export type {
+  LetterGrade,
+  Semester,
+  SemesterGradeResponse,
+  SemesterGradeListResponse,
+  SemesterGradeCreate,
+  SemesterBreakdownItem,
+  YearGPAResponse,
+} from './grades'

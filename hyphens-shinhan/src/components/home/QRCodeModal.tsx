@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
+import { AnimatePresence, motion } from 'framer-motion';
 import { QRCodeSVG } from 'qrcode.react';
 import jsQR from 'jsqr';
 import { cn } from '@/utils/cn';
@@ -176,8 +177,6 @@ export default function QRCodeModal({
     };
   }, [isOpen, viewMode, onClose, router]);
 
-  if (!isOpen) return null;
-
   const handleOverlayClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
       if (viewMode === 'scan') setViewMode('qr');
@@ -195,96 +194,114 @@ export default function QRCodeModal({
   };
 
   const modalContent = (
-    <div
-      className={styles.overlay}
-      onClick={handleOverlayClick}
-      role="dialog"
-      aria-modal="true"
-      aria-label={viewMode === 'scan' ? 'QR 코드 스캔' : 'QR 코드'}
-    >
-      <div className={styles.card} onClick={(e) => e.stopPropagation()}>
-        <div className={styles.header}>
-          <h2 className={styles.title}>
-            {viewMode === 'scan' ? 'QR 코드 스캔' : 'QR 코드'}
-          </h2>
-          <button
-            type="button"
-            onClick={handleClose}
-            className={styles.closeButton}
-            aria-label="닫기"
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          key="qr-modal-overlay"
+          className={styles.overlay}
+          style={{ perspective: 1200 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          onClick={handleOverlayClick}
+          role="dialog"
+          aria-modal="true"
+          aria-label={viewMode === 'scan' ? 'QR 코드 스캔' : 'QR 코드'}
+        >
+          <motion.div
+            className={styles.card}
+            style={{ transformStyle: 'preserve-3d' }}
+            initial={{ rotateY: -90, opacity: 0, scale: 0.9 }}
+            animate={{ rotateY: 0, opacity: 1, scale: 1 }}
+            exit={{ rotateY: 90, opacity: 0, scale: 0.9 }}
+            transition={{ type: 'spring', stiffness: 200, damping: 22 }}
+            onClick={(e) => e.stopPropagation()}
           >
-            <Icon name="IconLLineClose" size={20} />
-          </button>
-        </div>
-
-        {/** QR 보기 vs 카메라 스캔 (같은 자리) */}
-        <div className={styles.qrWrapper}>
-          {viewMode === 'qr' ? (
-            <>
-              <QRCodeSVG
-                value={qrValue}
-                size={172}
-                level="M"
-                className={styles.qrSvg}
-                fgColor="#0046FF"
-                bgColor="#FFFFFF"
-              />
-              <div className={styles.centerImageWrapper}>
-                <Image
-                  src={shinhanCharacter}
-                  alt="신한 캐릭터"
-                  className={styles.centerImage}
-                />
-              </div>
-            </>
-          ) : (
-            <>
-              <video
-                ref={videoRef}
-                className={styles.scanVideo}
-                muted
-                playsInline
-              />
-              <canvas ref={canvasRef} className="absolute w-0 h-0 overflow-hidden" aria-hidden />
-              {scanError && (
-                <p className={styles.scanError}>{scanError}</p>
-              )}
-            </>
-          )}
-        </div>
-
-        <p className={styles.caption}>
-          {viewMode === 'scan'
-            ? '다른 사람의 QR 코드를 화면에 맞춰 주세요'
-            : '프로필 정보를 보려면 이 QR 코드를 스캔하세요'}
-        </p>
-
-        <div className={styles.buttons}>
-          {viewMode === 'scan' ? (
-            <button
-              type="button"
-              className={styles.scanButton}
-              onClick={() => { setViewMode('qr'); setScanError(null); }}
-            >
-              QR 코드 보기
-            </button>
-          ) : (
-            <>
-              <button type="button" className={styles.downloadButton} onClick={onClose}>
-                QR 코드 다운로드
-              </button>
+            <div className={styles.header}>
+              <h2 className={styles.title}>
+                {viewMode === 'scan' ? 'QR 코드 스캔' : 'QR 코드'}
+              </h2>
               <button
                 type="button"
-                className={styles.scanButton}
-                onClick={() => setViewMode('scan')}
+                onClick={handleClose}
+                className={styles.closeButton}
+                aria-label="닫기"
               >
-                QR 코드 스캔
+                <Icon name="IconLLineClose" size={20} />
               </button>
-            </>
-          )}
-        </div>
-      </div>
-    </div>
+            </div>
+
+            {/** QR 보기 vs 카메라 스캔 (같은 자리) */}
+            <div className={styles.qrWrapper}>
+              {viewMode === 'qr' ? (
+                <>
+                  <QRCodeSVG
+                    value={qrValue}
+                    size={172}
+                    level="M"
+                    className={styles.qrSvg}
+                    fgColor="#0046FF"
+                    bgColor="#FFFFFF"
+                  />
+                  <div className={styles.centerImageWrapper}>
+                    <Image
+                      src={shinhanCharacter}
+                      alt="신한 캐릭터"
+                      className={styles.centerImage}
+                    />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <video
+                    ref={videoRef}
+                    className={styles.scanVideo}
+                    muted
+                    playsInline
+                  />
+                  <canvas ref={canvasRef} className="absolute w-0 h-0 overflow-hidden" aria-hidden />
+                  {scanError && (
+                    <p className={styles.scanError}>{scanError}</p>
+                  )}
+                </>
+              )}
+            </div>
+
+            <p className={styles.caption}>
+              {viewMode === 'scan'
+                ? '다른 사람의 QR 코드를 화면에 맞춰 주세요'
+                : '프로필 정보를 보려면 이 QR 코드를 스캔하세요'}
+            </p>
+
+            <div className={styles.buttons}>
+              {viewMode === 'scan' ? (
+                <button
+                  type="button"
+                  className={styles.scanButton}
+                  onClick={() => { setViewMode('qr'); setScanError(null); }}
+                >
+                  QR 코드 보기
+                </button>
+              ) : (
+                <>
+                  <button type="button" className={styles.downloadButton} onClick={onClose}>
+                    QR 코드 다운로드
+                  </button>
+                  <button
+                    type="button"
+                    className={styles.scanButton}
+                    onClick={() => setViewMode('scan')}
+                  >
+                    QR 코드 스캔
+                  </button>
+                </>
+              )}
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 
   return createPortal(modalContent, document.body);

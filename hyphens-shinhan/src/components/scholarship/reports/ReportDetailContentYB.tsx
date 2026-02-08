@@ -54,13 +54,43 @@ function ReportDetailContentYB({
   )
 
   /** 해당 연·월 활동 보고서 조회 */
-  const { data: report, isLoading, isError, error } = useReport(
+  const { data: report, isLoading, isError } = useReport(
     councilId,
     year,
     month
   )
 
   const toast = useToast()
+  const user = useUserStore((s) => s.user)
+  const confirmAttendance = useConfirmAttendance()
+  const rejectAttendance = useRejectAttendance()
+  const toggleVisibility = useToggleVisibility()
+
+  /** EmptyContent 내 목록으로 돌아가기 버튼용 (연도 쿼리 유지) */
+  const backToList = useCallback(
+    () => router.push(`${ROUTES.SCHOLARSHIP.MAIN}?year=${year}`),
+    [router, year]
+  )
+
+  const handleConfirm = useCallback(() => {
+    if (!report?.id) return
+    confirmAttendance.mutate(report.id, {
+      onError: () => toast.error(TOAST_MESSAGES.REPORT.ATTENDANCE_ERROR),
+    })
+  }, [report?.id, confirmAttendance, toast])
+  const handleReject = useCallback(() => {
+    if (!report?.id) return
+    rejectAttendance.mutate(report.id, {
+      onError: () => toast.error(TOAST_MESSAGES.REPORT.ATTENDANCE_ERROR),
+    })
+  }, [report?.id, rejectAttendance, toast])
+  const handleExport = useCallback(() => {
+    if (!report?.id) return
+    toggleVisibility.mutate(report.id, {
+      onError: () => toast.error(TOAST_MESSAGES.REPORT.ATTENDANCE_ERROR),
+    })
+  }, [report?.id, toggleVisibility, toast])
+
   const activitiesLoading = activitiesData === undefined
   const hasNoCouncil = !activitiesLoading && !councilId
 
@@ -76,12 +106,6 @@ function ReportDetailContentYB({
       </div>
     )
   }
-
-  /** EmptyContent 내 목록으로 돌아가기 버튼용 (연도 쿼리 유지) */
-  const backToList = useCallback(
-    () => router.push(`${ROUTES.SCHOLARSHIP.MAIN}?year=${year}`),
-    [router, year]
-  )
 
   // ---------- 해당 연도 자치회 없음 ----------
   if (hasNoCouncil) {
@@ -131,37 +155,15 @@ function ReportDetailContentYB({
   }
 
   const isSubmitted = !!report.submitted_at
-  const user = useUserStore((s) => s.user)
-  const confirmAttendance = useConfirmAttendance()
-  const rejectAttendance = useRejectAttendance()
-  const toggleVisibility = useToggleVisibility()
-
   const attendance = report.attendance ?? []
   const receipts = report.receipts ?? []
   const myAttendance = attendance.find((a) => a.user_id === user?.id)
   const hasConfirmed = myAttendance?.confirmation === 'CONFIRMED'
-  const canConfirm = isSubmitted && !hasConfirmed && !!report.id
+  /** 확인 완료 또는 수정 요청 중 하나라도 끝난 뒤에는 둘 다 비활성화 */
+  const hasResponded = hasConfirmed
+  const canConfirm = isSubmitted && !hasResponded && !!report.id
   const isConfirming = confirmAttendance.isPending || rejectAttendance.isPending
   const isExporting = toggleVisibility.isPending
-
-  const handleConfirm = useCallback(() => {
-    if (!report.id) return
-    confirmAttendance.mutate(report.id, {
-      onError: () => toast.error(TOAST_MESSAGES.REPORT.ATTENDANCE_ERROR),
-    })
-  }, [report.id, confirmAttendance, toast])
-  const handleReject = useCallback(() => {
-    if (!report.id) return
-    rejectAttendance.mutate(report.id, {
-      onError: () => toast.error(TOAST_MESSAGES.REPORT.ATTENDANCE_ERROR),
-    })
-  }, [report.id, rejectAttendance, toast])
-  const handleExport = useCallback(() => {
-    if (!report.id) return
-    toggleVisibility.mutate(report.id, {
-      onError: () => toast.error(TOAST_MESSAGES.REPORT.ATTENDANCE_ERROR),
-    })
-  }, [report.id, toggleVisibility, toast])
 
   // ---------- 정상: 보고서 내용 렌더 ----------
   return (
@@ -197,11 +199,11 @@ function ReportDetailContentYB({
           label="확인 완료"
           size="L"
           type="primary"
-          disabled={!canConfirm || isConfirming}
+          disabled={!canConfirm || isConfirming || hasResponded}
           onClick={handleConfirm}
           secondLabel="수정 요청"
           secondType="warning"
-          secondDisabled={!isSubmitted || isConfirming}
+          secondDisabled={!isSubmitted || isConfirming || hasResponded}
           onSecondClick={handleReject}
           topContent={
             <p className="font-caption-caption3 text-grey-9">

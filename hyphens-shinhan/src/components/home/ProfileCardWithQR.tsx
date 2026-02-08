@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { memo, useCallback, useMemo, useState } from 'react';
 import { motion, useMotionValue, animate } from 'framer-motion';
 import ProfileCard from "../mypage/ProfileCard";
 import { useMyProfile } from "@/hooks/user/useUser";
@@ -14,21 +14,26 @@ import QRCodeModal from "./QRCodeModal";
 const DRAG_LIMIT_UP = -100;
 const DRAG_LIMIT_DOWN = 60;
 
-export default function ProfileCardWithQR() {
+function ProfileCardWithQR() {
   const y = useMotionValue(0);
   const [isQRModalOpen, setIsQRModalOpen] = useState(false);
   const { data: profile, isLoading, error } = useMyProfile();
 
-  const handleDragEnd = (_: unknown, info: { offset: { y: number } }) => {
+  const handleDragEnd = useCallback((_: unknown, info: { offset: { y: number } }) => {
     animate(y, 0, { type: 'spring', stiffness: 300, damping: 30 });
     if (info.offset.y < 0) setIsQRModalOpen(true);
-  };
+  }, [y]);
 
-  /** 퍼블릭 프로필 페이지 링크 (QR 스캔 시 이 페이지로 이동) */
-  const profileShareUrl =
-    typeof window !== 'undefined' && profile
-      ? `${window.location.origin}/mypage/${profile.id}`
-      : '';
+  const openQRModal = useCallback(() => setIsQRModalOpen(true), []);
+  const closeQRModal = useCallback(() => setIsQRModalOpen(false), []);
+
+  const profileShareUrl = useMemo(
+    () =>
+      typeof window !== 'undefined' && profile
+        ? `${window.location.origin}/mypage/${profile.id}`
+        : '',
+    [profile?.id],
+  );
 
   if (isLoading) return <ProfileCardWithQRSkeleton />;
   if (error) return <EmptyContent variant="error" message={EMPTY_CONTENT_MESSAGES.ERROR.PROFILE} />;
@@ -43,29 +48,28 @@ export default function ProfileCardWithQR() {
       dragElastic={0.15}
       onDragEnd={handleDragEnd}
     >
-      {/** 드래그 바 */}
       <div className={styles.dragBar} />
       <div className={styles.profileCardContainer}>
-        {/** QR 코드가 있는 프로필 카드 */}
         <ProfileCard profile={profile} isMyProfile={true} />
-        {/** QR 코드 버튼 */}
         <button
           type="button"
           className={styles.qrCodeButton}
-          onClick={() => setIsQRModalOpen(true)}
+          onClick={openQRModal}
           aria-label="QR 코드 보기"
         >
-          <Icon name='IconLBoldQrcode' className={styles.qrCodeButtonIcon} />
+          <Icon name="IconLBoldQrcode" className={styles.qrCodeButtonIcon} />
         </button>
       </div>
       <QRCodeModal
         isOpen={isQRModalOpen}
-        onClose={() => setIsQRModalOpen(false)}
+        onClose={closeQRModal}
         qrValue={profileShareUrl}
       />
     </motion.div>
   );
 }
+
+export default memo(ProfileCardWithQR);
 
 const styles = {
   container: cn(

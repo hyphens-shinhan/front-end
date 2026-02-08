@@ -5,6 +5,7 @@ import MaintenanceReviewSummary, {
   type MaintenanceReviewSummaryItem,
 } from '@/components/home/MaintenanceReviewSummary';
 import ShortcutMenuList from '@/components/home/ShortcutMenuList';
+import { ROUTES } from '@/constants';
 import { useScholarshipEligibility } from '@/hooks/user/useUser';
 import type { ScholarshipEligibilityResponse } from '@/types';
 import { cn } from '@/utils/cn';
@@ -105,6 +106,7 @@ export default function HomeContentCard({
       <ShortcutMenuList />
       <MaintenanceReviewShortcut
         tagLabel={tagLabel}
+        href={ROUTES.SCHOLARSHIP.MAINTENANCE}
         className={styles.shortcut}
       />
       <div className={styles.summaryWrap}>

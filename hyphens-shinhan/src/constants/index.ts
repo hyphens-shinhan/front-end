@@ -257,6 +257,12 @@ export const CUSTOM_HEADER_CONFIG: Record<string, CustomHeaderConfig> = {
     navItem: HEADER_ITEMS[HEADER_NAV_ITEM_KEY.MORE],
     backHref: ROUTES.COMMUNITY.GROUP.MAIN,
   },
+  /** 유지심사 현황 상세보기 */
+  [ROUTES.SCHOLARSHIP.MAINTENANCE]: {
+    title: '나의 유지심사',
+    type: 'Left',
+    btnType: 'Back',
+  },
   /** MY활동 자치회 상세 페이지 (제목은 useHeaderStore.setCustomTitle으로 '4월 활동' 등 월별 표시) */
   [ROUTES.SCHOLARSHIP.REPORT.ACTIVITY]: {
     type: 'Left',

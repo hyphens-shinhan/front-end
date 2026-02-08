@@ -19,9 +19,9 @@ export default function ProfileCardWithQR() {
   const [isQRModalOpen, setIsQRModalOpen] = useState(false);
   const { data: profile, isLoading, error } = useMyProfile();
 
-  const handleDragEnd = () => {
+  const handleDragEnd = (_: unknown, info: { offset: { y: number } }) => {
     animate(y, 0, { type: 'spring', stiffness: 300, damping: 30 });
-    setIsQRModalOpen(true);
+    if (info.offset.y < 0) setIsQRModalOpen(true);
   };
 
   /** 퍼블릭 프로필 페이지 링크 (QR 스캔 시 이 페이지로 이동) */

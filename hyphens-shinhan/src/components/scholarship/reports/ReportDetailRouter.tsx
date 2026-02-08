@@ -1,25 +1,16 @@
 'use client'
 
-import { useEffect, useMemo } from 'react'
-import dynamic from 'next/dynamic'
+import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useUserStore, useHeaderStore } from '@/stores'
 import { useReport } from '@/hooks/reports/useReports'
 import { useActivitiesSummary } from '@/hooks/activities/useActivities'
 import { ROUTES } from '@/constants'
 import type { ReportMonth } from '@/services/reports'
+import ReportDetailContentYB from './ReportDetailContentYB'
+import ReportDetailContentYBLeader from './ReportDetailContentYBLeader'
 import EmptyContent from '@/components/common/EmptyContent'
 import { EMPTY_CONTENT_MESSAGES } from '@/constants/emptyContent'
-
-const ReportDetailContentYB = dynamic(
-  () => import('./ReportDetailContentYB'),
-  { ssr: true }
-)
-
-const ReportDetailContentYBLeader = dynamic(
-  () => import('./ReportDetailContentYBLeader'),
-  { ssr: true }
-)
 
 interface ReportDetailRouterProps {
   year: number
@@ -41,13 +32,10 @@ export default function ReportDetailRouter({
 }: ReportDetailRouterProps) {
   const user = useUserStore((s) => s.user)
   const { data: activitiesData } = useActivitiesSummary()
-  const councilId = useMemo(
-    () =>
-      councilIdFromUrl ||
-      activitiesData?.years?.find((y) => y.year === year)?.council_id ||
-      '',
-    [councilIdFromUrl, activitiesData?.years, year]
-  )
+  const councilId =
+    councilIdFromUrl ||
+    activitiesData?.years?.find((y) => y.year === year)?.council_id ||
+    ''
   const { data: report, isLoading: reportLoading } = useReport(
     councilId,
     year,
@@ -63,10 +51,6 @@ export default function ReportDetailRouter({
   /** is_submitted가 false면 무조건 작성 페이지(YBLeader). ActivityCard status와 무관. */
   const showLeaderDraft = isLeader && !report?.is_submitted
 
-  /** user 미로드 또는 리더인데 보고서 로딩 중이면 로딩 UI (역할 분기 보류) */
-  const isLoading =
-    user === null || (reportLoading && !!councilId && isLeader)
-
   /** 활동 상세 공통 헤더: 제목 'N월 활동', 백 시 MY활동 목록(연도 쿼리 유지) */
   useEffect(() => {
     setCustomTitle(`${month}월 활동`)
@@ -78,7 +62,20 @@ export default function ReportDetailRouter({
     }
   }, [router, year, month, setHandlers, resetHandlers, setCustomTitle])
 
-  if (isLoading) {
+  // user가 아직 로드되지 않았으면 역할 분기하지 않음 (null일 때 isLeader가 false라 YB가 뜨는 것 방지)
+  if (user === null) {
+    return (
+      <div className="flex flex-col py-20 pb-40">
+        <EmptyContent
+          variant="loading"
+          message={EMPTY_CONTENT_MESSAGES.LOADING.DEFAULT}
+        />
+      </div>
+    )
+  }
+
+  // 역할·리포트 로딩 중
+  if (reportLoading && councilId && isLeader) {
     return (
       <div className="flex flex-col py-20 pb-40">
         <EmptyContent

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef, useCallback, memo } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import ActivityInfoInput from './create/ActivityInfoInput'
 import Separator from '@/components/common/Separator'
 import ActivityPhotosInput, { type ActivityPhotosInputRef } from './create/ActivityPhotosInput'
@@ -18,12 +18,9 @@ import { AttendanceStatus, ConfirmationStatus } from '@/types/reports'
 import type { ReportMonth } from '@/services/reports'
 import { useUpdateReport, useSubmitReport } from '@/hooks/reports/useReportsMutations'
 import { useCouncilMembers } from '@/hooks/councils/useCouncils'
-import { useConfirmModalStore } from '@/stores'
-import { useToast } from '@/hooks/useToast'
-import { TOAST_MESSAGES } from '@/constants/toast'
 
 // ---------- Props ----------
-export interface ReportDetailContentYBLeaderProps {
+interface ReportDetailContentYBLeaderProps {
     year: number
     month: ReportMonth
     /** 회의 ID (PATCH/GET 경로용). 없으면 임시저장·제출 비활성화 */
@@ -38,7 +35,7 @@ export interface ReportDetailContentYBLeaderProps {
  * - 임시 저장 → PATCH (초안 생성 또는 수정).
  * - 제출 → POST submit (reportId 필요, 초안 저장 후 또는 initialReport.id).
  */
-function ReportDetailContentYBLeader({
+export default function ReportDetailContentYBLeader({
     year,
     month,
     councilId,
@@ -70,8 +67,6 @@ function ReportDetailContentYBLeader({
     // ---------- API 뮤테이션 ----------
     const updateReport = useUpdateReport()
     const submitReport = useSubmitReport()
-    const openConfirmModal = useConfirmModalStore((s) => s.onOpen)
-    const toast = useToast()
 
     // ---------- 회의 멤버 목록 (출석 없을 때 초기 명단 채우기) ----------
     const { data: councilMembers } = useCouncilMembers(councilId)
@@ -104,14 +99,14 @@ function ReportDetailContentYBLeader({
             avatar_url: m.avatar_url,
             status: AttendanceStatus.PRESENT,
             confirmation: ConfirmationStatus.PENDING,
-            is_leader: m.is_leader ?? false,
+            is_leader: m.is_leader,
         }))
         setAttendance(initial)
         attendanceRef.current = initial
     }, [councilId, councilMembers, initialReport?.attendance, attendance?.length])
 
     /** 참석/불참 토글 시 부모 attendance 상태 반영 → 임시저장/제출 시 서버로 전달 */
-    const handleAttendanceStatusChange = useCallback((userId: string, present: boolean) => {
+    const handleAttendanceStatusChange = (userId: string, present: boolean) => {
         setAttendance((prev) => {
             if (!prev?.length) return prev
             const next = prev.map((a) =>
@@ -122,7 +117,7 @@ function ReportDetailContentYBLeader({
             attendanceRef.current = next
             return next
         })
-    }, [])
+    }
 
     // ---------- 제출 가능 여부 (섹션별 체크) ----------
     const isActivityInfoChecked =
@@ -170,10 +165,8 @@ function ReportDetailContentYBLeader({
             {
                 onSuccess: (data) => {
                     setReportId(data.id)
-                    if (!afterSave) toast.show(TOAST_MESSAGES.REPORT.DRAFT_SAVE_SUCCESS)
                     afterSave?.(data)
                 },
-                onError: () => toast.error(TOAST_MESSAGES.REPORT.DRAFT_SAVE_ERROR),
             }
         )
     }
@@ -183,20 +176,10 @@ function ReportDetailContentYBLeader({
         saveDraftThen()
     }
 
-    /** 제출: 확인 모달 띄운 뒤, 확인 시 최신 폼으로 PATCH 후 submit 호출 */
+    /** 제출: 항상 최신 폼(출석 포함)으로 먼저 PATCH 후 submit 호출 */
     const handleSubmit = () => {
-        openConfirmModal({
-            title: '모두 잘 입력했나요?',
-            content: <div className="flex items-center justify-center body-7 text-grey-10">제출 후에는 임의로 수정할 수 없어요.</div>,
-            confirmText: '제출하기',
-            onConfirm: () => {
-                saveDraftThen((data) => {
-                    submitReport.mutate(data.id, {
-                        onSuccess: () => toast.show(TOAST_MESSAGES.REPORT.SUBMIT_SUCCESS),
-                        onError: () => toast.error(TOAST_MESSAGES.REPORT.SUBMIT_ERROR),
-                    })
-                })
-            },
+        saveDraftThen((data) => {
+            submitReport.mutate(data.id)
         })
     }
 
@@ -210,10 +193,12 @@ function ReportDetailContentYBLeader({
             {/* ---------- 활동 정보 (제목·일자·장소·내용) ---------- */}
             <ActivityInfoInput
                 title={title}
-                date={activityDate || 'YYYY.MM.DD'}
+                date={activityDate}
                 location={location}
                 description={content}
                 setTitle={setTitle}
+                setDate={setActivityDate}
+                setLocation={setLocation}
                 setDescription={setContent}
                 isTitleChecked={isActivityInfoChecked}
             />
@@ -260,5 +245,3 @@ function ReportDetailContentYBLeader({
         </div>
     )
 }
-
-export default memo(ReportDetailContentYBLeader)

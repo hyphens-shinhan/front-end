@@ -2,7 +2,6 @@ import { memo } from "react";
 import { cn } from "@/utils/cn";
 import { Icon } from "@/components/common/Icon";
 import InfoTag from "@/components/common/InfoTag";
-import Avatar from "@/components/common/Avatar";
 import type { ClubResponse, ClubCategory } from "@/types/clubs";
 
 const CATEGORY_LABEL: Record<ClubCategory, string> = {
@@ -78,23 +77,15 @@ function GroupCard({ club, variant = 'card' }: GroupCardProps) {
         {/** 소모임 멤버 미리보기: 카드일 때만 표시 (동그라미 3개) */}
         {isCard && (
           <div className={styles.memberPreviewContainer}>
-            <div className={styles.memberPreviewItem}>
-              <Avatar
-                src={slot1}
-                alt="멤버 프로필"
-                fill
-                containerClassName="w-10 h-10"
-              />
-            </div>
-            <div className={styles.memberPreviewItem}>
-              <Avatar
-                src={slot2}
-                alt="멤버 프로필"
-                fill
-                containerClassName="w-10 h-10"
-              />
-            </div>
-            <div className={styles.memberCountItem}>+{member_count}</div>
+            <div
+              className={styles.memberPreviewItem}
+              style={slot1 ? { backgroundImage: `url(${slot1})`, backgroundSize: 'cover' } : undefined}
+            />
+            <div
+              className={styles.memberPreviewItem}
+              style={slot2 ? { backgroundImage: `url(${slot2})`, backgroundSize: 'cover' } : undefined}
+            />
+            <div className={styles.memberCountItem}>{member_count}</div>
           </div>
         )}
       </div>
@@ -112,7 +103,7 @@ const styles = {
     'flex gap-1.5',
   ),
   contentWrapper: cn(
-    'flex gap-8 justify-between',
+    'flex gap-8',
   ),
   contentContainer: cn(
     'flex flex-col gap-3',
@@ -129,14 +120,12 @@ const styles = {
     'flex flex-col -space-y-6.5',
   ),
   memberPreviewItem: cn(
-    'relative w-10 h-10 rounded-full bg-grey-3 overflow-hidden',
-    'z-0',
+    'w-10 h-10 rounded-full bg-grey-3 border',
   ),
   memberCountItem: cn(
-    'relative w-10 h-10 rounded-full bg-primary-secondaryroyal',
+    'w-10 h-10 rounded-full bg-grey-8',
     'flex items-center justify-center',
-    'font-caption-caption1 text-grey-2',
-    'z-10',
+    'body-10 font-caption-caption-1 text-grey-2',
   ),
 };
 

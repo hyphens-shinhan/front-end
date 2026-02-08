@@ -2,14 +2,12 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import React from "react";
 import { cn } from "@/utils/cn";
 import Button from "@/components/common/Button";
 import EmptyContent from "@/components/common/EmptyContent";
 import PillTabs from "@/components/common/PillTabs";
 import Separator from "@/components/common/Separator";
 import GroupCard from "./GroupCard";
-import GroupCardSkeleton from "./GroupCardSkeleton";
 import { EMPTY_CONTENT_MESSAGES, POST_FAB_ITEM_KEY, ROUTES } from "@/constants";
 import PostFAB from "@/components/common/PostFAB";
 import { useInfiniteClubs } from "@/hooks/clubs/useClubs";
@@ -46,12 +44,10 @@ export default function GroupList() {
         return (
             <div className={styles.container}>
                 <PillTabs tabs={GROUP_TABS} activeIndex={activeIndex} onChange={setActiveIndex} />
-                {Array.from({ length: 5 }).map((_, index) => (
-                    <React.Fragment key={index}>
-                        <GroupCardSkeleton />
-                        {index < 4 && <Separator className="mx-4" />}
-                    </React.Fragment>
-                ))}
+                <EmptyContent
+                    variant="loading"
+                    message={EMPTY_CONTENT_MESSAGES.LOADING.GROUP}
+                />
                 <PostFAB type={POST_FAB_ITEM_KEY.ADD} />
             </div>
         );
@@ -117,8 +113,7 @@ export default function GroupList() {
                 </button>
             )}
 
-            {/** TODO: 소모임 추가 기능 구현 후 활성화 */}
-            {/* <PostFAB type={POST_FAB_ITEM_KEY.ADD} /> */}
+            <PostFAB type={POST_FAB_ITEM_KEY.ADD} />
         </div>
     );
 }

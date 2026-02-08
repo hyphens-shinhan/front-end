@@ -13,8 +13,6 @@ import {
   GalleryListResponse,
   GalleryListQuery,
   GalleryDeleteResponse,
-  ClubMemberResponse,
-  ClubMemberListResponse,
 } from '@/types/clubs'
 
 const BASE = '/clubs'
@@ -128,18 +126,6 @@ export const ClubService = {
   ): Promise<GalleryDeleteResponse> => {
     const response = await apiClient.delete<GalleryDeleteResponse>(
       `${BASE}/${clubId}/gallery/${imageId}`,
-    )
-    return response.data
-  },
-
-  // --- Members API ---
-
-  /**
-   * 소모임 멤버 목록 조회
-   */
-  getClubMembers: async (clubId: string): Promise<ClubMemberListResponse> => {
-    const response = await apiClient.get<ClubMemberListResponse>(
-      `${BASE}/${clubId}/members`,
     )
     return response.data
   },

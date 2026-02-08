@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { ReportsService, type ReportMonth } from '@/services/reports'
 import { reportKeys } from './useReports'
-import { activityKeys } from '@/hooks/activities/useActivities'
 import type { ReportUpdate } from '@/types/reports'
 
 // ---------- 보고서 초안 생성/수정 ----------
@@ -28,7 +27,6 @@ export const useUpdateReport = () => {
         queryKey: reportKeys.report(data.council_id, data.year, data.month),
       })
       queryClient.invalidateQueries({ queryKey: reportKeys.all })
-      queryClient.invalidateQueries({ queryKey: activityKeys.summary() })
     },
   })
 }
@@ -47,7 +45,6 @@ export const useSubmitReport = () => {
         queryKey: reportKeys.report(data.council_id, data.year, data.month),
       })
       queryClient.invalidateQueries({ queryKey: reportKeys.all })
-      queryClient.invalidateQueries({ queryKey: activityKeys.summary() })
     },
   })
 }

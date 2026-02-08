@@ -1,8 +1,6 @@
 import { memo } from 'react'
 import Image from 'next/image'
 import { cn } from '@/utils/cn'
-import { useMultipleImageError } from '@/hooks/useMultipleImageError'
-import ImageErrorPlaceholder from '@/components/common/ImageErrorPlaceholder'
 
 interface PostContentProps {
   /** 게시글 본문 */
@@ -29,8 +27,6 @@ const PostContent = memo(function PostContent({
   maxImages,
   className,
 }: PostContentProps) {
-  const { handleImageError, isFailed } = useMultipleImageError()
-
   const displayImages = maxImages ? imageUrls?.slice(0, maxImages) : imageUrls
   const remainingCount = imageUrls && maxImages ? imageUrls.length - maxImages : 0
 
@@ -50,27 +46,16 @@ const PostContent = memo(function PostContent({
       {/** 이미지 영역 */}
       {displayImages && displayImages.length > 0 && (
         <div className={styles.imageWrapper}>
-          {displayImages.map((url, index) => {
-            if (isFailed(index)) {
-              return (
-                <div key={index} className={styles.imageItem}>
-                  <ImageErrorPlaceholder />
-                </div>
-              )
-            }
-            return (
-              <div key={index} className={styles.imageItem}>
-                <Image
-                  src={url}
-                  alt={`post-image-${index}`}
-                  fill
-                  className="rounded-[12px] object-cover"
-                  onError={() => handleImageError(index)}
-                  unoptimized
-                />
-              </div>
-            )
-          })}
+          {displayImages.map((url, index) => (
+            <div key={index} className={styles.imageItem}>
+              <Image
+                src={url}
+                alt={`post-image-${index}`}
+                fill
+                className="rounded-[12px] object-cover"
+              />
+            </div>
+          ))}
           {remainingCount > 0 && (
             <div className={styles.imageMoreButton}>+{remainingCount}</div>
           )}

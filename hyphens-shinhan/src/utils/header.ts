@@ -1,10 +1,4 @@
-import {
-  HEADER_CONFIG_BY_BOTTOM_NAV,
-  ROUTES,
-  HeaderConfig,
-  CUSTOM_HEADER_CONFIG,
-  CustomHeaderConfig,
-} from '@/constants'
+import { HEADER_CONFIG_BY_BOTTOM_NAV, ROUTES, HeaderConfig, CUSTOM_HEADER_CONFIG, CustomHeaderConfig } from '@/constants'
 import { NavLink } from '@/types'
 
 /**
@@ -31,31 +25,14 @@ export function getHeaderConfig(pathname: string): HeaderConfig | null {
 
 /**
  * 현재 경로에 해당하는 상세 페이지 헤더 설정을 반환합니다.
+ * 긴 경로(예: /chat/)를 먼저 매칭하여 /chat/[userId]가 /chat 목록과 구분됩니다.
  * @param pathname - 현재 경로
  * @returns 상세 페이지 헤더 설정 또는 null
- *
- * 더 구체적인 경로(긴 경로)를 우선적으로 매칭합니다.
- * 예: /mypage/setting/privacy는 /mypage/setting보다 먼저 매칭되어야 합니다.
  */
-export function getCustomHeaderConfig(
-  pathname: string,
-): CustomHeaderConfig | null {
-  const entries = Object.entries(CUSTOM_HEADER_CONFIG)
-
-  // pathPattern이 있는 항목은 패턴 매칭 (동적 경로, 상세와 구분하기 위해 먼저 체크)
-  for (const [, config] of entries) {
-    if (config.pathPattern?.test(pathname)) {
-      const { pathPattern: _, ...rest } = config
-      return rest
-    }
-  }
-
-  // 경로 길이 순으로 정렬 (긴 경로가 먼저 오도록)
-  const sortedEntries = entries
-    .filter(([, config]) => !config.pathPattern)
-    .sort(([routeA], [routeB]) => routeB.length - routeA.length)
-
-  for (const [route, config] of sortedEntries) {
+export function getCustomHeaderConfig(pathname: string): CustomHeaderConfig | null {
+  const entries = Object.entries(CUSTOM_HEADER_CONFIG) as [string, CustomHeaderConfig][]
+  entries.sort(([a], [b]) => b.length - a.length)
+  for (const [route, config] of entries) {
     if (pathname.startsWith(route)) {
       return config
     }

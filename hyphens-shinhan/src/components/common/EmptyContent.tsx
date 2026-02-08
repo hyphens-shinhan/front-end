@@ -40,12 +40,10 @@ export default function EmptyContent({
             role={variant === 'loading' ? 'status' : undefined}
             aria-live={variant === 'loading' ? 'polite' : undefined}
         >
-            <p className={styles.messageText}>
-                {message}
-                {variant === 'error' && subMessage != null && (
-                    <span className="mt-2 block">{subMessage}</span>
-                )}
-            </p>
+            <p className={styles.messageText}>{message}</p>
+            {variant === 'error' && subMessage != null && (
+                <div className={styles.subMessage}>{subMessage}</div>
+            )}
             {action && variant === 'error' && (
                 <div className={styles.actionWrapper}>{action}</div>
             )}
@@ -60,5 +58,6 @@ const styles = {
     ),
     errorWrapper: cn('gap-4'),
     messageText: cn('text-center body-6 text-grey-8'),
+    subMessage: cn('mt-2 flex justify-center'),
     actionWrapper: cn('flex items-center justify-center py-3'),
 };

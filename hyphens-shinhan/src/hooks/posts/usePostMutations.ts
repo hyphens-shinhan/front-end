@@ -151,13 +151,8 @@ export const useToggleLike = () => {
   return useMutation({
     mutationFn: (postId: string) => PostService.toggleLike(postId),
     onSuccess: (_, postId) => {
-      // 피드 게시글 상세 및 목록 무효화
       queryClient.invalidateQueries({ queryKey: postKeys.detail(postId) })
       queryClient.invalidateQueries({ queryKey: postKeys.lists() })
-      // 자치회 리포트 상세 및 목록 무효화
-      queryClient.invalidateQueries({ queryKey: [...postKeys.all, 'council', postId] })
-      // 자치회 리포트 목록 무효화 (모든 limit/offset 조합)
-      queryClient.invalidateQueries({ queryKey: [...postKeys.lists(), 'council'] })
     },
   })
 }
@@ -171,13 +166,8 @@ export const useToggleScrap = () => {
   return useMutation({
     mutationFn: (postId: string) => PostService.toggleScrap(postId),
     onSuccess: (_, postId) => {
-      // 피드 게시글 상세 및 목록 무효화
       queryClient.invalidateQueries({ queryKey: postKeys.detail(postId) })
       queryClient.invalidateQueries({ queryKey: postKeys.lists() })
-      // 자치회 리포트 상세 및 목록 무효화
-      queryClient.invalidateQueries({ queryKey: [...postKeys.all, 'council', postId] })
-      // 자치회 리포트 목록 무효화 (모든 limit/offset 조합)
-      queryClient.invalidateQueries({ queryKey: [...postKeys.lists(), 'council'] })
     },
   })
 }

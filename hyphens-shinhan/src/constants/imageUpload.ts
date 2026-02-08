@@ -10,8 +10,6 @@ export const IMAGE_UPLOAD = {
     POSTS: 'posts',
     /** 자치회 활동 보고서 (사진·영수증) */
     REPORTS: 'reports',
-    /** 프로필 아바타 이미지 */
-    AVATARS: 'avatars',
   },
 
   /** 저장 경로 접두사 (버킷 내 폴더 구분) */

@@ -20,9 +20,6 @@ export { EMPTY_CONTENT_MESSAGES } from './emptyContent'
 /** 이미지 업로드(Supabase Storage) bucket / pathPrefix 상수 */
 export { IMAGE_UPLOAD } from './imageUpload'
 
-/** 토스트 메시지 상수 */
-export { TOAST_MESSAGES } from './toast'
-
 /** 바텀 네비게이션 아이템 상수
  * 사용자 역할에 따라 바텀 네비게이션 아이템 상수를 반환합니다.
  */
@@ -132,7 +129,6 @@ export const HEADER_ITEMS: Record<HEADER_NAV_ITEM_KEY, HeaderNavItem> = {
   [HEADER_NAV_ITEM_KEY.MORE]: {
     icon: 'IconLLine3DotVertical',
     ariaLabel: '더보기',
-    href: ROUTES.MYPAGE.SETTING.MAIN,
   },
 } as const
 
@@ -162,7 +158,7 @@ export const HEADER_CONFIG_BY_BOTTOM_NAV: Record<NavLink, HeaderConfig> = {
   },
   [ROUTES.MYPAGE.MAIN]: {
     title: '프로필',
-    navItems: [HEADER_ITEMS.MORE],
+    navItems: [HEADER_ITEMS.NOTIFICATIONS],
   },
 } as const
 
@@ -175,8 +171,6 @@ export interface CustomHeaderConfig {
   img?: string | StaticImageData
   navItem?: HeaderNavItem
   backHref?: string
-  /** 있으면 pathname을 이 패턴으로 매칭 (동적 경로용, 키는 startsWith에 사용 안 함) */
-  pathPattern?: RegExp
 }
 
 /** 상세 페이지 헤더 설정 상수 */
@@ -186,6 +180,12 @@ export const CUSTOM_HEADER_CONFIG: Record<string, CustomHeaderConfig> = {
   },
   [ROUTES.CHAT]: {
     title: '채팅',
+  },
+  /** 채팅 대화 상세 - back to /chat, title from useHeaderStore.customTitle */
+  [ROUTES.CHAT_DETAIL_PREFIX]: {
+    type: 'Center',
+    btnType: 'Back',
+    backHref: ROUTES.CHAT,
   },
   [ROUTES.SEARCH]: {
     title: '검색',
@@ -225,24 +225,8 @@ export const CUSTOM_HEADER_CONFIG: Record<string, CustomHeaderConfig> = {
     title: '추가하기',
     type: 'Left',
   },
-  /** 게시글 상세 보기 (공유 링크 진입 시 뒤로가기 = 커뮤니티로) */
+  /** 게시글 상세 보기 */
   [ROUTES.COMMUNITY.FEED.DETAIL]: {
-    title: '게시글',
-    type: 'Center',
-    btnType: 'Back',
-    navItem: HEADER_ITEMS[HEADER_NAV_ITEM_KEY.MORE],
-    backHref: ROUTES.COMMUNITY.MAIN,
-  },
-  /** 게시글 수정 페이지 (동적 경로라 pathPattern으로 매칭) */
-  [ROUTES.COMMUNITY.FEED.EDIT]: {
-    pathPattern: /^\/community\/feed\/[^/]+\/edit$/,
-    title: '게시글 수정',
-    type: 'Left',
-    btnType: 'Back',
-    navItem: HEADER_ITEMS[HEADER_NAV_ITEM_KEY.COMPLETE],
-  },
-  /** 자치회 리포트 상세 보기 (공유 링크 진입 시 뒤로가기 = 커뮤니티로) */
-  [ROUTES.COMMUNITY.COUNCIL.DETAIL]: {
     title: '게시글',
     type: 'Center',
     btnType: 'Back',
@@ -269,26 +253,33 @@ export const CUSTOM_HEADER_CONFIG: Record<string, CustomHeaderConfig> = {
     btnType: 'Back',
     backHref: ROUTES.SCHOLARSHIP.REPORT.ACTIVITY,
   },
-  /** 마이페이지 설정 메인 페이지 */
-  [ROUTES.MYPAGE.SETTING.MAIN]: {
-    title: '설정',
+  /** 멘토 프로필 상세 - /mentors/[id] (길이 긴 경로 먼저) */
+  [ROUTES.MENTORS.DETAIL_PREFIX]: {
+    title: '멘토 프로필',
     type: 'Left',
     btnType: 'Back',
-    backHref: ROUTES.MYPAGE.MAIN,
+    backHref: ROUTES.MENTORS.MATCHES,
   },
-  /** 마이페이지 개인정보 공개 설정 페이지 */
-  [ROUTES.MYPAGE.SETTING.PRIVACY]: {
-    title: '개인정보 공개 설정',
+  /** 멘토 매칭 결과 */
+  [ROUTES.MENTORS.MATCHES]: {
+    title: '멘토 매칭 결과',
     type: 'Left',
-    btnType: 'Back',
-    backHref: ROUTES.MYPAGE.SETTING.MAIN,
+    btnType: 'Close',
+    backHref: ROUTES.NETWORK.MAIN,
   },
-  /** 마이페이지 스크랩 페이지 */
-  [ROUTES.MYPAGE.SETTING.SCRAP]: {
-    title: '내가 스크랩한 글',
+  /** 나의 멘토링 내역 */
+  [ROUTES.MENTORS.HISTORY]: {
+    title: '나의 멘토링 내역',
     type: 'Left',
     btnType: 'Back',
-    backHref: ROUTES.MYPAGE.SETTING.MAIN,
+    backHref: ROUTES.NETWORK.MAIN,
+  },
+  /** 멘토 찾기 설문 */
+  [ROUTES.MENTORS.QUESTIONNAIRE]: {
+    title: '멘토 찾기',
+    type: 'Left',
+    btnType: 'Close',
+    backHref: ROUTES.NETWORK.MAIN,
   },
 } as const
 

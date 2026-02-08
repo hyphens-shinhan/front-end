@@ -1,6 +1,5 @@
 import { memo } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { Icon } from "@/components/common/Icon";
 import { cn } from "@/utils/cn";
 import { formatDateKrWithTime } from "@/utils/date";
@@ -9,19 +8,9 @@ import FollowButton from "@/components/community/FollowButton";
 import MoreButton from "@/components/community/MoreButton";
 import PostContent from "@/components/community/feed/PostContent";
 import { FeedPostResponse } from "@/types/posts";
-import { useUserStore } from "@/stores";
-import { useFeedPostMoreMenu } from "@/hooks/useFeedPostMoreMenu";
-import { useCouncilReportMoreMenu } from "@/hooks/useCouncilReportMoreMenu";
-import Avatar from "@/components/common/Avatar";
 
 interface PostCardProps {
     post: FeedPostResponse;
-    /** 커스텀 상세보기 링크 (기본값: FEED.DETAIL/{id}) */
-    detailHref?: string;
-    /** 프로필 상호작용 비활성화 (마이페이지 등에서 사용) */
-    disableProfileInteraction?: boolean;
-    /** 'council'이면 더보기에 게시물 공유만 노출 (자치회 카드/상세) */
-    postType?: 'feed' | 'council';
 }
 
 /** 게시글 카드 컴포넌트 동일성 비교 함수 */
@@ -43,7 +32,6 @@ function arePostPropsEqual(prev: PostCardProps, next: PostCardProps): boolean {
     if (aAuthor?.id !== bAuthor?.id) return false;
     if (aAuthor?.name !== bAuthor?.name) return false;
     if (aAuthor?.is_following !== bAuthor?.is_following) return false;
-    if (prev.postType !== next.postType) return false;
     return true;
 }
 
@@ -52,8 +40,7 @@ function arePostPropsEqual(prev: PostCardProps, next: PostCardProps): boolean {
  * @example
  * <PostCard post={postData} />
  */
-function PostCard({ post, detailHref, disableProfileInteraction = false, postType = 'feed' }: PostCardProps) {
-    const router = useRouter();
+function PostCard({ post }: PostCardProps) {
     const {
         id,
         author,
@@ -65,93 +52,39 @@ function PostCard({ post, detailHref, disableProfileInteraction = false, postTyp
         is_anonymous,
     } = post;
 
-    // 상세보기 링크 (커스텀 링크가 있으면 사용, 없으면 기본 피드 상세보기 링크)
-    const detailLink = detailHref || `${ROUTES.COMMUNITY.FEED.DETAIL}/${id}`;
-
-    const currentUser = useUserStore((s) => s.user);
-    const isMyPost = currentUser?.id === author?.id;
-    // 프로필 상호작용이 비활성화되어 있거나, 내 게시글이거나, 익명이거나, 작성자가 없으면 프로필 링크 없음
-    const profileLink = !disableProfileInteraction && !isMyPost && !is_anonymous && author
-        ? ROUTES.MYPAGE.PUBLIC_PROFILE(author.id)
-        : null;
-    // 내 글이 아니고, 프로필 상호작용 가능하고, 익명이 아니고, 작성자가 있으며, 아직 팔로우하지 않은 경우에만 팔로우 버튼 표시
-    const showFollowButton =
-        !isMyPost && !disableProfileInteraction && !is_anonymous && !!author && !author.is_following;
-
-    const handleProfileClick = (e: React.MouseEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
-        if (profileLink && !disableProfileInteraction) {
-            router.push(profileLink);
-        }
-    };
-
-    const { openMenu: openFeedMoreMenu } = useFeedPostMoreMenu(id, isMyPost);
-    const { openMenu: openCouncilMoreMenu } = useCouncilReportMoreMenu(id);
-
     return (
-        <div className={styles.container}>
+        <Link href={`${ROUTES.COMMUNITY.FEED.DETAIL}/${id}`} className={styles.container}>
             {/** 유저 프로필 사진 */}
-            {profileLink ? (
-                <Link
-                    href={profileLink}
-                    className={styles.userProfileWrapper}
-                >
-                    <Avatar
-                        src={author?.avatar_url}
-                        alt={author?.name || '프로필'}
+            <div className={styles.userProfileWrapper}>
+                {/* {author?.avatar_url ? (
+                    <Image
+                        src={author.avatar_url}
+                        alt={author.name}
                         fill
-                        containerClassName="w-full h-full"
+                        className="rounded-full object-cover"
                     />
-                    {showFollowButton && (
-                        <div className={styles.followButton}>
-                            <FollowButton type="addIcon" />
-                        </div>
-                    )}
-                </Link>
-            ) : (
-                <div className={styles.userProfileWrapper}>
-                    <Avatar
-                        src={author?.avatar_url}
-                        alt={author?.name || '프로필'}
-                        fill
-                        containerClassName="w-full h-full"
-                    />
-                    {showFollowButton && (
-                        <div className={styles.followButton}>
-                            <FollowButton type="addIcon" />
-                        </div>
-                    )}
-                </div>
-            )}
+                ) : null} */}
+                {/** 익명이 아니고, 팔로우하지 않은 경우에만 팔로우 버튼 표시 */}
+                {!is_anonymous && author && !author.is_following && (
+                    <div className={styles.followButton}>
+                        <FollowButton type="addIcon" />
+                    </div>
+                )}
+            </div>
 
             {/** 유저 정보, 본문 영역 */}
-            <Link href={detailLink} className={styles.postContent}>
+            <div className={styles.postContent}>
                 {/** 유저 이름, 시간, 팔로우 버튼, 더보기 버튼 */}
                 <div className={styles.infoWrapper}>
                     {/** 유저 이름 */}
-                    {profileLink && !disableProfileInteraction ? (
-                        <button
-                            type="button"
-                            onClick={handleProfileClick}
-                            className={styles.userName}
-                        >
-                            {is_anonymous ? '익명' : (author?.name || '알 수 없음')}
-                        </button>
-                    ) : (
-                        <p className={styles.userName}>
-                            {is_anonymous ? '익명' : (author?.name || '알 수 없음')}
-                        </p>
-                    )}
+                    <p className={styles.userName}>
+                        {is_anonymous ? '익명' : (author?.name || '알 수 없음')}
+                    </p>
                     {/** 시간 */}
                     <time className={styles.time}>{formatDateKrWithTime(created_at)}</time>
-                    {/** 팔로우 버튼, 더보기 버튼 (클릭 시 상세 이동 방지) */}
-                    <div className={styles.moreButtonWrapper} onClick={(e) => e.stopPropagation()}>
-                        <MoreButton
-                            type="post"
-                            isAuthor={isMyPost}
-                            onOpenMenu={postType === 'council' ? openCouncilMoreMenu : openFeedMoreMenu}
-                        />
+                    {/** 팔로우 버튼, 더보기 버튼 */}
+                    <div className={styles.moreButtonWrapper}>
+                        <MoreButton />
                     </div>
                 </div>
                 {/** 중앙: 이미지/본문 영역 */}
@@ -164,7 +97,7 @@ function PostCard({ post, detailHref, disableProfileInteraction = false, postTyp
                 />
 
                 {/** 좋아요 버튼, 댓글 버튼 */}
-                <footer className={cn(styles.footerWrapper, image_urls && image_urls.length > 0 && '-mt-2.5')}>
+                <footer className={styles.footerWrapper}>
                     {/** 좋아요 버튼 */}
                     <div className={styles.footerButton}>
                         <Icon name='IconMBoldHeart' />
@@ -176,8 +109,8 @@ function PostCard({ post, detailHref, disableProfileInteraction = false, postTyp
                         <span className={styles.footerButtonText}>{comment_count}</span>
                     </div>
                 </footer>
-            </Link>
-        </div>
+            </div>
+        </Link>
     );
 }
 
@@ -206,7 +139,6 @@ const styles = {
     userName: cn(
         'title-16',
         'text-grey-11',
-        'hover:underline',
     ),
     time: cn(
         'font-caption-caption4 text-gray-8',
@@ -215,7 +147,8 @@ const styles = {
         'mt-1 gap-3',
     ),
     footerWrapper: cn(
-        'flex flex-row items-center gap-2.5 justify-end mt-2',
+        'flex flex-row items-center gap-2.5 justify-end',
+        '-mt-2.5',
     ),
     footerButton: cn(
         'flex flex-row items-center gap-1',

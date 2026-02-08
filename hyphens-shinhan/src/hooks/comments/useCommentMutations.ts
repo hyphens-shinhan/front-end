@@ -13,21 +13,12 @@ export const useCreateComment = () => {
     mutationFn: ({ postId, data }: { postId: string; data: CommentCreate }) =>
       CommentService.createComment(postId, data),
     onSuccess: (_, { postId }) => {
-      // 댓글 목록 무효화
       queryClient.invalidateQueries({
         queryKey: ['comments', 'list', postId],
       })
-      // 피드 게시글 상세(comment_count) 갱신 → PostInteraction 댓글 수 실시간 반영
+      // 게시글 상세(comment_count) 갱신 → PostInteraction 댓글 수 실시간 반영
       queryClient.invalidateQueries({
         queryKey: postKeys.detail(postId),
-      })
-      // 자치회 리포트 상세 및 목록 무효화
-      queryClient.invalidateQueries({
-        queryKey: [...postKeys.all, 'council', postId],
-      })
-      // 자치회 리포트 목록 무효화 (모든 limit/offset 조합)
-      queryClient.invalidateQueries({
-        queryKey: [...postKeys.lists(), 'council'],
       })
     },
   })
@@ -55,14 +46,6 @@ export const useUpdateComment = () => {
       queryClient.invalidateQueries({
         queryKey: ['comments', 'list', postId],
       })
-      // 자치회 리포트 상세 및 목록 무효화
-      queryClient.invalidateQueries({
-        queryKey: [...postKeys.all, 'council', postId],
-      })
-      // 자치회 리포트 목록 무효화 (모든 limit/offset 조합)
-      queryClient.invalidateQueries({
-        queryKey: [...postKeys.lists(), 'council'],
-      })
     },
   })
 }
@@ -84,17 +67,9 @@ export const useDeleteComment = () => {
       queryClient.invalidateQueries({
         queryKey: ['comments', 'list', postId],
       })
-      // 피드 게시글 상세(comment_count) 갱신
+      // 게시글 상세(comment_count) 갱신
       queryClient.invalidateQueries({
         queryKey: postKeys.detail(postId),
-      })
-      // 자치회 리포트 상세 및 목록 무효화
-      queryClient.invalidateQueries({
-        queryKey: [...postKeys.all, 'council', postId],
-      })
-      // 자치회 리포트 목록 무효화 (모든 limit/offset 조합)
-      queryClient.invalidateQueries({
-        queryKey: [...postKeys.lists(), 'council'],
       })
     },
   })

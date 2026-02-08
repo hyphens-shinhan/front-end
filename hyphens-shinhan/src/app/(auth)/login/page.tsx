@@ -11,7 +11,6 @@ export default function LoginPage() {
 
     const handleLogin = (e: React.FormEvent) => {
         e.preventDefault();
-        if (loginMutation.isPending) return;
         loginMutation.mutate({ email, password });
     };
 

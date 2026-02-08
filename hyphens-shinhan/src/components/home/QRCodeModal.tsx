@@ -4,7 +4,8 @@ import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
-import { QRCodeSVG } from 'qrcode.react';
+import { toPng } from 'html-to-image';
+import { QRCodeCanvas, QRCodeSVG } from 'qrcode.react';
 import jsQR from 'jsqr';
 import { cn } from '@/utils/cn';
 import { Icon } from '../common/Icon';
@@ -43,8 +44,38 @@ export default function QRCodeModal({
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const qrDownloadWrapRef = useRef<HTMLDivElement>(null);
+  const cardForDownloadRef = useRef<HTMLDivElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const scanLoopRef = useRef<number | null>(null);
+
+  const handleDownloadQR = async () => {
+    const node = cardForDownloadRef.current;
+    if (!node || !qrValue) return;
+    try {
+      const dataUrl = await toPng(node, {
+        pixelRatio: 2,
+        backgroundColor: '#ffffff',
+        cacheBust: true,
+      });
+      const a = document.createElement('a');
+      a.href = dataUrl;
+      a.download = 'qr-code-card.png';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } catch {
+      const qrCanvas = qrDownloadWrapRef.current?.querySelector<HTMLCanvasElement>('canvas');
+      if (qrCanvas) {
+        const a = document.createElement('a');
+        a.href = qrCanvas.toDataURL('image/png');
+        a.download = 'qr-code.png';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      }
+    }
+  };
 
   useEffect(() => {
     if (!isOpen) return;
@@ -194,120 +225,158 @@ export default function QRCodeModal({
   };
 
   const modalContent = (
-    <AnimatePresence>
-      {isOpen && (
-        <motion.div
-          key="qr-modal-overlay"
-          className={styles.overlay}
-          style={{ perspective: 1200 }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
-          onClick={handleOverlayClick}
-          role="dialog"
-          aria-modal="true"
-          aria-label={viewMode === 'scan' ? 'QR 코드 스캔' : 'QR 코드'}
-        >
-          <motion.div
-            className={styles.card}
-            style={{ transformStyle: 'preserve-3d' }}
-            initial={{ rotateY: -90, opacity: 0, scale: 0.9 }}
-            animate={{ rotateY: 0, opacity: 1, scale: 1 }}
-            exit={{ rotateY: 90, opacity: 0, scale: 0.9 }}
-            transition={{ type: 'spring', stiffness: 200, damping: 22 }}
-            onClick={(e) => e.stopPropagation()}
-          >
+    <>
+      {/** 다운로드용 카드 (숨김, QR만 · 가운데 이미지 없음) */}
+      {isOpen && viewMode === 'qr' && (
+        <div className={styles.cardForDownloadWrap} aria-hidden>
+          <div ref={cardForDownloadRef} className={styles.card}>
             <div className={styles.header}>
-              <h2 className={styles.title}>
-                {viewMode === 'scan' ? 'QR 코드 스캔' : 'QR 코드'}
-              </h2>
-              <button
-                type="button"
-                onClick={handleClose}
-                className={styles.closeButton}
-                aria-label="닫기"
-              >
-                <Icon name="IconLLineClose" size={20} />
-              </button>
+              <h2 className={styles.title}>QR 코드</h2>
             </div>
-
-            {/** QR 보기 vs 카메라 스캔 (같은 자리) */}
             <div className={styles.qrWrapper}>
-              {viewMode === 'qr' ? (
-                <>
-                  <QRCodeSVG
-                    value={qrValue}
-                    size={172}
-                    level="M"
-                    className={styles.qrSvg}
-                    fgColor="#0046FF"
-                    bgColor="#FFFFFF"
-                  />
-                  <div className={styles.centerImageWrapper}>
-                    <Image
-                      src={shinhanCharacter}
-                      alt="신한 캐릭터"
-                      className={styles.centerImage}
-                    />
-                  </div>
-                </>
-              ) : (
-                <>
-                  <video
-                    ref={videoRef}
-                    className={styles.scanVideo}
-                    muted
-                    playsInline
-                  />
-                  <canvas ref={canvasRef} className="absolute w-0 h-0 overflow-hidden" aria-hidden />
-                  {scanError && (
-                    <p className={styles.scanError}>{scanError}</p>
-                  )}
-                </>
-              )}
+              <QRCodeSVG
+                value={qrValue}
+                size={172}
+                level="M"
+                className={styles.qrSvg}
+                fgColor="#0046FF"
+                bgColor="#FFFFFF"
+              />
             </div>
-
             <p className={styles.caption}>
-              {viewMode === 'scan'
-                ? '다른 사람의 QR 코드를 화면에 맞춰 주세요'
-                : '프로필 정보를 보려면 이 QR 코드를 스캔하세요'}
+              프로필 정보를 보려면 이 QR 코드를 스캔하세요
             </p>
-
-            <div className={styles.buttons}>
-              {viewMode === 'scan' ? (
+          </div>
+        </div>
+      )}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            key="qr-modal-overlay"
+            className={styles.overlay}
+            style={{ perspective: 1200 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            onClick={handleOverlayClick}
+            role="dialog"
+            aria-modal="true"
+            aria-label={viewMode === 'scan' ? 'QR 코드 스캔' : 'QR 코드'}
+          >
+            <motion.div
+              className={styles.card}
+              style={{ transformStyle: 'preserve-3d' }}
+              initial={{ rotateY: -90, opacity: 0, scale: 0.9 }}
+              animate={{ rotateY: 0, opacity: 1, scale: 1 }}
+              exit={{ rotateY: 90, opacity: 0, scale: 0.9 }}
+              transition={{ type: 'spring', stiffness: 200, damping: 22 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className={styles.header}>
+                <h2 className={styles.title}>
+                  {viewMode === 'scan' ? 'QR 코드 스캔' : 'QR 코드'}
+                </h2>
                 <button
                   type="button"
-                  className={styles.scanButton}
-                  onClick={() => { setViewMode('qr'); setScanError(null); }}
+                  onClick={handleClose}
+                  className={styles.closeButton}
+                  aria-label="닫기"
                 >
-                  QR 코드 보기
+                  <Icon name="IconLLineClose" size={20} />
                 </button>
-              ) : (
-                <>
-                  <button type="button" className={styles.downloadButton} onClick={onClose}>
-                    QR 코드 다운로드
-                  </button>
+              </div>
+
+              {/** QR 보기 vs 카메라 스캔 (같은 자리) */}
+              <div className={styles.qrWrapper}>
+                {viewMode === 'qr' ? (
+                  <>
+                    <QRCodeSVG
+                      value={qrValue}
+                      size={172}
+                      level="M"
+                      className={styles.qrSvg}
+                      fgColor="#0046FF"
+                      bgColor="#FFFFFF"
+                    />
+                    {/** 다운로드용 숨김 캔버스 (동일 QR, 고해상도) */}
+                    <div ref={qrDownloadWrapRef} className={styles.qrDownloadCanvasWrap} aria-hidden>
+                      <QRCodeCanvas
+                        value={qrValue}
+                        size={256}
+                        level="M"
+                        fgColor="#0046FF"
+                        bgColor="#FFFFFF"
+                      />
+                    </div>
+                    <div className={styles.centerImageWrapper}>
+                      <Image
+                        src={shinhanCharacter}
+                        alt="신한 캐릭터"
+                        className={styles.centerImage}
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <video
+                      ref={videoRef}
+                      className={styles.scanVideo}
+                      muted
+                      playsInline
+                    />
+                    <canvas ref={canvasRef} className="absolute w-0 h-0 overflow-hidden" aria-hidden />
+                    {scanError && (
+                      <p className={styles.scanError}>{scanError}</p>
+                    )}
+                  </>
+                )}
+              </div>
+
+              <p className={styles.caption}>
+                {viewMode === 'scan'
+                  ? '다른 사람의 QR 코드를 화면에 맞춰 주세요'
+                  : '프로필 정보를 보려면 이 QR 코드를 스캔하세요'}
+              </p>
+
+              <div className={styles.buttons}>
+                {viewMode === 'scan' ? (
                   <button
                     type="button"
                     className={styles.scanButton}
-                    onClick={() => setViewMode('scan')}
+                    onClick={() => { setViewMode('qr'); setScanError(null); }}
                   >
-                    QR 코드 스캔
+                    QR 코드 보기
                   </button>
-                </>
-              )}
-            </div>
+                ) : (
+                  <>
+                    <button type="button" className={styles.downloadButton} onClick={handleDownloadQR}>
+                      QR 코드 다운로드
+                    </button>
+                    <button
+                      type="button"
+                      className={styles.scanButton}
+                      onClick={() => setViewMode('scan')}
+                    >
+                      QR 코드 스캔
+                    </button>
+                  </>
+                )}
+              </div>
+            </motion.div>
           </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+        )}
+      </AnimatePresence>
+    </>
   );
 
   return createPortal(modalContent, document.body);
 }
 
 const styles = {
+  cardForDownloadWrap: cn(
+    'fixed left-0 top-0 z-[-1] opacity-0 pointer-events-none',
+  ),
   overlay: cn(
     'fixed inset-0 z-50 flex items-center justify-center',
     'bg-black/50',
@@ -327,6 +396,9 @@ const styles = {
   qrWrapper: cn(
     'relative flex items-center justify-center overflow-hidden rounded-[9px]',
     'w-[242px] h-[220px] mx-auto mb-4',
+  ),
+  qrDownloadCanvasWrap: cn(
+    'absolute w-0 h-0 overflow-hidden opacity-0 pointer-events-none',
   ),
   qrSvg: cn(
     'rounded-[9px]',
@@ -351,10 +423,10 @@ const styles = {
   ),
   downloadButton: cn(
     'flex-1 py-3 rounded-[12px] border border-grey-2',
-    'font-caption-caption3 text-grey-11',
+    'font-caption-caption3 text-grey-11 active:bg-grey-2 active:text-grey-11',
   ),
   scanButton: cn(
     'flex-1 py-3 rounded-[12px] bg-primary-shinhanblue',
-    'font-caption-caption3 text-white',
+    'font-caption-caption3 text-white active:bg-primary-dark active:text-white',
   ),
 };

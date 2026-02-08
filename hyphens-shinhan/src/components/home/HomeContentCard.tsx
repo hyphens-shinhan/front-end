@@ -8,6 +8,7 @@ import ShortcutMenuList from '@/components/home/ShortcutMenuList';
 import { useScholarshipEligibility } from '@/hooks/user/useUser';
 import type { ScholarshipEligibilityResponse } from '@/types';
 import { cn } from '@/utils/cn';
+import RecommendedContent from './RecommendedContent';
 
 /** 유지 심사 표시용 목표값 (API에 없을 때 UI 기본값) */
 const DISPLAY_TARGETS = {
@@ -108,6 +109,7 @@ export default function HomeContentCard({
       />
       <div className={styles.summaryWrap}>
         <MaintenanceReviewSummary items={summaryItems} />
+        <RecommendedContent />
       </div>
     </div>
   );

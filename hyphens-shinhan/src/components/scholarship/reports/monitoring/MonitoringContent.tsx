@@ -3,7 +3,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import MonitoringGoalHeader from './MonitoringGoalHeader'
 import MonitoringGoalItem from './MonitoringGoalItem'
+import MonitoringGoalsSummary from './MonitoringGoalsSummary'
 import MonitoringPeriodNotice from './MonitoringPeriodNotice'
+import ReportTitle from '../ReportTitle'
 import type { ReportMonth } from '@/services/reports'
 import MonitoringEvidenceUpload from './MonitoringEvidenceUpload'
 import BottomFixedButton from '@/components/common/BottomFixedButton'
@@ -55,6 +57,7 @@ export default function MonitoringContent({
 
   const [goals, setGoals] = useState<GoalCreate[]>([{ ...INITIAL_GOAL }, { ...INITIAL_GOAL }])
   const [evidenceUrls, setEvidenceUrls] = useState<string[]>([])
+  const [showGoalsSummary, setShowGoalsSummary] = useState(false)
 
   useEffect(() => {
     if (!lookupSuccess || !report) return
@@ -66,6 +69,7 @@ export default function MonitoringContent({
       )
     }
     setEvidenceUrls(report.evidence_urls ?? [])
+    setShowGoalsSummary(!!report.id && report.goals?.length > 0)
   }, [lookupSuccess, report?.id])
 
   const periodLabel = useMemo(
@@ -100,6 +104,7 @@ export default function MonitoringContent({
     }
     if (report && !isSubmitted) {
       await updateReport.mutateAsync({ reportId: report.id, body })
+      setShowGoalsSummary(true)
     } else if (!report) {
       await createReport.mutateAsync({
         year,
@@ -107,6 +112,7 @@ export default function MonitoringContent({
         goals,
         evidence_urls: body.evidence_urls,
       })
+      setShowGoalsSummary(true)
     }
   }
 
@@ -132,23 +138,43 @@ export default function MonitoringContent({
         periodRange={periodRange}
       />
 
-      <MonitoringGoalHeader
-        onAddGoal={handleAddGoal}
-        isChecked={isGoalsChecked}
-      />
-
-      <div className="flex flex-col">
-        {goals.map((goal, index) => (
-          <MonitoringGoalItem
-            key={index}
-            goalIndex={index + 1}
-            goal={goal}
-            onGoalChange={(next) => handleGoalChange(index, next)}
-            onRemove={() => handleRemoveGoal(index)}
-            canRemove={goals.length > 2}
+      {showGoalsSummary ? (
+        <>
+          <div className="px-4 py-2">
+            <ReportTitle title="학습 목표" className="py-0" />
+          </div>
+          <div className="px-4">
+            <MonitoringGoalsSummary
+              goals={goals}
+              onAchievementChange={(goalIndex, achievementPct) =>
+                handleGoalChange(goalIndex, {
+                  ...goals[goalIndex],
+                  achievement_pct: achievementPct,
+                })
+              }
+            />
+          </div>
+        </>
+      ) : (
+        <>
+          <MonitoringGoalHeader
+            onAddGoal={handleAddGoal}
+            isChecked={isGoalsChecked}
           />
-        ))}
-      </div>
+          <div className="flex flex-col">
+            {goals.map((goal, index) => (
+              <MonitoringGoalItem
+                key={index}
+                goalIndex={index + 1}
+                goal={goal}
+                onGoalChange={(next) => handleGoalChange(index, next)}
+                onRemove={() => handleRemoveGoal(index)}
+                canRemove={goals.length > 2}
+              />
+            ))}
+          </div>
+        </>
+      )}
 
       <MonitoringEvidenceUpload
         evidenceUrls={evidenceUrls}

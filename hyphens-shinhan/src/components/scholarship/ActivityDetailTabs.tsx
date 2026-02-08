@@ -84,5 +84,5 @@ export default function ActivityDetailTabs({
 const styles = {
   container: cn('flex flex-col h-full'),
   tabRow: cn('flex flex-row gap-[6px] px-4 py-2'),
-  content: cn('flex-1 overflow-y-auto'),
+  content: cn('flex-1 overflow-y-auto scrollbar-hide'),
 }

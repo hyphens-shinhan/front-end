@@ -16,7 +16,10 @@ export const useCreateAcademicReport = () => {
   return useMutation({
     mutationFn: (body: AcademicReportCreate) =>
       AcademicService.createReport(body),
-    onSuccess: () => {
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: academicKeys.reportLookup(data.year, data.month),
+      })
       queryClient.invalidateQueries({ queryKey: academicKeys.reports() })
       queryClient.invalidateQueries({ queryKey: academicKeys.all })
     },

@@ -65,8 +65,8 @@ export type {
   ActivitiesSummaryResponse,
 } from './activities'
 
-// MARK: - 공통 (Mandatory / Academic 등에서 공통 사용)
-export type { ActivityStatusType, AcademicGoalCategory } from './common'
+// MARK: - 공통 (Mandatory 등에서 공통 사용, AcademicGoalCategory는 academic에서 export)
+export type { ActivityStatusType } from './common'
 
 // MARK: - Mandatory (필수 활동) API 타입
 export type {
@@ -84,7 +84,8 @@ export type {
   MandatoryActivitiesForYearResponse,
 } from './mandatory'
 
-// MARK: - Academic (월별 학업 보고서/모니터링) API 타입
+// MARK: - Academic (유지 심사/월별 학업 보고서) API 타입
+export { AcademicGoalCategory } from './academic'
 export type {
   GoalCreate,
   GoalResponse,
@@ -93,9 +94,10 @@ export type {
   AcademicReportResponse,
   AcademicReportListResponse,
   AcademicReportLookupResponse,
-  AcademicMonitoringEnableResponse,
-  AcademicMonitoringDisableResponse,
-  AcademicMonitoringYearsResponse,
+  MonitoringEnableResponse,
+  MonitoringDisableResponse,
+  UserMonitoringYearsResponse,
+  AcademicApi,
 } from './academic'
 
 // MARK: - Reports (활동 보고서) API 타입

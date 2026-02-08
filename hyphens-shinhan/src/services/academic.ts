@@ -5,39 +5,108 @@ import type {
   AcademicReportResponse,
   AcademicReportListResponse,
   AcademicReportLookupResponse,
-  AcademicMonitoringEnableResponse,
-  AcademicMonitoringDisableResponse,
-  AcademicMonitoringYearsResponse,
+  MonitoringEnableResponse,
+  MonitoringDisableResponse,
+  UserMonitoringYearsResponse,
 } from '@/types/academic'
 
-const BASE = '/reports/academic'
+const BASE = '/reports/academic' as const
 
 /**
- * Academic(월별 학업 보고서) API 서비스
+ * 유지 심사(학업 보고) API 엔드포인트 경로 빌더
+ * - baseURL 기준 상대 경로 (예: /api/v1 은 baseURL에 포함)
+ */
+export const academicEndpoints = {
+  /** POST - 학업 보고서 생성 */
+  createReport: () => BASE,
+
+  /** GET - 내 학업 보고서 목록 (year?, limit?, offset?) */
+  listMyReports: (params?: {
+    year?: number
+    limit?: number
+    offset?: number
+  }) => {
+    const search = new URLSearchParams()
+    if (params?.year != null) search.set('year', String(params.year))
+    if (params?.limit != null) search.set('limit', String(params.limit))
+    if (params?.offset != null) search.set('offset', String(params.offset))
+    const q = search.toString()
+    return q ? `${BASE}?${q}` : BASE
+  },
+
+  /** GET - 특정 연/월 보고서 조회 */
+  getReportByYearMonth: (year: number, month: number) =>
+    `${BASE}/${year}/${month}`,
+
+  /** PATCH - 학업 보고서 수정 (제출 전만) */
+  updateReport: (reportId: string) => `${BASE}/${reportId}`,
+
+  /** POST - 학업 보고서 제출 (확정, 취소 불가) */
+  submitReport: (reportId: string) => `${BASE}/${reportId}/submit`,
+
+  // --- Admin ---
+  /** POST - 특정 유저 특정 연도 유지 심사(학업 모니터링) 활성화 */
+  enableMonitoring: (userId: string, year: number) =>
+    `${BASE}/admin/users/${userId}/monitoring/${year}`,
+
+  /** DELETE - 유지 심사(학업 모니터링) 비활성화 */
+  disableMonitoring: (userId: string, year: number) =>
+    `${BASE}/admin/users/${userId}/monitoring/${year}`,
+
+  /** GET - 특정 유저의 모니터링 대상 연도 목록 */
+  getUserMonitoringYears: (userId: string) =>
+    `${BASE}/admin/users/${userId}/monitoring`,
+
+  /** GET - 특정 유저의 학업 보고서 목록 (Admin) */
+  listUserReports: (
+    userId: string,
+    params?: { limit?: number; offset?: number }
+  ) => {
+    const search = new URLSearchParams()
+    if (params?.limit != null) search.set('limit', String(params.limit))
+    if (params?.offset != null) search.set('offset', String(params.offset))
+    const q = search.toString()
+    return q
+      ? `${BASE}/admin/users/${userId}?${q}`
+      : `${BASE}/admin/users/${userId}`
+  },
+}
+
+/**
+ * Academic(월별 학업 보고서 / 유지 심사) API 서비스
  *
  * 엔드포인트 ↔ 타입 매핑:
- * POST   /api/v1/reports/academic                              → AcademicReportCreate  → AcademicReportResponse
- * GET    /api/v1/reports/academic                              → AcademicReportListResponse
- * GET    /api/v1/reports/academic/{year}/{month}                → AcademicReportLookupResponse
- * PATCH  /api/v1/reports/academic/{report_id}                  → AcademicReportUpdate  → AcademicReportResponse
- * POST   /api/v1/reports/academic/{report_id}/submit           → AcademicReportResponse
- * POST   .../admin/users/{user_id}/monitoring/{year}           → AcademicMonitoringEnableResponse
- * DELETE .../admin/users/{user_id}/monitoring/{year}           → AcademicMonitoringDisableResponse
- * GET    .../admin/users/{user_id}/monitoring                  → AcademicMonitoringYearsResponse
- * GET    .../admin/users/{user_id}                             → AcademicReportListResponse
+ * POST   /reports/academic                              → AcademicReportCreate  → AcademicReportResponse
+ * GET    /reports/academic                              → AcademicReportListResponse
+ * GET    /reports/academic/{year}/{month}                → AcademicReportLookupResponse
+ * PATCH  /reports/academic/{report_id}                  → AcademicReportUpdate → AcademicReportResponse
+ * POST   /reports/academic/{report_id}/submit            → AcademicReportResponse
+ * POST   .../admin/users/{user_id}/monitoring/{year}     → MonitoringEnableResponse
+ * DELETE .../admin/users/{user_id}/monitoring/{year}     → MonitoringDisableResponse
+ * GET    .../admin/users/{user_id}/monitoring            → UserMonitoringYearsResponse
+ * GET    .../admin/users/{user_id}                       → AcademicReportListResponse
  */
 export const AcademicService = {
   /** 월별 학업 보고서 생성 */
   createReport: async (
     body: AcademicReportCreate
   ): Promise<AcademicReportResponse> => {
-    const { data } = await apiClient.post<AcademicReportResponse>(BASE, body)
+    const { data } = await apiClient.post<AcademicReportResponse>(
+      academicEndpoints.createReport(),
+      body
+    )
     return data
   },
 
-  /** 월별 학업 보고서 목록 (내 보고서) */
-  getReports: async (): Promise<AcademicReportListResponse> => {
-    const { data } = await apiClient.get<AcademicReportListResponse>(BASE)
+  /** 월별 학업 보고서 목록 (내 보고서). year, limit, offset 선택 */
+  getReports: async (params?: {
+    year?: number
+    limit?: number
+    offset?: number
+  }): Promise<AcademicReportListResponse> => {
+    const { data } = await apiClient.get<AcademicReportListResponse>(
+      academicEndpoints.listMyReports(params)
+    )
     return data
   },
 
@@ -47,7 +116,7 @@ export const AcademicService = {
     month: number
   ): Promise<AcademicReportLookupResponse> => {
     const { data } = await apiClient.get<AcademicReportLookupResponse>(
-      `${BASE}/${year}/${month}`
+      academicEndpoints.getReportByYearMonth(year, month)
     )
     return data
   },
@@ -58,7 +127,7 @@ export const AcademicService = {
     body: AcademicReportUpdate
   ): Promise<AcademicReportResponse> => {
     const { data } = await apiClient.patch<AcademicReportResponse>(
-      `${BASE}/${reportId}`,
+      academicEndpoints.updateReport(reportId),
       body
     )
     return data
@@ -69,7 +138,7 @@ export const AcademicService = {
     reportId: string
   ): Promise<AcademicReportResponse> => {
     const { data } = await apiClient.post<AcademicReportResponse>(
-      `${BASE}/${reportId}/submit`
+      academicEndpoints.submitReport(reportId)
     )
     return data
   },
@@ -80,9 +149,9 @@ export const AcademicService = {
   adminEnableMonitoring: async (
     userId: string,
     year: number
-  ): Promise<AcademicMonitoringEnableResponse> => {
-    const { data } = await apiClient.post<AcademicMonitoringEnableResponse>(
-      `${BASE}/admin/users/${userId}/monitoring/${year}`
+  ): Promise<MonitoringEnableResponse> => {
+    const { data } = await apiClient.post<MonitoringEnableResponse>(
+      academicEndpoints.enableMonitoring(userId, year)
     )
     return data
   },
@@ -91,9 +160,9 @@ export const AcademicService = {
   adminDisableMonitoring: async (
     userId: string,
     year: number
-  ): Promise<AcademicMonitoringDisableResponse> => {
-    const { data } = await apiClient.delete<AcademicMonitoringDisableResponse>(
-      `${BASE}/admin/users/${userId}/monitoring/${year}`
+  ): Promise<MonitoringDisableResponse> => {
+    const { data } = await apiClient.delete<MonitoringDisableResponse>(
+      academicEndpoints.disableMonitoring(userId, year)
     )
     return data
   },
@@ -101,19 +170,20 @@ export const AcademicService = {
   /** [Admin] 특정 사용자의 모니터링 대상 연도 목록 */
   adminGetMonitoringYears: async (
     userId: string
-  ): Promise<AcademicMonitoringYearsResponse> => {
-    const { data } = await apiClient.get<AcademicMonitoringYearsResponse>(
-      `${BASE}/admin/users/${userId}/monitoring`
+  ): Promise<UserMonitoringYearsResponse> => {
+    const { data } = await apiClient.get<UserMonitoringYearsResponse>(
+      academicEndpoints.getUserMonitoringYears(userId)
     )
     return data
   },
 
-  /** [Admin] 특정 사용자의 월별 학업 보고서 목록 */
+  /** [Admin] 특정 사용자의 월별 학업 보고서 목록. limit, offset 선택 */
   adminGetUserReports: async (
-    userId: string
+    userId: string,
+    params?: { limit?: number; offset?: number }
   ): Promise<AcademicReportListResponse> => {
     const { data } = await apiClient.get<AcademicReportListResponse>(
-      `${BASE}/admin/users/${userId}`
+      academicEndpoints.listUserReports(userId, params)
     )
     return data
   },

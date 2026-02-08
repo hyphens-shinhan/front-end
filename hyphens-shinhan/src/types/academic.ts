@@ -1,53 +1,52 @@
 /**
- * Academic(월별 학업) API 타입
- * - 서버 API 요청/응답과 동일한 구조로 유지
+ * 유지 심사(학업 보고) API 타입
+ * Base: /api/v1/reports/academic
+ * 서버: app/schemas/academic.py
  */
 
-import type { AcademicGoalCategory } from './common'
+// --- 목표 카테고리 (MAJOR_REVIEW = 유지 심사 관련) ---
+export const AcademicGoalCategory = {
+  MAJOR_REVIEW: 'MAJOR_REVIEW',
+  ENGLISH_STUDY: 'ENGLISH_STUDY',
+  CERTIFICATION_PREP: 'CERTIFICATION_PREP',
+  STUDY_GROUP: 'STUDY_GROUP',
+  ASSIGNMENT_EXAM_PREP: 'ASSIGNMENT_EXAM_PREP',
+  OTHER: 'OTHER',
+} as const
+export type AcademicGoalCategory =
+  (typeof AcademicGoalCategory)[keyof typeof AcademicGoalCategory]
 
-/** @see common.AcademicGoalCategory (re-export for academic 사용처) */
-export type { AcademicGoalCategory } from './common'
-
-// ========== Goal (월별 학업 목표) ==========
-
-/** 학업 목표 1건 생성/수정 (월별 보고서 내 목표 항목) */
+// --- 요청 ---
 export interface GoalCreate {
   category: AcademicGoalCategory
   custom_category?: string | null
   content: string
-  /** 달성률 0–100, 선택 */
-  achievement_pct?: number | null
+  achievement_pct?: number | null // 0~100
 }
 
-/** 학업 목표 1건 응답 */
-export interface GoalResponse {
-  id: string
-  category: AcademicGoalCategory
-  custom_category?: string | null
-  content: string
-  achievement_pct: number | null
-}
-
-// ========== Report 생성/수정 ==========
-
-/** 월별 학업 보고서 생성 요청 (목표 최소 2개) */
+/** POST /reports/academic - 학업 보고서 생성 */
 export interface AcademicReportCreate {
   year: number
-  month: number // 1–12
+  month: number // 1~12
   goals: GoalCreate[] // 최소 2개
-  /** 증빙 자료 URL 목록 */
   evidence_urls?: string[] | null
 }
 
-/** 월별 학업 보고서 수정 요청 (목표 최소 2개) */
+/** PATCH /reports/academic/{report_id} - 학업 보고서 수정 (제출 전만) */
 export interface AcademicReportUpdate {
   goals: GoalCreate[] // 최소 2개
   evidence_urls?: string[] | null
 }
 
-// ========== Report 응답 ==========
+// --- 응답 ---
+export interface GoalResponse {
+  id: string
+  category: AcademicGoalCategory
+  custom_category?: string | null
+  content: string
+  achievement_pct?: number | null
+}
 
-/** 월별 학업 보고서 단건 응답 */
 export interface AcademicReportResponse {
   id: string
   user_id: string
@@ -55,41 +54,104 @@ export interface AcademicReportResponse {
   month: number
   is_submitted: boolean
   created_at: string // ISO datetime
-  submitted_at: string | null
+  submitted_at: string | null // ISO datetime
   evidence_urls: string[] | null
   goals: GoalResponse[]
 }
 
-/** 월별 학업 보고서 목록 응답 (페이지네이션 등) */
+/** GET /reports/academic - 내 보고서 목록 */
 export interface AcademicReportListResponse {
   reports: AcademicReportResponse[]
   total: number
 }
 
-/** 특정 연·월 보고서 조회 시 사용 (있으면 report, 없으면 exists false) */
+/** GET /reports/academic/{year}/{month} - 연/월 조회 */
 export interface AcademicReportLookupResponse {
   exists: boolean
   report: AcademicReportResponse | null
 }
 
-// ========== Admin: Monitoring ==========
-
-/** [Admin] 특정 사용자·연도 학업 모니터링 활성화 시 응답 */
-export interface AcademicMonitoringEnableResponse {
+// --- Admin: 유지 심사 대상 설정 ---
+export interface MonitoringEnableResponse {
   user_id: string
   year: number
-  enabled: true
+  enabled: boolean
 }
 
-/** [Admin] 특정 사용자·연도 학업 모니터링 비활성화 시 응답 */
-export interface AcademicMonitoringDisableResponse {
+export interface MonitoringDisableResponse {
   user_id: string
   year: number
-  enabled: false
+  enabled: boolean
 }
 
-/** [Admin] 특정 사용자의 모니터링 대상 연도 목록 */
-export interface AcademicMonitoringYearsResponse {
+export interface UserMonitoringYearsResponse {
   user_id: string
   years: number[]
+}
+
+// --- API 타입 매핑 (선택) ---
+export type AcademicApi = {
+  createReport: {
+    method: 'POST'
+    path: () => string
+    response: AcademicReportResponse
+    body: AcademicReportCreate
+  }
+  listMyReports: {
+    method: 'GET'
+    path: (params?: {
+      year?: number
+      limit?: number
+      offset?: number
+    }) => string
+    response: AcademicReportListResponse
+    query?: { year?: number; limit?: number; offset?: number }
+  }
+  getReportByYearMonth: {
+    method: 'GET'
+    path: (year: number, month: number) => string
+    response: AcademicReportLookupResponse
+    params: { year: number; month: number }
+  }
+  updateReport: {
+    method: 'PATCH'
+    path: (reportId: string) => string
+    response: AcademicReportResponse
+    body: AcademicReportUpdate
+    params: { reportId: string }
+  }
+  submitReport: {
+    method: 'POST'
+    path: (reportId: string) => string
+    response: AcademicReportResponse
+    params: { reportId: string }
+  }
+  enableMonitoring: {
+    method: 'POST'
+    path: (userId: string, year: number) => string
+    response: MonitoringEnableResponse
+    params: { userId: string; year: number }
+  }
+  disableMonitoring: {
+    method: 'DELETE'
+    path: (userId: string, year: number) => string
+    response: MonitoringDisableResponse
+    params: { userId: string; year: number }
+  }
+  getUserMonitoringYears: {
+    method: 'GET'
+    path: (userId: string) => string
+    response: UserMonitoringYearsResponse
+    params: { userId: string }
+  }
+  listUserReports: {
+    method: 'GET'
+    path: (
+      userId: string,
+      params?: { limit?: number; offset?: number }
+    ) => string
+    response: AcademicReportListResponse
+    params: { userId: string }
+    query?: { limit?: number; offset?: number }
+  }
 }

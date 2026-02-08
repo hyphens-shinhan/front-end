@@ -2,6 +2,8 @@
 
 import { useRouter, useSearchParams } from 'next/navigation';
 import Tab from '@/components/common/Tab';
+import { useScholarshipEligibility } from '@/hooks/user/useUser';
+import { getMaintenanceReviewProgress } from '@/utils/maintenanceReview';
 import { cn } from '@/utils/cn';
 import MaintenanceReviewProgress from './MaintenanceReviewProgress';
 import MaintenanceTabAll from './MaintenanceTabAll';
@@ -30,6 +32,13 @@ const TAB_ORDER: MaintenanceTabValue[] = [
 export default function MaintenanceReviewTabs() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { data: eligibility } = useScholarshipEligibility();
+  const progress = getMaintenanceReviewProgress(eligibility);
+  const yearLabel =
+    eligibility?.current_year != null
+      ? `${eligibility.current_year} 장학금`
+      : '2025 장학금';
+
   const tabFromUrl = searchParams.get('tab') as MaintenanceTabValue | null;
   const activeTab =
     TAB_ORDER.includes(tabFromUrl as MaintenanceTabValue)
@@ -44,13 +53,8 @@ export default function MaintenanceReviewTabs() {
 
   return (
     <div className={styles.container}>
-      {/** 유지심사 진행률 */}
-      <MaintenanceReviewProgress
-        yearLabel="2025 장학금"
-        tagLabel="유의 필요"
-        progress={60}
-        noticeMessage="장학금 유지 위험! 조금만 더 신경써주세요."
-      />
+      {/** 유지심사 진행률 (구간별 태그·문구는 컴포넌트 내부 데이터 사용) */}
+      <MaintenanceReviewProgress yearLabel={yearLabel} progress={progress} />
 
       <div className={styles.tabRow}>
         {TAB_ORDER.map((tab) => (

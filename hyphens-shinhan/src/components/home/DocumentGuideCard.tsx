@@ -3,6 +3,8 @@
 import { motion } from 'framer-motion';
 import Button from '@/components/common/Button';
 import { cn } from '@/utils/cn';
+import { ROUTES } from '@/constants';
+import { useRouter } from 'next/navigation';
 
 /** 하트 + 좌우 물결 한 줄 경로 (선으로 그리기용, 좌물결 → 하트 → 우물결) */
 const HEART_LINE_PATH =
@@ -12,6 +14,12 @@ const HEART_LINE_PATH =
  * 홈 상단 제출 D-day 카드
  */
 export default function DocumentGuideCard() {
+  const router = useRouter();
+
+  const handleSubmit = () => {
+    router.push(ROUTES.SCHOLARSHIP.MAIN);
+  }
+
   return (
     <article className={styles.card}>
       <h2 className={styles.title}>4월 자치회 활동 제출까지</h2>
@@ -43,6 +51,7 @@ export default function DocumentGuideCard() {
           label="지금 제출하러 가기"
           size="L"
           type="primary"
+          onClick={handleSubmit}
         />
       </div>
     </article>

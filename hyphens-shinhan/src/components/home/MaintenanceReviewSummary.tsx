@@ -48,6 +48,9 @@ export default function MaintenanceReviewSummary({
                 <Icon name={item.icon} size={20} className={styles.icon} />
               </span>
               <span className={styles.label}>{item.label}</span>
+            </div>
+            <div className={styles.valueRow}>
+              <span className={styles.value}>{item.value}</span>
               <span className={styles.iconWrap}>
                 <Icon
                   name={
@@ -64,7 +67,6 @@ export default function MaintenanceReviewSummary({
                 />
               </span>
             </div>
-            <span className={styles.value}>{item.value}</span>
           </div>
         ))}
       </div>
@@ -79,6 +81,7 @@ const styles = {
   item: 'flex flex-col gap-1.5',
   row: 'flex flex-row items-center gap-2',
   label: 'body-5 text-grey-9',
+  valueRow: 'flex flex-row items-center gap-2',
   value: 'body-6 text-grey-11',
   iconWrap: 'flex shrink-0',
   icon: 'text-grey-8',

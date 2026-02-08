@@ -3,34 +3,29 @@
 /**
  * 게시글 종류
  */
-export const PostType = {
-  FEED: 'FEED',
-  NOTICE: 'NOTICE',
-  EVENT: 'EVENT',
-  COUNCIL_REPORT: 'COUNCIL_REPORT',
-} as const
-
-export type PostType = (typeof PostType)[keyof typeof PostType]
+export enum PostType {
+  /** 일반 피드 게시물 */
+  FEED = 'FEED',
+  /** 공지사항 게시물 */
+  NOTICE = 'NOTICE',
+  /** 이벤트/행사 게시물 */
+  EVENT = 'EVENT',
+}
 
 /**
  * 이벤트 진행 상태
  */
-export const EventStatus = {
-  SCHEDULED: 'SCHEDULED',
-  OPEN: 'OPEN',
-  CLOSED: 'CLOSED',
-} as const
-
-export type EventStatus = (typeof EventStatus)[keyof typeof EventStatus]
+export enum EventStatus {
+  /** 예정됨 */
+  SCHEDULED = 'SCHEDULED',
+  /** 모집 중 / 진행 중 */
+  OPEN = 'OPEN',
+  /** 종료됨 */
+  CLOSED = 'CLOSED',
+}
 
 /** 신청 기간 기준 상태 (API에서 반환) */
-export const ApplicationStatus = {
-  UPCOMING: 'UPCOMING',
-  OPEN: 'OPEN',
-  CLOSED: 'CLOSED',
-} as const
-
-export type ApplicationStatus = (typeof ApplicationStatus)[keyof typeof ApplicationStatus]
+export type ApplicationStatus = 'UPCOMING' | 'OPEN' | 'CLOSED'
 
 /**
  * 게시글 작성자 정보
@@ -41,9 +36,9 @@ export interface PostAuthor {
   /** 작성자 이름/닉네임 */
   name: string
   /** 프로필 이미지 URL */
-  avatar_url?: string | null
+  avatar_url: string | null
   /** 현재 사용자가 이 작성자를 팔로우 중인지 여부 */
-  is_following?: boolean
+  is_following: boolean
 }
 
 /**
@@ -67,7 +62,7 @@ interface BasePostResponse {
  */
 export interface FeedPostResponse extends BasePostResponse {
   /** 게시글 타입: FEED */
-  type: 'FEED'
+  type: PostType.FEED
   /** 게시글 본문 내용 */
   content: string
   /** 익명 게시글 여부 */
@@ -79,7 +74,7 @@ export interface FeedPostResponse extends BasePostResponse {
   /** 현재 사용자가 스크랩했는지 여부 */
   is_scrapped: boolean
   /** 작성자 정보 (익명일 경우 null) */
-  author?: PostAuthor | null
+  author: PostAuthor | null
 }
 
 /**
@@ -87,7 +82,7 @@ export interface FeedPostResponse extends BasePostResponse {
  */
 export interface NoticePostResponse extends BasePostResponse {
   /** 게시글 타입: NOTICE */
-  type: 'NOTICE'
+  type: PostType.NOTICE
   /** 공지사항 제목 */
   title: string
   /** 공지사항 본문 내용 */
@@ -106,15 +101,15 @@ export interface NoticePostResponse extends BasePostResponse {
  */
 export interface EventPostResponse extends BasePostResponse {
   /** 게시글 타입: EVENT */
-  type: 'EVENT'
+  type: PostType.EVENT
   /** 이벤트 제목 */
   title: string
   /** 이벤트 상세 내용 */
   content: string
   /** 신청 시작 일시 (ISO 8601) */
-  application_start?: string | null
+  application_start: string | null
   /** 신청 종료 일시 (ISO 8601) */
-  application_end?: string | null
+  application_end: string | null
   /** 이벤트 시작 일시 (ISO 8601) */
   event_start: string
   /** 이벤트 종료 일시 (ISO 8601) */
@@ -128,19 +123,19 @@ export interface EventPostResponse extends BasePostResponse {
   /** 댓글 수 */
   comment_count: number
   /** 현재 사용자 이벤트 신청 여부 */
-  is_applied?: boolean
+  is_applied: boolean
   /** 이벤트 진행 상태 */
   event_status: EventStatus
   /** 신청 기간 기준 상태 (API에서 반환) */
   application_status: ApplicationStatus
   /** 이벤트 카테고리 */
-  event_category?: string | null
+  event_category: string | null
   /** 최대 참여 가능 인원 */
-  max_participants?: number | null
+  max_participants: number | null
   /** 첨부 파일 URL 목록 */
-  file_urls?: string[] | null
+  file_urls: string[] | null
   /** 첨부 이미지 URL 목록 */
-  image_urls?: string[] | null
+  image_urls: string[] | null
 }
 
 /**
@@ -158,30 +153,6 @@ export interface PostListResponse<T> {
   /** 게시글 목록 배열 */
   posts: T[]
   /** 전체 게시글 수 */
-  total: number
-}
-
-/**
- * 피드 게시글 목록 응답
- */
-export interface FeedPostListResponse {
-  posts: FeedPostResponse[]
-  total: number
-}
-
-/**
- * 공지사항 게시글 목록 응답
- */
-export interface NoticePostListResponse {
-  posts: NoticePostResponse[]
-  total: number
-}
-
-/**
- * 이벤트 게시글 목록 응답
- */
-export interface EventPostListResponse {
-  posts: EventPostResponse[]
   total: number
 }
 
@@ -278,20 +249,13 @@ export interface EventPostUpdate {
 
 // --- 이벤트 신청 / 좋아요·스크랩 응답 타입 ---
 
-/**
- * 메시지 응답 (공통)
- */
-export interface MessageResponse {
-  message: string
-}
-
 /** 이벤트 신청 성공 응답 */
-export interface EventApplyResponse extends MessageResponse {
+export interface EventApplyResponse {
   message: 'Successfully applied for event'
 }
 
 /** 이벤트 신청 취소 응답 */
-export interface EventCancelApplyResponse extends MessageResponse {
+export interface EventCancelApplyResponse {
   message: 'Event application cancelled'
 }
 
@@ -305,86 +269,4 @@ export interface ToggleLikeResponse {
 export interface ToggleScrapResponse {
   scrapped: boolean
   scrap_count: number
-}
-
-// MARK: - 내가 작성한 포스트 관련 타입
-
-/**
- * 내가 작성한 포스트 아이템 타입
- */
-export const MyPostItemType = {
-  FEED: 'FEED',
-  COUNCIL_REPORT: 'COUNCIL_REPORT',
-} as const
-
-export type MyPostItemType =
-  (typeof MyPostItemType)[keyof typeof MyPostItemType]
-
-/**
- * 내가 작성한 포스트 아이템 (Feed + Council Report 통합)
- * GET /posts/me
- */
-export interface MyPostItem {
-  id: string
-  type: MyPostItemType
-  created_at: string // ISO datetime
-  content?: string | null
-  title?: string | null // Council Report에만 있음
-  image_urls?: string[] | null
-  like_count: number
-  comment_count: number
-  /** 작성자 정보 */
-  author?: PostAuthor | null
-}
-
-/**
- * 내가 작성한 포스트 목록 응답
- * GET /posts/me
- */
-export interface MyPostsResponse {
-  posts: MyPostItem[]
-  total: number
-}
-
-// MARK: - 공개 리포트 피드 관련 타입
-
-/**
- * 공개 리포트 피드용 출석 정보
- */
-export interface PublicAttendanceResponse {
-  name: string
-}
-
-/**
- * 공개 리포트 피드 응답
- * GET /posts/council
- */
-export interface PublicReportResponse {
-  id: string
-  title: string
-  activity_date?: string | null // ISO date
-  location?: string | null
-  content?: string | null
-  image_urls?: string[] | null
-  attendance: PublicAttendanceResponse[]
-  submitted_at: string // ISO datetime
-  /** 작성자 정보 */
-  author?: PostAuthor | null
-  /** 좋아요 수 */
-  like_count?: number
-  /** 현재 사용자가 좋아요를 눌렀는지 여부 */
-  is_liked?: boolean
-  /** 댓글 수 */
-  comment_count?: number
-  /** 스크랩 수 */
-  scrap_count?: number
-  /** 현재 사용자가 스크랩했는지 여부 */
-  is_scrapped?: boolean
-}
-
-/**
- * 메시지 응답 (공통)
- */
-export interface MessageResponse {
-  message: string
 }

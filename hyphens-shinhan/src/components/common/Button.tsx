@@ -27,8 +27,7 @@ interface PropsType {
 */
 export default function Button({ label, size, type, fullWidth = false, disabled = false, className, onClick }: PropsType) {
     const containerStyle = cn(
-        'flex items-center justify-center',
-        'shadow-[0px_1px_3px_0px_rgba(0,0,0,0.04),0px_1px_2px_0px_rgba(0,0,0,0.04)]',
+        'flex items-center justify-center shadow-md',
         'transition-all duration-100 active:scale-98',
         sizeStyles[size],
         typeStyles[type],

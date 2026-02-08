@@ -1,4 +1,3 @@
-import { memo } from "react";
 import { cn } from "@/utils/cn";
 import StatusTag from "../common/StatusTag";
 import { Icon } from "../common/Icon";
@@ -6,7 +5,7 @@ import Link from "next/link";
 import { ROUTES } from "@/constants";
 import type { ActivityStatusType } from "@/types";
 
-export interface ActivityCardProps {
+interface ActivityCardProps {
   isCurrentMonth: boolean
   isMonitoring: boolean
   /** 연도 (상세 링크 쿼리용) */
@@ -24,7 +23,7 @@ export interface ActivityCardProps {
 /** MY활동 월별 활동 카드 컴포넌트
  * 월, 학업 모니터링 태그, 월별 title, 상태 태그
  */
-function ActivityCard({
+export default function ActivityCard({
   isCurrentMonth,
   isMonitoring,
   year,
@@ -52,8 +51,6 @@ function ActivityCard({
     </Link>
   )
 }
-
-export default memo(ActivityCard);
 
 const styles = {
   container: cn(

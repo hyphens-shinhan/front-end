@@ -13,8 +13,6 @@ import { useClub, useGalleryImages } from "@/hooks/clubs/useClubs";
 import { useJoinClub } from "@/hooks/clubs/useClubMutations";
 import { useConfirmModalStore } from "@/stores";
 import { EMPTY_CONTENT_MESSAGES, ROUTES } from "@/constants";
-import { TOAST_MESSAGES } from "@/constants/toast";
-import { useToast } from "@/hooks/useToast";
 import MemberContent from "./MemberContent";
 import GalleryContent from "./GalleryContent";
 import BottomFixedButton from "@/components/common/BottomFixedButton";
@@ -47,7 +45,6 @@ export default function GroupDetailContent({ clubId }: GroupDetailContentProps) 
     const { data: galleryData } = useGalleryImages(clubId);
     const galleryImages = useMemo(() => galleryData?.images ?? [], [galleryData?.images]);
     const joinClub = useJoinClub();
-    const toast = useToast();
     const { onOpen: openConfirmModal, updateOptions } = useConfirmModalStore();
     const [joinProfileType, setJoinProfileType] = useState<JoinProfileType>('realname');
     const [anonymousNickname, setAnonymousNickname] = useState('');
@@ -83,9 +80,9 @@ export default function GroupDetailContent({ clubId }: GroupDetailContentProps) 
         joinClub.mutate(
             { clubId, profile },
             {
-                onSuccess: () => toast.show(TOAST_MESSAGES.GROUP.JOIN_SUCCESS),
+                onSuccess: () => { },
                 onError: (error) => {
-                    toast.error(TOAST_MESSAGES.GROUP.JOIN_ERROR);
+                    alert(error instanceof Error ? error.message : '참여에 실패했어요.');
                 },
             }
         );
@@ -165,7 +162,7 @@ export default function GroupDetailContent({ clubId }: GroupDetailContentProps) 
 
             {/** 탭별 콘텐츠 */}
             <div className={styles.tabContent}>
-                {activeTab === '멤버' && <MemberContent clubId={clubId} />}
+                {activeTab === '멤버' && <MemberContent />}
                 {activeTab === '앨범' && <GalleryContent images={galleryImages} isMember={club.is_member} />}
             </div>
 

@@ -139,3 +139,24 @@ export type {
   UserPrivacyUpdate,
 } from './user'
 export { AppRole, ScholarshipType } from './user'
+
+// MARK: - Network (네트워크/추천·팔로잉·주변 사람) 타입
+export type {
+  Generation as NetworkGeneration,
+  ScholarshipType as NetworkScholarshipType,
+  Location as NetworkLocation,
+  Person as NetworkPerson,
+} from './network'
+
+// MARK: - Chat (채팅/메시지) API 및 UI 타입
+export type {
+  ChatRoomType,
+  ChatRoomMember,
+  MessageResponse,
+  ChatRoomResponse,
+  ChatRoomListResponse,
+  MessageListResponse,
+  MessageCreate,
+  ChatMessage,
+  ChatRoomListItem,
+} from './chat'

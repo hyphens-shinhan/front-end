@@ -26,13 +26,8 @@ export const UserService = {
    * 내 프로필 상세 (GET /users/me/profile)
    */
   getMyProfile: async (): Promise<UserMyProfile> => {
-    const response = await apiClient.get<any>(`${BASE}/me/profile`)
-    const data = response.data
-    // API 응답의 address 필드를 location으로 매핑
-    return {
-      ...data,
-      location: data.address || data.location || null,
-    } as UserMyProfile
+    const response = await apiClient.get<UserMyProfile>(`${BASE}/me/profile`)
+    return response.data
   },
 
   /**
@@ -41,23 +36,11 @@ export const UserService = {
   updateMyProfile: async (
     data: UserProfileUpdate,
   ): Promise<UserMyProfile> => {
-    // location을 address로 변환하여 요청
-    const requestData: any = { ...data }
-    if ('location' in requestData) {
-      requestData.address = requestData.location
-      delete requestData.location
-    }
-    
-    const response = await apiClient.patch<any>(
+    const response = await apiClient.patch<UserMyProfile>(
       `${BASE}/me/profile`,
-      requestData,
+      data,
     )
-    const responseData = response.data
-    // API 응답의 address 필드를 location으로 매핑
-    return {
-      ...responseData,
-      location: responseData.address || responseData.location || null,
-    } as UserMyProfile
+    return response.data
   },
 
   /**
@@ -87,12 +70,9 @@ export const UserService = {
    * 다른 유저 공개 프로필 조회 (GET /users/{user_id})
    */
   getPublicProfile: async (userId: string): Promise<UserPublicProfile> => {
-    const response = await apiClient.get<any>(`${BASE}/${userId}`)
-    const data = response.data
-    // API 응답의 address 필드를 location으로 매핑
-    return {
-      ...data,
-      location: data.address || data.location || null,
-    } as UserPublicProfile
+    const response = await apiClient.get<UserPublicProfile>(
+      `${BASE}/${userId}`,
+    )
+    return response.data
   },
 }

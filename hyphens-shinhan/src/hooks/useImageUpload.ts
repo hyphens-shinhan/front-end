@@ -101,33 +101,34 @@ export function useImageUpload(
   }, [])
 
   // ─────────────────────────────────────────────────────────────
-  // Supabase Storage에 업로드 (여러 장일 때 병렬로 요청해 체감 속도 개선)
+  // Supabase Storage에 업로드
   // ─────────────────────────────────────────────────────────────
   const uploadImages = useCallback(async (): Promise<string[]> => {
     if (images.length === 0) return []
 
     setIsUploading(true)
+    const uploadedUrls: string[] = []
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
 
     try {
-      const uploadedUrls = await Promise.all(
-        images.map(async ({ file }) => {
-          const fileExt = file.name.split('.').pop()
-          const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`
-          const filePath = pathPrefix ? `${pathPrefix}/${fileName}` : fileName
+      for (const { file } of images) {
+        const fileExt = file.name.split('.').pop()
+        const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`
+        const filePath = `${pathPrefix}/${fileName}`
 
-          const { error } = await supabase.storage
-            .from(bucket)
-            .upload(filePath, file)
+        const { error } = await supabase.storage
+          .from(bucket)
+          .upload(filePath, file)
 
-          if (error) {
-            console.error('이미지 업로드 실패:', error)
-            throw new Error(`이미지 업로드 실패: ${error.message}`)
-          }
+        if (error) {
+          console.error('이미지 업로드 실패:', error)
+          throw new Error(`이미지 업로드 실패: ${error.message}`)
+        }
 
-          return `${supabaseUrl}/storage/v1/object/${bucket}/${filePath}`
-        }),
-      )
+        // public 경로로 URL 생성
+        const publicUrl = `${supabaseUrl}/storage/v1/object/${bucket}/${filePath}`
+        uploadedUrls.push(publicUrl)
+      }
 
       return uploadedUrls
     } finally {

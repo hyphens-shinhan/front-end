@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useMemo, memo } from 'react'
+import { useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import Button from '@/components/common/Button'
 import EmptyContent from '@/components/common/EmptyContent'
@@ -15,8 +15,6 @@ import { useActivitiesSummary } from '@/hooks/activities/useActivities'
 import { useUserStore } from '@/stores'
 import { EMPTY_CONTENT_MESSAGES } from '@/constants/emptyContent'
 import { ROUTES } from '@/constants'
-import { TOAST_MESSAGES } from '@/constants/toast'
-import { useToast } from '@/hooks/useToast'
 import type { ReportMonth } from '@/services/reports'
 import ActivityCostReceipt from './view/ActivityCostReceipt'
 import ActivityInfo from './view/ActivityInfo'
@@ -27,7 +25,7 @@ import characterImg from '@/assets/character.png'
 import ParticipationMemberStatus from './view/ParticipationMemberStatus'
 import BottomFixedButton from '@/components/common/BottomFixedButton'
 
-export interface ReportDetailContentYBProps {
+interface ReportDetailContentYBProps {
   /** 연도 (URL searchParams 또는 목록에서 전달) */
   year: number
   /** 월 (4–12, ReportMonth) */
@@ -41,7 +39,7 @@ export interface ReportDetailContentYBProps {
  * - council_id는 api/v1/activities 요약에서 해당 연도로 조회 후 reports API에 사용
  * - 헤더 백·목록으로 돌아가기 시 /scholarship?year={year} 로 이동해 선택 연도 유지
  */
-function ReportDetailContentYB({
+export default function ReportDetailContentYB({
   year,
   month,
 }: ReportDetailContentYBProps) {
@@ -60,7 +58,12 @@ function ReportDetailContentYB({
     month
   )
 
-  const toast = useToast()
+  /** Hooks must run unconditionally before any early return (Rules of Hooks) */
+  const user = useUserStore((s) => s.user)
+  const confirmAttendance = useConfirmAttendance()
+  const rejectAttendance = useRejectAttendance()
+  const toggleVisibility = useToggleVisibility()
+
   const activitiesLoading = activitiesData === undefined
   const hasNoCouncil = !activitiesLoading && !councilId
 
@@ -78,10 +81,7 @@ function ReportDetailContentYB({
   }
 
   /** EmptyContent 내 목록으로 돌아가기 버튼용 (연도 쿼리 유지) */
-  const backToList = useCallback(
-    () => router.push(`${ROUTES.SCHOLARSHIP.MAIN}?year=${year}`),
-    [router, year]
-  )
+  const backToList = () => router.push(`${ROUTES.SCHOLARSHIP.MAIN}?year=${year}`)
 
   // ---------- 해당 연도 자치회 없음 ----------
   if (hasNoCouncil) {
@@ -112,9 +112,9 @@ function ReportDetailContentYB({
           variant="error"
           message={EMPTY_CONTENT_MESSAGES.ERROR.REPORT}
           subMessage={
-            <div className={'flex items-center justify-center p-6'}>
+            <span className="flex items-center justify-center p-6">
               <Image src={characterImg} alt="신한 캐릭터" width={100} height={100} />
-            </div>
+            </span>
           }
           action={
             <Button
@@ -131,11 +131,6 @@ function ReportDetailContentYB({
   }
 
   const isSubmitted = !!report.submitted_at
-  const user = useUserStore((s) => s.user)
-  const confirmAttendance = useConfirmAttendance()
-  const rejectAttendance = useRejectAttendance()
-  const toggleVisibility = useToggleVisibility()
-
   const attendance = report.attendance ?? []
   const receipts = report.receipts ?? []
   const myAttendance = attendance.find((a) => a.user_id === user?.id)
@@ -144,24 +139,18 @@ function ReportDetailContentYB({
   const isConfirming = confirmAttendance.isPending || rejectAttendance.isPending
   const isExporting = toggleVisibility.isPending
 
-  const handleConfirm = useCallback(() => {
+  const handleConfirm = () => {
     if (!report.id) return
-    confirmAttendance.mutate(report.id, {
-      onError: () => toast.error(TOAST_MESSAGES.REPORT.ATTENDANCE_ERROR),
-    })
-  }, [report.id, confirmAttendance, toast])
-  const handleReject = useCallback(() => {
+    confirmAttendance.mutate(report.id)
+  }
+  const handleReject = () => {
     if (!report.id) return
-    rejectAttendance.mutate(report.id, {
-      onError: () => toast.error(TOAST_MESSAGES.REPORT.ATTENDANCE_ERROR),
-    })
-  }, [report.id, rejectAttendance, toast])
-  const handleExport = useCallback(() => {
+    rejectAttendance.mutate(report.id)
+  }
+  const handleExport = () => {
     if (!report.id) return
-    toggleVisibility.mutate(report.id, {
-      onError: () => toast.error(TOAST_MESSAGES.REPORT.ATTENDANCE_ERROR),
-    })
-  }, [report.id, toggleVisibility, toast])
+    toggleVisibility.mutate(report.id)
+  }
 
   // ---------- 정상: 보고서 내용 렌더 ----------
   return (
@@ -221,8 +210,6 @@ function ReportDetailContentYB({
     </div>
   )
 }
-
-export default memo(ReportDetailContentYB)
 
 const styles = {
   container: cn('flex flex-col px-4 pb-40'),

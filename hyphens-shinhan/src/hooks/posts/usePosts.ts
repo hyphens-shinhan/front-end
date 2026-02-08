@@ -16,12 +16,6 @@ export const postKeys = {
   eventDetail: (id: string) => postKeys.detail(id),
   /** 내가 신청한 이벤트 목록 쿼리 키 */
   myAppliedEvents: () => [...postKeys.lists(), 'event', 'me-applied'] as const,
-  /** 내가 작성한 포스트 목록 쿼리 키 */
-  myPosts: (limit?: number, offset?: number) =>
-    [...postKeys.lists(), 'me', limit, offset] as const,
-  /** 공개 리포트 피드 쿼리 키 */
-  publicReportsFeed: (limit?: number, offset?: number) =>
-    [...postKeys.lists(), 'council', limit, offset] as const,
 }
 
 /**
@@ -95,16 +89,12 @@ export const useInfiniteEventPosts = (status?: EventStatus, limit = 20) => {
 /**
  * [FEED] 피드 게시글 상세 조회
  * @param postId 게시글 ID
- * @param options 옵션 (enabled: 쿼리 활성화 여부)
  */
-export const useFeedPost = (
-  postId: string,
-  options?: { enabled?: boolean },
-) => {
+export const useFeedPost = (postId: string) => {
   return useQuery({
     queryKey: postKeys.detail(postId),
     queryFn: () => PostService.getFeedPost(postId),
-    enabled: options?.enabled !== undefined ? options.enabled : !!postId,
+    enabled: !!postId,
   })
 }
 
@@ -141,80 +131,5 @@ export const useMyAppliedEventPosts = (limit = 20, offset = 0) => {
   return useQuery({
     queryKey: [...postKeys.myAppliedEvents(), limit, offset],
     queryFn: () => PostService.getMyAppliedEventPosts(limit, offset),
-  })
-}
-
-/**
- * 내가 작성한 포스트 목록 조회 (무한 스크롤)
- * Feed + Council Report 통합
- * @param limit 가져올 개수
- */
-export const useInfiniteMyPosts = (limit = 20) => {
-  return useInfiniteQuery({
-    queryKey: postKeys.myPosts(limit),
-    queryFn: ({ pageParam = 0 }) => PostService.getMyPosts(limit, pageParam),
-    initialPageParam: 0,
-    getNextPageParam: (lastPage, allPages) => {
-      const nextOffset = allPages.length * limit
-      return nextOffset < lastPage.total ? nextOffset : undefined
-    },
-  })
-}
-
-/**
- * 내가 작성한 포스트 목록 조회
- * Feed + Council Report 통합
- * @param limit 가져올 개수
- * @param offset 시작 위치
- */
-export const useMyPosts = (limit = 20, offset = 0) => {
-  return useQuery({
-    queryKey: postKeys.myPosts(limit, offset),
-    queryFn: () => PostService.getMyPosts(limit, offset),
-  })
-}
-
-/**
- * 공개 리포트 피드 조회 (무한 스크롤)
- * @param limit 가져올 개수
- */
-export const useInfinitePublicReportsFeed = (limit = 20) => {
-  return useInfiniteQuery({
-    queryKey: postKeys.publicReportsFeed(limit),
-    queryFn: ({ pageParam = 0 }) =>
-      PostService.getPublicReportsFeed(limit, pageParam),
-    initialPageParam: 0,
-    getNextPageParam: (lastPage, allPages) => {
-      // PublicReportResponse[]는 배열이므로, 길이로 다음 페이지 여부 판단
-      const hasMore = lastPage.length === limit
-      return hasMore ? allPages.length * limit : undefined
-    },
-  })
-}
-
-/**
- * 공개 리포트 피드 조회
- * @param limit 가져올 개수
- * @param offset 시작 위치
- */
-export const usePublicReportsFeed = (limit = 20, offset = 0) => {
-  return useQuery({
-    queryKey: postKeys.publicReportsFeed(limit, offset),
-    queryFn: () => PostService.getPublicReportsFeed(limit, offset),
-  })
-}
-
-/**
- * 자치회 리포트 상세 조회
- * @param postId 게시글 ID
- */
-export const useCouncilReport = (
-  postId: string,
-  options?: { enabled?: boolean },
-) => {
-  return useQuery({
-    queryKey: [...postKeys.all, 'council', postId],
-    queryFn: () => PostService.getCouncilReport(postId),
-    enabled: options?.enabled !== undefined ? options.enabled : !!postId,
   })
 }

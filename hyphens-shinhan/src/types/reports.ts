@@ -110,8 +110,8 @@ export interface AttendanceResponse {
   status: AttendanceStatus
   /** 내 출석 확인 여부 (제출된 보고서에서만 의미 있음) */
   confirmation: ConfirmationStatus
-  /** 팀장 여부 */
-  is_leader: boolean
+  /** 팀장 여부 (기본 false) */
+  is_leader?: boolean
 }
 
 /**
@@ -170,13 +170,10 @@ export interface PublicReportResponse {
 }
 
 /** 공개/비공개 전환 응답 */
-export interface ReportToggleVisibilityResponse {
+export interface ToggleVisibilityResponse {
   is_public: boolean
   message: string
 }
-
-/** @deprecated ReportToggleVisibilityResponse를 사용하세요 */
-export type ToggleVisibilityResponse = ReportToggleVisibilityResponse
 
 // ========== 엔드포인트별 API 매핑 (선택) ==========
 
@@ -211,6 +208,6 @@ export interface ReportApi {
   toggleVisibility: {
     method: 'POST'
     path: (reportId: string) => string
-    response: ReportToggleVisibilityResponse
+    response: ToggleVisibilityResponse
   }
 }

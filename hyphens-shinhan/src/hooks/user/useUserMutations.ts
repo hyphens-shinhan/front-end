@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { UserService } from '@/services/user'
 import { userKeys } from './useUser'
-import { postKeys } from '@/hooks/posts/usePosts'
 import type { UserProfileUpdate, UserPrivacyUpdate } from '@/types'
 
 /**
@@ -15,9 +14,6 @@ export const useUpdateMyProfile = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: userKeys.me() })
       queryClient.invalidateQueries({ queryKey: userKeys.myProfile() })
-      // 프로필 이미지 업데이트 시 피드 목록도 갱신하여 최신 프로필 이미지 반영
-      queryClient.invalidateQueries({ queryKey: postKeys.lists() })
-      queryClient.invalidateQueries({ queryKey: postKeys.myPosts() })
     },
   })
 }

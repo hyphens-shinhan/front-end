@@ -12,6 +12,12 @@ const apiClient = axios.create({
 // 2. 요청 인터셉터 설정 (통행증 자동 주입)
 apiClient.interceptors.request.use(
   async (config) => {
+    // FormData인 경우 Content-Type을 제거해 axios가 multipart/form-data; boundary=... 로 설정하게 함
+    // (기본 application/json 이면 서버가 파일을 받지 못해 422 발생)
+    if (config.data instanceof FormData) {
+      delete config.headers['Content-Type'];
+    }
+
     // 브라우저용 Supabase 클라이언트 호출
     const supabase = createClient();
     

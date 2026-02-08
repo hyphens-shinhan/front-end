@@ -1,4 +1,3 @@
-import { memo } from "react"
 import { cn } from "@/utils/cn"
 import ReportTitle from "../ReportTitle"
 import ParticipationMemberList from "./ParticipationMemberList"
@@ -15,7 +14,7 @@ export interface ParticipationMemberInputProps {
     isSubmitted?: boolean
 }
 
-function ParticipationMemberInput({
+export default function ParticipationMemberInput({
     attendance,
     onAttendanceStatusChange,
     isChecked = false,
@@ -31,8 +30,6 @@ function ParticipationMemberInput({
         </div>
     )
 }
-
-export default memo(ParticipationMemberInput)
 
 const styles = {
     container: cn('flex flex-col gap-1.5 px-4 pt-6'),

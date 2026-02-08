@@ -1,12 +1,7 @@
+import ReportDetailRouter from '@/components/scholarship/reports/ReportDetailRouter'
 import { toReportMonth } from '@/utils/reports'
-import ActivityDetailTabs from '@/components/scholarship/ActivityDetailTabs'
 
-type SearchParams = {
-  year?: string
-  month?: string
-  councilId?: string
-  tab?: string
-}
+type SearchParams = { year?: string; month?: string; councilId?: string }
 
 export default async function ScholarshipReportDetailPage({
   searchParams,
@@ -19,8 +14,8 @@ export default async function ScholarshipReportDetailPage({
   const councilId = sp?.councilId ?? ''
 
   return (
-    <div className="flex flex-col h-full">
-      <ActivityDetailTabs
+    <div>
+      <ReportDetailRouter
         year={year}
         month={toReportMonth(month)}
         councilId={councilId}

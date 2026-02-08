@@ -4,16 +4,7 @@ import { useState } from 'react'
 import { cn } from '@/utils/cn'
 import Accordion from '@/components/common/Accordion'
 import type { GoalCreate } from '@/types/academic'
-import { AcademicGoalCategory } from '@/types/academic'
-
-const CATEGORY_LABELS: Record<GoalCreate['category'], string> = {
-  [AcademicGoalCategory.MAJOR_REVIEW]: '유지 심사',
-  [AcademicGoalCategory.ENGLISH_STUDY]: '영어 학습',
-  [AcademicGoalCategory.CERTIFICATION_PREP]: '자격증 준비',
-  [AcademicGoalCategory.STUDY_GROUP]: '스터디 그룹',
-  [AcademicGoalCategory.ASSIGNMENT_EXAM_PREP]: '과제/시험 준비',
-  [AcademicGoalCategory.OTHER]: '기타',
-}
+import { ACADEMIC_GOAL_CATEGORY_LABELS } from '@/constants/academicGoalCategory'
 
 interface MonitoringCategorySelectProps {
   value: GoalCreate['category']
@@ -26,7 +17,7 @@ export default function MonitoringCategorySelect({
 }: MonitoringCategorySelectProps) {
   const [isOpen, setIsOpen] = useState(false)
 
-  const title = CATEGORY_LABELS[value]
+  const title = ACADEMIC_GOAL_CATEGORY_LABELS[value]
 
   return (
     <div className={styles.wrapper}>
@@ -39,7 +30,7 @@ export default function MonitoringCategorySelect({
       />
       {isOpen && (
         <div className={styles.categoryList}>
-          {(Object.keys(CATEGORY_LABELS) as GoalCreate['category'][]).map(
+          {(Object.keys(ACADEMIC_GOAL_CATEGORY_LABELS) as GoalCreate['category'][]).map(
             (key) => (
               <button
                 key={key}
@@ -53,7 +44,7 @@ export default function MonitoringCategorySelect({
                   setIsOpen(false)
                 }}
               >
-                {CATEGORY_LABELS[key]}
+                {ACADEMIC_GOAL_CATEGORY_LABELS[key]}
               </button>
             ),
           )}

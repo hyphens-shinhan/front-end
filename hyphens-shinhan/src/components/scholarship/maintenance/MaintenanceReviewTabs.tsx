@@ -3,6 +3,7 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 import Tab from '@/components/common/Tab';
 import { cn } from '@/utils/cn';
+import MaintenanceReviewProgress from './MaintenanceReviewProgress';
 import MaintenanceTabAll from './MaintenanceTabAll';
 import MaintenanceTabAcademic from './MaintenanceTabAcademic';
 import MaintenanceTabActivity from './MaintenanceTabActivity';
@@ -43,6 +44,14 @@ export default function MaintenanceReviewTabs() {
 
   return (
     <div className={styles.container}>
+      {/** 유지심사 진행률 */}
+      <MaintenanceReviewProgress
+        yearLabel="2025 장학금"
+        tagLabel="유의 필요"
+        progress={60}
+        noticeMessage="장학금 유지 위험! 조금만 더 신경써주세요."
+      />
+
       <div className={styles.tabRow}>
         {TAB_ORDER.map((tab) => (
           <Tab
@@ -67,4 +76,5 @@ const styles = {
   container: cn('flex flex-col h-full'),
   tabRow: cn('flex flex-row px-4 py-2'),
   content: cn('flex-1 overflow-y-auto scrollbar-hide'),
+  progressContainer: cn('px-4'),
 } as const;

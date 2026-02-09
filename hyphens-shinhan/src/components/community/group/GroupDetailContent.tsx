@@ -123,6 +123,11 @@ export default function GroupDetailContent({ clubId }: GroupDetailContentProps) 
         });
     };
 
+    const handleGoToChat = () => {
+        if (!club || !club.is_member) return;
+        router.push(`${ROUTES.COMMUNITY.GROUP.DETAIL}/${clubId}/chat`);
+    };
+
     if (isLoading) {
         return (
             <EmptyContent
@@ -177,12 +182,11 @@ export default function GroupDetailContent({ clubId }: GroupDetailContentProps) 
 
             {/** 하단 버튼 */}
             <BottomFixedButton
-                label="참여하기"
+                label={club.is_member ? '채팅방 가기' : '참여하기'}
                 size="M"
                 type="primary"
                 disabled={joinClub.isPending}
-                /** TODO: 멤버가 아니면 참여 모달, 멤버면 채팅방 이동 등 (TODO) */
-                onClick={club.is_member ? undefined : handleJoin}
+                onClick={club.is_member ? handleGoToChat : handleJoin}
                 bottomContent={BOTTOM_BUTTON_HINT}
             />
         </div>

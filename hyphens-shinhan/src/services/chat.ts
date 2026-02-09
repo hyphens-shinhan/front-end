@@ -1,4 +1,13 @@
-import type { ChatMessage, Conversation } from '@/types/chat'
+import apiClient from './apiClient'
+import type {
+  ChatMessage,
+  Conversation,
+  ChatRoomResponse,
+  ChatRoomListResponse,
+  MessageResponse,
+  MessageCreate,
+  MessageListResponse,
+} from '@/types/chat'
 import {
   getMockConversations,
   getMockMessages,
@@ -6,11 +15,15 @@ import {
   MOCK_CONVERSATIONS,
 } from '@/data/mock-chat'
 
+const BASE = '/chats'
+
 function getAvatar(id: string): string {
   return `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(id)}`
 }
 
-export async function getConversations(userId: string): Promise<Conversation[]> {
+export async function getConversations(
+  userId: string,
+): Promise<Conversation[]> {
   if (!userId) return []
   return getMockConversations(userId)
 }
@@ -29,7 +42,12 @@ export async function sendMessage(
   senderId: string,
   recipientId: string,
   content: string,
-  _attachments?: Array<{ url: string; type: string; name?: string; size?: number }>,
+  _attachments?: Array<{
+    url: string
+    type: string
+    name?: string
+    size?: number
+  }>,
 ): Promise<ChatMessage> {
   const newMessage: ChatMessage = {
     id: `msg_${Date.now()}`,
@@ -79,13 +97,112 @@ export async function sendMessage(
   } else {
     conv.last_message_at = newMessage.created_at
     conv.last_message_content = content
-    if (conv.user1_id === recipientId) conv.unread_count_user1 = (conv.unread_count_user1 || 0) + 1
+    if (conv.user1_id === recipientId)
+      conv.unread_count_user1 = (conv.unread_count_user1 || 0) + 1
     else conv.unread_count_user2 = (conv.unread_count_user2 || 0) + 1
   }
 
   return newMessage
 }
 
-export async function markAsRead(_userId: string, _otherUserId: string): Promise<void> {
+export async function markAsRead(
+  _userId: string,
+  _otherUserId: string,
+): Promise<void> {
   // Mock only
+}
+
+// ========== Group Chat API Service (새로운 통합 채팅 API) ==========
+
+/**
+ * 채팅 API 서비스
+ * Base: /api/v1/chats | 인증: Bearer
+ */
+export const ChatService = {
+  /**
+   * 클럽 채팅방 입장/생성 (POST /clubs/{club_id}/join)
+   * 클럽 멤버만 접근 가능
+   */
+  joinClubChat: async (clubId: string): Promise<ChatRoomResponse> => {
+    const response = await apiClient.post<ChatRoomResponse>(
+      `/clubs/${clubId}/join`,
+    )
+    return response.data
+  },
+
+  /**
+   * 클럽 채팅방 나가기 (POST /clubs/{club_id}/leave)
+   */
+  leaveClubChat: async (clubId: string): Promise<{ message: string }> => {
+    const response = await apiClient.post<{ message: string }>(
+      `/clubs/${clubId}/leave`,
+    )
+    return response.data
+  },
+
+  /**
+   * 클럽 채팅 메시지 조회 (GET /clubs/{club_id}/messages)
+   * @param cursor 마지막 메시지 ID (페이징용)
+   * @param limit 기본 30
+   */
+  getClubChatMessages: async (
+    clubId: string,
+    params?: { cursor?: string; limit?: number },
+  ): Promise<MessageListResponse> => {
+    const response = await apiClient.get<MessageListResponse>(
+      `/clubs/${clubId}/messages`,
+      { params },
+    )
+    return response.data
+  },
+
+  /**
+   * 채팅방 목록 조회 (GET /)
+   * 내가 속한 모든 채팅방 목록, 최신 메시지순
+   */
+  getChatRooms: async (): Promise<ChatRoomListResponse> => {
+    const response = await apiClient.get<ChatRoomListResponse>(BASE)
+    return response.data
+  },
+
+  /**
+   * 특정 채팅방 메시지 조회 (GET /{room_id}/messages)
+   * @param cursor 마지막 메시지 ID (페이징용)
+   * @param limit 기본값 없음
+   */
+  getMessages: async (
+    roomId: string,
+    params?: { cursor?: string; limit?: number },
+  ): Promise<MessageListResponse> => {
+    const response = await apiClient.get<MessageListResponse>(
+      `${BASE}/${roomId}/messages`,
+      { params },
+    )
+    return response.data
+  },
+
+  /**
+   * 메시지 전송 (POST /{room_id}/messages)
+   */
+  sendMessage: async (
+    roomId: string,
+    data: MessageCreate,
+  ): Promise<MessageResponse> => {
+    const response = await apiClient.post<MessageResponse>(
+      `${BASE}/${roomId}/messages`,
+      data,
+    )
+    return response.data
+  },
+
+  /**
+   * DM 생성/조회 (POST /message/{user_id})
+   * 상호 팔로우 필요
+   */
+  createOrGetDM: async (userId: string): Promise<ChatRoomResponse> => {
+    const response = await apiClient.post<ChatRoomResponse>(
+      `${BASE}/message/${userId}`,
+    )
+    return response.data
+  },
 }

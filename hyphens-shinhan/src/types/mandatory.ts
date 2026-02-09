@@ -1,6 +1,9 @@
 /**
- * 필수 활동(Mandatory Activity) API 타입
- * - 서버 API 요청/응답과 동일한 구조로 유지
+ * 필수 활동(연간 필수 활동) API 타입
+ * - Base: /api/v1/reports/mandatory | 인증: Bearer | YB 전용(일부 ADMIN 전용)
+ * - [ADMIN] POST/GET /admin/activities, GET/DELETE /admin/activities/{id}, GET /admin/submissions/{activity_id}
+ * - [YB] GET /{year}, GET /activity/{activity_id}, POST /activity/{id}/goal|simple-report|url-redirect,
+ *        PATCH /{submission_id}/goal|simple-report, POST /{submission_id}/submit|complete
  */
 
 import type { AcademicGoalCategory } from './common'
@@ -96,15 +99,14 @@ export interface MandatorySubmissionResponse {
   user_id: string
   is_submitted: boolean
   created_at: string
-  submitted_at?: string | null
+  submitted_at: string | null
   // GOAL 타입일 때
-  goals?: MandatoryGoalResponse[] | null
-  // SIMPLE_REPORT 타입일 때
-  report_title?: string | null
-  report_content?: string | null
-  activity_date?: string | null
-  location?: string | null
-  image_urls?: string[] | null
+  goals: MandatoryGoalResponse[] | null
+  report_title: string | null
+  report_content: string | null
+  activity_date: string | null
+  location: string | null
+  image_urls: string[] | null
 }
 
 /** 활동 + 해당 활동에 대한 사용자 제출 정보 (목록/조회용) */

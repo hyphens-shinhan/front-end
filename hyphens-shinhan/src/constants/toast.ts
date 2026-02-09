@@ -48,6 +48,12 @@ export const TOAST_MESSAGES = {
     PRIVACY_SAVE_SUCCESS: '설정이 저장되었어요',
     PRIVACY_SAVE_ERROR: '설정 저장에 실패했어요',
   },
+  /** 학업 모니터링 */
+  MONITORING: {
+    SAVE_SUCCESS: '저장되었어요',
+    SUBMIT_COMPLETE: '이미 제출하였어요',
+    SUBMIT_SUCCESS: '제출이 완료되었어요',
+  },
   /** 인증 */
   AUTH: {
     LOGIN_ERROR: '로그인에 실패했어요',

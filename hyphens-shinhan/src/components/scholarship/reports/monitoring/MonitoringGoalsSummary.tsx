@@ -30,52 +30,55 @@ function GoalSummaryItem({
   const isInteractive = onAchievementChange != null
 
   return (
-    <div className={styles.goalItem}>
-      <div className={styles.goalHeader}>
-        <span className={styles.goalTitle}>목표 {goalIndex}</span>
-        <span className={styles.dot} aria-hidden />
-        <span className={styles.categoryLabel}>{categoryLabel}</span>
-      </div>
-      <div className={styles.goalDetail}>
-        {goal.content && (
-          <p className={styles.content}>{goal.content}</p>
-        )}
-        <p className={styles.achievement}>달성률 {achievementPct}%</p>
-        {isInteractive ? (
-          <div className={styles.sliderWrapper}>
+    <div className={styles.card}>
+      <div className={styles.goalItem}>
+        <div className={styles.goalHeader}>
+          <span className={styles.goalTitle}>목표 {goalIndex}</span>
+          <span className={styles.dot} aria-hidden />
+          <span className={styles.categoryLabel}>{categoryLabel}</span>
+        </div>
+        <div className={styles.goalDetail}>
+          {goal.content && (
+            <p className={styles.content}>{goal.content}</p>
+          )}
+          <p className={styles.achievement}>달성률 {achievementPct}%</p>
+          {isInteractive ? (
+            <div className={styles.sliderWrapper}>
+              <div className={styles.progressTrack}>
+                <div
+                  className={styles.progressFill}
+                  style={{ width: `${clampPct(achievementPct)}%` }}
+                />
+              </div>
+              <input
+                type="range"
+                min={0}
+                max={100}
+                value={clampPct(achievementPct)}
+                onChange={(e) =>
+                  onAchievementChange?.(itemIndex, clampPct(Number(e.target.value)))
+                }
+                className={styles.slider}
+                aria-label={`목표 ${goalIndex} 달성률 조절`}
+              />
+            </div>
+          ) : (
             <div className={styles.progressTrack}>
               <div
                 className={styles.progressFill}
                 style={{ width: `${clampPct(achievementPct)}%` }}
               />
             </div>
-            <input
-              type="range"
-              min={0}
-              max={100}
-              value={clampPct(achievementPct)}
-              onChange={(e) =>
-                onAchievementChange?.(itemIndex, clampPct(Number(e.target.value)))
-              }
-              className={styles.slider}
-              aria-label={`목표 ${goalIndex} 달성률 조절`}
-            />
-          </div>
-        ) : (
-          <div className={styles.progressTrack}>
-            <div
-              className={styles.progressFill}
-              style={{ width: `${clampPct(achievementPct)}%` }}
-            />
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   )
 }
 
 /**
- * 저장 후 표시되는 학습 목표 요약 카드 (Figma 1725-4311).
+ * 저장 후 표시되는 학습 목표 요약 (Figma 1725-4311).
+ * 목표별로 카드 하나씩 표시.
  * 목표 N · 카테고리, 내용, 달성률, 진행 바.
  */
 export default function MonitoringGoalsSummary({
@@ -83,18 +86,16 @@ export default function MonitoringGoalsSummary({
   onAchievementChange,
 }: MonitoringGoalsSummaryProps) {
   return (
-    <div className={styles.card}>
-      <div className={styles.list}>
-        {goals.map((goal, index) => (
-          <GoalSummaryItem
-            key={index}
-            goalIndex={index + 1}
-            goal={goal}
-            itemIndex={index}
-            onAchievementChange={onAchievementChange}
-          />
-        ))}
-      </div>
+    <div className={styles.list}>
+      {goals.map((goal, index) => (
+        <GoalSummaryItem
+          key={index}
+          goalIndex={index + 1}
+          goal={goal}
+          itemIndex={index}
+          onAchievementChange={onAchievementChange}
+        />
+      ))}
     </div>
   )
 }
@@ -104,7 +105,7 @@ const styles = {
     'rounded-[16px] p-5',
     'bg-grey-1-1',
   ),
-  list: cn('flex flex-col gap-2.5'),
+  list: cn('flex flex-col gap-3 mb-4'),
   goalItem: cn('flex flex-col gap-3'),
   goalHeader: cn(
     'flex flex-row items-center gap-2',

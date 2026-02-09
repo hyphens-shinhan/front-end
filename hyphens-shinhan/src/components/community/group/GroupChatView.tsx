@@ -8,7 +8,8 @@ import { useHeaderStore, useUserStore } from '@/stores'
 import { useClubChatMessages, useChatRooms } from '@/hooks/chat/useChat'
 import { useJoinClubChat, useSendMessage } from '@/hooks/chat/useChatMutations'
 import MessageInput from '@/components/common/MessageInput'
-import { INPUT_BAR_TYPE } from '@/constants'
+import EmptyContent from '@/components/common/EmptyContent'
+import { INPUT_BAR_TYPE, EMPTY_CONTENT_MESSAGES } from '@/constants'
 import { cn } from '@/utils/cn'
 import type { MessageResponse } from '@/types/chat'
 
@@ -184,17 +185,19 @@ export default function GroupChatView({ clubId }: GroupChatViewProps) {
     joinClubChat.isPending
   ) {
     return (
-      <div className="flex min-h-[200px] items-center justify-center">
-        <p className="text-grey-8">로딩 중...</p>
-      </div>
+      <EmptyContent
+        variant="loading"
+        message={EMPTY_CONTENT_MESSAGES.LOADING.DEFAULT}
+      />
     )
   }
 
   if (!club) {
     return (
-      <div className="flex min-h-[200px] items-center justify-center">
-        <p className="text-grey-8">소모임을 찾을 수 없습니다.</p>
-      </div>
+      <EmptyContent
+        variant="error"
+        message="소모임을 찾을 수 없습니다."
+      />
     )
   }
 

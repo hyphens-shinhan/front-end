@@ -15,6 +15,8 @@ interface MonitoringEvidenceUploadProps {
   onEvidenceUrlsChange: React.Dispatch<React.SetStateAction<string[]>>
   /** 증빙자료 1개 이상 업로드 완료 여부 (체크 표시) */
   isChecked?: boolean
+  /** true면 업로드 버튼만 숨김 (저장된 요약 화면에서 사용) */
+  hideUploadButton?: boolean
 }
 
 function fileNameFromUrl(url: string): string {
@@ -31,6 +33,7 @@ export default function MonitoringEvidenceUpload({
   evidenceUrls,
   onEvidenceUrlsChange,
   isChecked = false,
+  hideUploadButton = false,
 }: MonitoringEvidenceUploadProps) {
   const {
     images,
@@ -70,7 +73,12 @@ export default function MonitoringEvidenceUpload({
   return (
     <div className={styles.wrapper}>
       <div className={styles.labelWrapper}>
-        <ReportTitle title="증빙자료를 업로드해주세요" checkIcon isChecked={isChecked} className="py-0" />
+        <ReportTitle
+          title="증빙자료를 업로드해주세요"
+          checkIcon={!hideUploadButton}
+          isChecked={isChecked}
+          className="py-0"
+        />
         <p className={styles.caption}>{CAPTION_TEXT}</p>
       </div>
 
@@ -85,26 +93,30 @@ export default function MonitoringEvidenceUpload({
           ))}
         </div>
 
-        <input
-          ref={fileInputRef as React.RefObject<HTMLInputElement>}
-          type="file"
-          accept="image/*,.pdf"
-          className="sr-only"
-          aria-hidden
-          onChange={handleImageSelect}
-          multiple
-        />
-        <button
-          type="button"
-          className={styles.uploadZone}
-          onClick={openFilePicker}
-          disabled={!canAddMore || isUploading}
-        >
-          <Icon name="IconLBoldFolderAdd" size={24} className={styles.uploadIcon} />
-          <p className={styles.uploadLabel}>
-            {isUploading ? '업로드 중...' : '자료 업로드'}
-          </p>
-        </button>
+        {!hideUploadButton && (
+          <>
+            <input
+              ref={fileInputRef as React.RefObject<HTMLInputElement>}
+              type="file"
+              accept="image/*,.pdf"
+              className="sr-only"
+              aria-hidden
+              onChange={handleImageSelect}
+              multiple
+            />
+            <button
+              type="button"
+              className={styles.uploadZone}
+              onClick={openFilePicker}
+              disabled={!canAddMore || isUploading}
+            >
+              <Icon name="IconLBoldFolderAdd" size={24} className={styles.uploadIcon} />
+              <p className={styles.uploadLabel}>
+                {isUploading ? '업로드 중...' : '자료 업로드'}
+              </p>
+            </button>
+          </>
+        )}
       </div>
     </div>
   )

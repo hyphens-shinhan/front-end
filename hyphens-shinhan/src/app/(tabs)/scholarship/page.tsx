@@ -1,13 +1,10 @@
 import dynamic from "next/dynamic";
+import ActivityListSkeleton from '@/components/scholarship/ActivityListSkeleton'
 
 const ActivityList = dynamic(
     () => import("@/components/scholarship/ActivityList"),
     {
-        loading: () => (
-            <div className="flex justify-center items-center py-12">
-                <p className="text-grey-9">로딩 중...</p>
-            </div>
-        ),
+        loading: () => <ActivityListSkeleton />,
         ssr: true,
     }
 );

@@ -59,6 +59,6 @@ const styles = {
         'px-4 py-20'
     ),
     errorWrapper: cn('gap-4'),
-    messageText: cn('text-center body-6 text-grey-8'),
+    messageText: cn('text-center body-5 text-grey-8 whitespace-pre-line'),
     actionWrapper: cn('flex items-center justify-center py-3'),
 };

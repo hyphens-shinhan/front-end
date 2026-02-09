@@ -9,6 +9,8 @@ export type ActivityFormItem = {
   title: string
   dateLabel: string
   status: ActivityStatusType
+  /** 연간 필수 활동일 때만: GOAL | SIMPLE_REPORT | URL_REDIRECT */
+  activity_type?: string
 }
 
 interface ActivityFormProps {
@@ -17,12 +19,15 @@ interface ActivityFormProps {
   items?: ActivityFormItem[]
   /** 빈 상태 메시지 키 (EMPTY_CONTENT_MESSAGES.EMPTY 내 키) */
   emptyMessageKey: keyof typeof EMPTY_CONTENT_MESSAGES.EMPTY
+  /** 항목 클릭 시 이동할 href (예: 내가 신청한 프로그램 → 이벤트 상세) */
+  getItemHref?: (item: ActivityFormItem) => string | undefined
 }
 
 export default function ActivityForm({
   title,
   items = [],
   emptyMessageKey,
+  getItemHref,
 }: ActivityFormProps) {
   return (
     <div className={styles.container}>
@@ -34,6 +39,7 @@ export default function ActivityForm({
             title={item.title}
             dateLabel={item.dateLabel}
             status={item.status}
+            href={getItemHref?.(item)}
           />
         ))
       ) : (

@@ -42,8 +42,8 @@ const SCHOLARSHIP_TYPE_LABELS: Record<ScholarshipType, string> = {
  * - 내 프로필: 모든 정보 표시
  * - 다른 사용자 프로필: 공개 설정에 따라 필터링된 정보만 표시 (API에서 이미 필터링됨)
  */
-export default function ProfileCard({ 
-    profile, 
+export default function ProfileCard({
+    profile,
     isMyProfile = false,
     showEditIcon = false,
     onEditClick,

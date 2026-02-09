@@ -2,7 +2,11 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { UserService } from '@/services/user'
 import { userKeys } from './useUser'
 import { postKeys } from '@/hooks/posts/usePosts'
-import type { UserProfileUpdate, UserPrivacyUpdate } from '@/types'
+import type {
+  UserProfileUpdate,
+  UserPrivacyUpdate,
+  VolunteerHoursUpdate,
+} from '@/types'
 
 /**
  * 내 프로필 수정 훅 (PATCH /users/me/profile)
@@ -32,6 +36,21 @@ export const useUpdateMyPrivacy = () => {
       UserService.updateMyPrivacy(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: userKeys.myPrivacy() })
+    },
+  })
+}
+
+/**
+ * 봉사시간 수정 훅 (PATCH /users/me/volunteer)
+ */
+export const useUpdateMyVolunteerHours = () => {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (data: VolunteerHoursUpdate) =>
+      UserService.updateMyVolunteerHours(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: userKeys.myVolunteerHours() })
+      queryClient.invalidateQueries({ queryKey: userKeys.scholarshipEligibility() })
     },
   })
 }

@@ -12,6 +12,10 @@ interface AccordionProps {
     isOpen?: boolean;
     /** 클릭 핸들러 */
     onClick?: () => void;
+    /** 컴포넌트 클래스 */
+    className?: string;
+    /** 타이틀 색상 */
+    titleColor?: string;
 }
 
 /**
@@ -26,11 +30,11 @@ interface AccordionProps {
  *   onClick={handleOpenBottomSheet}
  * />
  */
-export default function Accordion({ title, iconName, isOpen = false, onClick }: AccordionProps) {
+export default function Accordion({ title, iconName, isOpen = false, onClick, className, titleColor }: AccordionProps) {
     return (
-        <button type="button" onClick={onClick} className={styles.container}>
+        <button type="button" onClick={onClick} className={cn(styles.container, className)}>
             {iconName && <Icon name={iconName} className={styles.icon} />}
-            <p className={styles.title}>{title}</p>
+            <p className={cn(styles.title, titleColor)}>{title}</p>
             <Icon
                 name='IconLLineArrowDown'
                 className={cn(styles.icon, styles.arrowIcon, isOpen && '-rotate-180')}

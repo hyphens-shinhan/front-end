@@ -1,31 +1,45 @@
 import { useQuery } from '@tanstack/react-query'
 import { AcademicService } from '@/services/academic'
 
+/** 내 보고서 목록 쿼리 파라미터 */
+export interface AcademicReportsQueryParams {
+  year?: number
+  limit?: number
+  offset?: number
+}
+
+/** [Admin] 특정 사용자 보고서 목록 쿼리 파라미터 */
+export interface AdminUserReportsQueryParams {
+  limit?: number
+  offset?: number
+}
+
 /**
- * Academic(월별 학업 보고서) 쿼리 키 관리 객체
+ * Academic(유지 심사/월별 학업 보고서) 쿼리 키 관리 객체
  */
 export const academicKeys = {
   all: ['academic'] as const,
-  /** 내 보고서 목록 */
-  reports: () => [...academicKeys.all, 'reports'] as const,
+  /** 내 보고서 목록 (params 포함 시 캐시 키에 반영) */
+  reports: (params?: AcademicReportsQueryParams) =>
+    [...academicKeys.all, 'reports', params ?? {}] as const,
   /** 특정 연·월 보고서 조회 */
   reportLookup: (year: number, month: number) =>
     [...academicKeys.all, 'report', year, month] as const,
   /** [Admin] 특정 사용자 모니터링 연도 목록 */
   adminMonitoringYears: (userId: string) =>
     [...academicKeys.all, 'admin', 'monitoring', userId] as const,
-  /** [Admin] 특정 사용자 보고서 목록 */
-  adminUserReports: (userId: string) =>
-    [...academicKeys.all, 'admin', 'userReports', userId] as const,
+  /** [Admin] 특정 사용자 보고서 목록 (params 포함 시 캐시 키에 반영) */
+  adminUserReports: (userId: string, params?: AdminUserReportsQueryParams) =>
+    [...academicKeys.all, 'admin', 'userReports', userId, params ?? {}] as const,
 }
 
 /**
- * 월별 학업 보고서 목록 (내 보고서)
+ * 월별 학업 보고서 목록 (내 보고서). year, limit, offset 선택
  */
-export const useAcademicReports = () => {
+export const useAcademicReports = (params?: AcademicReportsQueryParams) => {
   return useQuery({
-    queryKey: academicKeys.reports(),
-    queryFn: () => AcademicService.getReports(),
+    queryKey: academicKeys.reports(params),
+    queryFn: () => AcademicService.getReports(params),
   })
 }
 
@@ -52,12 +66,15 @@ export const useAdminAcademicMonitoringYears = (userId: string) => {
 }
 
 /**
- * [Admin] 특정 사용자의 월별 학업 보고서 목록
+ * [Admin] 특정 사용자의 월별 학업 보고서 목록. limit, offset 선택
  */
-export const useAdminAcademicUserReports = (userId: string) => {
+export const useAdminAcademicUserReports = (
+  userId: string,
+  params?: AdminUserReportsQueryParams
+) => {
   return useQuery({
-    queryKey: academicKeys.adminUserReports(userId),
-    queryFn: () => AcademicService.adminGetUserReports(userId),
+    queryKey: academicKeys.adminUserReports(userId, params),
+    queryFn: () => AcademicService.adminGetUserReports(userId, params),
     enabled: !!userId,
   })
 }

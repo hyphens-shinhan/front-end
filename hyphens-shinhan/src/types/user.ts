@@ -140,3 +140,24 @@ export interface UserPrivacyUpdate {
   is_scholarship_public?: boolean | null
   is_follower_public?: boolean | null
 }
+
+/**
+ * 장학 유지 요건 요약 (GET /users/me/scholarship-eligibility)
+ * - 홈화면 유지 심사 관련 요약 정보
+ */
+export interface ScholarshipEligibilityResponse {
+  /** 기준 연도 */
+  current_year: number
+  /** 해당 연도 평균 학점 */
+  gpa: number
+  /** 총 이수 학점 */
+  total_credits: number
+  /** 학기별 breakdown (서버에서 내려주는 dict 배열) */
+  semester_breakdown: Record<string, unknown>[]
+  /** 봉사 시간 */
+  volunteer_hours: number
+  /** 해당 연도 필수 활동 개수 */
+  mandatory_total: number
+  /** 완료한 필수 활동 개수 */
+  mandatory_completed: number
+}

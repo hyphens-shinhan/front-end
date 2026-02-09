@@ -145,7 +145,7 @@ export interface HeaderConfig {
 /** 바텀 네비게이션 아이템 키에 따른 헤더 설정 상수 */
 export const HEADER_CONFIG_BY_BOTTOM_NAV: Record<NavLink, HeaderConfig> = {
   [ROUTES.HOME.MAIN]: {
-    title: '홈',
+    title: '',
     navItems: [HEADER_ITEMS.CHAT, HEADER_ITEMS.NOTIFICATIONS],
   },
   [ROUTES.SCHOLARSHIP.MAIN]: {
@@ -256,6 +256,12 @@ export const CUSTOM_HEADER_CONFIG: Record<string, CustomHeaderConfig> = {
     btnType: 'Back',
     navItem: HEADER_ITEMS[HEADER_NAV_ITEM_KEY.MORE],
     backHref: ROUTES.COMMUNITY.GROUP.MAIN,
+  },
+  /** 유지심사 현황 상세보기 */
+  [ROUTES.SCHOLARSHIP.MAINTENANCE]: {
+    title: '나의 유지심사',
+    type: 'Left',
+    btnType: 'Back',
   },
   /** MY활동 자치회 상세 페이지 (제목은 useHeaderStore.setCustomTitle으로 '4월 활동' 등 월별 표시) */
   [ROUTES.SCHOLARSHIP.REPORT.ACTIVITY]: {

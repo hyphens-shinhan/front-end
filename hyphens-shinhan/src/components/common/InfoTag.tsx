@@ -2,7 +2,7 @@ import { cn } from "@/utils/cn";
 
 interface PropsType {
     label: string;
-    color: 'blue' | 'grey' | 'green' | 'yellow';
+    color: 'blue' | 'grey' | 'green' | 'yellow' | 'red';
 }
 
 /** Info Tag 컴포넌트
@@ -34,6 +34,7 @@ const tagColor = {
     grey: 'bg-grey-1-1',
     green: 'bg-state-green-light',
     yellow: 'bg-state-yellow-light',
+    red: 'bg-state-red-light',
 };
 
 const tagTextStyles = {
@@ -41,4 +42,5 @@ const tagTextStyles = {
     grey: 'text-grey-9',
     green: 'text-state-green-dark',
     yellow: 'text-state-yellow-dark',
+    red: 'text-state-red-dark',
 };

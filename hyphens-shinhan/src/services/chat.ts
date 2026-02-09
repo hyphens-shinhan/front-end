@@ -125,7 +125,7 @@ export const ChatService = {
    */
   joinClubChat: async (clubId: string): Promise<ChatRoomResponse> => {
     const response = await apiClient.post<ChatRoomResponse>(
-      `/clubs/${clubId}/join`,
+      `${BASE}/clubs/${clubId}/join`,
     )
     return response.data
   },
@@ -135,7 +135,7 @@ export const ChatService = {
    */
   leaveClubChat: async (clubId: string): Promise<{ message: string }> => {
     const response = await apiClient.post<{ message: string }>(
-      `/clubs/${clubId}/leave`,
+      `${BASE}/clubs/${clubId}/leave`,
     )
     return response.data
   },
@@ -150,7 +150,7 @@ export const ChatService = {
     params?: { cursor?: string; limit?: number },
   ): Promise<MessageListResponse> => {
     const response = await apiClient.get<MessageListResponse>(
-      `/clubs/${clubId}/messages`,
+      `${BASE}/clubs/${clubId}/messages`,
       { params },
     )
     return response.data

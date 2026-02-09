@@ -46,13 +46,21 @@ export const useSendMessage = () => {
     mutationFn: ({
       roomId,
       data,
+      clubId,
     }: {
       roomId: string
       data: MessageCreate
+      clubId?: string // 클럽 채팅인 경우 클럽 ID
     }) => ChatService.sendMessage(roomId, data),
-    onSuccess: (_, { roomId }) => {
+    onSuccess: (_, { roomId, clubId }) => {
       // 해당 채팅방 메시지 갱신
       queryClient.invalidateQueries({ queryKey: chatKeys.messages(roomId) })
+      // 클럽 채팅인 경우 클럽 채팅 메시지 쿼리도 갱신
+      if (clubId) {
+        queryClient.invalidateQueries({
+          queryKey: chatKeys.clubMessages(clubId),
+        })
+      }
       // 채팅방 목록도 갱신 (최신 메시지 업데이트)
       queryClient.invalidateQueries({ queryKey: chatKeys.rooms() })
     },

@@ -50,12 +50,13 @@ export const useMessages = (
 /**
  * 클럽 채팅 메시지 조회 (GET /clubs/{club_id}/messages)
  * @param clubId 클럽 ID
- * @param cursor 마지막 메시지 ID (페이징용)
- * @param limit 기본 30
+ * @param params 쿼리 파라미터 (cursor, limit)
+ * @param enabled 쿼리 활성화 여부 (채팅방이 준비되었는지 확인용)
  */
 export const useClubChatMessages = (
   clubId: string | null,
   params?: { cursor?: string; limit?: number },
+  enabled: boolean = true,
 ) => {
   return useQuery({
     queryKey: chatKeys.clubMessages(clubId ?? '', params),
@@ -63,6 +64,6 @@ export const useClubChatMessages = (
       clubId
         ? ChatService.getClubChatMessages(clubId, params)
         : Promise.resolve(null),
-    enabled: !!clubId,
+    enabled: !!clubId && enabled,
   })
 }

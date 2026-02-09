@@ -11,6 +11,7 @@ import JoinProfileOptions from "@/components/common/JoinProfileOptions";
 import type { JoinProfileType } from "@/components/common/JoinProfileOptions";
 import { useClub, useGalleryImages } from "@/hooks/clubs/useClubs";
 import { useJoinClub } from "@/hooks/clubs/useClubMutations";
+import { useJoinClubChat } from "@/hooks/chat/useChatMutations";
 import { useConfirmModalStore } from "@/stores";
 import { EMPTY_CONTENT_MESSAGES, ROUTES } from "@/constants";
 import { TOAST_MESSAGES } from "@/constants/toast";
@@ -47,6 +48,7 @@ export default function GroupDetailContent({ clubId }: GroupDetailContentProps) 
     const { data: galleryData } = useGalleryImages(clubId);
     const galleryImages = useMemo(() => galleryData?.images ?? [], [galleryData?.images]);
     const joinClub = useJoinClub();
+    const joinClubChat = useJoinClubChat();
     const toast = useToast();
     const { onOpen: openConfirmModal, updateOptions } = useConfirmModalStore();
     const [joinProfileType, setJoinProfileType] = useState<JoinProfileType>('realname');
@@ -84,7 +86,18 @@ export default function GroupDetailContent({ clubId }: GroupDetailContentProps) 
         joinClub.mutate(
             { clubId, profile },
             {
-                onSuccess: () => toast.show(TOAST_MESSAGES.GROUP.JOIN_SUCCESS),
+                onSuccess: () => {
+                    // 클럽 가입 성공 후 채팅방 join API 호출
+                    joinClubChat.mutate(clubId, {
+                        onSuccess: () => {
+                            toast.show(TOAST_MESSAGES.GROUP.JOIN_SUCCESS);
+                        },
+                        onError: (error) => {
+                            // 채팅방 join 실패 시 에러 표시
+                            toast.error('채팅방 입장에 실패했습니다. 다시 시도해주세요.');
+                        },
+                    });
+                },
                 onError: (error) => {
                     toast.error(TOAST_MESSAGES.GROUP.JOIN_ERROR);
                 },
@@ -185,7 +198,7 @@ export default function GroupDetailContent({ clubId }: GroupDetailContentProps) 
                 label={club.is_member ? '채팅방 가기' : '참여하기'}
                 size="M"
                 type="primary"
-                disabled={joinClub.isPending}
+                disabled={joinClub.isPending || joinClubChat.isPending}
                 onClick={club.is_member ? handleGoToChat : handleJoin}
                 bottomContent={BOTTOM_BUTTON_HINT}
             />

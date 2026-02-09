@@ -32,6 +32,7 @@ export const TOAST_MESSAGES = {
   REPORT: {
     DRAFT_SAVE_SUCCESS: '임시 저장했어요',
     DRAFT_SAVE_ERROR: '임시 저장에 실패했어요',
+    FILL_ALL_CONTENT: '모든 내용을 작성해주세요',
     SUBMIT_SUCCESS: '제출이 완료되었어요',
     SUBMIT_ERROR: '제출에 실패했어요',
     ATTENDANCE_ERROR: '처리에 실패했어요',

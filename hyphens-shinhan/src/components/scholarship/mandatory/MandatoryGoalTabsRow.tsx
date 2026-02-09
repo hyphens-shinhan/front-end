@@ -9,15 +9,19 @@ interface MandatoryGoalTabsRowProps {
   onTabChange: (index: number) => void
   onAddGoal: () => void
   canAddGoal: boolean
+  onRemoveGoal?: (goalIndex: number) => void
+  canRemoveGoal?: boolean
 }
 
-/** 목표 탭(목표 1, 목표 2, …) + 목표 추가 버튼 */
+/** 목표 탭(목표 1, 목표 2, …) + 목표 추가/삭제 */
 export default function MandatoryGoalTabsRow({
   tabLabels,
   activeIndex,
   onTabChange,
   onAddGoal,
   canAddGoal,
+  onRemoveGoal,
+  canRemoveGoal,
 }: MandatoryGoalTabsRowProps) {
   return (
     <div className="flex items-center justify-between gap-6 py-2 pr-4">
@@ -25,6 +29,8 @@ export default function MandatoryGoalTabsRow({
         tabs={tabLabels}
         activeIndex={activeIndex}
         onChange={onTabChange}
+        deletable={canRemoveGoal}
+        onDelete={onRemoveGoal}
       />
       <button
         type="button"

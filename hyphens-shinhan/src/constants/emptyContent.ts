@@ -41,4 +41,9 @@ export const EMPTY_CONTENT_MESSAGES = {
     /** 활동 보고서 - 등록된 사진 없음 */
     ACTIVITY_PHOTOS: '등록된 활동 사진이 없어요.',
   },
+  /** 제출 완료 등 완료 상태 문구 */
+  SUBMITTED: {
+    /** 학업 계획서 제출 완료 */
+    GOAL: '학업 계획서가 제출된 상태입니다.\n수정이 필요하면 관리자에게 문의해 주세요.',
+  },
 } as const

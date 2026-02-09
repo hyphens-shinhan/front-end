@@ -73,11 +73,11 @@ export default function MandatoryGoalContent({
 
   if (form.status === 'submitted') {
     return (
-      <div className={styles.submittedWrapper}>
-        <p className={styles.submittedTitle}>제출이 완료되었습니다.</p>
-        <p className={styles.submittedDescription}>
-          학업 계획서가 제출된 상태입니다. 수정이 필요하면 운영진에 문의해 주세요.
-        </p>
+      <div className={styles.errorEmptyWrapper}>
+        <EmptyContent
+          variant="empty"
+          message={EMPTY_CONTENT_MESSAGES.SUBMITTED.GOAL}
+        />
       </div>
     )
   }
@@ -93,13 +93,16 @@ export default function MandatoryGoalContent({
         onTabChange={form.setActiveGoalIndex}
         onAddGoal={form.addGoal}
         canAddGoal={form.canAddGoal}
+        onRemoveGoal={form.removeGoal}
+        canRemoveGoal={form.canRemoveGoal}
       />
       {/** 학습 목표 유형 – 클릭 시 바텀시트에서 선택(익명/실명과 동일 디자인, 다중 선택) */}
       <MandatoryGoalCategorySection
         categoryOptions={form.categoryLabels}
         selectedCategoriesForCurrentGoal={form.currentGoal.categories}
         selectedChips={form.selectedCategoriesForChips.filter(
-          (c) => c.index === form.activeGoalIndex
+          (c: { index: number; category: AcademicGoalCategory }) =>
+            c.index === form.activeGoalIndex
         )}
         onToggleCategory={(cat) => {
           const cur = categoriesRef.current
@@ -148,7 +151,7 @@ export default function MandatoryGoalContent({
         onResize={outcomeResize.handleResize}
       />
 
-      {/** 학습 목표 하단 고정 버튼: 저장하기 / 제출하기 */}
+      {/** 학습 목표 하단 고정 버튼: 저장하기 / 제출하기 (컨텐츠 다 채워야만 제출 가능) */}
       <MandatoryGoalBottomButtons
         onSave={form.saveDraft}
         onSubmit={form.handleSubmit}
@@ -161,9 +164,6 @@ export default function MandatoryGoalContent({
 
 const styles = {
   loadingWrapper: cn('flex flex-col py-20 pb-40'),
-  errorEmptyWrapper: cn('flex flex-col px-4 py-8'),
-  submittedWrapper: cn('px-4 py-6'),
-  submittedTitle: cn('title-16 text-grey-11 mb-4'),
-  submittedDescription: cn('body-6 text-grey-8'),
+  errorEmptyWrapper: cn('flex flex-col items-center '),
   formWrapper: cn('flex flex-col pb-40'),
 }

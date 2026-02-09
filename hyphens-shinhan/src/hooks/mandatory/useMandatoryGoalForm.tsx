@@ -16,7 +16,6 @@ const MIN_GOALS = 2
 const MAX_GOALS = 5
 
 export interface GoalFormItem {
-  /** 목표 유형 (다중 선택) */
   categories: AcademicGoalCategory[]
   custom_category?: string | null
   content: string
@@ -51,21 +50,19 @@ export interface UseMandatoryGoalFormResult {
   setAccordionOpen: (open: boolean | ((prev: boolean) => boolean)) => void
   setCurrentGoal: (patch: Partial<GoalFormItem>) => void
   addGoal: () => void
+  removeGoal: (goalIndex: number) => void
   removeGoalCategory: (goalIndex: number, category: AcademicGoalCategory) => void
   categoryLabels: AcademicGoalCategory[]
   selectedCategoriesForChips: { index: number; category: AcademicGoalCategory }[]
   pillLabels: string[]
   canAddGoal: boolean
+  canRemoveGoal: boolean
   isFormValid: boolean
   saveDraft: () => void
   handleSubmit: () => void
   isSaving: boolean
 }
 
-/**
- * 학업 계획서(GOAL) 폼: API 조회/생성/수정/제출 훅 + 폼 상태
- * useMandatoryActivityLookup, useCreateSubmissionGoal, useUpdateSubmissionGoal, useSubmitSubmission 사용
- */
 export function useMandatoryGoalForm(activityId: string): UseMandatoryGoalFormResult {
   const { data, isLoading, isError } = useMandatoryActivityLookup(activityId)
   const createGoal = useCreateSubmissionGoal()
@@ -129,6 +126,16 @@ export function useMandatoryGoalForm(activityId: string): UseMandatoryGoalFormRe
     setActiveGoalIndex(goals.length)
   }, [goals.length])
 
+  const removeGoal = useCallback((goalIndex: number) => {
+    if (goals.length <= MIN_GOALS) return
+    setGoals((prev) => prev.filter((_, i) => i !== goalIndex))
+    setActiveGoalIndex((prev) => {
+      if (prev === goalIndex) return Math.max(0, goalIndex - 1)
+      if (prev > goalIndex) return prev - 1
+      return prev
+    })
+  }, [goals.length])
+
   const removeGoalCategory = useCallback(
     (goalIndex: number, category: AcademicGoalCategory) => {
       setGoals((prev) => {
@@ -157,6 +164,10 @@ export function useMandatoryGoalForm(activityId: string): UseMandatoryGoalFormRe
   }, [goals])
 
   const saveDraft = useCallback(() => {
+    if (!isFormValid) {
+      toast.error(TOAST_MESSAGES.REPORT.FILL_ALL_CONTENT)
+      return
+    }
     const body = {
       goals: goals.map((g) => ({
         category:
@@ -172,7 +183,10 @@ export function useMandatoryGoalForm(activityId: string): UseMandatoryGoalFormRe
       updateGoal.mutate(
         { submissionId, body },
         {
-          onSuccess: () => toast.show(TOAST_MESSAGES.REPORT.DRAFT_SAVE_SUCCESS),
+          onSuccess: () =>
+            toast.show(TOAST_MESSAGES.REPORT.DRAFT_SAVE_SUCCESS, {
+              position: 'bottom-above-tabs',
+            }),
           onError: () => toast.error(TOAST_MESSAGES.REPORT.DRAFT_SAVE_ERROR),
         }
       )
@@ -182,7 +196,9 @@ export function useMandatoryGoalForm(activityId: string): UseMandatoryGoalFormRe
         {
           onSuccess: (res) => {
             setSubmissionId(res.id)
-            toast.show(TOAST_MESSAGES.REPORT.DRAFT_SAVE_SUCCESS)
+            toast.show(TOAST_MESSAGES.REPORT.DRAFT_SAVE_SUCCESS, {
+              position: 'bottom-above-tabs',
+            })
           },
           onError: () => toast.error(TOAST_MESSAGES.REPORT.DRAFT_SAVE_ERROR),
         }
@@ -192,6 +208,7 @@ export function useMandatoryGoalForm(activityId: string): UseMandatoryGoalFormRe
     activityId,
     submissionId,
     goals,
+    isFormValid,
     updateGoal,
     createGoal,
     toast,
@@ -206,7 +223,7 @@ export function useMandatoryGoalForm(activityId: string): UseMandatoryGoalFormRe
         </div>
       ),
       confirmText: '제출하기',
-        onConfirm: () => {
+      onConfirm: () => {
         const body: { goals: MandatoryGoalCreate[] } = {
           goals: goals.map((g) => ({
             category: g.categories[0]!,
@@ -218,7 +235,10 @@ export function useMandatoryGoalForm(activityId: string): UseMandatoryGoalFormRe
         }
         const doSubmit = (id: string) => {
           submitSubmission.mutate(id, {
-            onSuccess: () => toast.show(TOAST_MESSAGES.REPORT.SUBMIT_SUCCESS),
+            onSuccess: () =>
+              toast.show(TOAST_MESSAGES.REPORT.SUBMIT_SUCCESS, {
+                position: 'bottom-above-tabs',
+              }),
             onError: () => toast.error(TOAST_MESSAGES.REPORT.SUBMIT_ERROR),
           })
         }
@@ -270,6 +290,7 @@ export function useMandatoryGoalForm(activityId: string): UseMandatoryGoalFormRe
   )
 
   const canAddGoal = goals.length < MAX_GOALS
+  const canRemoveGoal = goals.length > MIN_GOALS
   const status: MandatoryGoalFormStatus = isLoading
     ? 'loading'
     : isError || !data
@@ -291,11 +312,13 @@ export function useMandatoryGoalForm(activityId: string): UseMandatoryGoalFormRe
     setAccordionOpen,
     setCurrentGoal,
     addGoal,
+    removeGoal,
     removeGoalCategory,
     categoryLabels,
     selectedCategoriesForChips,
     pillLabels,
     canAddGoal,
+    canRemoveGoal,
     isFormValid,
     saveDraft,
     handleSubmit,

@@ -59,25 +59,25 @@ export default function ActivityList() {
 
     const mandatoryItems = useMemo(
         () =>
-            yearlySummary?.mandatory_report?.activities?.map((a) => ({
+            yearlySummary?.mandatory_activities?.map((a) => ({
                 id: a.id,
                 title: a.title,
                 dateLabel: a.due_date,
-                status: (a.is_submitted ? 'completed' : 'beforeStart') as ActivityStatusType,
+                status: (a.status === 'SUBMITTED' ? 'completed' : a.status === 'DRAFT' ? 'inProgress' : 'beforeStart') as ActivityStatusType,
                 activity_type: a.activity_type,
             })) ?? [],
-        [yearlySummary?.mandatory_report?.activities]
+        [yearlySummary?.mandatory_activities]
     );
 
     const appliedProgramItems = useMemo(
         () =>
-            yearlySummary?.applied_events?.events?.map((e) => ({
+            yearlySummary?.applied_events?.map((e) => ({
                 id: e.id,
                 title: e.title,
                 dateLabel: e.event_date,
                 status: (e.status === 'CLOSED' ? 'completed' : e.status === 'OPEN' ? 'inProgress' : 'scheduled') as ActivityStatusType,
             })) ?? [],
-        [yearlySummary?.applied_events?.events]
+        [yearlySummary?.applied_events]
     );
 
     const cardList = useMemo(() => {
@@ -85,15 +85,31 @@ export default function ActivityList() {
             const monthData = yearlySummary?.months.find((m) => m.month === monthNum);
             const isCurrentMonth = now.year === resolvedYear && now.month === monthNum;
             const isMonitoring = (yearlySummary?.academic_is_monitored ?? false) && isCurrentMonth;
-            const title = monthData?.council_report?.title ?? null;
             const cr = monthData?.council_report;
-            const isSubmitted = cr?.is_submitted ?? cr?.is_completed;
+            const title = cr?.title ?? null;
+
+            // council_report가 없으면 beforeStart
+            if (!cr) {
+                return {
+                    key: monthNum,
+                    year: resolvedYear,
+                    month: monthNum,
+                    councilId: yearlySummary?.council_id ?? undefined,
+                    title: undefined,
+                    status: 'beforeStart' as ActivityStatusType,
+                    isCurrentMonth,
+                    isMonitoring,
+                };
+            }
+
+            // 상태 결정: is_submitted가 true면 completed, exists가 true이고 is_submitted가 false면 inProgress, 그 외는 beforeStart
             const status: ActivityStatusType =
-                isSubmitted
+                cr.is_submitted
                     ? 'completed'
-                    : cr?.exists === true && cr?.is_submitted === false
+                    : cr.exists && !cr.is_submitted
                         ? 'inProgress'
                         : 'beforeStart';
+
             return {
                 key: monthNum,
                 year: resolvedYear,

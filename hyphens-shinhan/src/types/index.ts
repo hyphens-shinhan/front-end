@@ -53,13 +53,12 @@ export interface InputBarConfig {
 
 // MARK: - Activities (활동 요약/상태) API 타입
 export type {
+  ActivityStatus,
   CouncilReportStatus,
   AcademicReportStatus,
   MandatoryActivityType,
   MandatoryActivityStatus,
-  MandatoryReportStatus,
   AppliedEventStatus,
-  AppliedEventsStatus,
   MonthlyActivityStatus,
   YearlyActivitySummary,
   ActivitiesSummaryResponse,

@@ -1,6 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { MandatoryService } from '@/services/mandatory'
-import { activityKeys } from '@/hooks/activities/useActivities'
 import { mandatoryKeys } from './useMandatory'
 import type {
   MandatoryActivityCreate,
@@ -21,9 +20,7 @@ export const useAdminCreateMandatoryActivity = () => {
     mutationFn: (body: MandatoryActivityCreate) =>
       MandatoryService.adminCreateActivity(body),
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: mandatoryKeys.adminActivities(),
-      })
+      queryClient.invalidateQueries({ queryKey: mandatoryKeys.adminActivities() })
       queryClient.invalidateQueries({ queryKey: mandatoryKeys.all })
     },
   })
@@ -38,9 +35,7 @@ export const useAdminDeleteMandatoryActivity = () => {
     mutationFn: (activityId: string) =>
       MandatoryService.adminDeleteActivity(activityId),
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: mandatoryKeys.adminActivities(),
-      })
+      queryClient.invalidateQueries({ queryKey: mandatoryKeys.adminActivities() })
       queryClient.invalidateQueries({ queryKey: mandatoryKeys.all })
     },
   })
@@ -66,7 +61,6 @@ export const useCreateSubmissionGoal = () => {
         queryKey: mandatoryKeys.activityLookup(activityId),
       })
       queryClient.invalidateQueries({ queryKey: mandatoryKeys.all })
-      queryClient.invalidateQueries({ queryKey: activityKeys.summary() })
     },
   })
 }
@@ -89,7 +83,6 @@ export const useCreateSubmissionReport = () => {
         queryKey: mandatoryKeys.activityLookup(activityId),
       })
       queryClient.invalidateQueries({ queryKey: mandatoryKeys.all })
-      queryClient.invalidateQueries({ queryKey: activityKeys.summary() })
     },
   })
 }
@@ -107,7 +100,6 @@ export const useCreateSubmissionRedirect = () => {
         queryKey: mandatoryKeys.activityLookup(activityId),
       })
       queryClient.invalidateQueries({ queryKey: mandatoryKeys.all })
-      queryClient.invalidateQueries({ queryKey: activityKeys.summary() })
     },
   })
 }
@@ -132,7 +124,6 @@ export const useUpdateSubmissionGoal = () => {
         queryKey: mandatoryKeys.activityLookup(data.activity_id),
       })
       queryClient.invalidateQueries({ queryKey: mandatoryKeys.all })
-      queryClient.invalidateQueries({ queryKey: activityKeys.summary() })
     },
   })
 }
@@ -155,7 +146,6 @@ export const useUpdateSubmissionReport = () => {
         queryKey: mandatoryKeys.activityLookup(data.activity_id),
       })
       queryClient.invalidateQueries({ queryKey: mandatoryKeys.all })
-      queryClient.invalidateQueries({ queryKey: activityKeys.summary() })
     },
   })
 }
@@ -173,7 +163,6 @@ export const useSubmitSubmission = () => {
         queryKey: mandatoryKeys.activityLookup(data.activity_id),
       })
       queryClient.invalidateQueries({ queryKey: mandatoryKeys.all })
-      queryClient.invalidateQueries({ queryKey: activityKeys.summary() })
     },
   })
 }
@@ -191,7 +180,6 @@ export const useCompleteSubmission = () => {
         queryKey: mandatoryKeys.activityLookup(data.activity_id),
       })
       queryClient.invalidateQueries({ queryKey: mandatoryKeys.all })
-      queryClient.invalidateQueries({ queryKey: activityKeys.summary() })
     },
   })
 }

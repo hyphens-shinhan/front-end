@@ -187,8 +187,61 @@ export const CUSTOM_HEADER_CONFIG: Record<string, CustomHeaderConfig> = {
   [ROUTES.CHAT]: {
     title: '채팅',
   },
+  /** Chat detail: title set by setCustomTitle in ChatView; more button uses store onClick */
+  [ROUTES.CHAT_DETAIL]: {
+    pathPattern: /^\/chat\/[^/]+$/,
+    title: '',
+    type: 'Center',
+    btnType: 'Back',
+    backHref: ROUTES.CHAT,
+    navItem: {
+      icon: 'IconLLine3DotVertical',
+      ariaLabel: '더보기',
+      type: 'button',
+    },
+  },
   [ROUTES.SEARCH]: {
     title: '검색',
+  },
+  /** 멘토링 신청 설문 */
+  [ROUTES.MENTORS.QUESTIONNAIRE]: {
+    title: '멘토링 신청하기',
+    type: 'Left',
+    btnType: 'Back',
+    navItem: {
+      text: '이전 설문 불러오기',
+      ariaLabel: '이전 설문 불러오기',
+      type: 'button',
+    },
+  },
+  /** 멘토 매칭 결과 */
+  [ROUTES.MENTORS.MATCHES]: {
+    title: '멘토 매칭 결과',
+    type: 'Left',
+    btnType: 'Back',
+    backHref: ROUTES.MENTORS.QUESTIONNAIRE,
+  },
+  /** 멘토링 신청 풀스크린 (/mentors/[id]/apply) */
+  [ROUTES.MENTORS.APPLY]: {
+    pathPattern: /^\/mentors\/[^/]+\/apply$/,
+    title: '멘토링 신청',
+    type: 'Left',
+    btnType: 'Back',
+  },
+  /** 나의 멘토링 내역 (pathPattern so /mentors/history is not matched by DETAIL_PREFIX) */
+  [ROUTES.MENTORS.HISTORY]: {
+    pathPattern: /^\/mentors\/history$/,
+    title: '나의 멘토링 내역',
+    type: 'Left',
+    btnType: 'Back',
+  },
+  /** 멘토 프로필 상세 (/mentors/[id]) - pathPattern so not to match /mentors/matches etc. */
+  [ROUTES.MENTORS.DETAIL_PREFIX]: {
+    pathPattern: /^\/mentors\/[^/]+$/,
+    title: '멘토 상세',
+    type: 'Left',
+    btnType: 'Back',
+    backHref: ROUTES.MENTORS.MATCHES,
   },
   /** 신한장학재단 공지 상세 - 목록보다 먼저 두어 /community/notice/[id] 매칭 */
   [ROUTES.COMMUNITY.NOTICE.DETAIL_PREFIX]: {
@@ -220,10 +273,12 @@ export const CUSTOM_HEADER_CONFIG: Record<string, CustomHeaderConfig> = {
     btnType: 'Close',
     navItem: HEADER_ITEMS[HEADER_NAV_ITEM_KEY.COMPLETE],
   },
-  /** 커뮤니티 소모임 추가하기 페이지 헤더 설정 */
+  /** 커뮤니티 소모임 만들기 페이지 헤더 설정 */
   [ROUTES.COMMUNITY.GROUP.CREATE]: {
-    title: '추가하기',
+    title: '소모임 만들기',
     type: 'Left',
+    btnType: 'Back',
+    navItem: { text: '만들기', ariaLabel: '소모임 만들기' },
   },
   /** 게시글 상세 보기 (공유 링크 진입 시 뒤로가기 = 커뮤니티로) */
   [ROUTES.COMMUNITY.FEED.DETAIL]: {
@@ -257,6 +312,14 @@ export const CUSTOM_HEADER_CONFIG: Record<string, CustomHeaderConfig> = {
     navItem: HEADER_ITEMS[HEADER_NAV_ITEM_KEY.MORE],
     backHref: ROUTES.COMMUNITY.GROUP.MAIN,
   },
+  /** 소모임 채팅방 (/community/group/[id]/chat) - 제목은 setCustomTitle으로 그룹명 */
+  [ROUTES.COMMUNITY.GROUP.CHAT]: {
+    pathPattern: /^\/community\/group\/[^/]+\/chat$/,
+    title: '채팅',
+    type: 'Left',
+    btnType: 'Back',
+    navItem: HEADER_ITEMS[HEADER_NAV_ITEM_KEY.MORE],
+  },
   /** 유지심사 현황 상세보기 */
   [ROUTES.SCHOLARSHIP.MAINTENANCE]: {
     title: '나의 유지심사',
@@ -274,36 +337,6 @@ export const CUSTOM_HEADER_CONFIG: Record<string, CustomHeaderConfig> = {
     type: 'Left',
     btnType: 'Back',
     backHref: ROUTES.SCHOLARSHIP.REPORT.ACTIVITY,
-  },
-  /** 연간 필수 활동 – 학업계획서(GOAL) 상세 (pathPattern으로 타입별 타이틀) */
-  'mandatory-goal': {
-    pathPattern: /^\/scholarship\/mandatory\/goal\/[^/]+$/,
-    title: '학업계획서',
-    type: 'Left',
-    btnType: 'Back',
-    backHref: ROUTES.SCHOLARSHIP.MAIN,
-  },
-  /** 연간 필수 활동 – 장학캠프(CAMP) 상세 */
-  'mandatory-camp': {
-    pathPattern: /^\/scholarship\/mandatory\/camp\/[^/]+$/,
-    title: '장학캠프',
-    type: 'Left',
-    btnType: 'Back',
-    backHref: ROUTES.SCHOLARSHIP.MAIN,
-  },
-  /** 연간 필수 활동 – 만족도 조사(SURVEY) 상세 */
-  'mandatory-survey': {
-    pathPattern: /^\/scholarship\/mandatory\/survey\/[^/]+$/,
-    title: '만족도 조사',
-    type: 'Left',
-    btnType: 'Back',
-    backHref: ROUTES.SCHOLARSHIP.MAIN,
-  },
-  /** 연간 필수 활동 상세 - 목록보다 먼저 두어 /scholarship/mandatory/[id] 매칭 */
-  [ROUTES.SCHOLARSHIP.MANDATORY.DETAIL_PREFIX]: {
-    type: 'Left',
-    btnType: 'Back',
-    backHref: ROUTES.SCHOLARSHIP.MAIN,
   },
   /** 마이페이지 설정 메인 페이지 */
   [ROUTES.MYPAGE.SETTING.MAIN]: {
@@ -344,7 +377,7 @@ export const POST_FAB_ITEMS: Record<POST_FAB_ITEM_KEY, PostFABItem> = {
   [POST_FAB_ITEM_KEY.ADD]: {
     icon: 'IconLLinePlus',
     href: ROUTES.COMMUNITY.GROUP.CREATE,
-    ariaLabel: '추가하기',
+    ariaLabel: '소모임 만들기',
   },
 } as const
 

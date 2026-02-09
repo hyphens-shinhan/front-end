@@ -214,6 +214,8 @@ function ReportDetailContentYBLeader({
                 location={location}
                 description={content}
                 setTitle={setTitle}
+                setDate={setActivityDate}
+                setLocation={setLocation}
                 setDescription={setContent}
                 isTitleChecked={isActivityInfoChecked}
             />

@@ -9,7 +9,7 @@ interface MonitoringPeriodNoticeProps {
 
 const styles = {
   wrapper: cn('px-4'),
-  box: cn('text-center px-5 py-3 bg-grey-2 rounded-[16px] mb-4'),
+  box: cn('text-center px-5.5 py-3 bg-grey-2 rounded-[16px] mb-4'),
   message: cn('font-caption-caption2 text-grey-9'),
   highlight: cn('font-caption-caption1 text-grey-9'),
 }

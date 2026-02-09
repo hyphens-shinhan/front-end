@@ -31,7 +31,7 @@ export const IMAGE_UPLOAD = {
     /** 자치회 활동 보고서 사진 */
     ACTIVITY_PHOTOS: 5,
     /** 자치회 활동 영수증 */
-    RECEIPTS: 1,
+    RECEIPTS: 3,
     /** 업로드 없이 기존 이미지만 표시할 때 (추가 선택 불가) */
     VIEW_ONLY: 0,
   },

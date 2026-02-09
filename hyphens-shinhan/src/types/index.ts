@@ -53,12 +53,12 @@ export interface InputBarConfig {
 
 // MARK: - Activities (활동 요약/상태) API 타입
 export type {
-  ActivityStatus,
   CouncilReportStatus,
   AcademicReportStatus,
   MandatoryActivityType,
-  MandatoryActivityStatus,
+  MandatoryReportStatus,
   AppliedEventStatus,
+  AppliedEventsStatus,
   MonthlyActivityStatus,
   YearlyActivitySummary,
   ActivitiesSummaryResponse,
@@ -157,6 +157,19 @@ export type {
   SemesterGradeResponse,
   SemesterGradeListResponse,
   SemesterGradeCreate,
+  SemesterGradeUpdate,
   SemesterBreakdownItem,
   YearGPAResponse,
 } from './grades'
+
+// MARK: - Network (네트워크/멘토/팔로잉)
+export type {
+  Generation,
+  ScholarshipType as NetworkScholarshipType,
+  Location,
+  MentorListRole,
+  Person,
+} from './network'
+
+// MARK: - Notification (알림)
+export type { NotificationItem } from './notification'

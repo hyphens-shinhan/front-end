@@ -11,13 +11,12 @@ import type {
   SimpleReportSubmissionUpdate,
 } from '@/types/mandatory'
 
-/** Base: /api/v1/reports/mandatory (apiClient baseURL 기준) */
 const BASE = '/reports/mandatory'
 const ADMIN_ACTIVITIES = `${BASE}/admin/activities`
 const ADMIN_SUBMISSIONS = (activityId: string) =>
   `${BASE}/admin/submissions/${activityId}`
-/** PATCH /{submission_id}/goal, POST /{submission_id}/submit 등에 사용 */
-const submissionPath = (submissionId: string) => `${BASE}/${submissionId}`
+/** Backend uses /reports/mandatory/{submission_id}, not /submission/... */
+const SUBMISSION = (submissionId: string) => `${BASE}/${submissionId}`
 
 /**
  * Mandatory(필수 활동) API 서비스
@@ -78,7 +77,7 @@ export const MandatoryService = {
     return data
   },
 
-  /** 활동 + 내 제출 조회 - GET /api/v1/reports/mandatory/activity/{activity_id} (Get Activity And Submission) */
+  /** 활동 + 내 제출 조회 */
   getActivityLookup: async (
     activityId: string,
   ): Promise<MandatorySubmissionLookupResponse> => {
@@ -101,7 +100,7 @@ export const MandatoryService = {
     return data
   },
 
-  /** [제출 생성] SIMPLE_REPORT - POST /activity/{id}/simple-report */
+  /** [제출 생성] SIMPLE_REPORT */
   createSubmissionReport: async (
     activityId: string,
     body: SimpleReportSubmissionCreate,
@@ -113,7 +112,7 @@ export const MandatoryService = {
     return data
   },
 
-  /** [제출 생성] URL_REDIRECT (body 없음) - POST /activity/{id}/url-redirect */
+  /** [제출 생성] URL_REDIRECT (body 없음) */
   createSubmissionRedirect: async (
     activityId: string,
   ): Promise<MandatorySubmissionResponse> => {
@@ -124,46 +123,46 @@ export const MandatoryService = {
   },
 
   // ---------- 제출 수정 / 제출·완료 ----------
-  /** GOAL 제출 수정 - PATCH /{submission_id}/goal */
+  /** GOAL 제출 수정 */
   updateSubmissionGoal: async (
     submissionId: string,
     body: GoalSubmissionUpdate,
   ): Promise<MandatorySubmissionResponse> => {
     const { data } = await apiClient.patch<MandatorySubmissionResponse>(
-      `${submissionPath(submissionId)}/goal`,
+      `${SUBMISSION(submissionId)}/goal`,
       body,
     )
     return data
   },
 
-  /** SIMPLE_REPORT 제출 수정 - PATCH /{submission_id}/simple-report */
+  /** SIMPLE_REPORT 제출 수정 */
   updateSubmissionReport: async (
     submissionId: string,
     body: SimpleReportSubmissionUpdate,
   ): Promise<MandatorySubmissionResponse> => {
     const { data } = await apiClient.patch<MandatorySubmissionResponse>(
-      `${submissionPath(submissionId)}/simple-report`,
+      `${SUBMISSION(submissionId)}/simple-report`,
       body,
     )
     return data
   },
 
-  /** 제출하기 - POST /{submission_id}/submit */
+  /** 제출하기 */
   submitSubmission: async (
     submissionId: string,
   ): Promise<MandatorySubmissionResponse> => {
     const { data } = await apiClient.post<MandatorySubmissionResponse>(
-      `${submissionPath(submissionId)}/submit`,
+      `${SUBMISSION(submissionId)}/submit`,
     )
     return data
   },
 
-  /** URL_REDIRECT 완료 - POST /{submission_id}/complete */
+  /** 완료하기 */
   completeSubmission: async (
     submissionId: string,
   ): Promise<MandatorySubmissionResponse> => {
     const { data } = await apiClient.post<MandatorySubmissionResponse>(
-      `${submissionPath(submissionId)}/complete`,
+      `${SUBMISSION(submissionId)}/complete`,
     )
     return data
   },

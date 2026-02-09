@@ -14,7 +14,9 @@ export default function NoTabsLayout({
                 <CustomHeader />
                 <main className={styles.main}>
                     <div className={styles.content}>
-                        {children}
+                        <div className={styles.contentInner}>
+                            {children}
+                        </div>
                     </div>
                 </main>
             </div>
@@ -24,7 +26,7 @@ export default function NoTabsLayout({
 
 const styles = {
     container: cn(
-        'relative mx-auto max-w-md',
+        'relative mx-auto w-max-md',
         'h-[100dvh] flex flex-col',
         'bg-white'
     ),
@@ -32,6 +34,9 @@ const styles = {
         'flex-1 min-h-0 overflow-hidden',
     ),
     content: cn(
-        'flex-1 h-full min-h-0 overflow-y-auto overflow-x-hidden scrollbar-hide',
+        'flex flex-col flex-1 h-full min-h-0 overflow-hidden',
+    ),
+    contentInner: cn(
+        'flex-1 min-h-0 flex flex-col overflow-y-auto overflow-x-hidden scrollbar-hide',
     ),
 };

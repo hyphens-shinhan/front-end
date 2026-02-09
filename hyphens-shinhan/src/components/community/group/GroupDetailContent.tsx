@@ -1,23 +1,22 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { cn } from "@/utils/cn";
 import Button from "@/components/common/Button";
 import EmptyContent from "@/components/common/EmptyContent";
 import GroupCard from "./GroupCard";
 import Tab from "@/components/common/Tab";
-import JoinProfileOptions from "@/components/common/JoinProfileOptions";
-import type { JoinProfileType } from "@/components/common/JoinProfileOptions";
+import JoinProfileModal from "@/components/common/JoinProfileModal";
 import { useClub, useGalleryImages } from "@/hooks/clubs/useClubs";
 import { useJoinClub } from "@/hooks/clubs/useClubMutations";
-import { useConfirmModalStore } from "@/stores";
 import { EMPTY_CONTENT_MESSAGES, ROUTES } from "@/constants";
 import { TOAST_MESSAGES } from "@/constants/toast";
 import { useToast } from "@/hooks/useToast";
 import MemberContent from "./MemberContent";
 import GalleryContent from "./GalleryContent";
 import BottomFixedButton from "@/components/common/BottomFixedButton";
+import type { UserClubProfile } from "@/types/clubs";
 
 type DetailTab = '멤버' | '앨범';
 
@@ -48,74 +47,29 @@ export default function GroupDetailContent({ clubId }: GroupDetailContentProps) 
     const galleryImages = useMemo(() => galleryData?.images ?? [], [galleryData?.images]);
     const joinClub = useJoinClub();
     const toast = useToast();
-    const { onOpen: openConfirmModal, updateOptions } = useConfirmModalStore();
-    const [joinProfileType, setJoinProfileType] = useState<JoinProfileType>('realname');
-    const [anonymousNickname, setAnonymousNickname] = useState('');
     const [joinModalOpen, setJoinModalOpen] = useState(false);
-    const joinProfileTypeRef = useRef(joinProfileType);
-    const anonymousNicknameRef = useRef(anonymousNickname);
-    joinProfileTypeRef.current = joinProfileType;
-    anonymousNicknameRef.current = anonymousNickname;
 
-    useEffect(() => {
-        if (joinModalOpen) {
-            updateOptions({
-                content: (
-                    <JoinProfileOptions
-                        value={joinProfileType}
-                        onChange={setJoinProfileType}
-                        anonymousNickname={anonymousNickname}
-                        onAnonymousNicknameChange={setAnonymousNickname}
-                    />
-                ),
-            });
-        }
-    }, [joinModalOpen, joinProfileType, anonymousNickname, updateOptions]);
-
-    const doJoin = () => {
-        if (!club || club.is_member) return;
-        const isAnonymous = joinProfileTypeRef.current === 'anonymous';
-        const profile = {
-            is_anonymous: isAnonymous,
-            nickname: isAnonymous ? anonymousNicknameRef.current : null,
-            avatar_url: null,
-        };
-        joinClub.mutate(
-            { clubId, profile },
-            {
-                onSuccess: () => toast.show(TOAST_MESSAGES.GROUP.JOIN_SUCCESS),
-                onError: (error) => {
-                    toast.error(TOAST_MESSAGES.GROUP.JOIN_ERROR);
-                },
-            }
-        );
-    };
-
-    const handleJoin = () => {
-        if (!club || club.is_member) return;
-        setJoinProfileType('realname');
-        setAnonymousNickname('');
+    const handleJoin = useCallback(() => {
+        if (!club) return;
         setJoinModalOpen(true);
-        openConfirmModal({
-            title: '그룹에 참여할\n프로필을 선택해주세요',
-            message: '참여 후 소모임 채팅방에서 멤버와 대화할 수 있어요.',
-            confirmText: '참여하기',
-            cancelText: '취소',
-            content: (
-                <JoinProfileOptions
-                    value={joinProfileType}
-                    onChange={setJoinProfileType}
-                    anonymousNickname={anonymousNickname}
-                    onAnonymousNicknameChange={setAnonymousNickname}
-                />
-            ),
-            onConfirm: () => {
-                setJoinModalOpen(false);
-                doJoin();
-            },
-            onCancel: () => setJoinModalOpen(false),
-        });
-    };
+    }, [club]);
+
+    const handleJoinConfirm = useCallback(
+        (profile: UserClubProfile) => {
+            setJoinModalOpen(false);
+            toast.show(TOAST_MESSAGES.GROUP.JOIN_SUCCESS);
+            router.replace(`${ROUTES.COMMUNITY.GROUP.DETAIL}/${clubId}/chat`);
+            if (club && !club.is_member) {
+                joinClub.mutate(
+                    { clubId, profile },
+                    {
+                        onError: () => toast.error(TOAST_MESSAGES.GROUP.JOIN_ERROR),
+                    }
+                );
+            }
+        },
+        [club, clubId, joinClub, router, toast]
+    );
 
     if (isLoading) {
         return (
@@ -169,15 +123,20 @@ export default function GroupDetailContent({ clubId }: GroupDetailContentProps) 
                 {activeTab === '앨범' && <GalleryContent images={galleryImages} isMember={club.is_member} />}
             </div>
 
-            {/** 하단 버튼 */}
+            {/** 하단 버튼: 비멤버일 때만 참여하기, 멤버일 때는 채팅 등 다른 액션 가능 */}
             <BottomFixedButton
                 label="참여하기"
                 size="M"
                 type="primary"
                 disabled={joinClub.isPending}
-                /** TODO: 멤버가 아니면 참여 모달, 멤버면 채팅방 이동 등 (TODO) */
-                onClick={club.is_member ? undefined : handleJoin}
+                onClick={handleJoin}
                 bottomContent={BOTTOM_BUTTON_HINT}
+            />
+
+            <JoinProfileModal
+                isOpen={joinModalOpen}
+                onClose={() => setJoinModalOpen(false)}
+                onConfirm={handleJoinConfirm}
             />
         </div>
     );

@@ -21,8 +21,6 @@ export const EMPTY_CONTENT_MESSAGES = {
     PRIVACY: '개인정보 설정을 불러올 수 없어요.',
     /** 활동 보고서 상세 조회 실패 */
     REPORT: '보고서를 불러올 수 없어요.',
-    /** 연간 필수 활동 상세 조회 실패 */
-    MANDATORY_ACTIVITY: '연간 필수 활동을 불러올 수 없어요.',
   },
   EMPTY: {
     COMMENT: '아직 댓글이 없어요.',
@@ -41,9 +39,9 @@ export const EMPTY_CONTENT_MESSAGES = {
     /** 활동 보고서 - 등록된 사진 없음 */
     ACTIVITY_PHOTOS: '등록된 활동 사진이 없어요.',
   },
-  /** 제출 완료 등 완료 상태 문구 */
-  SUBMITTED: {
-    /** 학업 계획서 제출 완료 */
-    GOAL: '학업 계획서가 제출된 상태입니다.\n수정이 필요하면 관리자에게 문의해 주세요.',
+  /** 멘토 상세 - 멘토 없음 */
+  MENTOR: {
+    NOT_FOUND: '멘토를 찾을 수 없습니다.',
+    GO_TO_MATCHES: '매칭 목록으로',
   },
 } as const

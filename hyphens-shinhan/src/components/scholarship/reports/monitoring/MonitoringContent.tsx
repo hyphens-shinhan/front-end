@@ -1,8 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useRef, useState } from 'react'
-import { useToast } from '@/hooks/useToast'
-import { TOAST_MESSAGES } from '@/constants/toast'
+import { useEffect, useMemo, useState } from 'react'
 import MonitoringGoalHeader from './MonitoringGoalHeader'
 import MonitoringGoalItem from './MonitoringGoalItem'
 import MonitoringGoalsSummary from './MonitoringGoalsSummary'
@@ -54,14 +52,12 @@ export default function MonitoringContent({
   const updateReport = useUpdateAcademicReport()
   const submitReport = useSubmitAcademicReport()
 
-  const toast = useToast()
   const report = lookup?.report ?? null
   const isSubmitted = report?.is_submitted ?? false
 
   const [goals, setGoals] = useState<GoalCreate[]>([{ ...INITIAL_GOAL }, { ...INITIAL_GOAL }])
   const [evidenceUrls, setEvidenceUrls] = useState<string[]>([])
   const [showGoalsSummary, setShowGoalsSummary] = useState(false)
-  const hasShownSubmittedToast = useRef(false)
 
   useEffect(() => {
     if (!lookupSuccess || !report) return
@@ -75,13 +71,6 @@ export default function MonitoringContent({
     setEvidenceUrls(report.evidence_urls ?? [])
     setShowGoalsSummary(!!report.id && report.goals?.length > 0)
   }, [lookupSuccess, report?.id])
-
-  useEffect(() => {
-    if (lookupSuccess && isSubmitted && !hasShownSubmittedToast.current) {
-      hasShownSubmittedToast.current = true
-      toast.show(TOAST_MESSAGES.MONITORING.SUBMIT_COMPLETE)
-    }
-  }, [lookupSuccess, isSubmitted, toast])
 
   const periodLabel = useMemo(
     () => `${month}월 학업 달성 기간은`,
@@ -107,63 +96,40 @@ export default function MonitoringContent({
     setGoals((prev) => prev.map((g, i) => (i === index ? next : g)))
   }
 
-  /** 달성도 없으면 0으로 채워서 보낼 목표 배열 */
-  const goalsForSubmit = useMemo(
-    () =>
-      goals.map((g) => ({
-        ...g,
-        achievement_pct: g.achievement_pct ?? 0,
-      })),
-    [goals]
-  )
-
   const handleSave = async () => {
     if (goals.length < 2) return
     const body = {
-      goals: goalsForSubmit,
+      goals,
       evidence_urls: evidenceUrls.length ? evidenceUrls : null,
     }
     if (report && !isSubmitted) {
       await updateReport.mutateAsync({ reportId: report.id, body })
       setShowGoalsSummary(true)
-      toast.show(TOAST_MESSAGES.MONITORING.SAVE_SUCCESS)
     } else if (!report) {
       await createReport.mutateAsync({
         year,
         month,
-        goals: goalsForSubmit,
+        goals,
         evidence_urls: body.evidence_urls,
       })
       setShowGoalsSummary(true)
-      toast.show(TOAST_MESSAGES.MONITORING.SAVE_SUCCESS)
     }
   }
 
   const handleSubmit = async () => {
     if (!report || isSubmitted) return
     await submitReport.mutateAsync(report.id)
-    toast.show(TOAST_MESSAGES.MONITORING.SUBMIT_SUCCESS)
   }
+
+  const saveDisabled =
+    isSubmitted || goals.length < 2 || createReport.isPending || updateReport.isPending
+  const submitDisabled =
+    !report || isSubmitted || submitReport.isPending
 
   const isGoalsChecked =
     goals.length >= 2 &&
     goals.every((g) => g.content.trim().length > 0)
   const isEvidenceChecked = evidenceUrls.length >= 1
-
-  /** 저장하기: 제출 전 + 목표 칸 모두 체크(2개 이상, 내용 입력) + 로딩 아님 시에만 활성화 */
-  const saveDisabled =
-    isSubmitted ||
-    !isGoalsChecked ||
-    createReport.isPending ||
-    updateReport.isPending
-
-  /** 제출하기: 보고서 존재·미제출·로딩 아님 + 학습 목표·증빙 자료 체크 모두 완료 시에만 활성화 */
-  const submitDisabled =
-    !report ||
-    isSubmitted ||
-    submitReport.isPending ||
-    !isGoalsChecked ||
-    !isEvidenceChecked
 
   return (
     <div className="flex flex-col py-4 pb-40">
@@ -214,7 +180,6 @@ export default function MonitoringContent({
         evidenceUrls={evidenceUrls}
         onEvidenceUrlsChange={setEvidenceUrls}
         isChecked={isEvidenceChecked}
-        hideUploadButton={showGoalsSummary}
       />
 
       <BottomFixedButton
@@ -223,12 +188,10 @@ export default function MonitoringContent({
         type="primary"
         onClick={handleSubmit}
         disabled={submitDisabled}
-        secondLabel={showGoalsSummary ? '수정하기' : '저장하기'}
+        secondLabel="저장하기"
         secondType="secondary"
-        secondDisabled={showGoalsSummary ? isSubmitted : saveDisabled}
-        onSecondClick={
-          showGoalsSummary ? () => setShowGoalsSummary(false) : handleSave
-        }
+        secondDisabled={saveDisabled}
+        onSecondClick={handleSave}
       />
     </div>
   )

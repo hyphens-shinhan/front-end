@@ -50,7 +50,7 @@ export const useUpdateMyVolunteerHours = () => {
       UserService.updateMyVolunteerHours(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: userKeys.myVolunteerHours() })
-      queryClient.invalidateQueries({ queryKey: userKeys.scholarshipEligibility() })
+      queryClient.invalidateQueries({ queryKey: userKeys.all })
     },
   })
 }

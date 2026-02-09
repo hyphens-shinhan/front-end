@@ -16,7 +16,8 @@ const MIN_GOALS = 2
 const MAX_GOALS = 5
 
 export interface GoalFormItem {
-  category: AcademicGoalCategory | null
+  /** 목표 유형 (다중 선택) */
+  categories: AcademicGoalCategory[]
   custom_category?: string | null
   content: string
   plan: string
@@ -25,7 +26,7 @@ export interface GoalFormItem {
 
 function createEmptyGoal(): GoalFormItem {
   return {
-    category: null,
+    categories: [],
     content: '',
     plan: '',
     outcome: '',
@@ -50,7 +51,7 @@ export interface UseMandatoryGoalFormResult {
   setAccordionOpen: (open: boolean | ((prev: boolean) => boolean)) => void
   setCurrentGoal: (patch: Partial<GoalFormItem>) => void
   addGoal: () => void
-  removeGoalCategory: (goalIndex: number) => void
+  removeGoalCategory: (goalIndex: number, category: AcademicGoalCategory) => void
   categoryLabels: AcademicGoalCategory[]
   selectedCategoriesForChips: { index: number; category: AcademicGoalCategory }[]
   pillLabels: string[]
@@ -92,7 +93,9 @@ export function useMandatoryGoalForm(activityId: string): UseMandatoryGoalFormRe
     if (fromApi.length >= MIN_GOALS) {
       setGoals(
         fromApi.map((g) => ({
-          category: g.category as AcademicGoalCategory | null,
+          categories: g.category
+            ? [g.category as AcademicGoalCategory]
+            : [],
           custom_category: g.custom_category ?? null,
           content: g.content ?? '',
           plan: g.plan ?? '',
@@ -126,20 +129,27 @@ export function useMandatoryGoalForm(activityId: string): UseMandatoryGoalFormRe
     setActiveGoalIndex(goals.length)
   }, [goals.length])
 
-  const removeGoalCategory = useCallback((goalIndex: number) => {
-    setGoals((prev) => {
-      const next = [...prev]
-      const g = next[goalIndex]
-      if (g) next[goalIndex] = { ...g, category: null }
-      return next
-    })
-  }, [])
+  const removeGoalCategory = useCallback(
+    (goalIndex: number, category: AcademicGoalCategory) => {
+      setGoals((prev) => {
+        const next = [...prev]
+        const g = next[goalIndex]
+        if (g)
+          next[goalIndex] = {
+            ...g,
+            categories: g.categories.filter((c) => c !== category),
+          }
+        return next
+      })
+    },
+    []
+  )
 
   const isFormValid = useMemo(() => {
     if (goals.length < MIN_GOALS) return false
     return goals.every(
       (g) =>
-        g.category != null &&
+        g.categories.length > 0 &&
         g.content.trim() !== '' &&
         g.plan.trim() !== '' &&
         g.outcome.trim() !== ''
@@ -150,7 +160,7 @@ export function useMandatoryGoalForm(activityId: string): UseMandatoryGoalFormRe
     const body = {
       goals: goals.map((g) => ({
         category:
-          g.category ??
+          g.categories[0] ??
           (AcademicGoalCategoryEnum.MAJOR_REVIEW as AcademicGoalCategory),
         custom_category: g.custom_category ?? null,
         content: g.content.trim(),
@@ -196,10 +206,10 @@ export function useMandatoryGoalForm(activityId: string): UseMandatoryGoalFormRe
         </div>
       ),
       confirmText: '제출하기',
-      onConfirm: () => {
+        onConfirm: () => {
         const body: { goals: MandatoryGoalCreate[] } = {
           goals: goals.map((g) => ({
-            category: g.category!,
+            category: g.categories[0]!,
             custom_category: g.custom_category ?? null,
             content: g.content.trim(),
             plan: g.plan.trim(),
@@ -253,12 +263,9 @@ export function useMandatoryGoalForm(activityId: string): UseMandatoryGoalFormRe
   )
   const selectedCategoriesForChips = useMemo(
     () =>
-      goals
-        .map((g, i) => (g.category ? { index: i, category: g.category } : null))
-        .filter(Boolean) as {
-          index: number
-          category: AcademicGoalCategory
-        }[],
+      goals.flatMap((g, i) =>
+        g.categories.map((category) => ({ index: i, category }))
+      ),
     [goals]
   )
 

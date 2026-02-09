@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useAutoResize } from '@/hooks/useAutoResize'
 import { useMandatoryGoalForm } from '@/hooks/mandatory/useMandatoryGoalForm'
 import { cn } from '@/utils/cn'
@@ -11,6 +11,7 @@ import MandatoryGoalTabsRow from './MandatoryGoalTabsRow'
 import MandatoryGoalCategorySection from './MandatoryGoalCategorySection'
 import MandatoryGoalTextareaField from './MandatoryGoalTextareaField'
 import MandatoryGoalBottomButtons from './MandatoryGoalBottomButtons'
+import type { AcademicGoalCategory } from '@/types/mandatory'
 
 interface MandatoryGoalContentProps {
   activityId: string
@@ -24,6 +25,8 @@ export default function MandatoryGoalContent({
   const contentResize = useAutoResize()
   const planResize = useAutoResize()
   const outcomeResize = useAutoResize()
+  const categoriesRef = useRef<AcademicGoalCategory[]>(form.currentGoal.categories)
+  categoriesRef.current = form.currentGoal.categories
 
   useEffect(() => {
     contentResize.handleResize()
@@ -91,15 +94,20 @@ export default function MandatoryGoalContent({
         onAddGoal={form.addGoal}
         canAddGoal={form.canAddGoal}
       />
-      {/** 학습 목표 유형 아코디언 */}
+      {/** 학습 목표 유형 – 클릭 시 바텀시트에서 선택(익명/실명과 동일 디자인, 다중 선택) */}
       <MandatoryGoalCategorySection
-        isOpen={form.accordionOpen}
-        onToggle={() => form.setAccordionOpen((o) => !o)}
         categoryOptions={form.categoryLabels}
-        selectedChips={form.selectedCategoriesForChips}
-        onSelectCategory={(cat) => {
-          form.setCurrentGoal({ category: cat })
-          form.setAccordionOpen(false)
+        selectedCategoriesForCurrentGoal={form.currentGoal.categories}
+        selectedChips={form.selectedCategoriesForChips.filter(
+          (c) => c.index === form.activeGoalIndex
+        )}
+        onToggleCategory={(cat) => {
+          const cur = categoriesRef.current
+          const next = cur.includes(cat)
+            ? cur.filter((c) => c !== cat)
+            : [...cur, cat]
+          categoriesRef.current = next
+          form.setCurrentGoal({ categories: next })
         }}
         onRemoveChip={form.removeGoalCategory}
       />

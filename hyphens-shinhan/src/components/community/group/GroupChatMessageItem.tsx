@@ -79,7 +79,7 @@ const styles = {
   messageItemOwn: cn('justify-end'),
   messageItemOther: cn('justify-start'),
   avatar: cn('shrink-0'),
-  avatarPlaceholder: cn('w-[46px] shrink-0'),
+  avatarPlaceholder: cn('w-[38px] shrink-0'),
   messageContent: cn('flex flex-col'),
   messageContentOwn: cn('items-end'),
   messageContentOther: cn('items-start'),

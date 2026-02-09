@@ -171,9 +171,10 @@ export default function GroupChatView({ clubId }: GroupChatViewProps) {
         )}
         <div className={styles.messagesList}>
           {messages.length === 0 ? (
-            <div className={styles.emptyMessages}>
-              <p className={styles.emptyText}>아직 메시지가 없습니다.</p>
-            </div>
+            <EmptyContent
+              variant="empty"
+              message="아직 메시지가 없습니다."
+            />
           ) : (
             messages.map((msg, idx) => (
               <GroupChatMessageItem
@@ -208,8 +209,6 @@ const styles = {
   messagesContainer: cn('flex-1 min-h-0 overflow-y-auto px-4 pb-4'),
   dateLabel: cn('py-3 text-center text-[14px] font-normal leading-5 text-grey-8'),
   messagesList: cn('flex flex-col gap-5'),
-  emptyMessages: cn('flex items-center justify-center py-8'),
-  emptyText: cn('text-grey-8'),
   inputWrapper: cn('flex flex-col fixed bottom-0 left-0 right-0', 'bg-white'),
   inputInner: cn('w-full max-w-md mx-auto'),
 }

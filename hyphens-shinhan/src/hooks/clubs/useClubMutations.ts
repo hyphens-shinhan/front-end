@@ -103,3 +103,13 @@ export const useDeleteGalleryImage = () => {
     },
   })
 }
+
+/**
+ * 랜덤 닉네임 생성 훅
+ * 버튼 클릭 시 호출하여 리롤 가능
+ */
+export const useGenerateRandomNickname = () => {
+  return useMutation({
+    mutationFn: () => ClubService.generateClubNickname(),
+  })
+}

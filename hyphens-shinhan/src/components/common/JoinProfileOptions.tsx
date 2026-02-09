@@ -1,19 +1,12 @@
 'use client'
 
+import { useEffect, useMemo } from 'react'
 import { cn } from '@/utils/cn'
 import { Icon } from './Icon'
+import type { ClubAnonymity } from '@/types/clubs'
+import { useGenerateRandomNickname } from '@/hooks/clubs/useClubMutations'
 
 export type JoinProfileType = 'realname' | 'anonymous'
-
-const RANDOM_NICKNAMES = [
-  '별빛이', '달빛이', '하늘이', '바람이', '구름이', '꽃님이', '나뭇잎', '산들바람',
-  '햇살이', '물결이', '숲속이', '강물이', '눈꽃이', '나래이', '노을이', '바다이',
-]
-
-function getRandomNickname(current?: string): string {
-  const pool = current ? RANDOM_NICKNAMES.filter((n) => n !== current) : RANDOM_NICKNAMES
-  return pool[Math.floor(Math.random() * pool.length)] ?? RANDOM_NICKNAMES[0]
-}
 
 interface JoinProfileOptionsProps {
   value: JoinProfileType
@@ -22,9 +15,11 @@ interface JoinProfileOptionsProps {
   anonymousNickname?: string
   /** 익명 닉네임 변경 시 (랜덤 다시 고르기) */
   onAnonymousNicknameChange?: (nickname: string) => void
+  /** 소모임 익명 설정 (PUBLIC=실명만, PRIVATE=익명만, BOTH=둘 다) */
+  anonymity?: ClubAnonymity
 }
 
-const OPTIONS: { value: JoinProfileType; label: string }[] = [
+const ALL_OPTIONS: { value: JoinProfileType; label: string }[] = [
   { value: 'realname', label: '실명으로 참여하기' },
   { value: 'anonymous', label: '익명으로 참여하기' },
 ]
@@ -35,11 +30,92 @@ export default function JoinProfileOptions({
   onChange,
   anonymousNickname = '',
   onAnonymousNicknameChange,
+  anonymity = 'BOTH',
 }: JoinProfileOptionsProps) {
+  const generateNicknameMutation = useGenerateRandomNickname()
+
+  // anonymity 설정에 따라 사용 가능한 옵션 필터링
+  const availableOptions = useMemo(() => {
+    return ALL_OPTIONS.filter((option) => {
+      if (anonymity === 'PUBLIC') {
+        // PUBLIC: 실명만 선택 가능
+        return option.value === 'realname'
+      }
+      if (anonymity === 'PRIVATE') {
+        // PRIVATE: 익명만 선택 가능
+        return option.value === 'anonymous'
+      }
+      // BOTH: 둘 다 선택 가능
+      return true
+    })
+  }, [anonymity])
+
+  // 사용 가능한 옵션이 하나뿐이면 자동으로 선택
+  const effectiveValue = useMemo(() => {
+    if (availableOptions.length === 1) {
+      return availableOptions[0].value
+    }
+    return value
+  }, [availableOptions, value])
+
+  // anonymity나 availableOptions 변경 시 유효한 값으로 자동 설정
+  useEffect(() => {
+    if (availableOptions.length === 1) {
+      // 옵션이 하나뿐이면 자동 선택
+      if (value !== availableOptions[0].value) {
+        const newValue = availableOptions[0].value
+        onChange(newValue)
+        // 익명으로 자동 선택된 경우 닉네임도 자동 생성
+        if (newValue === 'anonymous' && onAnonymousNicknameChange) {
+          generateNicknameMutation.mutate(undefined, {
+            onSuccess: (data) => {
+              onAnonymousNicknameChange(data.nickname)
+            },
+          })
+        }
+      }
+    } else if (availableOptions.length > 0) {
+      // 현재 선택된 값이 사용 가능한 옵션에 없으면 첫 번째 옵션으로 변경
+      const isValid = availableOptions.some((opt) => opt.value === value)
+      if (!isValid) {
+        const newValue = availableOptions[0].value
+        onChange(newValue)
+        // 익명으로 변경된 경우 닉네임도 자동 생성
+        if (newValue === 'anonymous' && onAnonymousNicknameChange) {
+          generateNicknameMutation.mutate(undefined, {
+            onSuccess: (data) => {
+              onAnonymousNicknameChange(data.nickname)
+            },
+          })
+        }
+      }
+    }
+  }, [anonymity, availableOptions, value, onChange, onAnonymousNicknameChange, generateNicknameMutation])
+
+  // 익명이 선택되어 있고 닉네임이 없을 때 자동으로 생성
+  useEffect(() => {
+    if (
+      effectiveValue === 'anonymous' &&
+      !anonymousNickname &&
+      onAnonymousNicknameChange &&
+      !generateNicknameMutation.isPending
+    ) {
+      generateNicknameMutation.mutate(undefined, {
+        onSuccess: (data) => {
+          onAnonymousNicknameChange(data.nickname)
+        },
+      })
+    }
+  }, [effectiveValue, anonymousNickname, onAnonymousNicknameChange, generateNicknameMutation])
+
   const handleSelectAnonymous = () => {
     onChange('anonymous')
     if (onAnonymousNicknameChange) {
-      onAnonymousNicknameChange(getRandomNickname())
+      generateNicknameMutation.mutate(undefined, {
+        onSuccess: (data) => {
+          onAnonymousNicknameChange(data.nickname)
+        },
+      })
     }
   }
 
@@ -52,7 +128,13 @@ export default function JoinProfileOptions({
   }
 
   const handleShuffleNickname = () => {
-    onAnonymousNicknameChange?.(getRandomNickname(anonymousNickname))
+    if (onAnonymousNicknameChange) {
+      generateNicknameMutation.mutate(undefined, {
+        onSuccess: (data) => {
+          onAnonymousNicknameChange(data.nickname)
+        },
+      })
+    }
   }
 
   const handleOptionKeyDown = (e: React.KeyboardEvent, optionValue: JoinProfileType) => {
@@ -64,7 +146,7 @@ export default function JoinProfileOptions({
 
   return (
     <div className={styles.optionWrapper}>
-      {OPTIONS.map((option) => (
+      {availableOptions.map((option) => (
         <div
           key={option.value}
           role="button"
@@ -73,8 +155,8 @@ export default function JoinProfileOptions({
           onKeyDown={(e) => handleOptionKeyDown(e, option.value)}
           className={cn(
             styles.option,
-            value === option.value && styles.optionSelected,
-            option.value === 'anonymous' && value === 'anonymous' && styles.optionWithContent
+            effectiveValue === option.value && styles.optionSelected,
+            option.value === 'anonymous' && effectiveValue === 'anonymous' && styles.optionWithContent
           )}
         >
           <div className={styles.optionRow}>
@@ -83,17 +165,17 @@ export default function JoinProfileOptions({
               size={20}
               className={cn(
                 styles.optionIcon,
-                value === option.value && styles.optionIconSelected
+                effectiveValue === option.value && styles.optionIconSelected
               )}
             />
             <span className={styles.optionText}>{option.label}</span>
           </div>
-          {option.value === 'anonymous' && value === 'anonymous' && (
+          {option.value === 'anonymous' && effectiveValue === 'anonymous' && (
             <div className={styles.randomNameSection} onClick={(e) => e.stopPropagation()}>
               <p className={styles.randomNameLabel}>랜덤 이름을 골라주세요!</p>
               <div className={styles.randomNameField}>
                 <span className={styles.randomNameValue}>
-                  {anonymousNickname || '아래 버튼을 눌러 주세요'}
+                  {anonymousNickname || ''}
                 </span>
                 <button
                   type="button"
@@ -101,8 +183,9 @@ export default function JoinProfileOptions({
                     e.stopPropagation()
                     handleShuffleNickname()
                   }}
-                  className={styles.shuffleButton}
+                  className={cn(styles.shuffleButton)}
                   aria-label="다른 이름 고르기"
+                  disabled={generateNicknameMutation.isPending}
                 >
                   <Icon name="IconMBoldRefreshCircle" size={20} />
                 </button>
@@ -137,5 +220,5 @@ const styles = {
     'px-3 py-1.5'
   ),
   randomNameValue: cn('flex-1 font-caption-caption3 text-grey-9'),
-  shuffleButton: cn('p-1 -m-1 active:opacity-70 text-grey-9'),
+  shuffleButton: cn('p-1 -m-1 active:opacity-70 text-grey-9 transition-transform active:scale-95'),
 }

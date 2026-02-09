@@ -147,3 +147,13 @@ export interface ClubMemberListResponse {
   members: ClubMemberResponse[]
   total: number
 }
+
+// ========== Random Nickname ==========
+
+/** 랜덤 닉네임 생성 응답 */
+export interface RandomNicknameResponse {
+  /** 랜덤 닉네임 (예: "행복한 쏠", "귀여운 몰리" 등 형용사 + 명사 조합) */
+  nickname: string
+  /** 익명 아바타 이미지 URL (예: "https://...supabase.co/storage/.../anony_1.png") */
+  avatar_url: string
+}

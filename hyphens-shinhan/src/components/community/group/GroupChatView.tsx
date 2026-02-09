@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react'
 import Image from 'next/image'
-import { useRouter } from 'next/navigation'
 import { useClub } from '@/hooks/clubs/useClubs'
 import { useHeaderStore, useUserStore } from '@/stores'
 import { useClubChatMessages, useChatRooms } from '@/hooks/chat/useChat'
@@ -66,7 +65,6 @@ interface GroupChatViewProps {
  * 디자인: 헤더(뒤로, 그룹명, 더보기), 날짜 구분, 수신/발신 말풍선, 하단 입력창.
  */
 export default function GroupChatView({ clubId }: GroupChatViewProps) {
-  const router = useRouter()
   const user = useUserStore((s) => s.user)
   const currentUserId = user?.id ?? null
   const { data: club, isLoading: isClubLoading } = useClub(clubId)
@@ -114,7 +112,6 @@ export default function GroupChatView({ clubId }: GroupChatViewProps) {
   const {
     data: messagesData,
     isLoading: isMessagesLoading,
-    refetch: refetchMessages,
   } = useClubChatMessages(clubId, {}, isChatRoomReady)
 
   // 메시지 데이터 변환
@@ -204,18 +201,18 @@ export default function GroupChatView({ clubId }: GroupChatViewProps) {
   const dateLabel = messages.length > 0 ? formatDateLabel(messages[0].created_at) : ''
 
   return (
-    <div className="flex flex-1 flex-col min-h-0 bg-white overflow-hidden">
+    <div className={styles.container}>
       {/* 메시지 목록 */}
-      <div className="flex-1 min-h-0 overflow-y-auto px-4 pb-4">
+      <div className={styles.messagesContainer}>
         {dateLabel && (
-          <p className="py-3 text-center text-[14px] font-normal leading-5 text-grey-8">
+          <p className={styles.dateLabel}>
             {dateLabel}
           </p>
         )}
-        <div className="flex flex-col gap-1">
+        <div className={styles.messagesList}>
           {messages.length === 0 ? (
-            <div className="flex items-center justify-center py-8">
-              <p className="text-grey-8">아직 메시지가 없습니다.</p>
+            <div className={styles.emptyMessages}>
+              <p className={styles.emptyText}>아직 메시지가 없습니다.</p>
             </div>
           ) : (
             messages.map((msg, idx) => {
@@ -228,8 +225,8 @@ export default function GroupChatView({ clubId }: GroupChatViewProps) {
                 <div
                   key={msg.id}
                   className={cn(
-                    'flex gap-2',
-                    msg.is_own ? 'justify-end' : 'justify-start'
+                    styles.messageItem,
+                    msg.is_own ? styles.messageItemOwn : styles.messageItemOther
                   )}
                 >
                   {!msg.is_own && showAvatar && msg.sender_avatar && (
@@ -238,35 +235,33 @@ export default function GroupChatView({ clubId }: GroupChatViewProps) {
                       alt={msg.sender_name || ''}
                       width={38}
                       height={38}
-                      className="h-[38px] w-[38px] shrink-0 rounded-full object-cover"
+                      className={styles.avatar}
                       unoptimized
                     />
                   )}
-                  {!msg.is_own && !showAvatar && <div className="w-[46px] shrink-0" />}
+                  {!msg.is_own && !showAvatar && <div className={styles.avatarPlaceholder} />}
                   <div
                     className={cn(
-                      'flex flex-col',
-                      msg.is_own ? 'items-end' : 'items-start'
+                      styles.messageContent,
+                      msg.is_own ? styles.messageContentOwn : styles.messageContentOther
                     )}
                   >
                     {!msg.is_own && showAvatar && msg.sender_name && (
-                      <span className="mb-1 px-2 text-[12px] font-normal leading-[14px] text-grey-8">
+                      <span className={styles.senderName}>
                         {msg.sender_name}
                       </span>
                     )}
                     <div
                       className={cn(
-                        'max-w-[80%] rounded-2xl px-4 py-3',
-                        msg.is_own
-                          ? 'bg-primary-lighter text-black'
-                          : 'bg-grey-2 text-black'
+                        styles.messageBubble,
+                        msg.is_own ? styles.messageBubbleOwn : styles.messageBubbleOther
                       )}
                     >
-                      <p className="text-[16px] font-normal leading-[22px] whitespace-pre-wrap">
+                      <p className={styles.messageText}>
                         {msg.content}
                       </p>
                     </div>
-                    <span className="mt-1 px-2 text-[12px] font-normal leading-[14px] text-grey-8">
+                    <span className={styles.messageTime}>
                       {formatMessageTime(msg.created_at)}
                     </span>
                   </div>
@@ -279,16 +274,93 @@ export default function GroupChatView({ clubId }: GroupChatViewProps) {
       </div>
 
       {/* 입력창 */}
-      <div className="shrink-0 border-t border-grey-2 bg-white px-4 py-3 pb-6">
-        <MessageInput
-          type={INPUT_BAR_TYPE.CHAT}
-          value={message}
-          onChange={(value) => setMessage(value)}
-          onSend={handleSend}
-          isSubmitting={!roomId || sendMessageMutation.isPending}
-          className="rounded-[24px] bg-grey-2"
-        />
+      <div className={styles.inputWrapper}>
+        <div className={styles.inputInner}>
+          <MessageInput
+            type={INPUT_BAR_TYPE.CHAT}
+            value={message}
+            onChange={(value) => setMessage(value)}
+            onSend={handleSend}
+            isSubmitting={!roomId || sendMessageMutation.isPending}
+          />
+        </div>
       </div>
     </div>
   )
+}
+
+const styles = {
+  container: cn(
+    'flex flex-1 flex-col min-h-0 bg-white overflow-hidden'
+  ),
+  messagesContainer: cn(
+    'flex-1 min-h-0 overflow-y-auto px-4 pb-4'
+  ),
+  dateLabel: cn(
+    'py-3 text-center text-[14px] font-normal leading-5 text-grey-8'
+  ),
+  messagesList: cn(
+    'flex flex-col gap-1'
+  ),
+  emptyMessages: cn(
+    'flex items-center justify-center py-8'
+  ),
+  emptyText: cn(
+    'text-grey-8'
+  ),
+  messageItem: cn(
+    'flex gap-2'
+  ),
+  messageItemOwn: cn(
+    'justify-end'
+  ),
+  messageItemOther: cn(
+    'justify-start'
+  ),
+  avatar: cn(
+    'h-[38px] w-[38px] shrink-0 rounded-full object-cover'
+  ),
+  avatarPlaceholder: cn(
+    'w-[46px] shrink-0'
+  ),
+  messageContent: cn(
+    'flex flex-col'
+  ),
+  messageContentOwn: cn(
+    'items-end'
+  ),
+  messageContentOther: cn(
+    'items-start'
+  ),
+  senderName: cn(
+    'mb-1 px-2 text-[12px] font-normal leading-[14px] text-grey-8'
+  ),
+  messageBubble: cn(
+    'max-w-[80%] rounded-2xl px-4 py-3'
+  ),
+  messageBubbleOwn: cn(
+    'bg-primary-lighter text-black'
+  ),
+  messageBubbleOther: cn(
+    'bg-grey-2 text-black'
+  ),
+  messageText: cn(
+    'text-[16px] font-normal leading-[22px] whitespace-pre-wrap'
+  ),
+  messageTime: cn(
+    'mt-1 px-2 text-[12px] font-normal leading-[14px] text-grey-8'
+  ),
+  inputContainer: cn(
+    'shrink-0 border-t border-grey-2 bg-white px-4 py-3 pb-6'
+  ),
+  input: cn(
+    'rounded-[24px] bg-grey-2'
+  ),
+  inputWrapper: cn(
+    'flex flex-col fixed bottom-0 left-0 right-0',
+    'bg-white',
+  ),
+  inputInner: cn(
+    'w-full max-w-md mx-auto',
+  ),
 }

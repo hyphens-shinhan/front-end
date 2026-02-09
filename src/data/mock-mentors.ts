@@ -1,0 +1,173 @@
+import type { Mentor, MentorBadge } from '@/types/mentor'
+
+const AVATARS = {
+  male1: '/assets/images/male1.png',
+  male2: '/assets/images/male2.png',
+  woman1: '/assets/images/woman1.png',
+  woman2: '/assets/images/woman2.png',
+} as const
+
+const RISING_STAR_BADGE: MentorBadge = {
+  id: 'badge_rising_star',
+  name: 'Rising Star',
+  description: 'First 5 mentees',
+  earnedAt: '2024-01-15T00:00:00Z',
+}
+
+const MENTOR_CHAMPION_BADGE: MentorBadge = {
+  id: 'badge_champion',
+  name: 'Mentor Champion',
+  description: '10+ successful mentorships',
+  earnedAt: '2024-06-20T00:00:00Z',
+}
+
+export const MOCK_MENTORS: Mentor[] = [
+  {
+    id: 'mentor_1',
+    name: '김철수',
+    avatar: AVATARS.male1,
+    type: 'ob',
+    university: '서울대학교',
+    major: '소프트웨어학과',
+    cohortYear: '1기',
+    bio: '구글과 마이크로소프트에서 인턴십 경험이 있는 시니어 CS 학생입니다. 테크 업계에서 커리어를 쌓고 첫 인턴십을 얻는 데 도움을 드리고 싶습니다.',
+    currentRole: 'Senior Software Engineer',
+    company: '네이버',
+    primaryCategory: 'career_job_search',
+    secondaryCategories: ['academic_excellence', 'entrepreneurship_innovation'],
+    expertiseLevel: 'intermediate',
+    availability: {
+      days: ['monday', 'tuesday', 'wednesday'],
+      timeOfDay: ['evening'],
+      hoursPerWeek: 3,
+      preferredFormats: ['zoom', 'google_meet'],
+    },
+    personalityTraits: {
+      communicationStyle: 'supportive',
+      workPace: 'steady',
+      mentorshipStyle: 'hands_on',
+    },
+    rating: 4.8,
+    menteeCount: 52,
+    reviewCount: 50,
+    status: 'active',
+    badges: [RISING_STAR_BADGE, MENTOR_CHAMPION_BADGE],
+    experience: ['Google Internship (Summer 2024)', 'Microsoft Internship (Summer 2023)', '50+ mentees helped'],
+    achievements: ['Helped 30+ students land tech internships', '4.8/5 mentee satisfaction'],
+    createdAt: '2023-01-15T00:00:00Z',
+    updatedAt: '2024-12-01T00:00:00Z',
+  },
+  {
+    id: 'mentor_2',
+    name: '박민수',
+    avatar: AVATARS.male2,
+    type: 'ob',
+    university: '고려대학교',
+    major: 'Business Administration',
+    cohortYear: '3기',
+    bio: '창의 분야에서 활동하는 마케터입니다. 브랜딩과 마케팅 전략에 대한 실전 경험을 공유하고 싶습니다.',
+    currentRole: 'Marketing Manager',
+    company: '삼성',
+    primaryCategory: 'career_job_search',
+    secondaryCategories: ['entrepreneurship_innovation', 'personal_development'],
+    expertiseLevel: 'intermediate',
+    availability: {
+      days: ['tuesday', 'thursday'],
+      timeOfDay: ['evening'],
+      hoursPerWeek: 2,
+      preferredFormats: ['zoom', 'in_person'],
+    },
+    personalityTraits: {
+      communicationStyle: 'direct',
+      workPace: 'fast_paced',
+      mentorshipStyle: 'advisory',
+    },
+    rating: 4.5,
+    menteeCount: 18,
+    reviewCount: 15,
+    status: 'active',
+    badges: [RISING_STAR_BADGE, MENTOR_CHAMPION_BADGE],
+    experience: ['5+ years in marketing', 'Brand strategy expertise'],
+    achievements: ['Helped 15+ students with career transitions'],
+    createdAt: '2023-06-01T00:00:00Z',
+    updatedAt: '2024-11-15T00:00:00Z',
+  },
+  {
+    id: 'mentor_3',
+    name: '이지수',
+    avatar: AVATARS.woman1,
+    type: 'professional',
+    university: '연세대학교',
+    major: 'Psychology',
+    cohortYear: '2기',
+    bio: '신한장학재단의 전문 멘토입니다. 리더십 개발과 소프트 스킬 향상에 특화되어 있습니다.',
+    currentRole: '전문 멘토',
+    company: '신한장학재단',
+    primaryCategory: 'leadership_soft_skills',
+    secondaryCategories: ['personal_development', 'mental_health_wellness'],
+    expertiseLevel: 'advanced',
+    availability: {
+      days: ['monday', 'wednesday', 'friday'],
+      timeOfDay: ['afternoon', 'evening'],
+      hoursPerWeek: 5,
+      preferredFormats: ['zoom', 'google_meet', 'phone_call'],
+    },
+    personalityTraits: {
+      communicationStyle: 'collaborative',
+      workPace: 'steady',
+      mentorshipStyle: 'inspirational',
+    },
+    rating: 4.9,
+    menteeCount: 75,
+    reviewCount: 70,
+    status: 'active',
+    badges: [RISING_STAR_BADGE, MENTOR_CHAMPION_BADGE],
+    experience: ['10+ years in mentorship', 'Leadership development programs'],
+    achievements: ['Foundation-supported mentorship', 'High success rate'],
+    createdAt: '2022-01-01T00:00:00Z',
+    updatedAt: '2024-12-01T00:00:00Z',
+  },
+  {
+    id: 'mentor_7',
+    name: '김영희',
+    avatar: AVATARS.woman2,
+    type: 'professional',
+    university: '서울대학교',
+    major: 'Education',
+    cohortYear: '1기',
+    bio: '신한장학재단의 전문 멘토입니다. 학업 우수성과 개인 발전에 특화되어 있습니다.',
+    currentRole: '전문 멘토',
+    company: '신한장학재단',
+    primaryCategory: 'academic_excellence',
+    secondaryCategories: ['personal_development', 'mental_health_wellness'],
+    expertiseLevel: 'advanced',
+    availability: {
+      days: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'],
+      timeOfDay: ['morning', 'afternoon', 'evening'],
+      hoursPerWeek: 8,
+      preferredFormats: ['zoom', 'google_meet', 'phone_call', 'in_person'],
+    },
+    personalityTraits: {
+      communicationStyle: 'supportive',
+      workPace: 'steady',
+      mentorshipStyle: 'hands_on',
+    },
+    rating: 4.8,
+    menteeCount: 60,
+    reviewCount: 55,
+    status: 'active',
+    badges: [RISING_STAR_BADGE, MENTOR_CHAMPION_BADGE],
+    experience: ['Foundation-supported mentorship', 'Academic excellence programs'],
+    achievements: ['High student success rate'],
+    createdAt: '2022-03-01T00:00:00Z',
+    updatedAt: '2024-12-01T00:00:00Z',
+  },
+]
+
+export function getMentorById(id: string): Mentor | undefined {
+  return MOCK_MENTORS.find((m) => m.id === id)
+}
+
+export function getActiveMentors(): Mentor[] {
+  return MOCK_MENTORS.filter((m) => m.status === 'active')
+}

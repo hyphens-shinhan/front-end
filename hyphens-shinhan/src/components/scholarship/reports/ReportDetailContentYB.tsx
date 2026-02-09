@@ -128,8 +128,9 @@ function ReportDetailContentYB({
     )
   }
 
-  // ---------- 에러 또는 보고서 없음 ----------
-  if (isError || !report) {
+  // ---------- 에러, 보고서 없음, 또는 해당 월에 제출된 보고서 없음 ----------
+  const hasNoSubmittedReport = isError || !report || !report.is_submitted
+  if (hasNoSubmittedReport) {
     return (
       <div className={cn(styles.container, 'py-8')}>
         <EmptyContent
@@ -154,7 +155,7 @@ function ReportDetailContentYB({
     )
   }
 
-  const isSubmitted = !!report.submitted_at
+  const isSubmitted = report.is_submitted
   const attendance = report.attendance ?? []
   const receipts = report.receipts ?? []
   const myAttendance = attendance.find((a) => a.user_id === user?.id)

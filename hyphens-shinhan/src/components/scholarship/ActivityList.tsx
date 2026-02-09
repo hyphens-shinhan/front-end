@@ -11,6 +11,11 @@ import { useActivitiesSummary } from '@/hooks/activities/useActivities'
 import { EMPTY_CONTENT_MESSAGES, ROUTES } from '@/constants'
 import type { ActivityStatusType } from '@/types'
 
+/** 내가 신청한 프로그램 항목 → 신한장학재단 공지 이벤트 상세 경로 */
+function appliedProgramItemHref(item: { id: string }) {
+  return `${ROUTES.COMMUNITY.EVENT.DETAIL}/${item.id}`
+}
+
 /** 활동 보고서 월: 4월~12월 (9개) */
 const MONTHS = Array.from({ length: 9 }, (_, i) => i + 4);
 
@@ -137,6 +142,7 @@ export default function ActivityList() {
                 title="내가 신청한 프로그램"
                 items={appliedProgramItems}
                 emptyMessageKey="APPLIED_PROGRAMS"
+                getItemHref={appliedProgramItemHref}
             />
         </div>
     );

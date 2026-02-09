@@ -11,9 +11,18 @@ import { useActivitiesSummary } from '@/hooks/activities/useActivities'
 import { EMPTY_CONTENT_MESSAGES, ROUTES } from '@/constants'
 import type { ActivityStatusType } from '@/types'
 
+/** 연간 필수 활동 항목 → activity_type별 상세 경로 */
+function mandatoryItemHref(item: { id: string; activity_type?: string }) {
+    const type = item.activity_type
+    if (type === 'GOAL') return `${ROUTES.SCHOLARSHIP.MANDATORY.GOAL}/${item.id}`
+    if (type === 'SIMPLE_REPORT') return `${ROUTES.SCHOLARSHIP.MANDATORY.CAMP}/${item.id}`
+    if (type === 'URL_REDIRECT') return `${ROUTES.SCHOLARSHIP.MANDATORY.SURVEY}/${item.id}`
+    return `${ROUTES.SCHOLARSHIP.MANDATORY.DETAIL}/${item.id}`
+}
+
 /** 내가 신청한 프로그램 항목 → 신한장학재단 공지 이벤트 상세 경로 */
 function appliedProgramItemHref(item: { id: string }) {
-  return `${ROUTES.COMMUNITY.EVENT.DETAIL}/${item.id}`
+    return `${ROUTES.COMMUNITY.EVENT.DETAIL}/${item.id}`
 }
 
 /** 활동 보고서 월: 4월~12월 (9개) */
@@ -55,6 +64,7 @@ export default function ActivityList() {
                 title: a.title,
                 dateLabel: a.due_date,
                 status: (a.is_submitted ? 'completed' : 'beforeStart') as ActivityStatusType,
+                activity_type: a.activity_type,
             })) ?? [],
         [yearlySummary?.mandatory_report?.activities]
     );
@@ -135,6 +145,7 @@ export default function ActivityList() {
                 title="연간 필수 활동"
                 items={mandatoryItems}
                 emptyMessageKey="MANDATORY_ACTIVITY"
+                getItemHref={mandatoryItemHref}
             />
 
             <div className={styles.space2} />

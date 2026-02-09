@@ -9,6 +9,8 @@ export type ActivityFormItem = {
   title: string
   dateLabel: string
   status: ActivityStatusType
+  /** 연간 필수 활동일 때만: GOAL | SIMPLE_REPORT | URL_REDIRECT */
+  activity_type?: string
 }
 
 interface ActivityFormProps {

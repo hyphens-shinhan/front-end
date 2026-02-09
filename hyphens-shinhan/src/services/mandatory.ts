@@ -78,7 +78,7 @@ export const MandatoryService = {
     return data
   },
 
-  /** 활동 + 내 제출 조회 */
+  /** 활동 + 내 제출 조회 - GET /api/v1/reports/mandatory/activity/{activity_id} (Get Activity And Submission) */
   getActivityLookup: async (
     activityId: string,
   ): Promise<MandatorySubmissionLookupResponse> => {

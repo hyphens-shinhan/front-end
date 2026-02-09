@@ -77,8 +77,8 @@ export default function ActivityList() {
                 isSubmitted
                     ? 'completed'
                     : cr?.exists === true && cr?.is_submitted === false
-                      ? 'inProgress'
-                      : 'beforeStart';
+                        ? 'inProgress'
+                        : 'beforeStart';
             return {
                 key: monthNum,
                 year: resolvedYear,
@@ -92,15 +92,6 @@ export default function ActivityList() {
         });
     }, [yearlySummary, resolvedYear, now.year, now.month]);
 
-    if (isLoading) {
-        return (
-            <EmptyContent
-                variant="loading"
-                message={EMPTY_CONTENT_MESSAGES.LOADING.DEFAULT}
-                className="py-12"
-            />
-        );
-    }
     if (isError) {
         return (
             <EmptyContent

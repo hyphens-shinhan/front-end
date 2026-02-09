@@ -19,6 +19,11 @@ interface ActivityBannerProps {
   href?: string
 }
 
+/** 제목 줄바꿈·연속 공백을 한 칸으로 치환해 한 줄 말줄임이 안정적으로 동작하도록 함 */
+function normalizeTitle(title: string): string {
+  return title.replace(/\s+/g, ' ').trim()
+}
+
 /** MY활동 연간 필수 활동, 내가 신청한 프로그램 배너 컴포넌트 */
 export default function ActivityBanner({
   title,
@@ -27,12 +32,15 @@ export default function ActivityBanner({
   href,
 }: ActivityBannerProps) {
   const statusConfig = STATUS_LABEL[status]
+  const displayTitle = normalizeTitle(title)
   const content = (
     <>
       <div className={styles.infoContainer}>
         <div className={styles.titleContainer}>
-          <p className={styles.title}>{title}</p>
-          <InfoTag label={statusConfig.label} color={statusConfig.color} />
+          <p className={styles.title}>{displayTitle}</p>
+          <span className={styles.tagWrap}>
+            <InfoTag label={statusConfig.label} color={statusConfig.color} />
+          </span>
         </div>
         <time className={styles.date}>{formatDateLabel(dateLabel)}</time>
       </div>
@@ -71,11 +79,13 @@ const styles = {
     'flex flex-col gap-1',
   ),
   titleContainer: cn(
-    'flex gap-[9px]',
+    'flex items-center gap-[9px] min-h-0 pr-3',
   ),
+  /** min-w-0으로 flex에서 줄어들 수 있게 해 말줄임표가 나오고, 태그와 겹치지 않음 */
   title: cn(
-    'body-5 text-grey-11 line-clamp-1',
+    'body-5 text-grey-11 line-clamp-1 min-w-0 flex-1 overflow-hidden',
   ),
+  tagWrap: cn('shrink-0'),
   statusContainer: cn(
     'mb-auto',
   ),

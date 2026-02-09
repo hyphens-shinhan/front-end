@@ -1,0 +1,14 @@
+{
+  "name": "Hyphen",
+  "short_name": "Hyphen",
+  "description": "Hyphen APP",
+  "icons": [],
+  "theme_color": "#FFFFFF",
+  "background_color": "#FFFFFF",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "dir": "ltr",
+  "lang": "ko"
+}

@@ -1,0 +1,58 @@
+import type { NotificationItem } from '@/types/notification'
+
+export const MOCK_NOTIFICATIONS: NotificationItem[] = [
+  {
+    id: '1',
+    title: '새로운 메시지',
+    body: '오시온님의 메시지: 안녕안녕~안녕',
+    date: '2026.01.12',
+    time: '01:12',
+    unread: true,
+    icon: 'IconLBoldMessages3',
+  },
+  {
+    id: '2',
+    title: '신한장학재단 공지사항',
+    body: '2026년 상반기 장학금 신청 안내',
+    date: '2026.01.12',
+    time: '01:12',
+    unread: true,
+    icon: 'IconLBoldNotification',
+  },
+  {
+    id: '3',
+    title: '팔로우 요청',
+    body: '이지우님이 팔로우를 요청했어요.',
+    date: '2026.01.12',
+    time: '01:12',
+    unread: false,
+    icon: 'IconLBoldProfile2user',
+  },
+  {
+    id: '4',
+    title: '친구가 되었어요!',
+    body: '김멘토님이 팔로우를 수락했어요.',
+    date: '2026.01.12',
+    time: '01:12',
+    unread: false,
+    icon: 'IconLBoldProfile2user',
+  },
+  {
+    id: '5',
+    title: '4월 자치회 활동',
+    body: '김회원님이 확인을 완료했어요.',
+    date: '2026.01.12',
+    time: '01:12',
+    unread: false,
+    icon: 'IconLBoldCalendar',
+  },
+  {
+    id: '6',
+    title: '새로운 댓글',
+    body: '이지우님의 댓글: 우와 신기해요!!',
+    date: '2026.01.12',
+    time: '01:12',
+    unread: false,
+    icon: 'IconLBoldMessageText',
+  },
+]

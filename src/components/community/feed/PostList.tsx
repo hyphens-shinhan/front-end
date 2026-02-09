@@ -1,0 +1,131 @@
+'use client'
+
+import { cn } from "@/utils/cn";
+import { useMemo } from "react";
+
+import PostCardSkeleton from "@/components/community/feed/PostCardSkeleton";
+import ShinhanNoticeCard from "@/components/community/ShinhanNoticeCard";
+import Button from "@/components/common/Button";
+import EmptyContent from "@/components/common/EmptyContent";
+import Separator from "@/components/common/Separator";
+import PostFAB from "@/components/common/PostFAB";
+import { EMPTY_CONTENT_MESSAGES, POST_FAB_ITEM_KEY } from "@/constants";
+import { useInfiniteFeedPosts } from "@/hooks/posts/usePosts";
+import { useImageLoadTracking } from "@/hooks/useImageLoadTracking";
+import React from "react";
+import PostCard from "@/components/community/feed/PostCard";
+
+/** 커뮤니티 게시판 리스트 컴포넌트
+ * @returns {React.ReactNode} 커뮤니티 게시판 리스트 컴포넌트
+ * @example
+ * <PostList />
+ *
+ * 가상화: 현재 20개 단위 무한스크롤 + PostCard memo로 10~20개 구간은 충분. 아이템이 50개 이상 누적되고
+ * 스크롤/프레임 이슈가 생기면 @tanstack/react-virtual 도입 검토.
+ */
+export default function PostList() {
+    const {
+        data,
+        fetchNextPage,
+        hasNextPage,
+        isFetchingNextPage,
+        isLoading,
+        isError,
+        refetch,
+    } = useInfiniteFeedPosts();
+
+    const allPosts = data?.pages.flatMap(page => page.posts) || [];
+
+    // 모든 포스트의 이미지 URL 수집
+    const allImageUrls = useMemo(() => {
+        return allPosts.flatMap(post => post.image_urls || [])
+    }, [allPosts])
+
+    // 이미지 로드 상태 추적
+    const { allImagesLoaded } = useImageLoadTracking(allImageUrls)
+
+    // 데이터 로딩 중이거나 이미지가 아직 로드되지 않았으면 로딩 표시
+    const isContentLoading = isLoading || (allPosts.length > 0 && !allImagesLoaded)
+
+    if (isContentLoading) {
+        return (
+            <div className={styles.container}>
+                {/** 신한 공지사항 카드 */}
+                <div className={styles.noticeCardWrapper}>
+                    <ShinhanNoticeCard />
+                </div>
+                {/** 게시글 카드 리스트 */}
+                <div className={styles.postCardWrapper}>
+                    {Array.from({ length: 5 }).map((_, index) => (
+                        <React.Fragment key={index}>
+                            <PostCardSkeleton />
+                            <Separator className="mx-4" />
+                        </React.Fragment>
+                    ))}
+                </div>
+            </div>
+        );
+    }
+    if (isError) {
+        return (
+            <EmptyContent
+                variant="error"
+                message={EMPTY_CONTENT_MESSAGES.ERROR.LIST}
+                action={
+                    <Button
+                        label="다시 시도"
+                        size="M"
+                        type="primary"
+                        onClick={() => refetch()}
+                    />
+                }
+            />
+        );
+    }
+
+    return (
+        <div className={styles.container}>
+            {/** 신한 공지사항 카드 */}
+            <div className={styles.noticeCardWrapper}>
+                <ShinhanNoticeCard />
+            </div>
+            {/** 게시글 카드 리스트 */}
+            <div className={styles.postCardWrapper}>
+                {allPosts.map((post, index) => (
+                    <React.Fragment key={post.id}>
+                        <PostCard post={post} />
+                        <Separator className="mx-4" />
+                    </React.Fragment>
+                ))}
+            </div>
+
+            {/** 무한 스크롤 트리거 (임시) */}
+            {hasNextPage && (
+                <button
+                    onClick={() => fetchNextPage()}
+                    disabled={isFetchingNextPage}
+                    className="p-4 text-grey-9 font-caption-caption3"
+                >
+                    {isFetchingNextPage ? '불러오는 중...' : '더 보기'}
+                </button>
+            )}
+
+            <PostFAB type={POST_FAB_ITEM_KEY.WRITE} />
+        </div>
+    );
+}
+
+const styles = {
+    container: cn(
+        'flex-1 flex flex-col',
+    ),
+    noticeCardWrapper: cn(
+        'flex-1 m-4 mb-3',
+    ),
+    postCardSeparator: cn(
+        'h-[1px] bg-grey-3 mx-4',
+    ),
+    postCardWrapper: cn(
+        'flex flex-col',
+    ),
+};

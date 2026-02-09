@@ -284,6 +284,7 @@
   --color-primary-secondaryroyal: #2878f5ff;
   --color-primary-secondarynavy: #00236eff;
   --color-primary-lighter: #e6f2ffff;
+  --color-primary-middlelight: #c5e1ffff;
   --color-state-red: #ef4444ff;
   --color-state-green: #10b981ff;
   --color-state-yellow: #ffc637ff;
@@ -689,6 +690,7 @@
   --color-primary-secondaryroyal: var(--color-primary-secondaryroyal);
   --color-primary-secondarynavy: var(--color-primary-secondarynavy);
   --color-primary-lighter: var(--color-primary-lighter);
+  --color-primary-middlelight: var(--color-primary-middlelight);
   --color-state-red: var(--color-state-red);
   --color-state-green: var(--color-state-green);
   --color-state-yellow: var(--color-state-yellow);

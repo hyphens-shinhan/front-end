@@ -1,6 +1,7 @@
 'use client';
 
 import { Icon, type IconName } from '@/components/common/Icon';
+import { Skeleton } from '@/components/common/Skeleton';
 import { cn } from '@/utils/cn';
 
 /** 한 항목: 라벨 + 값 + 옆에 info 또는 tick 아이콘 */
@@ -16,26 +17,44 @@ export interface MaintenanceReviewSummaryItem {
 }
 
 interface MaintenanceReviewSummaryProps {
-  /** 없으면 Figma 기본 4항목 사용 */
+  /** API 로딩 중이면 undefined, 데이터 없으면 [], 있으면 4항목 */
   items?: MaintenanceReviewSummaryItem[];
   className?: string;
 }
 
-/** 기본 4항목: GPA, 봉사, 이수학점, 행사 */
-export const DEFAULT_SUMMARY_ITEMS: MaintenanceReviewSummaryItem[] = [
-  { label: 'GPA', value: '2.8 / 4.5', icon: 'IconMBoldBookmark', hint: 'info' },
-  { label: '이수학점', value: '18 / 15학점', icon: 'IconMBoldMedalStar', hint: 'tick' },
-  { label: '봉사', value: '21 / 21시간', icon: 'IconMBoldMenuBoard', hint: 'tick' },
-  { label: '행사', value: '7 / 8개', icon: 'IconMBoldCalendar', hint: 'info' },
-];
+const SUMMARY_SKELETON_COUNT = 4;
 
 /**
  * 홈 화면 유지 심사 현황 정보 요약 카드
+ * - items undefined: 로딩 스켈레톤
+ * - items []: 미렌더
+ * - items 있음: 2x2 그리드 표시
  */
 export default function MaintenanceReviewSummary({
-  items = DEFAULT_SUMMARY_ITEMS,
+  items,
   className,
 }: MaintenanceReviewSummaryProps) {
+  if (items === undefined) {
+    return (
+      <div className={cn(styles.card, className)}>
+        <div className={styles.grid}>
+          {Array.from({ length: SUMMARY_SKELETON_COUNT }).map((_, i) => (
+            <div key={i} className={styles.item}>
+              <div className={styles.row}>
+                <Skeleton.Box className="size-5 shrink-0 rounded" />
+                <Skeleton.Box className="h-5 w-12 rounded" />
+              </div>
+              <div className={styles.valueRow}>
+                <Skeleton.Box className="h-5 w-24 rounded" />
+                <Skeleton.Box className="size-5 shrink-0 rounded" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   if (items.length === 0) return null;
 
   return (
@@ -48,6 +67,9 @@ export default function MaintenanceReviewSummary({
                 <Icon name={item.icon} size={20} className={styles.icon} />
               </span>
               <span className={styles.label}>{item.label}</span>
+            </div>
+            <div className={styles.valueRow}>
+              <span className={styles.value}>{item.value}</span>
               <span className={styles.iconWrap}>
                 <Icon
                   name={
@@ -64,7 +86,6 @@ export default function MaintenanceReviewSummary({
                 />
               </span>
             </div>
-            <span className={styles.value}>{item.value}</span>
           </div>
         ))}
       </div>
@@ -79,9 +100,10 @@ const styles = {
   item: 'flex flex-col gap-1.5',
   row: 'flex flex-row items-center gap-2',
   label: 'body-5 text-grey-9',
+  valueRow: 'flex flex-row items-center gap-2',
   value: 'body-6 text-grey-11',
   iconWrap: 'flex shrink-0',
   icon: 'text-grey-8',
-  hintIconTick: 'text-state-yellow-dark',
-  hintIconInfo: 'text-state-green',
+  hintIconTick: 'text-state-green',
+  hintIconInfo: 'text-state-yellow-dark',
 } as const;

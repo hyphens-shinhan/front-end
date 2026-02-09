@@ -6,6 +6,10 @@ import type {
   UserProfileUpdate,
   UserPrivacySettings,
   UserPrivacyUpdate,
+  ScholarshipEligibilityResponse,
+  MandatoryStatusResponse,
+  VolunteerHoursResponse,
+  VolunteerHoursUpdate,
 } from '@/types'
 
 const BASE = '/users'
@@ -84,6 +88,21 @@ export const UserService = {
   },
 
   /**
+   * 장학 유지 요건 요약 조회 (GET /users/me/scholarship-eligibility)
+   * @param year - 조회 연도 (2000~2100, 미입력 시 현재 연도)
+   */
+  getScholarshipEligibility: async (
+    year?: number,
+  ): Promise<ScholarshipEligibilityResponse> => {
+    const params = year != null ? { year } : undefined
+    const response = await apiClient.get<ScholarshipEligibilityResponse>(
+      `${BASE}/me/scholarship-eligibility`,
+      { params },
+    )
+    return response.data
+  },
+
+  /**
    * 다른 유저 공개 프로필 조회 (GET /users/{user_id})
    */
   getPublicProfile: async (userId: string): Promise<UserPublicProfile> => {
@@ -94,5 +113,41 @@ export const UserService = {
       ...data,
       location: data.address || data.location || null,
     } as UserPublicProfile
+  },
+
+  /**
+   * 필수활동 완료 현황 (GET /users/me/mandatory-status?year=)
+   */
+  getMandatoryStatus: async (
+    year: number,
+  ): Promise<MandatoryStatusResponse> => {
+    const response = await apiClient.get<MandatoryStatusResponse>(
+      `${BASE}/me/mandatory-status`,
+      { params: { year } },
+    )
+    return response.data
+  },
+
+  /**
+   * 봉사시간 조회 (GET /users/me/volunteer)
+   */
+  getMyVolunteerHours: async (): Promise<VolunteerHoursResponse> => {
+    const response = await apiClient.get<VolunteerHoursResponse>(
+      `${BASE}/me/volunteer`,
+    )
+    return response.data
+  },
+
+  /**
+   * 봉사시간 수정 (PATCH /users/me/volunteer)
+   */
+  updateMyVolunteerHours: async (
+    data: VolunteerHoursUpdate,
+  ): Promise<VolunteerHoursResponse> => {
+    const response = await apiClient.patch<VolunteerHoursResponse>(
+      `${BASE}/me/volunteer`,
+      data,
+    )
+    return response.data
   },
 }

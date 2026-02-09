@@ -2,6 +2,7 @@ import { cn } from '@/utils/cn';
 import DocumentGuideCard from './DocumentGuideCard';
 import HomeContentCard from './HomeContentCard';
 import ProfileCardWithQR from './ProfileCardWithQR';
+import RecommendedContent from './RecommendedContent';
 
 /** 홈 탭 전체 레이아웃: 문서 안내 + 프로필 카드 레이어 + 스크롤 영역 */
 export default function HomePageContent() {
@@ -37,4 +38,5 @@ const styles = {
   scrollArea: cn(
     'pointer-events-auto min-h-0 flex-1 overflow-y-auto bg-primary-lighter',
   ),
-};
+  recommendedWrap: 'pointer-events-auto shrink-0',
+} as const;

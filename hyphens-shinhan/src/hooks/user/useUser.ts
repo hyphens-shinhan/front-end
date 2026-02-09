@@ -15,6 +15,14 @@ export const userKeys = {
   /** 다른 유저 공개 프로필 (GET /users/{user_id}) */
   publicProfile: (userId: string) =>
     [...userKeys.all, 'public', userId] as const,
+  /** 장학 유지 요건 요약 (GET /users/me/scholarship-eligibility) */
+  scholarshipEligibility: (year?: number) =>
+    [...userKeys.all, 'me', 'scholarship-eligibility', year] as const,
+  /** 필수활동 완료 현황 (GET /users/me/mandatory-status) */
+  mandatoryStatus: (year: number) =>
+    [...userKeys.all, 'me', 'mandatory-status', year] as const,
+  /** 봉사시간 (GET /users/me/volunteer) */
+  myVolunteerHours: () => [...userKeys.all, 'me', 'volunteer'] as const,
 }
 
 /**
@@ -55,5 +63,37 @@ export const usePublicProfile = (userId: string) => {
     queryKey: userKeys.publicProfile(userId),
     queryFn: () => UserService.getPublicProfile(userId),
     enabled: !!userId,
+  })
+}
+
+/**
+ * 장학 유지 요건 요약 조회 (GET /users/me/scholarship-eligibility)
+ * @param year - 조회 연도 (2000~2100, 미입력 시 현재 연도)
+ */
+export const useScholarshipEligibility = (year?: number) => {
+  return useQuery({
+    queryKey: userKeys.scholarshipEligibility(year),
+    queryFn: () => UserService.getScholarshipEligibility(year),
+  })
+}
+
+/**
+ * 필수활동 완료 현황 (GET /users/me/mandatory-status)
+ */
+export const useMandatoryStatus = (year: number) => {
+  return useQuery({
+    queryKey: userKeys.mandatoryStatus(year),
+    queryFn: () => UserService.getMandatoryStatus(year),
+    enabled: !!year,
+  })
+}
+
+/**
+ * 봉사시간 조회 (GET /users/me/volunteer)
+ */
+export const useMyVolunteerHours = () => {
+  return useQuery({
+    queryKey: userKeys.myVolunteerHours(),
+    queryFn: () => UserService.getMyVolunteerHours(),
   })
 }

@@ -5,25 +5,28 @@ import type { EventStatus } from './posts'
 // ========== Activity 관련 타입 ==========
 
 /**
+ * 활동 상태
+ */
+export type ActivityStatus = "NOT_STARTED" | "DRAFT" | "SUBMITTED"
+
+/**
  * 자치회 보고서 제출 상태
  */
 export interface CouncilReportStatus {
   /** 보고서 제목 (없을 수 있음) */
-  title?: string | null
-  /** 제출 완료 여부 (레거시: is_submitted와 동일 의미) */
-  is_completed: boolean
-  /** 해당 연·월 리포트(초안) 존재 여부. true이고 is_submitted가 false이면 진행중 */
-  exists?: boolean
-  /** 제출 완료 여부. exists true + is_submitted false → 진행중 */
-  is_submitted?: boolean
+  title: string | null
+  /** 해당 연·월 리포트(초안) 존재 여부 */
+  exists: boolean
+  /** 제출 완료 여부 */
+  is_submitted: boolean
 }
 
 /**
  * 학술 보고서 제출 상태
  */
 export interface AcademicReportStatus {
-  /** 제출 완료 여부 */
-  is_completed: boolean
+  /** 활동 상태 */
+  status: ActivityStatus
 }
 
 /**
@@ -42,18 +45,10 @@ export interface MandatoryActivityStatus {
   title: string
   /** 활동 유형 */
   activity_type: MandatoryActivityType
-  /** 제출 여부 */
-  is_submitted: boolean
+  /** 활동 상태 */
+  status: ActivityStatus
   /** 제출 마감일 (ISO "YYYY-MM-DD") */
   due_date: string
-}
-
-/**
- * 필수 활동(과제) 보고 전체 상태
- */
-export interface MandatoryReportStatus {
-  /** 필수 활동 목록 */
-  activities: MandatoryActivityStatus[]
 }
 
 /**
@@ -71,18 +66,10 @@ export interface AppliedEventStatus {
 }
 
 /**
- * 신청한 이벤트 목록 상태
- */
-export interface AppliedEventsStatus {
-  /** 신청 이벤트 목록 */
-  events: AppliedEventStatus[]
-}
-
-/**
  * 월별 활동 상태 (자치회·학술 보고 등)
  */
 export interface MonthlyActivityStatus {
-  /** 월 (1–12) */
+  /** 월 (4-12, April to December) */
   month: number
   /** 자치회 보고서 상태 */
   council_report: CouncilReportStatus
@@ -97,7 +84,7 @@ export interface YearlyActivitySummary {
   /** 연도 */
   year: number
   /** 자치회 ID (UUID, 없을 수 있음) */
-  council_id?: string | null
+  council_id: string | null
   /** 월별 활동 상태 목록 */
   months: MonthlyActivityStatus[]
   /** 해당 연도 자치회 보고 전체 완료 여부 */
@@ -106,10 +93,10 @@ export interface YearlyActivitySummary {
   academic_all_completed: boolean
   /** 학술 활동 모니터링 대상 여부 */
   academic_is_monitored: boolean
-  /** 필수 활동(과제) 보고 상태 */
-  mandatory_report: MandatoryReportStatus
-  /** 신청한 이벤트 목록 상태 */
-  applied_events: AppliedEventsStatus
+  /** 필수 활동(과제) 목록 */
+  mandatory_activities: MandatoryActivityStatus[]
+  /** 신청한 이벤트 목록 */
+  applied_events: AppliedEventStatus[]
 }
 
 /**

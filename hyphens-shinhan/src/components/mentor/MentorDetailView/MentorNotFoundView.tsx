@@ -3,32 +3,44 @@
 import { useMemo } from 'react'
 import Link from 'next/link'
 import { ROUTES } from '@/constants'
-import { MENTOR_CATEGORY_LABELS } from '@/constants/mentorDetail'
 import { EMPTY_CONTENT_MESSAGES } from '@/constants/emptyContent'
 import Avatar from '@/components/common/Avatar'
+import InfoTag from '@/components/common/InfoTag'
 import EmptyContent from '@/components/common/EmptyContent'
 import { Icon } from '@/components/common/Icon'
 import { useSentMentoringRequests } from '@/hooks/mentoring/useMentoring'
-import type { MentorCategory } from '@/types/mentor'
-import type { MentoringRequestResponse } from '@/types/mentoring-api'
+import type { MentoringRequestResponse, MentoringRequestStatus } from '@/types/mentoring-api'
 
-/** Mentoring history list item (uses real mentor ids so detail screen loads). */
+const STATUS_LABELS: Record<MentoringRequestStatus, string> = {
+  PENDING: '대기중',
+  ACCEPTED: '수락됨',
+  REJECTED: '거절됨',
+  COMPLETED: '완료됨',
+  CANCELED: '취소됨',
+}
+
+const STATUS_COLORS: Record<
+  MentoringRequestStatus,
+  'blue' | 'grey' | 'green' | 'yellow' | 'red'
+> = {
+  PENDING: 'yellow',
+  ACCEPTED: 'green',
+  REJECTED: 'red',
+  COMPLETED: 'green',
+  CANCELED: 'grey',
+}
+
 export interface MentoringHistorySession {
   id: string
   name: string
   avatar: string
-  expertise: string
-  location: string
+  message: string
+  status: MentoringRequestStatus
   verified: boolean
 }
 
 type MentoringHistoryGroup = { date: string; sessions: MentoringHistorySession[] }
 
-function getExpertiseLabel(primaryCategory: string): string {
-  return MENTOR_CATEGORY_LABELS[primaryCategory as MentorCategory] ?? primaryCategory
-}
-
-/** Build history list from API sent requests (group by date, mentor info). */
 function buildHistoryFromRequests(
   requests: MentoringRequestResponse[]
 ): MentoringHistoryGroup[] {
@@ -39,8 +51,8 @@ function buildHistoryFromRequests(
       id: req.mentor.id,
       name: req.mentor.name,
       avatar: req.mentor.avatar_url || '/assets/images/male1.png',
-      expertise: '멘토링',
-      location: '',
+      message: req.message || '',
+      status: req.status,
       verified: req.status === 'ACCEPTED' || req.status === 'COMPLETED',
     }
     if (!byDate[dateStr]) byDate[dateStr] = []
@@ -55,14 +67,10 @@ function buildHistoryFromRequests(
 }
 
 interface MentorNotFoundViewProps {
-  /** When provided (e.g. from GET /mentoring/requests/sent), show API data instead of mock */
   sentRequests?: MentoringRequestResponse[]
 }
 
-/**
- * When mentor detail is not found, show "나의 멘토링 내역" list.
- * Uses sentRequests from API when provided; otherwise falls back to mock data.
- */
+/** 나의 멘토링 내역 페이지 */
 export function MentorNotFoundView({ sentRequests }: MentorNotFoundViewProps) {
   const { data, isLoading, error } = useSentMentoringRequests()
   const resolvedRequests = sentRequests ?? data?.requests
@@ -73,7 +81,6 @@ export function MentorNotFoundView({ sentRequests }: MentorNotFoundViewProps) {
     return buildHistoryFromRequests(resolvedRequests)
   }, [resolvedRequests])
 
-  // prop이 없으면(멘토 상세에서 직접 사용) 훅 상태를 그대로 보여준다.
   if (sentRequests === undefined) {
     if (isLoading) {
       return (
@@ -94,7 +101,6 @@ export function MentorNotFoundView({ sentRequests }: MentorNotFoundViewProps) {
     }
   }
 
-  // API로 연동됐고, 내역이 비어있으면 빈 상태를 보여준다.
   if (isApiDataResolved && (resolvedRequests?.length ?? 0) === 0) {
     return (
       <EmptyContent
@@ -140,20 +146,19 @@ export function MentorNotFoundView({ sentRequests }: MentorNotFoundViewProps) {
                                 <Icon name="IconLBoldVerify" className="size-6" />
                               </span>
                             )}
+                            <InfoTag
+                              label={STATUS_LABELS[session.status]}
+                              color={STATUS_COLORS[session.status]}
+                            />
                           </div>
-                          <span className={styles.meta}>
-                            {session.location
-                              ? `${session.expertise} • ${session.location}`
-                              : session.expertise}
-                          </span>
+                          {session.message && (
+                            <div className={styles.messageContainer}>
+                              <p className={styles.messageText}>요청한 메시지</p>
+                              <p className={styles.messageTextBody}>{session.message}</p>
+                            </div>
+                          )}
                         </div>
                       </div>
-                      <span className={styles.rightIconWrap} aria-hidden>
-                        <Icon
-                          name="IconLLineArrowRight"
-                          className="size-6"
-                        />
-                      </span>
                     </Link>
                   </div>
                 ))}
@@ -172,16 +177,18 @@ const styles = {
   inner: 'mx-auto max-w-[600px] px-4 pb-8 pt-2',
   groups: 'flex flex-col gap-5',
   groupSection: 'flex flex-col gap-5',
-  dateText: 'body-8 font-semibold text-grey-8 leading-5',
+  dateText: 'font-caption-caption1 text-grey-8',
   sessions: 'flex flex-col gap-0',
   divider: 'my-px h-px w-full bg-grey-2',
-  link: 'flex w-full items-center justify-between py-2',
-  left: 'flex items-center gap-4',
+  link: 'flex w-full py-2',
+  left: 'flex min-w-0 flex-1 gap-4',
   avatarContainer: 'h-[50px] w-[50px] shrink-0 overflow-hidden rounded-full bg-grey-2',
-  info: 'flex min-w-0 flex-col items-start gap-2',
-  nameRow: 'flex items-center gap-1',
+  info: 'flex min-w-0 flex-col items-start gap-2 flex-1',
+  nameRow: 'flex items-center gap-2.5 justify-between',
   name: 'title-18 truncate font-bold leading-[22px] text-grey-11',
   verifiedIconWrap: 'shrink-0 [&_path]:fill-primary-secondaryroyal',
-  meta: 'body-8 font-semibold leading-5 text-grey-8',
   rightIconWrap: 'shrink-0 text-grey-9',
+  messageText: 'body-7 text-grey-7',
+  messageTextBody: 'body-7 text-grey-9',
+  messageContainer: 'w-full min-w-0 flex flex-col gap-1 border border-grey-2 px-2 py-1.5 rounded-lg',
 } as const

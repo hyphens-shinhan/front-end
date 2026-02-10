@@ -7,6 +7,7 @@ import type {
   MentorshipStyle,
   PersonalityTraits,
 } from '@/types/mentor'
+import QuestionnaireQuestionBlock from './QuestionnaireQuestionBlock'
 import { cn } from '@/utils/cn'
 
 const COMMUNICATION: { value: CommunicationStyle; label: string }[] = [
@@ -22,9 +23,6 @@ const MENTORING_STYLE: { value: MentorshipStyle; label: string }[] = [
 ]
 
 const stepStyles = {
-  questionBlock: 'flex flex-col gap-1.5 pt-2 pb-2',
-  questionTitle: 'title-16 text-grey-11 font-semibold',
-  hint: 'body-8 text-grey-8',
   sectionTitle: 'body-8 text-grey-9 font-bold py-3',
   optionRow: cn(
     'flex items-center gap-2 py-3 px-4 cursor-pointer min-h-[48px]',
@@ -114,14 +112,11 @@ export default function QuestionnaireStep4({
   return (
     <div className="flex flex-col flex-1 min-h-0">
       <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
-        <div className={stepStyles.questionBlock}>
-          <h2 className={stepStyles.questionTitle}>
-            선호하는 멘토님의 스타일을 선택해주세요
-          </h2>
-          <p className={stepStyles.hint}>
-            복수 선택 가능, 선택하지 않으면 상관없음으로 매칭됩니다
-          </p>
-        </div>
+        <QuestionnaireQuestionBlock
+          title="선호하는 멘토님의 스타일을 선택해주세요"
+          hint="복수 선택 가능, 선택하지 않으면 상관없음으로 매칭됩니다"
+          titleVariant="large"
+        />
         <div className="pt-2">
           <p className={stepStyles.sectionTitle}>소통 방식</p>
           <div className="flex flex-col">

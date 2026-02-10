@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import type { MentorshipRequest } from '@/types/mentor'
 import { useAutoResize } from '@/hooks/useAutoResize'
+import QuestionnaireQuestionBlock from './QuestionnaireQuestionBlock'
 import { cn } from '@/utils/cn'
 
 interface QuestionnaireStep2bProps {
@@ -46,12 +47,10 @@ export default function QuestionnaireStep2b({
 
   return (
     <div className={stepStyles.wrapper}>
-      <div className={stepStyles.questionBlock}>
-        <h2 className={stepStyles.questionTitle}>
-          멘토링을 통해 얻고 싶은 것을 작성해주세요
-        </h2>
-        <p className={stepStyles.hint}>자유롭게 입력해주세요</p>
-      </div>
+      <QuestionnaireQuestionBlock
+        title="멘토링을 통해 얻고 싶은 것을 작성해주세요"
+        hint="자유롭게 입력해주세요"
+      />
       <div className={stepStyles.textareaWrapper}>
         <textarea
           name="goalDescription"
@@ -70,9 +69,6 @@ export default function QuestionnaireStep2b({
 
 const stepStyles = {
   wrapper: 'flex flex-col flex-1',
-  questionBlock: 'flex flex-col gap-1.5 pt-2 pb-2',
-  questionTitle: 'body-5 text-grey-11',
-  hint: 'font-caption-caption2 text-grey-8',
   textareaWrapper: 'flex flex-col pt-1.5 overflow-visible',
   textarea: cn(
     'w-full min-h-[112px] px-4 py-3 rounded-[16px] border border-grey-2 scrollbar-hide',

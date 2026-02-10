@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useEffect } from 'react'
 import type { MentorshipRequest, MeetingFormat } from '@/types/mentor'
+import QuestionnaireQuestionBlock from './QuestionnaireQuestionBlock'
 import { cn } from '@/utils/cn'
 
 type MeetingOptionId = 'remote' | 'in_person' | 'flexible'
@@ -13,9 +14,6 @@ const OPTIONS: { id: MeetingOptionId; label: string; formats: MeetingFormat[] }[
 ]
 
 const stepStyles = {
-  questionBlock: 'flex flex-col gap-1.5 pt-2 pb-2',
-  questionTitle: 'title-16 text-grey-11 font-semibold',
-  hint: 'body-8 text-grey-8',
   optionRow: cn(
     'flex items-center gap-2 py-3 px-4 cursor-pointer min-h-[48px]',
     'border-b border-grey-2 last:border-b-0',
@@ -94,10 +92,11 @@ export default function QuestionnaireStep3c({
   return (
     <div className="flex flex-col flex-1 min-h-0">
       <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
-        <div className={stepStyles.questionBlock}>
-          <h2 className={stepStyles.questionTitle}>멘토님과 만날 방법을 선택해주세요</h2>
-          <p className={stepStyles.hint}>복수 선택 가능</p>
-        </div>
+        <QuestionnaireQuestionBlock
+          title="멘토님과 만날 방법을 선택해주세요"
+          hint="복수 선택 가능"
+          titleVariant="large"
+        />
         <div className="flex flex-col">
           {OPTIONS.map((opt) => {
             const isSelected = selected.has(opt.id)

@@ -30,9 +30,11 @@ function mapFollowRequestToDisplay(req: FollowRequest): FollowRequestDisplay {
 /**
  * Map FollowUser to UI Person for FollowingList
  */
-function mapFollowUserToPerson(
-  user: { id: string; name: string; avatar_url?: string | null }
-): Person {
+function mapFollowUserToPerson(user: {
+  id: string
+  name: string
+  avatar_url?: string | null
+}): Person {
   return {
     id: String(user.id),
     name: user.name,
@@ -57,7 +59,7 @@ export const FollowsService = {
   }): Promise<{ requests: FollowRequestDisplay[]; total: number }> => {
     const { data } = await apiClient.get<FollowRequestListResponse>(
       `${BASE}/requests`,
-      { params }
+      { params },
     )
     return {
       requests: (data.requests ?? []).map(mapFollowRequestToDisplay),
@@ -96,11 +98,9 @@ export const FollowsService = {
   /**
    * GET /follows/{user_id}/status - 특정 유저에 대한 팔로우 상태
    */
-  getFollowStatus: async (
-    userId: string
-  ): Promise<FollowStatusResponse> => {
+  getFollowStatus: async (userId: string): Promise<FollowStatusResponse> => {
     const { data } = await apiClient.get<FollowStatusResponse>(
-      `${BASE}/${userId}/status`
+      `${BASE}/${userId}/status`,
     )
     return data
   },
@@ -112,10 +112,9 @@ export const FollowsService = {
     limit?: number
     offset?: number
   }): Promise<{ followers: Person[]; total: number }> => {
-    const { data } = await apiClient.get<FollowListResponse>(
-      `${BASE}/me`,
-      { params }
-    )
+    const { data } = await apiClient.get<FollowListResponse>(`${BASE}/me`, {
+      params,
+    })
     return {
       followers: (data.followers ?? []).map(mapFollowUserToPerson),
       total: data.total ?? 0,

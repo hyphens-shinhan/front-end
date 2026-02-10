@@ -1,5 +1,8 @@
 /** EmptyContent(로딩/빈/에러) 문구 상수 (해요체) */
 export const EMPTY_CONTENT_MESSAGES = {
+  NETWORK: {
+    FOLLOWING_EMPTY: '내가 팔로우하는 사람이 없어요.',
+  },
   LOADING: {
     DEFAULT: '로딩 중...',
     COMMENT: '댓글을 불러오는 중...',

@@ -1,22 +1,55 @@
 'use client'
 
-import { useState } from 'react'
+import type { ReactNode } from 'react'
 import type { Person } from '@/types/network'
 import { cn } from '@/utils/cn'
+import Avatar from '@/components/common/Avatar'
+import Button from '@/components/common/Button'
+
+/** 카드에 표시할 최소 정보 (친구 목록은 Person, 팔로우 요청은 id/name/avatar만 넘겨도 됨) */
+export type PersonCardDisplay = Pick<Person, 'id' | 'name'> &
+  Partial<Pick<Person, 'avatar' | 'mutualConnections' | 'generation' | 'scholarshipType' | 'university' | 'tags'>>
 
 interface FollowingPersonCardProps {
-  person: Person
+  person: PersonCardDisplay
   onClick?: () => void
   onMessage?: (personId: string) => void
+  /** 커스텀 부가 정보 (없으면 person에 generation/scholarshipType 있을 때만 자동 계산) */
+  subtitle?: string | null
+  /** 커스텀 액션 영역 (수락/거절 등). 있으면 onMessage 대신 사용 */
+  actions?: ReactNode
+}
+
+function isYB(p: PersonCardDisplay): boolean {
+  const tags = p.tags ?? []
+  const hasMentorOrObTag = tags.some((t) =>
+    t.includes('멘토') ||
+    t.includes('OB') ||
+    t.toLowerCase().includes('mentor'),
+  )
+  return !hasMentorOrObTag
+}
+
+function getSubtitle(p: PersonCardDisplay): string {
+  if (p.generation == null || p.scholarshipType == null) return ''
+  return isYB(p)
+    ? `${p.generation} · ${p.scholarshipType}${p.university ? ` · ${p.university}` : ''}`
+    : (p.university || '소속 없음')
 }
 
 export default function FollowingPersonCard({
   person,
   onClick,
   onMessage,
+  subtitle: subtitleProp,
+  actions,
 }: FollowingPersonCardProps) {
-  const [imageError, setImageError] = useState(false)
-  const hasAvatar = person.avatar && !imageError
+  const subtitle =
+    subtitleProp !== undefined
+      ? subtitleProp
+      : (person.generation != null && person.scholarshipType != null
+        ? getSubtitle(person)
+        : null)
 
   return (
     <div
@@ -29,47 +62,47 @@ export default function FollowingPersonCard({
           onClick?.()
         }
       }}
-      className={cn(
-        'flex items-center gap-4 py-4 min-h-[72px] touch-manipulation cursor-pointer',
-        'active:opacity-95 transition-opacity'
-      )}
+      className={styles.container}
     >
-      <div className="w-12 h-12 rounded-full bg-grey-3 shrink-0 overflow-hidden">
-        {hasAvatar ? (
-          <img
-            src={person.avatar}
-            alt=""
-            className="w-full h-full object-cover"
-            onError={() => setImageError(true)}
-          />
-        ) : null}
-      </div>
-      <div className="flex-1 min-w-0">
-        <h3 className="text-base font-medium text-grey-10 tracking-tight truncate">
+      <Avatar src={person.avatar} alt={person.name} size={46} />
+
+      <div className={styles.infoWrapper}>
+        <h3 className={styles.name}>
           {person.name}
         </h3>
-        <p className="text-[13px] text-grey-7 truncate mt-1">
-          {person.generation} · {person.scholarshipType}
-          {person.university ? ` · ${person.university}` : ''}
-        </p>
-        {person.mutualConnections != null && person.mutualConnections > 0 && (
-          <p className="text-xs text-grey-6 mt-0.5">
-            겸친구 {person.mutualConnections}명
+        {/* {subtitle != null && subtitle !== '' && (
+          <p className={styles.subtitle}>
+            {subtitle}
           </p>
-        )}
+        )} */}
       </div>
-      {onMessage && (
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation()
-            onMessage(person.id)
-          }}
-          className="shrink-0 py-2 px-1 min-h-[44px] flex items-center text-sm font-medium text-grey-7 active:opacity-80 transition-opacity touch-manipulation"
-        >
-          메시지
-        </button>
-      )}
+
+      {actions != null ? (
+        <div onClick={(e) => e.stopPropagation()}>
+          {actions}
+        </div>
+      ) : onMessage ? (
+        <div onClick={(e) => e.stopPropagation()}>
+          <Button
+            type="secondary"
+            size="S"
+            label="메시지"
+            onClick={() => onMessage(person.id)}
+          />
+        </div>
+      ) : null}
     </div>
   )
 }
+
+const styles = {
+  container: cn(
+    'flex items-center gap-4 cursor-pointer',
+    'active:opacity-95 transition-opacity',
+  ),
+  infoWrapper: cn('flex-1 min-w-0'),
+  name: cn('body-5 text-grey-11'),
+  subtitle: cn('body-7 text-grey-8'),
+  mutual: cn('text-xs text-grey-6 mt-0.5'),
+}
+

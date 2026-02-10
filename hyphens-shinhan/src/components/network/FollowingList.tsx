@@ -3,6 +3,8 @@
 import type { Person } from '@/types/network'
 import FollowingPersonCard from './FollowingPersonCard'
 import { cn } from '@/utils/cn'
+import EmptyContent from '@/components/common/EmptyContent'
+import { EMPTY_CONTENT_MESSAGES } from '@/constants'
 
 interface FollowingListProps {
   people: Person[]
@@ -17,22 +19,25 @@ export default function FollowingList({
 }: FollowingListProps) {
   if (people.length === 0) {
     return (
-      <section className="pt-6 pb-0">
+      <section className="pb-0">
         <h2 className="text-base font-medium text-grey-10 tracking-tight mb-4">
-          내가 팔로우하는 사람
+          내 친구{' '}
         </h2>
-        <p className="text-sm text-grey-7 py-8">팔로우하는 사람이 없습니다.</p>
+        <EmptyContent
+          variant="empty"
+          message={EMPTY_CONTENT_MESSAGES.NETWORK.FOLLOWING_EMPTY}
+        />
       </section>
     )
   }
 
   return (
-    <section className="pt-6 pb-0">
-      <h2 className="text-base font-medium text-grey-10 tracking-tight mb-4">
-        내가 팔로우하는 사람{' '}
-        <span className="text-grey-7 font-normal">({people.length})</span>
+    <section className="pb-0">
+      <h2 className="title-16 text-grey-10 tracking-tight mb-4">
+        내 친구{' '}
+        <span className="text-grey-8 title-16">({people.length})</span>
       </h2>
-      <div className={cn('space-y-0')}>
+      <div className={cn('space-y-4')}>
         {people.map((person) => (
           <FollowingPersonCard
             key={person.id}

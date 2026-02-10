@@ -1,8 +1,9 @@
 'use client'
 
-import { useState } from 'react'
 import { cn } from '@/utils/cn'
 import type { FollowRequestDisplay } from '@/services/follows'
+import Button from '@/components/common/Button'
+import FollowingPersonCard from './FollowingPersonCard'
 
 interface FollowRequestsListProps {
   requests?: FollowRequestDisplay[]
@@ -17,80 +18,60 @@ export default function FollowRequestsList({
   onReject,
   isLoading = false,
 }: FollowRequestsListProps) {
-  const [showAll, setShowAll] = useState(false)
-  const INITIAL_DISPLAY_COUNT = 2
-  const requests = requestsProp
-  const displayedRequests = showAll ? requests : requests.slice(0, INITIAL_DISPLAY_COUNT)
 
-  if (isLoading || requests.length === 0) return null
+  if (isLoading || requestsProp.length === 0) return null
 
   return (
-    <section className="pt-4 pb-0">
-      <p className="text-[13px] text-grey-7 tracking-tight uppercase mb-3">
-        팔로우 요청
-      </p>
-      <div className={cn('space-y-0')}>
-        {displayedRequests.map((request) => (
-          <div
+    <section className={styles.section}>
+      <h2 className={styles.sectionTitle}>
+        팔로우 요청{' '}
+        <span className={styles.sectionCount}>({requestsProp.length})</span>
+      </h2>
+      <div className={styles.list}>
+        {requestsProp.map((request) => (
+          <FollowingPersonCard
             key={request.id}
-            className="flex items-center gap-4 py-4 min-h-[72px] touch-manipulation"
-          >
-            <div className="w-12 h-12 rounded-full bg-grey-3 shrink-0 overflow-hidden">
-              {request.avatar_url && (
-                <img
-                  src={request.avatar_url}
-                  alt=""
-                  className="w-full h-full object-cover"
+            person={{
+              id: request.id,
+              name: request.name,
+              avatar: request.avatar_url ?? undefined,
+            }}
+            subtitle={request.university ?? '소속 없음'}
+            actions={
+              <div className={styles.actions}>
+                <Button
+                  type="primary"
+                  size="S"
+                  label="수락"
+                  onClick={() => onAccept?.(request.id)}
                 />
-              )}
-            </div>
-            <div className="flex-1 min-w-0">
-              <h3 className="text-base font-medium text-grey-10 tracking-tight truncate">
-                {request.name}
-              </h3>
-              {request.university && (
-                <p className="text-[13px] text-grey-7 truncate mt-1">
-                  {request.university}
-                </p>
-              )}
-            </div>
-            <div className="flex gap-3 shrink-0">
-              <button
-                type="button"
-                onClick={() => onAccept?.(request.id)}
-                className="min-h-[44px] min-w-[68px] px-4 py-2.5 bg-primary-shinhanblue text-white text-[15px] font-medium rounded-lg active:opacity-90 transition-opacity touch-manipulation"
-              >
-                수락
-              </button>
-              <button
-                type="button"
-                onClick={() => onReject?.(request.id)}
-                className="min-h-[44px] px-3 py-2.5 text-sm font-medium text-grey-7 active:opacity-80 transition-opacity touch-manipulation"
-              >
-                거절
-              </button>
-            </div>
-          </div>
+                <Button
+                  type="secondary"
+                  size="S"
+                  label="거절"
+                  onClick={() => onReject?.(request.id)}
+                />
+              </div>
+            }
+          />
         ))}
       </div>
-      {requests.length > INITIAL_DISPLAY_COUNT && !showAll && (
-        <button
-          type="button"
-          onClick={() => setShowAll(true)}
-          className="w-full py-3 text-sm font-medium text-grey-7 active:opacity-80 touch-manipulation"
-        >
-          팔로우 요청 {requests.length - INITIAL_DISPLAY_COUNT}개 더 보기
-        </button>
-      )}
-      {showAll && requests.length > INITIAL_DISPLAY_COUNT && (
-        <button
-          type="button"
-          onClick={() => setShowAll(false)}
-          className="w-full py-2 text-sm text-grey-7 active:opacity-80 touch-manipulation"
-        >
-          접기
-        </button>
-      )}
     </section>
   )
+}
+
+const styles = {
+  section: cn('pt-6 pb-6'),
+  sectionTitle: cn('title-16 text-grey-10 tracking-tight mb-4'),
+  sectionCount: cn('text-grey-8 title-16'),
+  list: cn('space-y-4'),
+  actions: cn('flex gap-3 shrink-0'),
+  showMoreButton: cn(
+    'w-full py-3 text-sm font-medium text-grey-7',
+    'active:opacity-80 touch-manipulation',
+  ),
+  collapseButton: cn(
+    'w-full py-2 text-sm text-grey-7',
+    'active:opacity-80 touch-manipulation',
+  ),
 }

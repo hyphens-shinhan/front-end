@@ -171,7 +171,8 @@ export type {
   Person,
 } from './network'
 
-// MARK: - Notification (알림)
+// MARK: - Chat (채팅: DM + Group)
+export type {
   ChatRoomType,
   ChatRoomMember,
   MessageResponse,
@@ -206,3 +207,6 @@ export type {
   ClubMemberListResponse,
   RandomNicknameResponse,
 } from './clubs'
+
+// MARK: - Videos (비디오 목록/생성/삭제, ADMIN 전용 생성·삭제)
+export type { VideoCreate, VideoResponse, VideoListResponse } from './videos'

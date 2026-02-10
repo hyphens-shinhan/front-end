@@ -226,6 +226,7 @@ export const CUSTOM_HEADER_CONFIG: Record<string, CustomHeaderConfig> = {
   /** 멘토 상세 프로필 (/mentors/[id]) */
   [ROUTES.MENTORS.MAIN]: {
     pathPattern: /^\/mentors\/[^/]+$/,
+    title: '프로필',
     type: 'Left',
     btnType: 'Back',
     backHref: ROUTES.NETWORK.MAIN,

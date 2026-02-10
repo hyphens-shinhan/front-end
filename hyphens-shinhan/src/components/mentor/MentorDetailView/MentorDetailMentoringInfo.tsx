@@ -9,8 +9,8 @@ import {
   PREFERRED_FREQUENCY_LABEL,
 } from '@/constants/mentorDetail'
 
-const labelClass = 'text-sm font-semibold leading-5 text-grey-8'
-const valueClass = 'text-sm font-semibold leading-5 text-grey-10'
+const labelClass = 'body-7 text-grey-8'
+const valueClass = 'body-7 text-grey-10'
 
 function InfoRow({
   label,
@@ -55,10 +55,10 @@ export function MentorDetailMentoringInfo({
   const formatLabel =
     availability.preferredFormats.length > 0
       ? [
-          ...new Set(
-            availability.preferredFormats.map((f) => MEETING_FORMAT_LABELS[f])
-          ),
-        ].join(', ')
+        ...new Set(
+          availability.preferredFormats.map((f) => MEETING_FORMAT_LABELS[f])
+        ),
+      ].join(', ')
       : '-'
   const styleParts: string[] = []
   if (
@@ -83,10 +83,10 @@ export function MentorDetailMentoringInfo({
 
   return (
     <section className="flex flex-col gap-3">
-      <h2 className="text-base font-bold leading-[22px] text-grey-10">
+      <h2 className="title-16 text-grey-10">
         멘토링 정보
       </h2>
-      <div className="grid grid-cols-2 gap-x-[62px] gap-y-2">
+      <div className="grid grid-cols-2 gap-x-5 gap-y-2">
         {/* Left column: 가능 시간, 시간대, 선호 방식 */}
         <div className="flex flex-col gap-2">
           <InfoRow label="가능 시간" value={daysLabel} gap={12} />

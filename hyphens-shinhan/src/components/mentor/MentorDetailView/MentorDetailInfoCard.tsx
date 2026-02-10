@@ -13,7 +13,7 @@ function InfoRow({ icon, children }: InfoRowProps) {
   return (
     <div className="flex items-center gap-3">
       <Icon name={icon} className="size-6 shrink-0 text-grey-8" aria-hidden />
-      <span className="text-base font-normal leading-[22px] text-grey-11">
+      <span className="body-6 text-grey-11">
         {children}
       </span>
     </div>
@@ -48,7 +48,7 @@ export function MentorDetailInfoCard({ mentor }: MentorDetailInfoCardProps) {
         <InfoRow icon="IconLBoldLocation">{mentor.address}</InfoRow>
       )}
       {mentor.email && (
-        <InfoRow icon="IconLBoldMessageText">{mentor.email}</InfoRow>
+        <InfoRow icon='IconLBoldRsms'>{mentor.email}</InfoRow>
       )}
     </div>
   )

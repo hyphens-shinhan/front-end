@@ -18,6 +18,7 @@ import { useToast } from '@/hooks/useToast'
 import { TOAST_MESSAGES } from '@/constants/toast'
 import EmptyContent from '@/components/common/EmptyContent'
 import { EMPTY_CONTENT_MESSAGES } from '@/constants/emptyContent'
+import { activityDateToDisplay, activityDateToApi, ACTIVITY_DATE_PLACEHOLDER } from '@/utils/reports'
 
 interface MandatoryCampContentProps {
   activityId: string
@@ -49,7 +50,7 @@ function MandatoryCampContent({ activityId }: MandatoryCampContentProps) {
     if (!submission) return
     setReportTitle(submission.report_title ?? '')
     setReportContent(submission.report_content ?? '')
-    setActivityDate(submission.activity_date ?? '')
+    setActivityDate(activityDateToDisplay(submission.activity_date))
     setLocation(submission.location ?? '')
     setSubmissionId(submission.id)
   }, [submission?.id])
@@ -67,7 +68,7 @@ function MandatoryCampContent({ activityId }: MandatoryCampContentProps) {
       const body = {
         report_title: reportTitle || '',
         report_content: reportContent || '',
-        activity_date: activityDate || new Date().toISOString().slice(0, 10),
+        activity_date: activityDateToApi(activityDate) ?? new Date().toISOString().slice(0, 10),
         location: location || '',
         image_urls: imageUrls.length > 0 ? imageUrls : null,
       }
@@ -165,7 +166,7 @@ function MandatoryCampContent({ activityId }: MandatoryCampContentProps) {
   }
 
   const displayDate =
-    activityDate || 'YYYY.MM.DD'
+    activityDate || ACTIVITY_DATE_PLACEHOLDER
 
   return (
     <div className="flex flex-col pb-40">

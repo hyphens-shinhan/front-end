@@ -21,6 +21,7 @@ import { useCouncilMembers } from '@/hooks/councils/useCouncils'
 import { useConfirmModalStore } from '@/stores'
 import { useToast } from '@/hooks/useToast'
 import { TOAST_MESSAGES } from '@/constants/toast'
+import { activityDateToDisplay, activityDateToApi, ACTIVITY_DATE_PLACEHOLDER } from '@/utils/reports'
 
 // ---------- Props ----------
 export interface ReportDetailContentYBLeaderProps {
@@ -81,7 +82,7 @@ function ReportDetailContentYBLeader({
     useEffect(() => {
         if (!initialReport) return
         setTitle(initialReport.title ?? '')
-        setActivityDate(initialReport.activity_date ?? '')
+        setActivityDate(activityDateToDisplay(initialReport.activity_date))
         setLocation(initialReport.location ?? '')
         setContent(initialReport.content ?? '')
         if (initialReport.attendance?.length) {
@@ -156,7 +157,7 @@ function ReportDetailContentYBLeader({
                 month,
                 body: {
                     title: title || null,
-                    activity_date: activityDate || null,
+                    activity_date: activityDateToApi(activityDate),
                     location: location || null,
                     content: content || null,
                     image_urls: imageUrls.length > 0 ? imageUrls : null,
@@ -210,7 +211,7 @@ function ReportDetailContentYBLeader({
             {/* ---------- 활동 정보 (제목·일자·장소·내용) ---------- */}
             <ActivityInfoInput
                 title={title}
-                date={activityDate || 'YYYY.MM.DD'}
+                date={activityDate || ACTIVITY_DATE_PLACEHOLDER}
                 location={location}
                 description={content}
                 setTitle={setTitle}

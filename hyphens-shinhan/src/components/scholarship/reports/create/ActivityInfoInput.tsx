@@ -5,6 +5,7 @@ import { cn } from "@/utils/cn";
 import { useAutoResize } from "@/hooks/useAutoResize";
 import ReportTitle from "../ReportTitle";
 import Accordion from "@/components/common/Accordion";
+import Button from "@/components/common/Button";
 import Separator from "@/components/common/Separator";
 import CalendarModal from "@/components/common/CalendarModal";
 
@@ -60,17 +61,14 @@ export default function ActivityInfoInput({ title, date, location, description, 
             <input type="text" placeholder="활동 제목" className={styles.input} value={title} onChange={handleTitleChange} />
             <Separator />
 
-            {/** 날짜 선택: 클릭 시 인라인 캘린더 */}
+            {/** 날짜 선택: 클릭 시 인라인 캘린더, 선택 시 제목이 날짜로 변경 */}
             <div className="flex flex-col gap-2">
                 <Accordion
-                    title="날짜 선택"
+                    title={date && date !== 'YYYY.MM.DD' ? date : '날짜 선택'}
                     iconName="IconMBoldCalendar"
                     isOpen={calendarOpen}
                     onClick={() => setCalendarOpen((v) => !v)}
                 />
-                {date && date !== 'YYYY.MM.DD' && !calendarOpen && (
-                    <p className="body-6 text-grey-10 pl-8">{date}</p>
-                )}
                 {calendarOpen && (
                     <CalendarModal
                         isOpen
@@ -86,17 +84,14 @@ export default function ActivityInfoInput({ title, date, location, description, 
             </div>
             <Separator />
 
-            {/** 장소 선택: 클릭 시 인라인 입력 */}
+            {/** 장소 선택: 클릭 시 인라인 입력, 선택 시 제목이 장소로 변경 */}
             <div className="flex flex-col gap-2">
                 <Accordion
-                    title="장소 선택"
+                    title={location?.trim() ? location : '장소 선택'}
                     iconName="IconMBoldLocation"
                     isOpen={locationModalOpen}
                     onClick={() => setLocationModalOpen((v) => !v)}
                 />
-                {location && !locationModalOpen && (
-                    <p className="body-6 text-grey-10 pl-8">{location}</p>
-                )}
                 {locationModalOpen && (
                     <LocationInputInline
                         value={location}
@@ -164,20 +159,22 @@ function LocationInputInline({
                 )}
             />
             <div className="flex gap-2">
-                <button
-                    type="button"
+                <Button
+                    label="취소"
+                    size="M"
+                    type="secondary"
+                    fullWidth
+                    className="flex-1"
                     onClick={onCancel}
-                    className="flex-1 py-3 rounded-xl body-8 text-grey-9 bg-grey-2"
-                >
-                    취소
-                </button>
-                <button
-                    type="button"
+                />
+                <Button
+                    label="확인"
+                    size="M"
+                    type="primary"
+                    fullWidth
+                    className="flex-1"
                     onClick={handleConfirm}
-                    className="flex-1 py-3 rounded-xl body-8 font-medium text-white bg-primary-shinhanblue"
-                >
-                    확인
-                </button>
+                />
             </div>
         </div>
     )

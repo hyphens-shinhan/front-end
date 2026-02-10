@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import { Icon } from '@/components/common/Icon';
+import Button from '@/components/common/Button';
 import { cn } from '@/utils/cn';
 
 const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'];
@@ -143,21 +144,22 @@ export default function CalendarModal({ isOpen, onClose, value = '', onSelect, i
               const isSelected = selectedKey === key;
               const isToday = formatDateKey(new Date()) === key;
               return (
-                <button
-                  key={di}
-                  type="button"
-                  onClick={() => handleDayClick(d)}
-                  className={cn(
-                    'aspect-square rounded-full body-8 flex items-center justify-center',
-                    !isCurrentMonth && 'text-grey-5',
-                    isCurrentMonth && 'text-grey-11',
-                    isSelected && 'bg-primary-shinhanblue text-white',
-                    !isSelected && isCurrentMonth && 'hover:bg-grey-1-1',
-                    isToday && !isSelected && 'ring-1 ring-primary-shinhanblue',
-                  )}
-                >
-                  {d.getDate()}
-                </button>
+                <div key={di} className="flex items-center justify-center min-h-9">
+                  <button
+                    type="button"
+                    onClick={() => handleDayClick(d)}
+                    className={cn(
+                      'w-10 h-10 rounded-[12px] body-8 flex items-center justify-center shrink-0',
+                      !isCurrentMonth && 'text-grey-5',
+                      isCurrentMonth && 'text-grey-11',
+                      isSelected && 'bg-primary-shinhanblue text-white',
+                      !isSelected && isCurrentMonth && 'hover:bg-grey-1-1',
+                      isToday && !isSelected && 'border border-grey-4',
+                    )}
+                  >
+                    {d.getDate()}
+                  </button>
+                </div>
               );
             })}
           </div>
@@ -165,13 +167,7 @@ export default function CalendarModal({ isOpen, onClose, value = '', onSelect, i
       </div>
 
       <div className="px-4 pb-4 pt-2">
-        <button
-          type="button"
-          onClick={onClose}
-          className="w-full py-3 rounded-xl body-8 text-grey-9 bg-grey-2"
-        >
-          취소
-        </button>
+        <Button label="취소" size="M" type="secondary" fullWidth onClick={onClose} />
       </div>
     </div>
   );

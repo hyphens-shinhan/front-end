@@ -86,7 +86,7 @@ export default function QuestionnaireStep1({
 }
 
 const styles = {
-  stepLayout: 'flex flex-col flex-1 min-h-0 pb-40',
+  stepLayout: 'flex flex-col flex-1 min-h-0',
   scrollArea: 'flex-1 min-h-0 overflow-y-auto overflow-x-hidden',
   questionBlock: 'flex flex-col gap-1.5 pt-2 pb-2',
   questionTitle: 'body-5 text-grey-11',

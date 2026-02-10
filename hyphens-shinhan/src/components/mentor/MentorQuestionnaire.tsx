@@ -69,6 +69,13 @@ export default function MentorQuestionnaire({ initialData, onComplete }: MentorQ
     const updatedRequest = { ...request, ...stepData }
     setRequest(updatedRequest)
 
+    // 다음 버튼 클릭 시 현재까지 담긴 데이터 확인용
+    console.log('[MentorQuestionnaire] 다음 버튼 클릭', {
+      currentStep,
+      stepData,
+      mergedRequest: updatedRequest,
+    })
+
     if (currentStep < 7) {
       setCurrentStep(currentStep + 1)
     } else {
@@ -210,5 +217,5 @@ const styles = {
     'h-full rounded-full transition-[width] duration-300',
     'bg-primary-secondaryroyal',
   ),
-  stepContent: 'flex flex-col flex-1 min-h-0 overflow-hidden',
+  stepContent: 'flex flex-col flex-1 min-h-0 overflow-hidden overflow-y-auto pb-40',
 } as const

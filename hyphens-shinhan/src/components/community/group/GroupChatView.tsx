@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
+import { useQueryClient } from '@tanstack/react-query'
 import { useClub } from '@/hooks/clubs/useClubs'
 import { useHeaderStore, useUserStore, useBottomSheetStore } from '@/stores'
 import { useClubChatMessages, useChatRooms, chatKeys } from '@/hooks/chat/useChat'
@@ -14,6 +15,7 @@ import GroupChatMessageItem from './GroupChatMessageItem'
 import GroupMoreOptionsMenu from './GroupMoreOptionsMenu'
 import { INPUT_BAR_TYPE, EMPTY_CONTENT_MESSAGES, ROUTES } from '@/constants'
 import { cn } from '@/utils/cn'
+import type { MessageResponse } from '@/types/chat'
 import {
   convertMessageToGroupChatMessage,
   formatDateLabel,
@@ -30,6 +32,7 @@ interface GroupChatViewProps {
  */
 export default function GroupChatView({ clubId }: GroupChatViewProps) {
   const router = useRouter()
+  const queryClient = useQueryClient()
   const user = useUserStore((s) => s.user)
   const currentUserId = user?.id ?? null
   const { data: club, isLoading: isClubLoading } = useClub(clubId)
@@ -165,7 +168,15 @@ export default function GroupChatView({ clubId }: GroupChatViewProps) {
       },
       {
         onSuccess: (data) => {
-          // Broadcast the saved message to all other room subscribers
+          // 발신자 캐시에 API 응답(익명)을 즉시 반영 → refetch 전에 실명이 잠깐 보이는 현상 방지
+          queryClient.setQueryData(
+            chatKeys.clubMessages(clubId, messageParams),
+            (old: { messages: MessageResponse[]; has_more: boolean } | undefined) => {
+              if (!old) return { messages: [data], has_more: false }
+              if (old.messages.some((m) => m.id === data.id)) return old
+              return { ...old, messages: [data, ...old.messages] }
+            },
+          )
           sendBroadcast(data)
           setMessage('')
           isSendingRef.current = false

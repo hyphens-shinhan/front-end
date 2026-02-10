@@ -11,6 +11,7 @@ import EmptyContent from "../common/EmptyContent";
 import { EMPTY_CONTENT_MESSAGES, ROUTES } from "@/constants";
 import { useUserStore, useHeaderStore } from "@/stores";
 import { AppRole } from "@/types";
+import { useFollow } from "@/hooks/follows/useFollows";
 
 interface PublicProfileContentProps {
     userId: string;
@@ -23,6 +24,7 @@ export default function PublicProfileContent({ userId }: PublicProfileContentPro
     const currentUser = useUserStore((s) => s.user);
     const isMyProfile = currentUser?.id === userId;
     const { setCustomTitle, resetHandlers } = useHeaderStore();
+    const followMutation = useFollow();
 
     // 헤더 제목을 "프로필"로 설정
     useEffect(() => {
@@ -59,7 +61,7 @@ export default function PublicProfileContent({ userId }: PublicProfileContentPro
             {/** 퍼블릭 페이지 : 팔로우 요청 */}
             {!isMyProfile && (
                 <div className={styles.button}>
-                    <Button label="팔로우 요청" size="L" type="secondary" fullWidth className='bg-grey-1-1' />
+                    <Button label="팔로우 요청" size="L" type="secondary" fullWidth className='bg-grey-1-1' onClick={() => { followMutation.mutate(userId) }} />
                 </div>
             )}
 

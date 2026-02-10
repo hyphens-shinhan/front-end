@@ -4,12 +4,14 @@ import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { ROUTES } from '@/constants'
 import { useHeaderStore } from '@/stores'
-import { useCreateClub } from '@/hooks/clubs/useClubMutations'
+import { useCreateClub, useJoinClub } from '@/hooks/clubs/useClubMutations'
+import { useJoinClubChat } from '@/hooks/chat/useChatMutations'
 import { useToast } from '@/hooks/useToast'
 import { TOAST_MESSAGES } from '@/constants/toast'
 import type { ClubCategory, ClubAnonymity } from '@/types/clubs'
 import { cn } from '@/utils/cn'
 import { Icon } from '@/components/common/Icon'
+import { useMyProfile } from '@/hooks/user/useUser'
 
 const CATEGORIES: { value: ClubCategory; label: string }[] = [
   { value: 'STUDY', label: '스터디' },
@@ -26,23 +28,24 @@ const PARTICIPATION_OPTIONS: { value: ClubAnonymity; label: string }[] = [
 const MAX_NAME_LENGTH = 40
 const MAX_DESCRIPTION_LENGTH = 500
 
-/**
- * 소모임 만들기 폼 (hyphens-frontend community/groups/create와 동일 구조).
- * 커버 이미지(선택) → 소모임 이름 → 카테고리 → 참가 방식 → 소개(선택) → 헤더 "만들기"로 제출.
- */
 export default function CreateGroup() {
   const router = useRouter()
   const { setHandlers, resetHandlers } = useHeaderStore()
   const coverInputRef = useRef<HTMLInputElement>(null)
+  const toast = useToast()
 
+  // Form State
   const [name, setName] = useState('')
   const [category, setCategory] = useState<ClubCategory | null>(null)
   const [participationMode, setParticipationMode] = useState<ClubAnonymity | null>(null)
   const [coverFile, setCoverFile] = useState<{ url: string; file: File } | null>(null)
   const [description, setDescription] = useState('')
 
+  // Mutations & Data
+  const { data: myProfile } = useMyProfile()
   const { mutateAsync: createClub, isPending: isSubmitting } = useCreateClub()
-  const toast = useToast()
+  const { mutateAsync: joinClub } = useJoinClub()
+  const { mutateAsync: joinClubChat } = useJoinClubChat()
 
   const canSubmit =
     name.trim().length >= 2 &&
@@ -57,21 +60,46 @@ export default function CreateGroup() {
       else if (!participationMode) toast.error('참가 방식을 선택해주세요.')
       return
     }
+
     try {
+      // 1. 소모임 생성
       const created = await createClub({
         name: name.trim(),
         description: description.trim(),
         category: category!,
         anonymity: participationMode!,
       })
-      toast.show(TOAST_MESSAGES.GROUP.CREATE_SUCCESS)
+
+      // 2. 소모임 가입 (방장 가입)
+      // participationMode가 'PRIVATE'이면 익명, 그 외(PUBLIC, BOTH)는 실명으로 기본 가입 처리
+      const isAnonymous = participationMode === 'PRIVATE';
+
+      await joinClub({
+        clubId: created.id,
+        profile: {
+          is_anonymous: isAnonymous,
+          nickname: isAnonymous ? `${myProfile?.name || '방장'}` : '방장',
+          avatar_url: myProfile?.avatar_url || null,
+        }
+      })
+
+      // 3. 채팅방 입장
+      try {
+        await joinClubChat(created.id)
+        toast.show(TOAST_MESSAGES.GROUP.CREATE_SUCCESS)
+      } catch (chatErr) {
+        console.error('Chat join error:', chatErr)
+      }
+
       router.replace(`${ROUTES.COMMUNITY.GROUP.DETAIL}/${created.id}`)
+
     } catch (err) {
-      console.error(err)
+      console.error('Creation/Join error:', err)
       toast.error('소모임 만들기에 실패했어요.')
     }
   }
 
+  // 헤더 버튼 핸들러 연결
   const handleSubmitRef = useRef<() => Promise<void>>(handleSubmit)
   handleSubmitRef.current = handleSubmit
 
@@ -97,7 +125,7 @@ export default function CreateGroup() {
 
   return (
     <main className="mx-auto max-w-[480px] px-5 pt-6 pb-20">
-      {/* Cover (optional) */}
+      {/* 커버 이미지 섹션 */}
       <section className="mb-10">
         <p className="title-16 text-grey-11">
           커버 이미지 <span className="body-6 text-grey-8">(선택)</span>
@@ -119,7 +147,6 @@ export default function CreateGroup() {
         >
           {coverFile ? (
             <div className="relative h-full w-full group">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={coverFile.url}
                 alt=""
@@ -137,7 +164,6 @@ export default function CreateGroup() {
                   removeCover()
                 }}
                 className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-black/50 text-sm font-medium text-white opacity-0 transition-opacity group-hover:opacity-100"
-                aria-label="커버 이미지 제거"
               >
                 <Icon name="IconLLineClose" />
               </button>
@@ -150,12 +176,9 @@ export default function CreateGroup() {
         </button>
       </section>
 
-      {/* Name */}
+      {/* 이름 섹션 */}
       <section className="mb-10">
-        <label
-          htmlFor="group-name"
-          className="mb-3 block title-16 text-grey-11"
-        >
+        <label htmlFor="group-name" className="mb-3 block title-16 text-grey-11">
           소모임 이름
         </label>
         <input
@@ -175,11 +198,9 @@ export default function CreateGroup() {
         </p>
       </section>
 
-      {/* Category */}
+      {/* 카테고리 섹션 */}
       <section className="mb-8">
-        <p className="mb-3 title-16 text-grey-11">
-          카테고리
-        </p>
+        <p className="mb-3 title-16 text-grey-11">카테고리</p>
         <div className="flex flex-wrap gap-1.5">
           {CATEGORIES.map(({ value, label }) => (
             <button
@@ -188,7 +209,6 @@ export default function CreateGroup() {
               onClick={() => setCategory(value)}
               className={cn(
                 'rounded-full px-3 py-2 font-caption-caption4 transition-colors',
-                'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-shinhanblue focus-visible:ring-offset-2',
                 category === value
                   ? 'bg-primary-light text-white'
                   : 'bg-grey-2 text-grey-10 hover:bg-grey-3'
@@ -200,11 +220,9 @@ export default function CreateGroup() {
         </div>
       </section>
 
-      {/* Participation mode */}
+      {/* 참가 방식 섹션 */}
       <section className="mb-8">
-        <p className="mb-3 title-16 text-grey-11">
-          참가 방식
-        </p>
+        <p className="mb-3 title-16 text-grey-11">참가 방식</p>
         <div className="flex flex-wrap gap-2">
           {PARTICIPATION_OPTIONS.map(({ value, label }) => (
             <button
@@ -213,7 +231,6 @@ export default function CreateGroup() {
               onClick={() => setParticipationMode(value)}
               className={cn(
                 'rounded-full px-3 py-2 font-caption-caption4 transition-colors',
-                'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-shinhanblue focus-visible:ring-offset-2',
                 participationMode === value
                   ? 'bg-primary-light text-white'
                   : 'bg-grey-2 text-grey-10 hover:bg-grey-3'
@@ -225,20 +242,15 @@ export default function CreateGroup() {
         </div>
       </section>
 
-      {/* Description */}
+      {/* 소개 섹션 */}
       <section className="mb-6">
-        <label
-          htmlFor="group-desc"
-          className="mb-3 title-16 text-grey-11"
-        >
+        <label htmlFor="group-desc" className="mb-3 title-16 text-grey-11">
           소개
         </label>
         <textarea
           id="group-desc"
           value={description}
-          onChange={(e) =>
-            setDescription(e.target.value.slice(0, MAX_DESCRIPTION_LENGTH))
-          }
+          onChange={(e) => setDescription(e.target.value.slice(0, MAX_DESCRIPTION_LENGTH))}
           placeholder="소모임을 소개해 주세요. (선택)"
           maxLength={MAX_DESCRIPTION_LENGTH}
           rows={5}

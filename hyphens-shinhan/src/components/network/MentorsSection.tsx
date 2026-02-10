@@ -13,6 +13,8 @@ import MentorFilterSheet, {
   REGION_OPTIONS,
   DEFAULT_FILTERS,
 } from './MentorFilterSheet'
+import EmptyContent from '../common/EmptyContent'
+import { EMPTY_CONTENT_MESSAGES } from '@/constants'
 
 const MENTOR_TYPE_LABELS: Record<string, string> = {
   ob: 'OB 선배',
@@ -196,14 +198,16 @@ export default function MentorsSection({
       </div>
 
       <section className={styles.mentorList}>
-        {filteredMentors.map((person) => (
+        {filteredMentors.length > 0 ? filteredMentors.map((person) => (
           <MentorCard
             key={person.id}
             person={person}
             onFollowRequest={onFollowRequest}
             onClick={() => onPersonClick?.(person)}
           />
-        ))}
+        )) : (
+          <EmptyContent variant="empty" message={EMPTY_CONTENT_MESSAGES.NETWORK.MENTORS_EMPTY} />
+        )}
       </section>
     </div>
   )

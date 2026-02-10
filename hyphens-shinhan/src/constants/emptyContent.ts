@@ -3,6 +3,7 @@ export const EMPTY_CONTENT_MESSAGES = {
   NETWORK: {
     FOLLOWING_EMPTY: '내가 팔로우하는 사람이 없어요.',
     COMMON_FRIENDS_EMPTY: '함께 아는 친구가 없어요.',
+    MENTORS_EMPTY: '등록된 멘토가 없어요.',
   },
   LOADING: {
     DEFAULT: '로딩 중...',

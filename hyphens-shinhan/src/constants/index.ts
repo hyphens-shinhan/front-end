@@ -338,6 +338,37 @@ export const CUSTOM_HEADER_CONFIG: Record<string, CustomHeaderConfig> = {
     btnType: 'Back',
     backHref: ROUTES.SCHOLARSHIP.REPORT.ACTIVITY,
   },
+  /** 연간 필수 활동 – 학업계획서(GOAL) 상세 (pathPattern으로 타입별 타이틀) */
+  'mandatory-goal': {
+    pathPattern: /^\/scholarship\/mandatory\/goal\/[^/]+$/,
+    title: '학업계획서',
+    type: 'Left',
+    btnType: 'Back',
+    backHref: ROUTES.SCHOLARSHIP.MAIN,
+  },
+  /** 연간 필수 활동 – 장학캠프(CAMP) 상세 */
+  'mandatory-camp': {
+    pathPattern: /^\/scholarship\/mandatory\/camp\/[^/]+$/,
+    title: '장학캠프',
+
+    type: 'Left',
+    btnType: 'Back',
+    backHref: ROUTES.SCHOLARSHIP.MAIN,
+  },
+  /** 연간 필수 활동 – 만족도 조사(SURVEY) 상세 */
+  'mandatory-survey': {
+    pathPattern: /^\/scholarship\/mandatory\/survey\/[^/]+$/,
+    title: '만족도 조사',
+    type: 'Left',
+    btnType: 'Back',
+    backHref: ROUTES.SCHOLARSHIP.MAIN,
+  },
+  /** 연간 필수 활동 상세 - 목록보다 먼저 두어 /scholarship/mandatory/[id] 매칭 */
+  [ROUTES.SCHOLARSHIP.MANDATORY.DETAIL_PREFIX]: {
+    type: 'Left',
+    btnType: 'Back',
+    backHref: ROUTES.SCHOLARSHIP.MAIN,
+  },
   /** 마이페이지 설정 메인 페이지 */
   [ROUTES.MYPAGE.SETTING.MAIN]: {
     title: '설정',

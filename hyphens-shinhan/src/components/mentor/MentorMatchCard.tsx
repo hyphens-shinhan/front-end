@@ -3,7 +3,9 @@
 import { useRouter } from 'next/navigation'
 import type { MentorMatch, DayOfWeek, TimeOfDay, MeetingFormat, MentorshipStyle, CommunicationStyle, WorkPace } from '@/types/mentor'
 import { ROUTES } from '@/constants'
+import Avatar from '@/components/common/Avatar'
 import { Icon } from '@/components/common/Icon'
+import InfoTag from '@/components/common/InfoTag'
 import { cn } from '@/utils/cn'
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -99,20 +101,6 @@ function getMatchTags(match: MentorMatch): string[] {
   return tags
 }
 
-const FALLBACK_AVATARS = [
-  '/assets/images/male1.png',
-  '/assets/images/male2.png',
-  '/assets/images/woman1.png',
-  '/assets/images/woman2.png',
-] as const
-
-function getFallbackAvatar(mentorId: string): string {
-  const index =
-    mentorId.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0) %
-    FALLBACK_AVATARS.length
-  return FALLBACK_AVATARS[index]
-}
-
 interface MentorMatchCardProps {
   match: MentorMatch
 }
@@ -126,11 +114,10 @@ export default function MentorMatchCard({ match }: MentorMatchCardProps) {
   }
 
   const roleOrCategory = mentor.currentRole || getCategoryLabel(mentor.primaryCategory)
-  const subtitle = `${roleOrCategory} • 서울`
-
-  const avatarSrc = mentor.avatar || getFallbackAvatar(mentor.id)
+  const locationLabel = mentor.location || '활동 장소 미공개'
+  const subtitle = `${roleOrCategory} • ${locationLabel}`
   const tags = getMatchTags(match)
-  const scorePercent = Math.min(score.total, 100)
+  const scorePercent = Math.min(score.total * 100, 100)
 
   return (
     <article className={styles.card}>
@@ -140,9 +127,12 @@ export default function MentorMatchCard({ match }: MentorMatchCardProps) {
           onClick={handleOpenProfile}
           className={styles.headerButton}
         >
-          <div className={styles.avatarWrap}>
-            <img src={avatarSrc} alt="" className={styles.avatar} />
-          </div>
+          <Avatar
+            src={mentor.avatar}
+            alt={mentor.name}
+            size={50}
+            containerClassName={styles.avatarWrap}
+          />
           <div className={styles.headerText}>
             <div className={styles.nameRow}>
               <span className={styles.name}>{mentor.name}</span>
@@ -162,7 +152,7 @@ export default function MentorMatchCard({ match }: MentorMatchCardProps) {
         <div className={styles.matchRow}>
           <span className={styles.matchLabel}>나와의 매칭 결과</span>
           <span className={styles.matchScore}>
-            <span className={styles.scoreValue}>{score.total}</span>
+            <span className={styles.scoreValue}>{score.total * 100}</span>
             <span className={styles.scoreUnit}>%</span>
           </span>
         </div>
@@ -177,14 +167,10 @@ export default function MentorMatchCard({ match }: MentorMatchCardProps) {
       {tags.length > 0 && (
         <div className={styles.tags}>
           {tags.slice(0, MAX_TAGS).map((tag) => (
-            <span key={tag} className={styles.tag}>
-              {tag}
-            </span>
+            <InfoTag key={tag} label={tag} color="grey" />
           ))}
           {tags.length > MAX_TAGS && (
-            <span className={styles.tagMore}>
-              +{tags.length - MAX_TAGS}
-            </span>
+            <InfoTag label={`+${tags.length - MAX_TAGS}`} color="grey" />
           )}
         </div>
       )}
@@ -195,7 +181,7 @@ export default function MentorMatchCard({ match }: MentorMatchCardProps) {
 const styles = {
   card: cn(
     'flex flex-col gap-4',
-    'px-4 py-4',
+    'py-4',
   ),
   headerRow: 'w-full',
   headerButton: cn(
@@ -203,7 +189,6 @@ const styles = {
     'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-shinhanblue focus-visible:ring-offset-2 rounded-lg',
   ),
   avatarWrap: 'h-[50px] w-[50px] shrink-0 overflow-hidden rounded-full bg-grey-2',
-  avatar: 'h-full w-full object-cover',
   headerText: 'min-w-0 flex-1',
   nameRow: 'flex items-center gap-1',
   name: 'title-18 text-grey-11',
@@ -211,7 +196,7 @@ const styles = {
   subtitle: 'body-7 text-grey-8 mt-0.5',
   chevron: 'shrink-0 text-grey-9',
   matchSection: 'flex flex-col gap-2.5',
-  matchRow: 'flex items-center justify-between',
+  matchRow: 'flex items-center justify-between mt-2',
   matchLabel: 'body-7 text-grey-9',
   matchScore: 'text-right',
   scoreValue: 'title-18 text-grey-11',
@@ -222,12 +207,4 @@ const styles = {
     'bg-gradient-to-r from-primary-light to-[#6AA3FF]',
   ),
   tags: 'flex flex-wrap gap-2',
-  tag: cn(
-    'body-8 text-grey-9',
-    'rounded-md bg-grey-1-1 px-1.5 py-0.5',
-  ),
-  tagMore: cn(
-    'body-8 text-grey-8',
-    'rounded-md bg-grey-2 px-1.5 py-0.5',
-  ),
 } as const

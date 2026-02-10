@@ -1,73 +1,45 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import type { MentorshipRequest, MentorMatch } from '@/types/mentor'
-import { findTopMentors } from '@/services/mentor-matching'
 import { ROUTES } from '@/constants'
 import { useUserStore } from '@/stores'
 import MentorMatchResultsContent from '@/components/mentor/MentorMatchResultsContent'
+import EmptyContent from '@/components/common/EmptyContent'
+import { EMPTY_CONTENT_MESSAGES } from '@/constants/emptyContent'
+import { useMentorRecommendationMatches } from '@/hooks/mentoring/useMentoring'
 import { cn } from '@/utils/cn'
-
-const DEFAULT_YB = {
-  university: '서울대학교',
-  major: '소프트웨어학과',
-  cohortYear: '1기',
-}
+import Button from '@/components/common/Button'
 
 export default function MentorMatchResultsPage() {
   const router = useRouter()
   const user = useUserStore((s) => s.user)
-  const [matches, setMatches] = useState<MentorMatch[]>([])
-  const [request, setRequest] = useState<MentorshipRequest | null>(null)
-  const [loading, setLoading] = useState(true)
+  const { matches, isLoading, error } = useMentorRecommendationMatches({ limit: 7 })
 
-  useEffect(() => {
-    const stored = typeof window !== 'undefined' ? localStorage.getItem('mentorship_request') : null
-    if (stored) {
-      try {
-        const parsed: MentorshipRequest = JSON.parse(stored)
-        setRequest(parsed)
-        findTopMentors(parsed, DEFAULT_YB, 7)
-          .then((top) => {
-            setMatches(top)
-            setLoading(false)
-          })
-          .catch((err) => {
-            console.error(err)
-            setLoading(false)
-          })
-        return
-      } catch {
-        router.push(ROUTES.MENTORS.QUESTIONNAIRE)
-        setLoading(false)
-        return
-      }
-    }
-    router.push(ROUTES.MENTORS.QUESTIONNAIRE)
-    setLoading(false)
-  }, [router])
-
-  if (loading) {
+  if (isLoading) {
     return (
-      <div className={styles.centerBlock}>
-        <p className="body-8 text-grey-7">로딩 중...</p>
-      </div>
+      <EmptyContent
+        variant="loading"
+        message={EMPTY_CONTENT_MESSAGES.LOADING.DEFAULT}
+        className={styles.fullHeight}
+      />
     )
   }
 
-  if (!request || matches.length === 0) {
+  if (error || matches.length === 0) {
     return (
-      <div className={styles.centerBlock}>
-        <p className="body-8 text-grey-7 mb-6">멘토를 찾을 수 없습니다.</p>
-        <button
-          type="button"
-          onClick={() => router.push(ROUTES.MENTORS.QUESTIONNAIRE)}
-          className={styles.primaryButton}
-        >
-          다시 찾기
-        </button>
-      </div>
+      <EmptyContent
+        variant="error"
+        message={error ? EMPTY_CONTENT_MESSAGES.ERROR.DEFAULT : EMPTY_CONTENT_MESSAGES.MENTOR.NOT_FOUND}
+        action={
+          <Button
+            label="다시 찾기"
+            size="L"
+            type="primary"
+            fullWidth
+            onClick={() => router.push(ROUTES.MENTORS.QUESTIONNAIRE)}
+          />
+        }
+      />
     )
   }
 
@@ -80,10 +52,7 @@ export default function MentorMatchResultsPage() {
 }
 
 const styles = {
-  centerBlock: cn(
-    'flex flex-col items-center justify-center min-h-[200px]',
-    'px-4 py-10',
-  ),
+  fullHeight: 'flex-1',
   primaryButton: cn(
     'min-h-[52px] px-6 py-3 rounded-xl',
     'bg-primary-shinhanblue text-white body-5 font-semibold',

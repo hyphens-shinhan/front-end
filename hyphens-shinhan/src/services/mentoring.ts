@@ -3,6 +3,7 @@ import type {
   MentorSearchResponse,
   MentorProfileResponse,
   MentorRecommendationsResponse,
+  MentorRecommendationCard,
   MentoringRequestListResponse,
   MentoringRequestResponse,
 } from '@/types/mentoring-api'
@@ -189,6 +190,24 @@ export const MentoringService = {
       }),
     )
     return { recommendations: mentors, total: data.total ?? 0 }
+  },
+
+  /**
+   * GET /mentoring/recommendations - 원본 카드(점수 포함) 조회
+   * matches 화면에서 match_score를 쓰기 위해 사용
+   */
+  getRecommendationCards: async (params?: {
+    limit?: number
+    offset?: number
+  }): Promise<{ recommendations: MentorRecommendationCard[]; total: number }> => {
+    const { data } = await apiClient.get<MentorRecommendationsResponse>(
+      `${BASE}/recommendations`,
+      { params },
+    )
+    return {
+      recommendations: data.recommendations ?? [],
+      total: data.total ?? 0,
+    }
   },
 
   /**

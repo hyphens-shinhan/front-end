@@ -6,6 +6,7 @@ import { ROUTES } from '@/constants'
 import MentorMatchCard from './MentorMatchCard'
 import Separator from '@/components/common/Separator'
 import { cn } from '@/utils/cn'
+import Button from '../common/Button'
 
 interface MentorMatchResultsContentProps {
   matches: MentorMatch[]
@@ -37,13 +38,13 @@ export default function MentorMatchResultsContent({
       </div>
 
       <div className={styles.footer}>
-        <button
-          type="button"
+        <Button
+          label="다시 찾기"
+          size="L"
+          type="secondary"
+          fullWidth
           onClick={() => router.push(ROUTES.MENTORS.QUESTIONNAIRE)}
-          className={styles.refreshButton}
-        >
-          다시 찾기
-        </button>
+        />
       </div>
     </div>
   )
@@ -54,7 +55,7 @@ const styles = {
     'flex flex-col',
     'px-4 pt-3 pb-12',
   ),
-  subtitle: 'title-16 text-grey-11 font-bold mb-4',
+  subtitle: 'title-16 text-grey-11 font-bold mb-3',
   list: 'flex flex-col',
   footer: 'pt-4 pb-8 flex justify-center',
   refreshButton: cn(

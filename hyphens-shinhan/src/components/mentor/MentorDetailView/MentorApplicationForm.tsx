@@ -8,6 +8,7 @@ import { TOAST_MESSAGES } from '@/constants/toast'
 import { useToast } from '@/hooks/useToast'
 import { useCreateMentoringRequest } from '@/hooks/mentoring/useMentoring'
 import { cn } from '@/utils/cn'
+import BottomFixedButton from '@/components/common/BottomFixedButton'
 
 const FORMAT_LABELS: Record<MeetingFormat, string> = {
   zoom: 'Zoom',
@@ -156,40 +157,38 @@ export function MentorApplicationForm({
     getDaysInMonth(currentMonth)
 
   return (
-    <div className="flex flex-col">
-      <p className="text-xs font-medium uppercase tracking-wider text-grey-8">
-        멘토링 요청
-      </p>
+    <div className={styles.root}>
+      <p className={styles.title}>멘토링 요청</p>
 
       {/* 날짜 */}
-      <div className="mt-4">
-        <p className="mb-2 text-sm text-grey-8">날짜</p>
-        <div className="mb-3 flex items-center justify-between">
+      <div className={styles.section}>
+        <p className={styles.labelSm}>날짜</p>
+        <div className={styles.monthHeader}>
           <button
             type="button"
             onClick={() => navigateMonth('prev')}
-            className="p-2 -m-2 text-grey-10 hover:opacity-80"
+            className={styles.monthNavButton}
             aria-label="이전 달"
           >
-            <span className="text-lg leading-none">‹</span>
+            <span className={styles.monthNavIcon}>‹</span>
           </button>
-          <span className="text-sm font-medium text-grey-11">
+          <span className={styles.monthLabel}>
             {getMonthName(currentMonth)}
           </span>
           <button
             type="button"
             onClick={() => navigateMonth('next')}
-            className="p-2 -m-2 text-grey-10 hover:opacity-80"
+            className={styles.monthNavButton}
             aria-label="다음 달"
           >
-            <span className="text-lg leading-none">›</span>
+            <span className={styles.monthNavIcon}>›</span>
           </button>
         </div>
-        <div className="grid grid-cols-7 gap-1">
+        <div className={styles.calendarGrid}>
           {['일', '월', '화', '수', '목', '금', '토'].map((d) => (
             <div
               key={d}
-              className="py-1.5 text-center text-xs text-grey-8"
+              className={styles.weekday}
             >
               {d}
             </div>
@@ -209,10 +208,10 @@ export function MentorApplicationForm({
                 onClick={() => handleDateClick(date)}
                 disabled={!available || past}
                 className={cn(
-                  'aspect-square rounded-lg text-[13px] font-medium',
-                  selected && 'bg-primary-shinhanblue text-white',
-                  available && !selected && !past && 'bg-grey-2 text-grey-11',
-                  (!available || past) && 'cursor-not-allowed opacity-40'
+                  styles.calendarDay,
+                  selected && styles.calendarDaySelected,
+                  available && !selected && !past && styles.calendarDayAvailable,
+                  (!available || past) && styles.calendarDayDisabled,
                 )}
               >
                 {i + 1}
@@ -224,19 +223,19 @@ export function MentorApplicationForm({
 
       {/* 시간 */}
       {selectedDate && (
-        <div className="mt-4">
-          <p className="mb-2 text-sm text-grey-8">시간</p>
-          <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
+        <div className={styles.section}>
+          <p className={styles.labelSm}>시간</p>
+          <div className={styles.timeGrid}>
             {timeSlots.map((time) => (
               <button
                 key={time}
                 type="button"
                 onClick={() => setSelectedTime(time)}
                 className={cn(
-                  'min-h-[44px] rounded-lg text-sm font-medium',
+                  styles.timeButton,
                   selectedTime === time
-                    ? 'bg-primary-shinhanblue text-white'
-                    : 'bg-grey-2 text-grey-11'
+                    ? styles.timeButtonSelected
+                    : styles.timeButtonUnselected,
                 )}
               >
                 {time}
@@ -247,19 +246,19 @@ export function MentorApplicationForm({
       )}
 
       {/* 만남 방식 */}
-      <div className="mt-4">
-        <p className="mb-2 text-sm text-grey-8">만남 방식</p>
-        <div className="flex flex-wrap gap-2">
+      <div className={styles.section}>
+        <p className={styles.labelSm}>만남 방식</p>
+        <div className={styles.formatsWrapper}>
           {formats.map((format) => (
             <button
               key={format}
               type="button"
               onClick={() => setSelectedFormat(format)}
               className={cn(
-                'min-h-[44px] rounded-lg px-4 text-sm font-medium',
+                styles.formatButton,
                 selectedFormat === format
-                  ? 'bg-primary-shinhanblue text-white'
-                  : 'bg-grey-2 text-grey-11'
+                  ? styles.formatButtonSelected
+                  : styles.formatButtonUnselected,
               )}
             >
               {FORMAT_LABELS[format]}
@@ -269,41 +268,64 @@ export function MentorApplicationForm({
       </div>
 
       {/* 메시지 (선택) */}
-      <div className="mt-4">
-        <p className="mb-2 text-sm text-grey-8">메시지 (선택)</p>
+      <div className={styles.section}>
+        <p className={styles.labelSm}>메시지 (선택)</p>
         <textarea
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder="인사말이나 질문을 남겨주세요"
-          className="w-full min-h-[100px] resize-none rounded-lg border border-grey-2 bg-white px-4 py-3 text-sm text-grey-11 placeholder:text-grey-6 focus:border-primary-shinhanblue focus:outline-none focus:ring-1 focus:ring-primary-shinhanblue"
+          className={styles.messageTextarea}
           rows={3}
         />
       </div>
 
       {/* 버튼 */}
-      <div className="mt-6 flex flex-col gap-2">
-        <button
-          type="button"
-          onClick={handleSubmit}
-          disabled={!selectedDate || !selectedTime || isSubmitting}
-          className={cn(
-            'flex h-12 w-full items-center justify-center rounded-2xl',
-            'bg-primary-shinhanblue text-base font-semibold text-white',
-            'disabled:cursor-not-allowed disabled:opacity-40',
-            'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-shinhanblue focus-visible:ring-offset-2'
-          )}
-        >
-          {isSubmitting ? '전송 중...' : '요청 보내기'}
-        </button>
-        <button
-          type="button"
-          onClick={handleCancel}
-          disabled={isSubmitting}
-          className="py-3 text-sm font-medium text-grey-7 hover:opacity-80 disabled:opacity-50"
-        >
-          취소
-        </button>
-      </div>
+      <div className={styles.bottomSpacer} />
+      <BottomFixedButton
+        label={isSubmitting ? '전송 중...' : '요청 보내기'}
+        size="L"
+        type="primary"
+        disabled={!selectedDate || !selectedTime || isSubmitting}
+        onClick={handleSubmit}
+        secondLabel="취소"
+        secondType="secondary"
+        secondDisabled={isSubmitting}
+        onSecondClick={handleCancel}
+      />
     </div>
   )
 }
+
+const styles = {
+  root: 'flex flex-col',
+  title: 'text-xs font-medium uppercase tracking-wider text-grey-8',
+  section: 'mt-4',
+  labelSm: 'mb-2 text-sm text-grey-8',
+
+  monthHeader: 'mb-3 flex items-center justify-between',
+  monthNavButton: 'p-2 -m-2 text-grey-10 hover:opacity-80',
+  monthNavIcon: 'text-lg leading-none',
+  monthLabel: 'text-sm font-medium text-grey-11',
+
+  calendarGrid: 'grid grid-cols-7 gap-1',
+  weekday: 'py-1.5 text-center text-xs text-grey-8',
+  calendarDay: 'aspect-square rounded-lg text-[13px] font-medium',
+  calendarDaySelected: 'bg-primary-shinhanblue text-white',
+  calendarDayAvailable: 'bg-grey-2 text-grey-11',
+  calendarDayDisabled: 'cursor-not-allowed opacity-40',
+
+  timeGrid: 'grid grid-cols-3 gap-2 sm:grid-cols-4',
+  timeButton: 'min-h-[44px] rounded-lg text-sm font-medium',
+  timeButtonSelected: 'bg-primary-shinhanblue text-white',
+  timeButtonUnselected: 'bg-grey-2 text-grey-11',
+
+  formatsWrapper: 'flex flex-wrap gap-2',
+  formatButton: 'min-h-[44px] rounded-lg px-4 text-sm font-medium',
+  formatButtonSelected: 'bg-primary-shinhanblue text-white',
+  formatButtonUnselected: 'bg-grey-2 text-grey-11',
+
+  messageTextarea:
+    'w-full min-h-[100px] resize-none rounded-lg border border-grey-2 bg-white px-4 py-3 text-sm text-grey-11 placeholder:text-grey-6 focus:border-primary-shinhanblue focus:outline-none focus:ring-1 focus:ring-primary-shinhanblue',
+
+  bottomSpacer: 'mt-6 h-24',
+} as const

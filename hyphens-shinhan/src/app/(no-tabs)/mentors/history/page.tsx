@@ -1,6 +1,8 @@
 'use client'
 
 import { MentorNotFoundView } from '@/components/mentor/MentorDetailView/MentorNotFoundView'
+import EmptyContent from '@/components/common/EmptyContent'
+import { EMPTY_CONTENT_MESSAGES } from '@/constants/emptyContent'
 import { useSentMentoringRequests } from '@/hooks/mentoring/useMentoring'
 
 /**
@@ -12,9 +14,11 @@ export default function MentorHistoryPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-dvh bg-white flex items-center justify-center">
-        <p className="text-sm text-grey-8">로딩 중...</p>
-      </div>
+      <EmptyContent
+        variant="loading"
+        message={EMPTY_CONTENT_MESSAGES.LOADING.DEFAULT}
+        className="min-h-dvh bg-white"
+      />
     )
   }
 

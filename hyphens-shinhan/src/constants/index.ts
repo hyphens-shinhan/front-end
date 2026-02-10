@@ -229,6 +229,7 @@ export const CUSTOM_HEADER_CONFIG: Record<string, CustomHeaderConfig> = {
     title: '나의 멘토링 내역',
     type: 'Left',
     btnType: 'Back',
+    backHref: ROUTES.NETWORK.MAIN,
   },
   /** 신한장학재단 공지 상세 - 목록보다 먼저 두어 /community/notice/[id] 매칭 */
   [ROUTES.COMMUNITY.NOTICE.DETAIL_PREFIX]: {

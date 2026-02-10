@@ -13,7 +13,7 @@ export function MentorDetailActions({ mentor }: MentorDetailActionsProps) {
   const router = useRouter()
 
   const handleApply = () => {
-    router.push(`${ROUTES.MENTORS.DETAIL_PREFIX}${mentor.id}/apply`)
+    router.push(`${ROUTES.MENTORS.MAIN}/${mentor.id}/apply`)
   }
 
   const handleBackToMatches = () => {

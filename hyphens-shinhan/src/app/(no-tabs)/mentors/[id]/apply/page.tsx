@@ -3,8 +3,10 @@
 import { useRouter, useParams } from 'next/navigation'
 import { ROUTES } from '@/constants'
 import { MentorApplicationForm } from '@/components/mentor/MentorDetailView/MentorApplicationForm'
+import EmptyContent from '@/components/common/EmptyContent'
+import { EMPTY_CONTENT_MESSAGES } from '@/constants/emptyContent'
+import Button from '@/components/common/Button'
 import { useMentorById } from '@/hooks/mentoring/useMentoring'
-import { cn } from '@/utils/cn'
 
 export default function MentorApplyPage() {
   const router = useRouter()
@@ -15,27 +17,30 @@ export default function MentorApplyPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-full items-center justify-center px-5 py-8">
-        <p className="text-grey-7">로딩 중...</p>
-      </div>
+      <EmptyContent
+        variant="loading"
+        message={EMPTY_CONTENT_MESSAGES.LOADING.DEFAULT}
+        className="min-h-dvh bg-white"
+      />
     )
   }
 
   if (!mentor) {
     return (
-      <div className="px-5 py-8">
-        <p className="mb-4 text-grey-7">멘토를 찾을 수 없습니다.</p>
-        <button
-          type="button"
-          onClick={() => router.push(ROUTES.MENTORS.MATCHES)}
-          className={cn(
-            'min-h-[44px] rounded-lg bg-primary-shinhanblue px-4 py-2 text-sm font-medium text-white',
-            'transition-opacity hover:opacity-90'
-          )}
-        >
-          매칭 목록으로
-        </button>
-      </div>
+      <EmptyContent
+        variant="error"
+        message={EMPTY_CONTENT_MESSAGES.MENTOR.NOT_FOUND}
+        action={
+          <Button
+            label={EMPTY_CONTENT_MESSAGES.MENTOR.GO_TO_MATCHES}
+            size="L"
+            type="primary"
+            fullWidth
+            onClick={() => router.push(ROUTES.MENTORS.MATCHES)}
+          />
+        }
+        className="min-h-dvh bg-white"
+      />
     )
   }
 

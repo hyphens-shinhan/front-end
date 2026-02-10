@@ -1,9 +1,10 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useCallback, useMemo } from 'react'
+import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { cn } from '@/utils/cn'
 import type { Person } from '@/types/network'
+import type { NetworkTab } from '@/components/network/NetworkingTabs'
 import { ROUTES } from '@/constants'
 import NetworkingTabs from '@/components/network/NetworkingTabs'
 import NetworkingTabContent from '@/components/network/NetworkingTabContent'
@@ -18,9 +19,33 @@ import {
 } from '@/hooks/follows/useFollows'
 import { useMentors } from '@/hooks/mentoring/useMentoring'
 
+const TAB_PARAM = 'tab'
+const VALID_TABS: NetworkTab[] = ['networking', 'mentors', 'friends']
+
+function parseTabFromSearchParams(searchParams: ReturnType<typeof useSearchParams>): NetworkTab {
+  const tab = searchParams.get(TAB_PARAM)
+  if (tab && VALID_TABS.includes(tab as NetworkTab)) return tab as NetworkTab
+  return 'networking'
+}
+
 export default function NetworkPage() {
   const router = useRouter()
-  const [activeTab, setActiveTab] = useState<'networking' | 'mentors' | 'friends'>('networking')
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+
+  const activeTab = useMemo(
+    () => parseTabFromSearchParams(searchParams),
+    [searchParams],
+  )
+
+  const setActiveTab = useCallback(
+    (tab: NetworkTab) => {
+      const next = new URLSearchParams(searchParams.toString())
+      next.set(TAB_PARAM, tab)
+      router.replace(`${pathname}?${next.toString()}`, { scroll: false })
+    },
+    [pathname, router, searchParams],
+  )
 
   const { data: followRequestsData, isLoading: followRequestsLoading } = useFollowRequests()
   const { data: myFollowingData, isLoading: myFollowingLoading } = useMyFollowing()
@@ -35,7 +60,7 @@ export default function NetworkPage() {
   const mentors = mentorsData?.mentors ?? []
 
   const handlePersonClick = (_person: Person) => {
-    // TODO: 프로필 또는 채팅으로 이동
+    router.push(ROUTES.MYPAGE.PUBLIC_PROFILE(_person.id))
   }
 
   const handleFollow = (personId: string) => {

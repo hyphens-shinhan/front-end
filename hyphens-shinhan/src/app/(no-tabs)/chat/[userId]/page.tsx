@@ -2,6 +2,8 @@
 
 import { useParams } from 'next/navigation'
 import { ChatView } from '@/components/chat'
+import { EMPTY_CONTENT_MESSAGES } from '@/constants'
+import EmptyContent from '@/components/common/EmptyContent'
 
 export default function ChatDetailPage() {
   const params = useParams()
@@ -9,9 +11,7 @@ export default function ChatDetailPage() {
 
   if (!userId) {
     return (
-      <div className="flex items-center justify-center min-h-[200px]">
-        <p className="body-8 text-grey-8">로딩 중...</p>
-      </div>
+      <EmptyContent variant="loading" message={EMPTY_CONTENT_MESSAGES.LOADING.DEFAULT} />
     )
   }
 

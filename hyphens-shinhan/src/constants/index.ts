@@ -416,6 +416,8 @@ export enum INPUT_BAR_TYPE {
   CHAT = 'CHAT',
   /** 댓글 입력창 */
   COMMENT = 'COMMENT',
+  /** 멘토 검색 입력창 */
+  MENTOR_SEARCH = 'MENTOR_SEARCH',
 }
 
 /** InputBar 타입별 설정 상수 */
@@ -441,5 +443,12 @@ export const INPUT_BAR_ITEMS: Record<INPUT_BAR_TYPE, InputBarConfig> = {
     showEmoji: false,
     sendButton: true,
     showAnonymous: true,
+  },
+  [INPUT_BAR_TYPE.MENTOR_SEARCH]: {
+    placeholder: '멘토 검색하기',
+    leftIcon: 'IconLLineSearchLine',
+    showAttach: false,
+    showEmoji: false,
+    sendButton: false,
   },
 } as const

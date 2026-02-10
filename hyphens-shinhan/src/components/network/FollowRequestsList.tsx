@@ -40,16 +40,16 @@ export default function FollowRequestsList({
             actions={
               <div className={styles.actions}>
                 <Button
+                  type="warning"
+                  size="S"
+                  label="거절"
+                  onClick={() => onReject?.(request.id)}
+                />
+                <Button
                   type="primary"
                   size="S"
                   label="수락"
                   onClick={() => onAccept?.(request.id)}
-                />
-                <Button
-                  type="secondary"
-                  size="S"
-                  label="거절"
-                  onClick={() => onReject?.(request.id)}
                 />
               </div>
             }

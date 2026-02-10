@@ -177,6 +177,8 @@ function MandatoryCampContent({ activityId }: MandatoryCampContentProps) {
         description={reportContent}
         setTitle={setReportTitle}
         setDescription={setReportContent}
+        setDate={setActivityDate}
+        setLocation={setLocation}
         isTitleChecked={isActivityInfoChecked}
       />
       <Separator className="mx-4" />

@@ -7,9 +7,28 @@ import type {
   FriendCard,
   NearbyUserCard,
 } from '@/types/network'
-import type { Person, Location } from '@/types/network'
+import type { Person, Location, Generation } from '@/types/network'
 
 const BASE = '/networking'
+
+const GENERATIONS: Generation[] = [
+  '1기',
+  '2기',
+  '3기',
+  '4기',
+  '5기',
+  '6기',
+  '7기',
+  '8기',
+  '9기',
+  '10기',
+]
+
+function toGeneration(batch: number | null | undefined): Generation {
+  if (batch == null) return '1기'
+  if (batch >= 1 && batch <= 10) return GENERATIONS[batch - 1]
+  return '1기'
+}
 
 /**
  * Map backend RecommendedUserCard to UI Person (추천/함께 아는 친구)
@@ -34,7 +53,7 @@ function mapFriendToPerson(card: FriendCard): Person {
     id: String(card.id),
     name: card.name,
     avatar: card.avatar_url ?? undefined,
-    generation: card.scholarship_batch ? `${card.scholarship_batch}기` : '1기',
+    generation: toGeneration(card.scholarship_batch),
     scholarshipType: '글로벌',
     isFollowing: true,
     mutualConnections: 0,
@@ -77,7 +96,7 @@ export const NetworkingService = {
   }): Promise<{ users: Person[]; total: number }> => {
     const { data } = await apiClient.get<RecommendationsResponse>(
       `${BASE}/recommendations`,
-      { params }
+      { params },
     )
     return {
       users: (data.users ?? []).map(mapRecommendedToPerson),
@@ -118,7 +137,7 @@ export const NetworkingService = {
   }> => {
     const { data } = await apiClient.get<NearbyUsersResponse>(
       `${BASE}/nearby`,
-      { params }
+      { params },
     )
     return {
       users: (data.users ?? []).map(mapNearbyToPerson),

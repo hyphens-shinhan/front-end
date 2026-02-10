@@ -223,6 +223,13 @@ export const CUSTOM_HEADER_CONFIG: Record<string, CustomHeaderConfig> = {
     type: 'Left',
     btnType: 'Back',
   },
+  /** 멘토 상세 프로필 (/mentors/[id]) */
+  [ROUTES.MENTORS.MAIN]: {
+    pathPattern: /^\/mentors\/[^/]+$/,
+    type: 'Left',
+    btnType: 'Back',
+    backHref: ROUTES.NETWORK.MAIN,
+  },
   /** 나의 멘토링 내역 (pathPattern so /mentors/history is not matched by DETAIL_PREFIX) */
   [ROUTES.MENTORS.HISTORY]: {
     pathPattern: /^\/mentors\/history$/,

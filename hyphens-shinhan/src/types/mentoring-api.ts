@@ -6,10 +6,10 @@ export interface MentorSearchCard {
   mentor_id: string
   name: string
   avatar_url: string | null
-  introduction?: string | null
-  affiliation?: string | null
-  expertise?: string[] | null
-  fields?: string[] | null
+  introduction: string | null
+  affiliation: string | null
+  expertise: string[] | null
+  fields: string[] | null
 }
 
 export interface MentorSearchResponse {
@@ -21,6 +21,20 @@ export interface MentorProfileResponse {
   user_id: string
   name: string
   avatar_url: string | null
+  introduction: string | null
+  affiliation: string | null
+  expertise: string[] | null
+  fields: string[] | null
+  frequency: string[] | null
+  available_days: string[] | null
+  time_slots: string[] | null
+  methods: string[] | null
+  communication_styles: string[] | null
+  mentoring_focuses: string[] | null
+}
+
+/** PATCH /mentoring/profile body */
+export interface MentorProfileUpdate {
   introduction?: string | null
   affiliation?: string | null
   expertise?: string[] | null
@@ -53,6 +67,9 @@ export interface MentoringRequestCreateBody {
   mentor_id: string
   message?: string | null
 }
+
+/** 스펙 명칭 alias */
+export type MentoringRequestCreate = MentoringRequestCreateBody
 
 export interface RequestUserInfo {
   id: string

@@ -1,4 +1,5 @@
 export { MentorDetailView } from './MentorDetailView'
+export { MentorDetailSkeleton } from './MentorDetailSkeleton'
 export { MentoringHistoryView } from './MentoringHistoryView'
 export { MentorDetailHeader } from './MentorDetailHeader'
 export { MentorDetailInfoCard } from './MentorDetailInfoCard'

@@ -2,10 +2,12 @@ import apiClient from './apiClient'
 import type {
   MentorSearchResponse,
   MentorProfileResponse,
+  MentorProfileUpdate,
   MentorRecommendationsResponse,
   MentorRecommendationCard,
   MentoringRequestListResponse,
   MentoringRequestResponse,
+  MentoringRequestStatus,
 } from '@/types/mentoring-api'
 import type {
   Mentor,
@@ -135,6 +137,26 @@ function mapSearchCardToPerson(card: {
  */
 export const MentoringService = {
   /**
+   * GET /mentoring/profile/me - 내 멘토 프로필 (Mentor 타입으로 매핑)
+   */
+  getMyProfile: async (): Promise<Mentor> => {
+    const { data } = await apiClient.get<MentorProfileResponse>(
+      `${BASE}/profile/me`,
+    )
+    return mapProfileToMentor(data)
+  },
+
+  /**
+   * PATCH /mentoring/profile - 내 멘토 프로필 수정 (Mentor 타입으로 매핑)
+   */
+  updateMyProfile: async (body: MentorProfileUpdate): Promise<Mentor> => {
+    const { data } = await apiClient.patch<MentorProfileResponse>(
+      `${BASE}/profile`,
+      body,
+    )
+    return mapProfileToMentor(data)
+  },
+  /**
    * GET /mentoring/mentors - 멘토 목록 (검색/필터)
    */
   getMentors: async (params?: {
@@ -230,6 +252,7 @@ export const MentoringService = {
   getSentRequests: async (params?: {
     limit?: number
     offset?: number
+    status?: MentoringRequestStatus
   }): Promise<MentoringRequestListResponse> => {
     const { data } = await apiClient.get<MentoringRequestListResponse>(
       `${BASE}/requests/sent`,
@@ -244,10 +267,35 @@ export const MentoringService = {
   getReceivedRequests: async (params?: {
     limit?: number
     offset?: number
+    status?: MentoringRequestStatus
   }): Promise<MentoringRequestListResponse> => {
     const { data } = await apiClient.get<MentoringRequestListResponse>(
       `${BASE}/requests/received`,
       { params },
+    )
+    return data
+  },
+
+  /**
+   * POST /mentoring/requests/{request_id}/accept - 멘토가 요청 수락
+   */
+  acceptRequest: async (
+    requestId: string,
+  ): Promise<{ message: string }> => {
+    const { data } = await apiClient.post<{ message: string }>(
+      `${BASE}/requests/${requestId}/accept`,
+    )
+    return data
+  },
+
+  /**
+   * POST /mentoring/requests/{request_id}/reject - 멘토가 요청 거절
+   */
+  rejectRequest: async (
+    requestId: string,
+  ): Promise<{ message: string }> => {
+    const { data } = await apiClient.post<{ message: string }>(
+      `${BASE}/requests/${requestId}/reject`,
     )
     return data
   },

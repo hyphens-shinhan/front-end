@@ -5,6 +5,7 @@ import {
   useQueries,
 } from '@tanstack/react-query'
 import { MentoringService } from '@/services/mentoring'
+import type { MentoringRequestStatus } from '@/types/mentoring-api'
 import type { MentorMatch, MatchScore } from '@/types/mentor'
 
 export const mentoringKeys = {
@@ -129,6 +130,7 @@ export const useMentorRecommendationMatches = (params?: {
 export const useSentMentoringRequests = (params?: {
   limit?: number
   offset?: number
+  status?: MentoringRequestStatus
 }) => {
   return useQuery({
     queryKey: mentoringKeys.sentRequests(params),

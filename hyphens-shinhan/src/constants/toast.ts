@@ -54,6 +54,7 @@ export const TOAST_MESSAGES = {
   MENTOR: {
     REQUEST_SUCCESS: '멘토링 요청이 전송되었어요',
     REQUEST_ERROR: '요청 전송에 실패했어요',
+  },
   /** 학업 모니터링 */
   MONITORING: {
     SAVE_SUCCESS: '저장되었어요',

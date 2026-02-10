@@ -45,6 +45,7 @@ export const EMPTY_CONTENT_MESSAGES = {
   MENTOR: {
     NOT_FOUND: '멘토를 찾을 수 없습니다.',
     GO_TO_MATCHES: '매칭 목록으로',
+  },
   /** 제출 완료 등 완료 상태 문구 */
   SUBMITTED: {
     /** 학업 계획서 제출 완료 */

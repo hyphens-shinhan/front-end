@@ -1,9 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import type { MentorshipRequest } from '@/types/mentor'
-import { ROUTES } from '@/constants'
 import { useHeaderStore } from '@/stores'
 import QuestionnaireStep1 from './QuestionnaireStep1'
 import QuestionnaireStep2 from './QuestionnaireStep2'
@@ -12,13 +11,21 @@ import QuestionnaireStep3 from './QuestionnaireStep3'
 import QuestionnaireStep3b from './QuestionnaireStep3b'
 import QuestionnaireStep3c from './QuestionnaireStep3c'
 import QuestionnaireStep4 from './QuestionnaireStep4'
+import QuestionnaireStepFooter from './QuestionnaireStepFooter'
 import { cn } from '@/utils/cn'
 
-interface MentorQuestionnaireProps {
-  onComplete: (request: MentorshipRequest) => void
+export interface QuestionnaireFooterState {
+  nextLabel: string
+  nextDisabled: boolean
 }
 
-export default function MentorQuestionnaire({ onComplete }: MentorQuestionnaireProps) {
+interface MentorQuestionnaireProps {
+  /** API에서 조회한 내 설문 초기값 (있으면 폼에 채움) */
+  initialData?: Partial<MentorshipRequest> | null
+  onComplete: (request: MentorshipRequest) => void | Promise<void>
+}
+
+export default function MentorQuestionnaire({ initialData, onComplete }: MentorQuestionnaireProps) {
   const router = useRouter()
   const setHandlers = useHeaderStore((s) => s.setHandlers)
   const resetHandlers = useHeaderStore((s) => s.resetHandlers)
@@ -27,6 +34,18 @@ export default function MentorQuestionnaire({ onComplete }: MentorQuestionnaireP
   const [request, setRequest] = useState<Partial<MentorshipRequest>>({
     ybId: 'yb_1',
   })
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [footerState, setFooterState] = useState<QuestionnaireFooterState>({
+    nextLabel: '다음',
+    nextDisabled: false,
+  })
+  const nextHandlerRef = useRef<() => void>(() => { })
+
+  useEffect(() => {
+    if (initialData && Object.keys(initialData).length > 0) {
+      setRequest((prev) => ({ ...prev, ...initialData }))
+    }
+  }, [initialData])
 
   useEffect(() => {
     setHandlers({
@@ -46,7 +65,7 @@ export default function MentorQuestionnaire({ onComplete }: MentorQuestionnaireP
     return () => resetHandlers()
   }, [setHandlers, resetHandlers])
 
-  const handleNext = (stepData: Partial<MentorshipRequest>) => {
+  const handleNext = async (stepData: Partial<MentorshipRequest>) => {
     const updatedRequest = { ...request, ...stepData }
     setRequest(updatedRequest)
 
@@ -65,7 +84,12 @@ export default function MentorQuestionnaire({ onComplete }: MentorQuestionnaireP
         personalityPreferences: updatedRequest.personalityPreferences,
         createdAt: new Date().toISOString(),
       }
-      onComplete(completeRequest)
+      setIsSubmitting(true)
+      try {
+        await Promise.resolve(onComplete(completeRequest))
+      } finally {
+        setIsSubmitting(false)
+      }
     }
   }
 
@@ -77,7 +101,18 @@ export default function MentorQuestionnaire({ onComplete }: MentorQuestionnaireP
     }
   }
 
+  useEffect(() => {
+    setFooterState({ nextLabel: '다음', nextDisabled: false })
+  }, [currentStep])
+
   const progressPercent = (currentStep / 7) * 100
+  const onRegisterNext = useCallback((fn: () => void) => {
+    nextHandlerRef.current = fn
+  }, [])
+  const footerCallbacks = {
+    onFooterChange: setFooterState,
+    onRegisterNext,
+  }
 
   return (
     <div className={styles.wrapper}>
@@ -99,6 +134,7 @@ export default function MentorQuestionnaire({ onComplete }: MentorQuestionnaireP
             initialData={request}
             onNext={handleNext}
             onBack={handleBack}
+            {...footerCallbacks}
           />
         )}
         {currentStep === 2 && (
@@ -106,6 +142,7 @@ export default function MentorQuestionnaire({ onComplete }: MentorQuestionnaireP
             initialData={request}
             onNext={handleNext}
             onBack={handleBack}
+            {...footerCallbacks}
           />
         )}
         {currentStep === 3 && (
@@ -113,6 +150,7 @@ export default function MentorQuestionnaire({ onComplete }: MentorQuestionnaireP
             initialData={request}
             onNext={handleNext}
             onBack={handleBack}
+            {...footerCallbacks}
           />
         )}
         {currentStep === 4 && (
@@ -120,6 +158,7 @@ export default function MentorQuestionnaire({ onComplete }: MentorQuestionnaireP
             initialData={request}
             onNext={handleNext}
             onBack={handleBack}
+            {...footerCallbacks}
           />
         )}
         {currentStep === 5 && (
@@ -127,6 +166,7 @@ export default function MentorQuestionnaire({ onComplete }: MentorQuestionnaireP
             initialData={request}
             onNext={handleNext}
             onBack={handleBack}
+            {...footerCallbacks}
           />
         )}
         {currentStep === 6 && (
@@ -134,6 +174,7 @@ export default function MentorQuestionnaire({ onComplete }: MentorQuestionnaireP
             initialData={request}
             onNext={handleNext}
             onBack={handleBack}
+            {...footerCallbacks}
           />
         )}
         {currentStep === 7 && (
@@ -141,9 +182,17 @@ export default function MentorQuestionnaire({ onComplete }: MentorQuestionnaireP
             initialData={request}
             onNext={handleNext}
             onBack={handleBack}
+            {...footerCallbacks}
           />
         )}
       </div>
+
+      <QuestionnaireStepFooter
+        onBack={handleBack}
+        onNext={() => nextHandlerRef.current?.()}
+        nextLabel={footerState.nextLabel}
+        nextDisabled={footerState.nextDisabled || isSubmitting}
+      />
     </div>
   )
 }
@@ -153,7 +202,7 @@ const styles = {
     'flex flex-col flex-1 min-h-0',
     'px-4 pt-3 pb-0',
   ),
-  subtitle: 'title-16 text-grey-11 font-bold mb-2 shrink-0',
+  subtitle: 'title-16 text-grey-11 font-bold mb-3 shrink-0',
   progressSection: 'flex flex-col gap-2 pb-2 shrink-0',
   progressText: 'body-8 text-grey-10',
   progressTrack: 'h-2 w-full overflow-hidden rounded-full bg-grey-2',

@@ -1,8 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import type { MentorshipRequest, TimeOfDay } from '@/types/mentor'
-import QuestionnaireStepFooter from './QuestionnaireStepFooter'
 import { cn } from '@/utils/cn'
 
 const TIMES: { value: TimeOfDay; label: string }[] = [
@@ -33,12 +32,16 @@ interface QuestionnaireStep3bProps {
   initialData?: Partial<MentorshipRequest>
   onNext: (data: Partial<MentorshipRequest>) => void
   onBack: () => void
+  onFooterChange?: (state: { nextLabel: string; nextDisabled: boolean }) => void
+  onRegisterNext?: (fn: () => void) => void
 }
 
 export default function QuestionnaireStep3b({
   initialData,
   onNext,
   onBack,
+  onFooterChange,
+  onRegisterNext,
 }: QuestionnaireStep3bProps) {
   const [selectedTimes, setSelectedTimes] = useState<TimeOfDay[]>(
     initialData?.availability?.timeOfDay ?? []
@@ -62,6 +65,11 @@ export default function QuestionnaireStep3b({
       })
     }
   }
+
+  useEffect(() => {
+    onFooterChange?.({ nextLabel: '다음', nextDisabled: selectedTimes.length === 0 })
+    onRegisterNext?.(handleNext)
+  }, [selectedTimes, onFooterChange, onRegisterNext])
 
   return (
     <div className="flex flex-col flex-1 min-h-0">
@@ -101,11 +109,6 @@ export default function QuestionnaireStep3b({
           })}
         </div>
       </div>
-      <QuestionnaireStepFooter
-        onBack={onBack}
-        onNext={handleNext}
-        nextDisabled={selectedTimes.length === 0}
-      />
     </div>
   )
 }

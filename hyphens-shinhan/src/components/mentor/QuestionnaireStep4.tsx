@@ -1,13 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import type {
   MentorshipRequest,
   CommunicationStyle,
   MentorshipStyle,
   PersonalityTraits,
 } from '@/types/mentor'
-import QuestionnaireStepFooter from './QuestionnaireStepFooter'
 import { cn } from '@/utils/cn'
 
 const COMMUNICATION: { value: CommunicationStyle; label: string }[] = [
@@ -77,12 +76,16 @@ interface QuestionnaireStep4Props {
   initialData?: Partial<MentorshipRequest>
   onNext: (data: Partial<MentorshipRequest>) => void
   onBack: () => void
+  onFooterChange?: (state: { nextLabel: string; nextDisabled: boolean }) => void
+  onRegisterNext?: (fn: () => void) => void
 }
 
 export default function QuestionnaireStep4({
   initialData,
   onNext,
   onBack,
+  onFooterChange,
+  onRegisterNext,
 }: QuestionnaireStep4Props) {
   const [communicationStyle, setCommunicationStyle] = useState<
     CommunicationStyle | undefined
@@ -102,6 +105,11 @@ export default function QuestionnaireStep4({
           : undefined,
     })
   }
+
+  useEffect(() => {
+    onFooterChange?.({ nextLabel: '멘토 찾기', nextDisabled: false })
+    onRegisterNext?.(handleNext)
+  }, [onFooterChange, onRegisterNext])
 
   return (
     <div className="flex flex-col flex-1 min-h-0">
@@ -147,11 +155,6 @@ export default function QuestionnaireStep4({
           </div>
         </div>
       </div>
-      <QuestionnaireStepFooter
-        onBack={onBack}
-        onNext={handleNext}
-        nextLabel="멘토 찾기"
-      />
     </div>
   )
 }

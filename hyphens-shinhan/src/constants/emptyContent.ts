@@ -23,6 +23,8 @@ export const EMPTY_CONTENT_MESSAGES = {
     REPORT: '보고서를 불러올 수 없어요.',
     /** 연간 필수 활동 상세 조회 실패 */
     MANDATORY_ACTIVITY: '연간 필수 활동을 불러올 수 없어요.',
+    /** 멘토 설문 조회 실패 */
+    SURVEY: '설문을 불러오지 못했어요.',
   },
   EMPTY: {
     COMMENT: '아직 댓글이 없어요.',

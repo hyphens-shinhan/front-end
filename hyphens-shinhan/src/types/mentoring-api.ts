@@ -80,3 +80,59 @@ export interface MentoringRequestListResponse {
   requests: MentoringRequestResponse[]
   total: number
 }
+
+// ========== Mentoring 설문조사 API (survey) ==========
+
+export type MentorField =
+  | 'CAREER_EMPLOYMENT'
+  | 'ACADEMICS_STUDY'
+  | 'ENTREPRENEURSHIP_LEADERSHIP'
+  | 'SELF_DEVELOPMENT_HOBBIES'
+  | 'VOLUNTEERING_SOCIAL'
+  | 'EMOTIONAL_COUNSELING'
+  | 'INVESTMENT_FINANCE'
+
+export type MeetingFrequency = 'ONE_TIME' | 'MONTHLY' | 'LONG_TERM'
+
+export type AvailableDay = 'MON' | 'TUE' | 'WED' | 'THU' | 'FRI' | 'SAT' | 'SUN'
+
+export type TimeSlot = 'MORNING' | 'AFTERNOON' | 'LATE_AFTERNOON' | 'EVENING'
+
+export type MeetingMethod = 'ONLINE' | 'OFFLINE' | 'FLEXIBLE'
+
+export type SurveyCommunicationStyle =
+  | 'DIRECT_CLEAR'
+  | 'SOFT_SUPPORTIVE'
+  | 'HORIZONTAL_COMFORTABLE'
+  | 'EXPERIENCE_GUIDE'
+
+export type MentoringFocus =
+  | 'PRACTICE_ORIENTED'
+  | 'ADVICE_COUNSELING'
+  | 'INSIGHT_INSPIRATION'
+
+export interface MentorMatchingSurveyCreate {
+  fields: MentorField[]
+  frequency: MeetingFrequency
+  goal: string
+  available_days: AvailableDay[]
+  time_slots: TimeSlot[]
+  methods: MeetingMethod[]
+  communication_styles: SurveyCommunicationStyle[]
+  mentoring_focuses: MentoringFocus[]
+}
+
+export interface MentorMatchingSurveyResponse {
+  id: string
+  user_id: string
+  fields: MentorField[]
+  frequency: MeetingFrequency
+  goal: string
+  available_days: AvailableDay[]
+  time_slots: TimeSlot[]
+  methods: MeetingMethod[]
+  communication_styles: SurveyCommunicationStyle[]
+  mentoring_focuses: MentoringFocus[]
+  created_at: string
+  updated_at: string
+}

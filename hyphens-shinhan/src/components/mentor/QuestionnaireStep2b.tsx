@@ -1,8 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import type { MentorshipRequest } from '@/types/mentor'
-import QuestionnaireStepFooter from './QuestionnaireStepFooter'
 import { cn } from '@/utils/cn'
 
 const stepStyles = {
@@ -20,12 +19,16 @@ interface QuestionnaireStep2bProps {
   initialData?: Partial<MentorshipRequest>
   onNext: (data: Partial<MentorshipRequest>) => void
   onBack: () => void
+  onFooterChange?: (state: { nextLabel: string; nextDisabled: boolean }) => void
+  onRegisterNext?: (fn: () => void) => void
 }
 
 export default function QuestionnaireStep2b({
   initialData,
   onNext,
   onBack,
+  onFooterChange,
+  onRegisterNext,
 }: QuestionnaireStep2bProps) {
   const [goalDescription, setGoalDescription] = useState<string>(
     initialData?.goalDescription ?? ''
@@ -40,6 +43,11 @@ export default function QuestionnaireStep2b({
       goalLevel: initialData?.goalLevel ?? 'intermediate',
     })
   }
+
+  useEffect(() => {
+    onFooterChange?.({ nextLabel: '다음', nextDisabled: !canNext })
+    onRegisterNext?.(handleNext)
+  }, [canNext, onFooterChange, onRegisterNext])
 
   return (
     <div className="flex flex-col flex-1 min-h-0">
@@ -60,11 +68,6 @@ export default function QuestionnaireStep2b({
           />
         </div>
       </div>
-      <QuestionnaireStepFooter
-        onBack={onBack}
-        onNext={handleNext}
-        nextDisabled={!canNext}
-      />
     </div>
   )
 }

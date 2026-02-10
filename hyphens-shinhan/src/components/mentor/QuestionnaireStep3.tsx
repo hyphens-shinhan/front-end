@@ -1,8 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import type { MentorshipRequest, DayOfWeek } from '@/types/mentor'
-import QuestionnaireStepFooter from './QuestionnaireStepFooter'
 import { cn } from '@/utils/cn'
 
 const DAYS: { value: DayOfWeek; label: string }[] = [
@@ -31,12 +30,16 @@ interface QuestionnaireStep3Props {
   initialData?: Partial<MentorshipRequest>
   onNext: (data: Partial<MentorshipRequest>) => void
   onBack: () => void
+  onFooterChange?: (state: { nextLabel: string; nextDisabled: boolean }) => void
+  onRegisterNext?: (fn: () => void) => void
 }
 
 export default function QuestionnaireStep3({
   initialData,
   onNext,
   onBack,
+  onFooterChange,
+  onRegisterNext,
 }: QuestionnaireStep3Props) {
   const [selectedDays, setSelectedDays] = useState<DayOfWeek[]>(
     initialData?.availability?.days ?? []
@@ -60,6 +63,11 @@ export default function QuestionnaireStep3({
       })
     }
   }
+
+  useEffect(() => {
+    onFooterChange?.({ nextLabel: '다음', nextDisabled: selectedDays.length === 0 })
+    onRegisterNext?.(handleNext)
+  }, [selectedDays, onFooterChange, onRegisterNext])
 
   return (
     <div className="flex flex-col flex-1 min-h-0">
@@ -87,11 +95,6 @@ export default function QuestionnaireStep3({
           })}
         </div>
       </div>
-      <QuestionnaireStepFooter
-        onBack={onBack}
-        onNext={handleNext}
-        nextDisabled={selectedDays.length === 0}
-      />
     </div>
   )
 }

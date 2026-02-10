@@ -1,8 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import type { MentorshipRequest, GoalTimeline } from '@/types/mentor'
-import QuestionnaireStepFooter from './QuestionnaireStepFooter'
 import { cn } from '@/utils/cn'
 
 const TIMELINES: { value: GoalTimeline; label: string }[] = [
@@ -31,12 +30,16 @@ interface QuestionnaireStep2Props {
   initialData?: Partial<MentorshipRequest>
   onNext: (data: Partial<MentorshipRequest>) => void
   onBack: () => void
+  onFooterChange?: (state: { nextLabel: string; nextDisabled: boolean }) => void
+  onRegisterNext?: (fn: () => void) => void
 }
 
 export default function QuestionnaireStep2({
   initialData,
   onNext,
   onBack,
+  onFooterChange,
+  onRegisterNext,
 }: QuestionnaireStep2Props) {
   const [goalTimeline, setGoalTimeline] = useState<GoalTimeline | null>(
     initialData?.goalTimeline ?? null
@@ -45,6 +48,11 @@ export default function QuestionnaireStep2({
   const handleNext = () => {
     if (goalTimeline) onNext({ goalTimeline })
   }
+
+  useEffect(() => {
+    onFooterChange?.({ nextLabel: '다음', nextDisabled: !goalTimeline })
+    onRegisterNext?.(handleNext)
+  }, [goalTimeline, onFooterChange, onRegisterNext])
 
   return (
     <div className="flex flex-col flex-1 min-h-0">
@@ -86,7 +94,6 @@ export default function QuestionnaireStep2({
           })}
         </div>
       </div>
-      <QuestionnaireStepFooter onBack={onBack} onNext={handleNext} nextDisabled={!goalTimeline} />
     </div>
   )
 }

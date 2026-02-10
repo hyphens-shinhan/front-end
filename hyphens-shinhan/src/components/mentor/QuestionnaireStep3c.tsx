@@ -1,8 +1,7 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import type { MentorshipRequest, MeetingFormat } from '@/types/mentor'
-import QuestionnaireStepFooter from './QuestionnaireStepFooter'
 import { cn } from '@/utils/cn'
 
 type MeetingOptionId = 'remote' | 'in_person' | 'flexible'
@@ -50,12 +49,16 @@ interface QuestionnaireStep3cProps {
   initialData?: Partial<MentorshipRequest>
   onNext: (data: Partial<MentorshipRequest>) => void
   onBack: () => void
+  onFooterChange?: (state: { nextLabel: string; nextDisabled: boolean }) => void
+  onRegisterNext?: (fn: () => void) => void
 }
 
 export default function QuestionnaireStep3c({
   initialData,
   onNext,
   onBack,
+  onFooterChange,
+  onRegisterNext,
 }: QuestionnaireStep3cProps) {
   const [selected, setSelected] = useState<Set<MeetingOptionId>>(() =>
     getInitialSelected(initialData?.availability?.preferredFormats)
@@ -82,6 +85,11 @@ export default function QuestionnaireStep3c({
       } as MentorshipRequest['availability'],
     })
   }
+
+  useEffect(() => {
+    onFooterChange?.({ nextLabel: '다음', nextDisabled: !hasSelection })
+    onRegisterNext?.(handleNext)
+  }, [hasSelection, onFooterChange, onRegisterNext])
 
   return (
     <div className="flex flex-col flex-1 min-h-0">
@@ -127,11 +135,6 @@ export default function QuestionnaireStep3c({
           })}
         </div>
       </div>
-      <QuestionnaireStepFooter
-        onBack={onBack}
-        onNext={handleNext}
-        nextDisabled={!hasSelection}
-      />
     </div>
   )
 }

@@ -6,13 +6,19 @@ import type {
   MentoringRequestListResponse,
   MentoringRequestResponse,
 } from '@/types/mentoring-api'
-import type { Mentor, MentorCategory, DayOfWeek, TimeOfDay, MeetingFormat } from '@/types/mentor'
+import type {
+  Mentor,
+  MentorCategory,
+  DayOfWeek,
+  TimeOfDay,
+  MeetingFormat,
+} from '@/types/mentor'
 import type { Person } from '@/types/network'
 
 const BASE = '/mentoring'
 
-/** Backend day enum -> frontend DayOfWeek */
-const DAY_MAP: Record<string, DayOfWeek> = {
+/** Backend day enum -> frontend DayOfWeek (설문·프로필 공용) */
+export const DAY_MAP: Record<string, DayOfWeek> = {
   MON: 'monday',
   TUE: 'tuesday',
   WED: 'wednesday',
@@ -22,23 +28,23 @@ const DAY_MAP: Record<string, DayOfWeek> = {
   SUN: 'sunday',
 }
 
-/** Backend time_slot -> frontend TimeOfDay */
-const TIME_SLOT_MAP: Record<string, TimeOfDay> = {
+/** Backend time_slot -> frontend TimeOfDay (설문·프로필 공용) */
+export const TIME_SLOT_MAP: Record<string, TimeOfDay> = {
   MORNING: 'morning',
   AFTERNOON: 'afternoon',
   LATE_AFTERNOON: 'afternoon',
   EVENING: 'evening',
 }
 
-/** Backend method -> frontend MeetingFormat */
-const METHOD_MAP: Record<string, MeetingFormat> = {
+/** Backend method -> frontend MeetingFormat (설문·프로필 공용) */
+export const METHOD_MAP: Record<string, MeetingFormat> = {
   ONLINE: 'zoom',
   OFFLINE: 'in_person',
   FLEXIBLE: 'any',
 }
 
-/** Backend MentorField (first segment) -> frontend MentorCategory (default fallback) */
-const FIELD_TO_CATEGORY: Record<string, MentorCategory> = {
+/** Backend MentorField -> frontend MentorCategory (설문·프로필 공용) */
+export const FIELD_TO_CATEGORY: Record<string, MentorCategory> = {
   CAREER_EMPLOYMENT: 'career_job_search',
   ACADEMICS_STUDY: 'academic_excellence',
   ENTREPRENEURSHIP_LEADERSHIP: 'leadership_soft_skills',
@@ -139,7 +145,7 @@ export const MentoringService = {
   }): Promise<{ mentors: Person[]; total: number }> => {
     const { data } = await apiClient.get<MentorSearchResponse>(
       `${BASE}/mentors`,
-      { params }
+      { params },
     )
     return {
       mentors: (data.mentors ?? []).map(mapSearchCardToPerson),
@@ -153,7 +159,7 @@ export const MentoringService = {
   getMentorById: async (mentorId: string): Promise<Mentor | null> => {
     try {
       const { data } = await apiClient.get<MentorProfileResponse>(
-        `${BASE}/mentors/${mentorId}`
+        `${BASE}/mentors/${mentorId}`,
       )
       return mapProfileToMentor(data)
     } catch {
@@ -170,7 +176,7 @@ export const MentoringService = {
   }): Promise<{ recommendations: Person[]; total: number }> => {
     const { data } = await apiClient.get<MentorRecommendationsResponse>(
       `${BASE}/recommendations`,
-      { params }
+      { params },
     )
     const mentors = (data.recommendations ?? []).map((rec) =>
       mapSearchCardToPerson({
@@ -180,7 +186,7 @@ export const MentoringService = {
         introduction: rec.introduction,
         affiliation: rec.affiliation,
         fields: rec.expertise ?? undefined,
-      })
+      }),
     )
     return { recommendations: mentors, total: data.total ?? 0 }
   },
@@ -194,7 +200,7 @@ export const MentoringService = {
   }): Promise<MentoringRequestResponse> => {
     const { data } = await apiClient.post<MentoringRequestResponse>(
       `${BASE}/requests`,
-      body
+      body,
     )
     return data
   },
@@ -208,7 +214,7 @@ export const MentoringService = {
   }): Promise<MentoringRequestListResponse> => {
     const { data } = await apiClient.get<MentoringRequestListResponse>(
       `${BASE}/requests/sent`,
-      { params }
+      { params },
     )
     return data
   },
@@ -222,7 +228,7 @@ export const MentoringService = {
   }): Promise<MentoringRequestListResponse> => {
     const { data } = await apiClient.get<MentoringRequestListResponse>(
       `${BASE}/requests/received`,
-      { params }
+      { params },
     )
     return data
   },

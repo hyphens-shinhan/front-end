@@ -6,7 +6,7 @@ import { MentorDetailInfoCard } from './MentorDetailInfoCard'
 import { MentorDetailBio } from './MentorDetailBio'
 import { MentorDetailMentoringInfo } from './MentorDetailMentoringInfo'
 import { MentorDetailActions } from './MentorDetailActions'
-import { MentorDetailPosts } from './MentorDetailPosts'
+import FeedList from '@/components/mypage/FeedList'
 import Separator from '@/components/common/Separator'
 
 interface MentorDetailViewProps {
@@ -31,9 +31,13 @@ export function MentorDetailView({ mentor }: MentorDetailViewProps) {
           {/* 액션 버튼 */}
           <MentorDetailActions mentor={mentor} />
           {/* 글 */}
-          <MentorDetailPosts mentor={mentor} />
-          {/* 분리선 */}
-          <div className="h-0.5 bg-grey-2 py-px" aria-hidden />
+          <FeedList
+            isMyPage={false}
+            userName={mentor.name}
+            userId={mentor.id}
+            userAvatarUrl={mentor.avatar ?? null}
+            postsUserId={mentor.id}
+          />
         </div>
       </main>
     </div>

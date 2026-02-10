@@ -8,7 +8,7 @@ import PostCardSkeleton from "../community/feed/PostCardSkeleton";
 import { FeedPostResponse, PostType, MyPostItem, MyPostItemType, PostAuthor } from "@/types/posts";
 import InfoTag from "../common/InfoTag";
 import Separator from "../common/Separator";
-import { useInfiniteMyPosts } from "@/hooks/posts/usePosts";
+import { useInfiniteMyPosts, useInfiniteUserPosts } from "@/hooks/posts/usePosts";
 import { useImageLoadTracking } from "@/hooks/useImageLoadTracking";
 import EmptyContent from "../common/EmptyContent";
 import { EMPTY_CONTENT_MESSAGES, ROUTES } from "@/constants";
@@ -19,30 +19,53 @@ import type { UserMyProfile } from "@/types/user";
 interface FeedListProps {
     isMyPage?: boolean;
     userName?: string;
-    userId?: string; // 퍼블릭 페이지일 경우 사용자 ID
-    userAvatarUrl?: string | null; // 퍼블릭 페이지일 경우 사용자 프로필 이미지 URL
-    hideTitle?: boolean; // 제목 숨김 여부
+    userId?: string;
+    userAvatarUrl?: string | null;
+    hideTitle?: boolean;
+    postsUserId?: string | null;
 }
 
-export default function FeedList({ isMyPage = true, userName, userId, userAvatarUrl, hideTitle = false }: FeedListProps) {
-    const { data, isLoading, error, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteMyPosts(20);
-    const { data: myProfile } = useMyProfile(); // 현재 사용자 프로필 정보
-    const currentUser = useUserStore((s) => s.user); // 현재 사용자 정보 (ID 비교용)
+export default function FeedList({
+    isMyPage = true,
+    userName,
+    userId,
+    userAvatarUrl,
+    hideTitle = false,
+    postsUserId
+}: FeedListProps) {
 
-    const titleText = hideTitle ? null : (isMyPage ? '내가 쓴 글' : `${userName || '사용자'}님의 글`);
+    // 타인의 글을 조회해야 하는 명확한 상황인지 판단
+    const isViewingOthers = Boolean(postsUserId);
+
+    // 1. 내 글 쿼리: isMyPage가 true이면서 동시에 postsUserId가 없을 때만 활성화
+    const myPostsQuery = useInfiniteMyPosts(20, {
+        enabled: isMyPage && !isViewingOthers
+    });
+
+    // 2. 타인 글 쿼리: postsUserId가 있을 때만 활성화
+    const userPostsQuery = useInfiniteUserPosts(postsUserId ?? null, 20, {
+        enabled: isViewingOthers
+    });
+
+    // 현재 활성화된 쿼리 선택
+    const activeQuery = isViewingOthers ? userPostsQuery : myPostsQuery;
+    const { data, isLoading, error, fetchNextPage, hasNextPage, isFetchingNextPage } = activeQuery;
+
+    const { data: myProfile } = useMyProfile();
+    const currentUser = useUserStore((s) => s.user);
+
+    const titleText = hideTitle ? null : (isMyPage && !isViewingOthers ? '내가 쓴 글' : `${userName || '사용자'}님의 글`);
 
     const allPosts = data?.pages.flatMap(page => page.posts) || [];
 
-    // 모든 포스트의 이미지 URL 수집
-    const allImageUrls = useMemo(() => {
-        return allPosts.flatMap(post => post.image_urls || [])
-    }, [allPosts])
-
     // 이미지 로드 상태 추적
-    const { allImagesLoaded } = useImageLoadTracking(allImageUrls)
+    const allImageUrls = useMemo(() => allPosts.flatMap(post => post.image_urls || []), [allPosts]);
+    const { allImagesLoaded } = useImageLoadTracking(allImageUrls);
 
     // 데이터 로딩 중이거나 이미지가 아직 로드되지 않았으면 로딩 표시
-    const isContentLoading = isLoading || (allPosts.length > 0 && !allImagesLoaded)
+    // React Query의 isLoading은 enabled가 false일 때도 true가 될 수 있으므로 
+    // 실제 쿼리가 시작되지 않았을 때의 처리는 내부적으로 관리됩니다.
+    const isContentLoading = isLoading || (allPosts.length > 0 && !allImagesLoaded);
 
     if (isContentLoading) {
         return (
@@ -51,8 +74,7 @@ export default function FeedList({ isMyPage = true, userName, userId, userAvatar
                 {Array.from({ length: 5 }).map((_, index) => (
                     <React.Fragment key={index}>
                         <div className={styles.article}>
-                            <div className={styles.articleType}>
-                            </div>
+                            <div className={styles.articleType} />
                             <PostCardSkeleton />
                         </div>
                         {index < 4 && <Separator className="mx-4" />}
@@ -77,7 +99,7 @@ export default function FeedList({ isMyPage = true, userName, userId, userAvatar
                 {titleText && <h2 className={styles.articleTitle}>{titleText}</h2>}
                 <EmptyContent
                     variant="empty"
-                    message={isMyPage ? '작성한 글이 없어요.' : `${userName || '사용자'}님이 작성한 글이 없어요.`}
+                    message={isMyPage && !isViewingOthers ? '작성한 글이 없어요.' : `${userName || '사용자'}님이 작성한 글이 없어요.`}
                 />
             </div>
         );
@@ -95,13 +117,14 @@ export default function FeedList({ isMyPage = true, userName, userId, userAvatar
                                 color="grey"
                             />
                         </div>
-                        <FeedPostItem 
-                            post={post} 
+                        <FeedPostItem
+                            post={post}
                             currentUser={isMyPage ? myProfile : null}
                             userName={userName}
                             userId={userId}
                             userAvatarUrl={userAvatarUrl}
                             currentUserId={currentUser?.id}
+                            isMyPage={isMyPage}
                         />
                     </div>
                     {index < allPosts.length - 1 && <Separator className="mx-4" />}
@@ -122,21 +145,23 @@ export default function FeedList({ isMyPage = true, userName, userId, userAvatar
     );
 }
 
-/** Feed 타입 포스트 아이템 (게시판 + 자치회 리포트 모두 동일 컴포넌트 사용) */
-function FeedPostItem({ 
-    post, 
+/** Feed 타입 포스트 아이템 컴포넌트 */
+function FeedPostItem({
+    post,
     currentUser,
     userName,
     userId,
     userAvatarUrl,
-    currentUserId
-}: { 
-    post: MyPostItem; 
+    currentUserId,
+    isMyPage,
+}: {
+    post: MyPostItem;
     currentUser?: UserMyProfile | null;
     userName?: string;
     userId?: string;
     userAvatarUrl?: string | null;
     currentUserId?: string;
+    isMyPage: boolean;
 }) {
     // MyPostItem을 FeedPostResponse로 변환
     // 자치회 리포트의 경우 title이 있을 수 있으므로, content가 없으면 title 사용
@@ -166,10 +191,14 @@ function FeedPostItem({
     // 내 게시글인지 확인 (퍼블릭 프로필 페이지에서 내 게시글인 경우 프로필 상호작용 비활성화)
     // author가 있고, 현재 사용자 ID와 작성자 ID가 일치하면 내 게시글
     const isMyPost = Boolean(
-        currentUserId && 
-        author?.id && 
+        currentUserId &&
+        author?.id &&
         currentUserId === author.id
     );
+
+    // 멘토/퍼블릭 페이지에서는 프로필 상호작용 및 팔로우 버튼 비활성화
+    // 마이페이지에서는 내 게시글인 경우만 비활성화
+    const disableProfileInteraction = !isMyPage || isMyPost;
 
     const feedPost: FeedPostResponse = {
         id: post.id,
@@ -192,13 +221,13 @@ function FeedPostItem({
         : undefined;
     const postType = post.type === MyPostItemType.COUNCIL_REPORT ? 'council' : 'feed';
 
-    // 내 게시글이면 프로필 상호작용 비활성화, 아니면 활성화
+    // 내 게시글이거나 멘토/퍼블릭 페이지인 경우 프로필 상호작용 비활성화
     return (
         <PostCard
             post={feedPost}
             detailHref={detailHref}
             postType={postType}
-            disableProfileInteraction={isMyPost}
+            disableProfileInteraction={disableProfileInteraction}
         />
     );
 }
@@ -210,4 +239,4 @@ const styles = {
     articleType: cn('flex items-center px-4'),
     loadMore: cn('px-4 py-4 flex justify-center'),
     loadMoreButton: cn('px-4 py-2 text-grey-9 bg-grey-1-1 rounded-lg'),
-}
+};

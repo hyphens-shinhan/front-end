@@ -19,6 +19,9 @@ export const postKeys = {
   /** 내가 작성한 포스트 목록 쿼리 키 */
   myPosts: (limit?: number, offset?: number) =>
     [...postKeys.lists(), 'me', limit, offset] as const,
+  /** 특정 유저(멘토)가 작성한 포스트 목록 쿼리 키 */
+  userPosts: (userId: string, limit?: number, offset?: number) =>
+    [...postKeys.lists(), 'user', userId, limit, offset] as const,
   /** 공개 리포트 피드 쿼리 키 */
   publicReportsFeed: (limit?: number, offset?: number) =>
     [...postKeys.lists(), 'council', limit, offset] as const,
@@ -149,7 +152,10 @@ export const useMyAppliedEventPosts = (limit = 20, offset = 0) => {
  * Feed + Council Report 통합
  * @param limit 가져올 개수
  */
-export const useInfiniteMyPosts = (limit = 20) => {
+export const useInfiniteMyPosts = (
+  limit = 20,
+  options?: { enabled?: boolean },
+) => {
   return useInfiniteQuery({
     queryKey: postKeys.myPosts(limit),
     queryFn: ({ pageParam = 0 }) => PostService.getMyPosts(limit, pageParam),
@@ -158,6 +164,7 @@ export const useInfiniteMyPosts = (limit = 20) => {
       const nextOffset = allPages.length * limit
       return nextOffset < lastPage.total ? nextOffset : undefined
     },
+    ...options,
   })
 }
 
@@ -171,6 +178,50 @@ export const useMyPosts = (limit = 20, offset = 0) => {
   return useQuery({
     queryKey: postKeys.myPosts(limit, offset),
     queryFn: () => PostService.getMyPosts(limit, offset),
+  })
+}
+
+/**
+ * 특정 유저(멘토)가 작성한 포스트 목록 조회
+ * GET /posts/user/{userId}
+ */
+export const useUserPosts = (
+  userId: string | null,
+  limit = 20,
+  offset = 0,
+  options?: { enabled?: boolean },
+) => {
+  return useQuery({
+    queryKey: postKeys.userPosts(userId ?? '', limit, offset),
+    queryFn: () =>
+      userId
+        ? PostService.getUserPosts(userId, limit, offset)
+        : Promise.resolve({ posts: [], total: 0 }),
+    ...options,
+  })
+}
+
+/**
+ * 특정 유저(멘토)가 작성한 포스트 목록 조회 (무한 스크롤)
+ * GET /posts/user/{userId}
+ */
+export const useInfiniteUserPosts = (
+  userId: string | null,
+  limit = 20,
+  options?: { enabled?: boolean },
+) => {
+  return useInfiniteQuery({
+    queryKey: [...postKeys.userPosts(userId ?? '', limit), 'infinite'],
+    queryFn: ({ pageParam = 0 }) =>
+      userId
+        ? PostService.getUserPosts(userId, limit, pageParam)
+        : Promise.resolve({ posts: [], total: 0 }),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, allPages) => {
+      const nextOffset = allPages.length * limit
+      return nextOffset < lastPage.total ? nextOffset : undefined
+    },
+    ...options,
   })
 }
 

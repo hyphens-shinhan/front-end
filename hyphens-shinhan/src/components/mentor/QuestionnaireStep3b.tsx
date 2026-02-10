@@ -3,28 +3,15 @@
 import { useState, useEffect } from 'react'
 import type { MentorshipRequest, TimeOfDay } from '@/types/mentor'
 import QuestionnaireQuestionBlock from './QuestionnaireQuestionBlock'
-import { cn } from '@/utils/cn'
+import SelectableOptionRow from './SelectableOptionRow'
 
 const TIMES: { value: TimeOfDay; label: string }[] = [
-  { value: 'morning', label: '오전 (6-9시)' },
-  { value: 'afternoon', label: '오후 (12-3시)' },
-  { value: 'evening', label: '저녁 (6-9시)' },
-  { value: 'late_night', label: '밤 (9시-12시)' },
-  { value: 'flexible', label: '유연함' },
+  { value: 'morning', label: '오전 9시 ~ 오후 12시' },
+  { value: 'afternoon', label: '오후 12시 ~ 오후 3시' },
+  { value: 'evening', label: '오후 3시 ~ 오후 6시' },
+  { value: 'late_night', label: '오후 6시 ~ 오후 9시' },
+  { value: 'flexible', label: '그 외 시간대' },
 ]
-
-const stepStyles = {
-  optionRow: cn(
-    'flex items-center gap-2 py-3 px-0 cursor-pointer min-h-[48px]',
-    'border-b border-grey-2 last:border-b-0',
-  ),
-  optionCircle: cn(
-    'shrink-0 w-6 h-6 rounded-full flex items-center justify-center bg-grey-4 transition-colors',
-  ),
-  optionCircleSelected: 'bg-primary-secondaryroyal',
-  optionLabel: 'body-5 text-grey-10 flex-1',
-  optionLabelSelected: 'text-grey-11',
-} as const
 
 interface QuestionnaireStep3bProps {
   initialData?: Partial<MentorshipRequest>
@@ -70,43 +57,32 @@ export default function QuestionnaireStep3b({
   }, [selectedTimes, onFooterChange, onRegisterNext])
 
   return (
-    <div className="flex flex-col flex-1 min-h-0">
-      <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
+    <div className={stepStyles.wrapper}>
+      <div className={stepStyles.scrollArea}>
         <QuestionnaireQuestionBlock
           title="가능한 시간대를 선택해주세요"
           hint="멘토와 만날 수 있는 시간대를 선택해주세요."
         />
-        <div className="flex flex-col">
-          {TIMES.map((time) => {
-            const isSelected = selectedTimes.includes(time.value)
-            return (
-              <label key={time.value} className={stepStyles.optionRow}>
-                <div
-                  className={cn(
-                    stepStyles.optionCircle,
-                    isSelected && stepStyles.optionCircleSelected,
-                  )}
-                >
-                  {isSelected && (
-                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden>
-                      <path d="M10 3L4.5 8.5L2 6" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  )}
-                </div>
-                <input
-                  type="checkbox"
-                  checked={isSelected}
-                  onChange={() => toggleTime(time.value)}
-                  className="sr-only"
-                />
-                <span className={cn(stepStyles.optionLabel, isSelected && stepStyles.optionLabelSelected)}>
-                  {time.label}
-                </span>
-              </label>
-            )
-          })}
+        <div className={stepStyles.options}>
+          {TIMES.map((time) => (
+            <SelectableOptionRow
+              key={time.value}
+              value={time.value}
+              label={time.label}
+              selected={selectedTimes.includes(time.value)}
+              onToggle={() => toggleTime(time.value)}
+              name="timeOfDay"
+              variant="checkbox"
+            />
+          ))}
         </div>
       </div>
     </div>
   )
 }
+
+const stepStyles = {
+  wrapper: 'flex flex-col flex-1 min-h-0',
+  scrollArea: 'flex-1 min-h-0 overflow-y-auto overflow-x-hidden',
+  options: 'flex flex-col',
+} as const

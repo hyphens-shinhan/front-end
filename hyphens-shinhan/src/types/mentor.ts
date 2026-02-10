@@ -19,7 +19,12 @@ export type CommunicationStyle = 'direct' | 'collaborative' | 'supportive'
 export type WorkPace = 'fast_paced' | 'steady' | 'flexible'
 export type MentorshipStyle = 'hands_on' | 'advisory' | 'inspirational'
 
-export type MeetingFormat = 'zoom' | 'google_meet' | 'in_person' | 'phone_call' | 'any'
+export type MeetingFormat =
+  | 'zoom'
+  | 'google_meet'
+  | 'in_person'
+  | 'phone_call'
+  | 'any'
 
 export type DayOfWeek =
   | 'monday'
@@ -29,7 +34,12 @@ export type DayOfWeek =
   | 'friday'
   | 'saturday'
   | 'sunday'
-export type TimeOfDay = 'morning' | 'afternoon' | 'evening' | 'late_night' | 'flexible'
+export type TimeOfDay =
+  | 'morning'
+  | 'afternoon'
+  | 'evening'
+  | 'late_night'
+  | 'flexible'
 
 export interface MentorAvailability {
   days: DayOfWeek[]
@@ -40,9 +50,15 @@ export interface MentorAvailability {
 }
 
 export interface PersonalityTraits {
+  /** 단일 선택(레거시) */
   communicationStyle?: CommunicationStyle
+  /** 복수 선택(신규) */
+  communicationStyles?: CommunicationStyle[]
   workPace?: WorkPace
+  /** 단일 선택(레거시) */
   mentorshipStyle?: MentorshipStyle
+  /** 복수 선택(신규) */
+  mentorshipStyles?: MentorshipStyle[]
 }
 
 export interface Mentor {

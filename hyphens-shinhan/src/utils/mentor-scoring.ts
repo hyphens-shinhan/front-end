@@ -22,17 +22,23 @@ function getCategoryLabel(category: MentorCategory): string {
 
 export function calculateCategoryScore(
   request: MentorshipRequest,
-  mentor: Mentor
+  mentor: Mentor,
 ): { score: number; reason?: string } {
   const selectedCategories = request.goalCategories || [request.goalCategory]
   for (const category of selectedCategories) {
     if (mentor.primaryCategory === category) {
-      return { score: 40, reason: `완벽한 분야 매칭: ${getCategoryLabel(category)}` }
+      return {
+        score: 40,
+        reason: `완벽한 분야 매칭: ${getCategoryLabel(category)}`,
+      }
     }
   }
   for (const category of selectedCategories) {
     if (mentor.secondaryCategories?.includes(category)) {
-      return { score: 20, reason: `보조 분야 매칭: ${getCategoryLabel(category)}` }
+      return {
+        score: 20,
+        reason: `보조 분야 매칭: ${getCategoryLabel(category)}`,
+      }
     }
   }
   return { score: 0 }
@@ -40,7 +46,7 @@ export function calculateCategoryScore(
 
 export function calculateGoalAlignmentScore(
   request: MentorshipRequest,
-  mentor: Mentor
+  mentor: Mentor,
 ): { score: number; reasons: string[] } {
   let score = 0
   const reasons: string[] = []
@@ -53,7 +59,9 @@ export function calculateGoalAlignmentScore(
   const requestLevel = levelOrder[request.goalLevel] || 0
   if (mentorLevel >= requestLevel) {
     score += 10
-    reasons.push(`전문성 수준 일치: ${getExpertiseLevelLabel(mentor.expertiseLevel)}`)
+    reasons.push(
+      `전문성 수준 일치: ${getExpertiseLevelLabel(mentor.expertiseLevel)}`,
+    )
   }
   score += 15
   reasons.push(`목표 기간 일치: ${getTimelineLabel(request.goalTimeline)}`)
@@ -80,25 +88,27 @@ function getExpertiseLevelLabel(level: string): string {
 
 export function calculateAvailabilityScore(
   request: MentorshipRequest,
-  mentor: Mentor
+  mentor: Mentor,
 ): { score: number; reasons: string[] } {
   let score = 0
   const reasons: string[] = []
   const dayOverlap = request.availability.days.filter((day) =>
-    mentor.availability.days.includes(day)
+    mentor.availability.days.includes(day),
   )
   const timeOverlap = request.availability.timeOfDay.filter((time) =>
-    mentor.availability.timeOfDay.includes(time)
+    mentor.availability.timeOfDay.includes(time),
   )
   if (dayOverlap.length > 0 && timeOverlap.length > 0) {
     score += 15
-    reasons.push(`가능한 시간 일치: ${dayOverlap.length}일, ${timeOverlap.length}개 시간대`)
+    reasons.push(
+      `가능한 시간 일치: ${dayOverlap.length}일, ${timeOverlap.length}개 시간대`,
+    )
   } else if (dayOverlap.length > 0 || timeOverlap.length > 0) {
     score += 8
     reasons.push('부분적인 시간 일치')
   }
   const formatOverlap = request.availability.preferredFormats.filter((format) =>
-    mentor.availability.preferredFormats.includes(format)
+    mentor.availability.preferredFormats.includes(format),
   )
   if (formatOverlap.length > 0) {
     score += 5
@@ -120,7 +130,7 @@ function getFormatLabel(format: string): string {
 
 export function calculatePersonalityScore(
   request: MentorshipRequest,
-  mentor: Mentor
+  mentor: Mentor,
 ): { score: number; reasons: string[] } {
   if (!request.personalityPreferences || !mentor.personalityTraits) {
     return { score: 5, reasons: ['성격 선호도 미지정'] }
@@ -129,11 +139,14 @@ export function calculatePersonalityScore(
   const reasons: string[] = []
   const requestPrefs = request.personalityPreferences
   const mentorTraits = mentor.personalityTraits
-  if (requestPrefs.communicationStyle && mentorTraits.communicationStyle) {
-    if (requestPrefs.communicationStyle === mentorTraits.communicationStyle) {
+  const communicationPrefs =
+    requestPrefs.communicationStyles ??
+    (requestPrefs.communicationStyle ? [requestPrefs.communicationStyle] : [])
+  if (communicationPrefs.length && mentorTraits.communicationStyle) {
+    if (communicationPrefs.includes(mentorTraits.communicationStyle)) {
       score += 3
       reasons.push(
-        `커뮤니케이션 스타일 일치: ${getCommunicationStyleLabel(requestPrefs.communicationStyle)}`
+        `커뮤니케이션 스타일 일치: ${getCommunicationStyleLabel(mentorTraits.communicationStyle)}`,
       )
     }
   }
@@ -143,11 +156,14 @@ export function calculatePersonalityScore(
       reasons.push(`작업 속도 일치: ${getWorkPaceLabel(requestPrefs.workPace)}`)
     }
   }
-  if (requestPrefs.mentorshipStyle && mentorTraits.mentorshipStyle) {
-    if (requestPrefs.mentorshipStyle === mentorTraits.mentorshipStyle) {
+  const mentorshipPrefs =
+    requestPrefs.mentorshipStyles ??
+    (requestPrefs.mentorshipStyle ? [requestPrefs.mentorshipStyle] : [])
+  if (mentorshipPrefs.length && mentorTraits.mentorshipStyle) {
+    if (mentorshipPrefs.includes(mentorTraits.mentorshipStyle)) {
       score += 4
       reasons.push(
-        `멘토링 스타일 일치: ${getMentorshipStyleLabel(requestPrefs.mentorshipStyle)}`
+        `멘토링 스타일 일치: ${getMentorshipStyleLabel(mentorTraits.mentorshipStyle)}`,
       )
     }
   }
@@ -188,7 +204,7 @@ function getMentorshipStyleLabel(style: string): string {
 export function calculateBonusScore(
   request: MentorshipRequest,
   mentor: Mentor,
-  ybProfile?: { university?: string; major?: string; cohortYear?: string }
+  ybProfile?: { university?: string; major?: string; cohortYear?: string },
 ): { score: number; reasons: string[] } {
   let score = 0
   const reasons: string[] = []
@@ -224,7 +240,7 @@ export function calculateBonusScore(
 export function calculateMatchScore(
   request: MentorshipRequest,
   mentor: Mentor,
-  ybProfile?: { university?: string; major?: string; cohortYear?: string }
+  ybProfile?: { university?: string; major?: string; cohortYear?: string },
 ): MatchScore {
   const category = calculateCategoryScore(request, mentor)
   const goalAlignment = calculateGoalAlignmentScore(request, mentor)

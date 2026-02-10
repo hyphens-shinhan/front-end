@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect } from 'react'
 import type { MentorshipRequest, MeetingFormat } from '@/types/mentor'
 import QuestionnaireQuestionBlock from './QuestionnaireQuestionBlock'
-import { cn } from '@/utils/cn'
+import SelectableOptionRow from './SelectableOptionRow'
 
 type MeetingOptionId = 'remote' | 'in_person' | 'flexible'
 
@@ -12,19 +12,6 @@ const OPTIONS: { id: MeetingOptionId; label: string; formats: MeetingFormat[] }[
   { id: 'in_person', label: '대면 방식', formats: ['in_person'] },
   { id: 'flexible', label: '상황에 따라 유연하게', formats: ['any'] },
 ]
-
-const stepStyles = {
-  optionRow: cn(
-    'flex items-center gap-2 py-3 px-4 cursor-pointer min-h-[48px]',
-    'border-b border-grey-2 last:border-b-0',
-  ),
-  optionCircle: cn(
-    'shrink-0 w-6 h-6 rounded-full flex items-center justify-center bg-grey-4 transition-colors',
-  ),
-  optionCircleSelected: 'bg-primary-secondaryroyal',
-  optionLabel: 'body-5 text-grey-10 flex-1 font-semibold',
-  optionLabelSelected: 'text-grey-11',
-} as const
 
 function getInitialSelected(preferredFormats: MeetingFormat[] | undefined): Set<MeetingOptionId> {
   const set = new Set<MeetingOptionId>()
@@ -90,50 +77,33 @@ export default function QuestionnaireStep3c({
   }, [hasSelection, onFooterChange, onRegisterNext])
 
   return (
-    <div className="flex flex-col flex-1 min-h-0">
-      <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
+    <div className={stepStyles.wrapper}>
+      <div className={stepStyles.scrollArea}>
         <QuestionnaireQuestionBlock
           title="멘토님과 만날 방법을 선택해주세요"
           hint="복수 선택 가능"
           titleVariant="large"
         />
-        <div className="flex flex-col">
-          {OPTIONS.map((opt) => {
-            const isSelected = selected.has(opt.id)
-            return (
-              <label key={opt.id} className={stepStyles.optionRow}>
-                <div
-                  className={cn(
-                    stepStyles.optionCircle,
-                    isSelected && stepStyles.optionCircleSelected,
-                  )}
-                >
-                  {isSelected && (
-                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden>
-                      <path
-                        d="M10 3L4.5 8.5L2 6"
-                        stroke="#fff"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  )}
-                </div>
-                <input
-                  type="checkbox"
-                  checked={isSelected}
-                  onChange={() => toggle(opt.id)}
-                  className="sr-only"
-                />
-                <span className={cn(stepStyles.optionLabel, isSelected && stepStyles.optionLabelSelected)}>
-                  {opt.label}
-                </span>
-              </label>
-            )
-          })}
+        <div className={stepStyles.options}>
+          {OPTIONS.map((opt) => (
+            <SelectableOptionRow
+              key={opt.id}
+              value={opt.id}
+              label={opt.label}
+              selected={selected.has(opt.id)}
+              onToggle={() => toggle(opt.id)}
+              name="meetingMethod"
+              variant="checkbox"
+            />
+          ))}
         </div>
       </div>
     </div>
   )
 }
+
+const stepStyles = {
+  wrapper: 'flex flex-col flex-1 min-h-0',
+  scrollArea: 'flex-1 min-h-0 overflow-y-auto overflow-x-hidden',
+  options: 'flex flex-col',
+} as const

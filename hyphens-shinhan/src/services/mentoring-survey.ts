@@ -115,20 +115,28 @@ export function toSurveyCreate(
   const methods = Array.from(methodsSet)
   if (methods.length === 0) methods.push('FLEXIBLE')
 
-  let communication_styles: SurveyCommunicationStyle[] = []
-  if (request.personalityPreferences?.communicationStyle) {
-    communication_styles = [
-      COMM_STYLE_TO_SURVEY[request.personalityPreferences.communicationStyle],
-    ]
-  }
+  const communicationPrefs =
+    request.personalityPreferences?.communicationStyles ??
+    (request.personalityPreferences?.communicationStyle
+      ? [request.personalityPreferences.communicationStyle]
+      : [])
+  let communication_styles: SurveyCommunicationStyle[] = [
+    ...new Set(
+      communicationPrefs.map((s) => COMM_STYLE_TO_SURVEY[s]).filter(Boolean),
+    ),
+  ]
   if (communication_styles.length === 0) communication_styles = ['DIRECT_CLEAR']
 
-  let mentoring_focuses: MentoringFocus[] = []
-  if (request.personalityPreferences?.mentorshipStyle) {
-    mentoring_focuses = [
-      MENTORSHIP_STYLE_TO_FOCUS[request.personalityPreferences.mentorshipStyle],
-    ]
-  }
+  const mentorshipPrefs =
+    request.personalityPreferences?.mentorshipStyles ??
+    (request.personalityPreferences?.mentorshipStyle
+      ? [request.personalityPreferences.mentorshipStyle]
+      : [])
+  let mentoring_focuses: MentoringFocus[] = [
+    ...new Set(
+      mentorshipPrefs.map((s) => MENTORSHIP_STYLE_TO_FOCUS[s]).filter(Boolean),
+    ),
+  ]
   if (mentoring_focuses.length === 0) mentoring_focuses = ['PRACTICE_ORIENTED']
 
   return {
@@ -184,12 +192,14 @@ export function fromSurveyResponse(
   const preferredFormats = res.methods
     .map((m) => METHOD_MAP[m])
     .filter(Boolean) as MeetingFormat[]
-  const communicationStyle = res.communication_styles[0]
-    ? SURVEY_TO_COMM_STYLE[res.communication_styles[0]]
-    : undefined
-  const mentorshipStyle = res.mentoring_focuses[0]
-    ? FOCUS_TO_MENTORSHIP_STYLE[res.mentoring_focuses[0]]
-    : undefined
+  const communicationStyles = (res.communication_styles ?? [])
+    .map((s) => SURVEY_TO_COMM_STYLE[s])
+    .filter(Boolean) as CommunicationStyle[]
+  const mentorshipStyles = (res.mentoring_focuses ?? [])
+    .map((s) => FOCUS_TO_MENTORSHIP_STYLE[s])
+    .filter(Boolean) as MentorshipStyle[]
+  const communicationStyle = communicationStyles[0]
+  const mentorshipStyle = mentorshipStyles[0]
 
   return {
     goalCategory,
@@ -202,8 +212,19 @@ export function fromSurveyResponse(
       preferredFormats: preferredFormats.length ? preferredFormats : ['any'],
     },
     personalityPreferences:
-      communicationStyle || mentorshipStyle
-        ? { communicationStyle, mentorshipStyle }
+      communicationStyles.length || mentorshipStyles.length
+        ? {
+            // 신규(복수)
+            communicationStyles: communicationStyles.length
+              ? communicationStyles
+              : undefined,
+            mentorshipStyles: mentorshipStyles.length
+              ? mentorshipStyles
+              : undefined,
+            // 레거시(단일)도 함께 채워 호환 유지
+            communicationStyle,
+            mentorshipStyle,
+          }
         : undefined,
   }
 }

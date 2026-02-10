@@ -9,6 +9,7 @@ import { useToast } from '@/hooks/useToast'
 import { TOAST_MESSAGES } from '@/constants/toast'
 import type { ClubCategory, ClubAnonymity } from '@/types/clubs'
 import { cn } from '@/utils/cn'
+import { Icon } from '@/components/common/Icon'
 
 const CATEGORIES: { value: ClubCategory; label: string }[] = [
   { value: 'STUDY', label: '스터디' },
@@ -98,8 +99,8 @@ export default function CreateGroup() {
     <main className="mx-auto max-w-[480px] px-5 pt-6 pb-20">
       {/* Cover (optional) */}
       <section className="mb-10">
-        <p className="mb-3 text-[13px] font-medium tracking-tight text-grey-10">
-          커버 이미지 <span className="font-normal text-grey-8">(선택)</span>
+        <p className="title-16 text-grey-11">
+          커버 이미지 <span className="body-6 text-grey-8">(선택)</span>
         </p>
         <input
           ref={coverInputRef}
@@ -112,7 +113,7 @@ export default function CreateGroup() {
           type="button"
           onClick={handleCoverClick}
           className={cn(
-            'flex w-full aspect-2/1 items-center justify-center overflow-hidden rounded-2xl bg-grey-2',
+            'flex w-full aspect-2/1 items-center justify-center overflow-hidden rounded-[16px] bg-grey-1-1 mt-4',
             'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-shinhanblue focus-visible:ring-offset-2'
           )}
         >
@@ -138,11 +139,11 @@ export default function CreateGroup() {
                 className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-black/50 text-sm font-medium text-white opacity-0 transition-opacity group-hover:opacity-100"
                 aria-label="커버 이미지 제거"
               >
-                ×
+                <Icon name="IconLLineClose" />
               </button>
             </div>
           ) : (
-            <span className="text-[15px] tracking-tight text-grey-8">
+            <span className="body-7 text-grey-8 flex items-center gap-2">
               이미지 추가
             </span>
           )}
@@ -153,7 +154,7 @@ export default function CreateGroup() {
       <section className="mb-10">
         <label
           htmlFor="group-name"
-          className="mb-3 block text-[13px] font-medium tracking-tight text-grey-10"
+          className="mb-3 block title-16 text-grey-11"
         >
           소모임 이름
         </label>
@@ -162,21 +163,21 @@ export default function CreateGroup() {
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value.slice(0, MAX_NAME_LENGTH))}
-          placeholder="이름을 입력하세요"
+          placeholder="소모임 이름을 입력하세요"
           maxLength={MAX_NAME_LENGTH}
           className={cn(
-            'w-full rounded-2xl bg-white px-4 py-4 text-[17px] text-grey-11 placeholder:text-grey-7',
-            'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-shinhanblue focus-visible:ring-offset-2'
+            'w-full rounded-[16px] bg-white px-4 py-2.5 body-8 text-grey-11 placeholder:body-7 placeholder:text-grey-7',
+            'focus:outline-none focus:ring-1 focus:ring-primary-light border border-grey-2'
           )}
         />
-        <p className="mt-2 text-[13px] text-grey-8">
+        <p className="font-caption-caption4 text-grey-8 text-right mt-1">
           {name.length} / {MAX_NAME_LENGTH}
         </p>
       </section>
 
       {/* Category */}
       <section className="mb-8">
-        <p className="mb-3 text-[13px] font-medium tracking-tight text-grey-10">
+        <p className="mb-3 title-16 text-grey-11">
           카테고리
         </p>
         <div className="flex flex-wrap gap-1.5">
@@ -186,10 +187,10 @@ export default function CreateGroup() {
               type="button"
               onClick={() => setCategory(value)}
               className={cn(
-                'h-8 rounded-full px-3 text-[13px] font-medium transition-colors',
+                'rounded-full px-3 py-2 font-caption-caption4 transition-colors',
                 'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-shinhanblue focus-visible:ring-offset-2',
                 category === value
-                  ? 'bg-primary-shinhanblue text-white'
+                  ? 'bg-primary-light text-white'
                   : 'bg-grey-2 text-grey-10 hover:bg-grey-3'
               )}
             >
@@ -201,7 +202,7 @@ export default function CreateGroup() {
 
       {/* Participation mode */}
       <section className="mb-8">
-        <p className="mb-3 text-[13px] font-medium tracking-tight text-grey-10">
+        <p className="mb-3 title-16 text-grey-11">
           참가 방식
         </p>
         <div className="flex flex-wrap gap-2">
@@ -211,10 +212,10 @@ export default function CreateGroup() {
               type="button"
               onClick={() => setParticipationMode(value)}
               className={cn(
-                'h-9 rounded-full px-4 text-[13px] font-medium transition-colors',
+                'rounded-full px-3 py-2 font-caption-caption4 transition-colors',
                 'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-shinhanblue focus-visible:ring-offset-2',
                 participationMode === value
-                  ? 'bg-primary-shinhanblue text-white'
+                  ? 'bg-primary-light text-white'
                   : 'bg-grey-2 text-grey-10 hover:bg-grey-3'
               )}
             >
@@ -228,7 +229,7 @@ export default function CreateGroup() {
       <section className="mb-6">
         <label
           htmlFor="group-desc"
-          className="mb-3 block text-[13px] font-medium tracking-tight text-grey-10"
+          className="mb-3 title-16 text-grey-11"
         >
           소개
         </label>
@@ -242,11 +243,11 @@ export default function CreateGroup() {
           maxLength={MAX_DESCRIPTION_LENGTH}
           rows={5}
           className={cn(
-            'w-full resize-none rounded-2xl bg-white px-4 py-4 text-[16px] leading-relaxed text-grey-11 placeholder:text-grey-7',
-            'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-shinhanblue focus-visible:ring-offset-2'
+            'w-full rounded-[16px] bg-white px-4 py-2.5 body-8 text-grey-11 placeholder:body-7 placeholder:text-grey-7',
+            'focus:outline-none focus:ring-1 focus:ring-primary-light mt-2 border border-grey-2'
           )}
         />
-        <p className="mt-2 text-[13px] text-grey-8">
+        <p className="font-caption-caption4 text-grey-8 text-right">
           {description.length} / {MAX_DESCRIPTION_LENGTH}
         </p>
       </section>

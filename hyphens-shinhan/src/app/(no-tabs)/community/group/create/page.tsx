@@ -6,7 +6,7 @@ import { cn } from '@/utils/cn'
  */
 export default function CreateGroupPage() {
   return (
-    <div className={cn('min-h-full bg-grey-1-1')}>
+    <div className={cn('min-h-full')}>
       <CreateGroup />
     </div>
   )

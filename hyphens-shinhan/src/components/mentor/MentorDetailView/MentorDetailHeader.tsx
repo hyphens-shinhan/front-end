@@ -31,17 +31,14 @@ export function MentorDetailHeader({ mentor }: MentorDetailHeaderProps) {
         <div className={styles.nameRow}>
           <h1 className={styles.name}>{mentor.name}</h1>
           <span className={styles.verifiedIconWrap} aria-hidden>
-            <Icon
-              name="IconMBoldShieldTick"
-              className="size-6"
-            />
+            <Icon name='IconLBoldVerify' />
           </span>
         </div>
         <div className={styles.tagsRow}>
           <InfoTag label={categoryLabel} color="blue" />
           <InfoTag label={typeLabel} color="yellow" />
-          {mentor.affiliation && (
-            <InfoTag label={mentor.affiliation} color="green" />
+          {mentor.university && (
+            <InfoTag label={mentor.university} color="green" />
           )}
         </div>
       </div>

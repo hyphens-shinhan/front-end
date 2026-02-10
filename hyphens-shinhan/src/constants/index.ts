@@ -208,18 +208,13 @@ export const CUSTOM_HEADER_CONFIG: Record<string, CustomHeaderConfig> = {
     title: '멘토링 신청하기',
     type: 'Left',
     btnType: 'Back',
-    navItem: {
-      text: '이전 설문 불러오기',
-      ariaLabel: '이전 설문 불러오기',
-      type: 'button',
-    },
   },
   /** 멘토 매칭 결과 */
   [ROUTES.MENTORS.MATCHES]: {
     title: '멘토 매칭 결과',
     type: 'Left',
     btnType: 'Back',
-    backHref: ROUTES.MENTORS.QUESTIONNAIRE,
+    backHref: ROUTES.NETWORK.MAIN,
   },
   /** 멘토링 신청 풀스크린 (/mentors/[id]/apply) */
   [ROUTES.MENTORS.APPLY]: {
@@ -234,14 +229,6 @@ export const CUSTOM_HEADER_CONFIG: Record<string, CustomHeaderConfig> = {
     title: '나의 멘토링 내역',
     type: 'Left',
     btnType: 'Back',
-  },
-  /** 멘토 프로필 상세 (/mentors/[id]) - pathPattern so not to match /mentors/matches etc. */
-  [ROUTES.MENTORS.DETAIL_PREFIX]: {
-    pathPattern: /^\/mentors\/[^/]+$/,
-    title: '멘토 상세',
-    type: 'Left',
-    btnType: 'Back',
-    backHref: ROUTES.MENTORS.MATCHES,
   },
   /** 신한장학재단 공지 상세 - 목록보다 먼저 두어 /community/notice/[id] 매칭 */
   [ROUTES.COMMUNITY.NOTICE.DETAIL_PREFIX]: {

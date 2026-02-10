@@ -1,6 +1,6 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import type { MentorshipRequest } from '@/types/mentor'
 import { ROUTES } from '@/constants'
 import MentorQuestionnaire from '@/components/mentor/MentorQuestionnaire'
@@ -12,6 +12,7 @@ import Button from '@/components/common/Button'
 
 export default function MentorQuestionnairePage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const toast = useToast()
   const {
     initialData,
@@ -59,9 +60,17 @@ export default function MentorQuestionnairePage() {
     )
   }
 
+  const stepParam = searchParams.get('step')
+  const parsedStep = stepParam ? Number(stepParam) : undefined
+  const initialStep =
+    parsedStep && Number.isFinite(parsedStep)
+      ? Math.min(7, Math.max(1, parsedStep))
+      : undefined
+
   return (
     <MentorQuestionnaire
       initialData={initialData}
+      initialStep={initialStep}
       onComplete={handleComplete}
     />
   )

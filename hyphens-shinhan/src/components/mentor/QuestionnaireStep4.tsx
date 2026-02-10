@@ -28,6 +28,8 @@ interface QuestionnaireStep4Props {
   onBack: () => void
   onFooterChange?: (state: { nextLabel: string; nextDisabled: boolean }) => void
   onRegisterNext?: (fn: () => void) => void
+  onSave?: (data: Partial<MentorshipRequest>) => void
+  onRegisterSave?: (fn: () => void) => void
 }
 
 export default function QuestionnaireStep4({
@@ -36,6 +38,8 @@ export default function QuestionnaireStep4({
   onBack,
   onFooterChange,
   onRegisterNext,
+  onSave,
+  onRegisterSave,
 }: QuestionnaireStep4Props) {
   const [communicationStyles, setCommunicationStyles] = useState<CommunicationStyle[]>(
     initialData?.personalityPreferences?.communicationStyles ??
@@ -65,7 +69,16 @@ export default function QuestionnaireStep4({
   useEffect(() => {
     onFooterChange?.({ nextLabel: '멘토 찾기', nextDisabled: false })
     onRegisterNext?.(handleNext)
-  }, [onFooterChange, onRegisterNext])
+    onRegisterSave?.(() => {
+      const personalityPreferences: PersonalityTraits = {}
+      if (communicationStyles.length) personalityPreferences.communicationStyles = communicationStyles
+      if (mentorshipStyles.length) personalityPreferences.mentorshipStyles = mentorshipStyles
+      onSave?.({
+        personalityPreferences:
+          Object.keys(personalityPreferences).length > 0 ? personalityPreferences : undefined,
+      })
+    })
+  }, [communicationStyles, mentorshipStyles, onFooterChange, onRegisterNext, onRegisterSave, onSave])
 
   return (
     <div className={stepStyles.wrapper}>

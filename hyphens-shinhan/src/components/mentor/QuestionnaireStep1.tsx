@@ -23,6 +23,8 @@ interface QuestionnaireStep1Props {
   onBack: () => void
   onFooterChange?: (state: { nextLabel: string; nextDisabled: boolean }) => void
   onRegisterNext?: (fn: () => void) => void
+  onSave?: (data: Partial<MentorshipRequest>) => void
+  onRegisterSave?: (fn: () => void) => void
 }
 
 export default function QuestionnaireStep1({
@@ -31,6 +33,8 @@ export default function QuestionnaireStep1({
   onBack,
   onFooterChange,
   onRegisterNext,
+  onSave,
+  onRegisterSave,
 }: QuestionnaireStep1Props) {
   const [selectedCategories, setSelectedCategories] = useState<MentorCategory[]>(
     initialData?.goalCategories ?? (initialData?.goalCategory ? [initialData.goalCategory] : [])
@@ -51,7 +55,12 @@ export default function QuestionnaireStep1({
       nextDisabled: selectedCategories.length === 0,
     })
     onRegisterNext?.(handleNext)
-  }, [selectedCategories, onFooterChange, onRegisterNext])
+    onRegisterSave?.(() => {
+      if (selectedCategories.length > 0) {
+        onSave?.({ goalCategory: selectedCategories[0], goalCategories: selectedCategories })
+      }
+    })
+  }, [selectedCategories, onFooterChange, onRegisterNext, onRegisterSave, onSave])
 
   const toggleCategory = (category: MentorCategory) => {
     if (selectedCategories.includes(category)) {

@@ -3,6 +3,7 @@
 import { useEffect } from 'react'
 import { useParams, usePathname, useRouter } from 'next/navigation'
 import { EMPTY_CONTENT_MESSAGES, ROUTES } from '@/constants'
+import { hasStoredMentorshipRequest } from '@/components/common/CustomHeader'
 import { MentorDetailView, MentorNotFoundView } from '@/components/mentor/MentorDetailView'
 import { BottomNavContent } from '@/components/common/BottomNav'
 import { useUserStore, toNavRole, useHeaderStore } from '@/stores'
@@ -17,6 +18,7 @@ function MentorDetailContent() {
   const setCustomTitle = useHeaderStore((s) => s.setCustomTitle)
   const setHandlers = useHeaderStore((s) => s.setHandlers)
   const resetHandlers = useHeaderStore((s) => s.resetHandlers)
+  const setNavItemOverride = useHeaderStore((s) => s.setNavItemOverride)
 
   useEffect(() => {
     if (!loading && !mentor) {
@@ -24,14 +26,33 @@ function MentorDetailContent() {
       setHandlers({
         onBack: () => router.push(ROUTES.NETWORK.MAIN),
       })
+      setNavItemOverride(null)
       return () => {
         setCustomTitle(null)
         resetHandlers()
       }
     }
+    if (!loading && mentor) {
+      setCustomTitle(null)
+      if (hasStoredMentorshipRequest()) {
+        setNavItemOverride(undefined)
+        setHandlers({
+          onClick: () => {
+            router.push(`${ROUTES.MENTORS.QUESTIONNAIRE}?step=7`)
+          },
+        })
+      } else {
+        setNavItemOverride(null)
+        setHandlers({})
+      }
+      return () => {
+        resetHandlers()
+      }
+    }
+
     setCustomTitle(null)
     resetHandlers()
-  }, [loading, mentor, setCustomTitle, setHandlers, resetHandlers, router])
+  }, [loading, mentor, setCustomTitle, setHandlers, resetHandlers, setNavItemOverride, router])
 
   if (loading) {
     return (

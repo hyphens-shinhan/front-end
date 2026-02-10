@@ -7,6 +7,7 @@ import MentorMatchCard from './MentorMatchCard'
 import Separator from '@/components/common/Separator'
 import { cn } from '@/utils/cn'
 import Button from '../common/Button'
+import EmptyContent from '@/components/common/EmptyContent'
 
 interface MentorMatchResultsContentProps {
   matches: MentorMatch[]
@@ -19,6 +20,27 @@ export default function MentorMatchResultsContent({
 }: MentorMatchResultsContentProps) {
   const router = useRouter()
   const displayName = userName ? `${userName}님` : '회원님'
+
+  // 매칭된 멘토가 하나도 없을 때 빈 상태 표시
+  if (!matches || matches.length === 0) {
+    return (
+      <div className={styles.wrapper}>
+        <EmptyContent
+          variant="error"
+          message="매칭된 멘토가 없어요!"
+          subMessage={
+            <Button
+              label="다시 찾기"
+              size="M"
+              type="primary"
+              fullWidth
+              onClick={() => router.push(ROUTES.MENTORS.QUESTIONNAIRE)}
+            />
+          }
+        />
+      </div>
+    )
+  }
 
   return (
     <div className={styles.wrapper}>
@@ -58,11 +80,4 @@ const styles = {
   subtitle: 'title-16 text-grey-11 font-bold mb-3',
   list: 'flex flex-col',
   footer: 'pt-4 pb-8 flex justify-center',
-  refreshButton: cn(
-    'body-5 text-grey-9',
-    'px-[60px] py-3',
-    'rounded-2xl border border-grey-2 bg-white',
-    'shadow-[0px_1px_3px_rgba(0,0,0,0.04),0px_1px_2px_rgba(0,0,0,0.04)]',
-    'hover:bg-grey-1-1 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-shinhanblue focus-visible:ring-offset-2',
-  ),
 } as const

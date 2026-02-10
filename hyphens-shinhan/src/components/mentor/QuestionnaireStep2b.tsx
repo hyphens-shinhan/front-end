@@ -12,6 +12,8 @@ interface QuestionnaireStep2bProps {
   onBack: () => void
   onFooterChange?: (state: { nextLabel: string; nextDisabled: boolean }) => void
   onRegisterNext?: (fn: () => void) => void
+  onSave?: (data: Partial<MentorshipRequest>) => void
+  onRegisterSave?: (fn: () => void) => void
 }
 
 export default function QuestionnaireStep2b({
@@ -20,12 +22,15 @@ export default function QuestionnaireStep2b({
   onBack,
   onFooterChange,
   onRegisterNext,
+  onSave,
+  onRegisterSave,
 }: QuestionnaireStep2bProps) {
   const [goalDescription, setGoalDescription] = useState<string>(
     initialData?.goalDescription ?? ''
   )
   const { textareaRef, handleResize } = useAutoResize()
 
+  // 비어 있는지만 trim으로 체크하고, 실제 저장 값은 사용자가 입력한 그대로 보존
   const canNext = goalDescription.trim().length > 0
 
   useEffect(() => {
@@ -35,7 +40,7 @@ export default function QuestionnaireStep2b({
   const handleNext = () => {
     if (!canNext) return
     onNext({
-      goalDescription: goalDescription.trim(),
+      goalDescription,
       goalLevel: initialData?.goalLevel ?? 'intermediate',
     })
   }
@@ -43,7 +48,13 @@ export default function QuestionnaireStep2b({
   useEffect(() => {
     onFooterChange?.({ nextLabel: '다음', nextDisabled: !canNext })
     onRegisterNext?.(handleNext)
-  }, [canNext, onFooterChange, onRegisterNext])
+    onRegisterSave?.(() => {
+      onSave?.({
+        goalDescription,
+        goalLevel: initialData?.goalLevel ?? 'intermediate',
+      })
+    })
+  }, [canNext, goalDescription, initialData?.goalLevel, onFooterChange, onRegisterNext, onRegisterSave, onSave])
 
   return (
     <div className={stepStyles.wrapper}>

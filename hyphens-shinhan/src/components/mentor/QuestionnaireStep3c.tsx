@@ -36,6 +36,8 @@ interface QuestionnaireStep3cProps {
   onBack: () => void
   onFooterChange?: (state: { nextLabel: string; nextDisabled: boolean }) => void
   onRegisterNext?: (fn: () => void) => void
+  onSave?: (data: Partial<MentorshipRequest>) => void
+  onRegisterSave?: (fn: () => void) => void
 }
 
 export default function QuestionnaireStep3c({
@@ -44,6 +46,8 @@ export default function QuestionnaireStep3c({
   onBack,
   onFooterChange,
   onRegisterNext,
+  onSave,
+  onRegisterSave,
 }: QuestionnaireStep3cProps) {
   const [selected, setSelected] = useState<Set<MeetingOptionId>>(() =>
     getInitialSelected(initialData?.availability?.preferredFormats)
@@ -74,7 +78,15 @@ export default function QuestionnaireStep3c({
   useEffect(() => {
     onFooterChange?.({ nextLabel: '다음', nextDisabled: !hasSelection })
     onRegisterNext?.(handleNext)
-  }, [hasSelection, onFooterChange, onRegisterNext])
+    onRegisterSave?.(() => {
+      onSave?.({
+        availability: {
+          ...initialData?.availability,
+          preferredFormats,
+        } as MentorshipRequest['availability'],
+      })
+    })
+  }, [hasSelection, preferredFormats, initialData?.availability, onFooterChange, onRegisterNext, onRegisterSave, onSave])
 
   return (
     <div className={stepStyles.wrapper}>

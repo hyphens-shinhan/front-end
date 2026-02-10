@@ -27,6 +27,8 @@ interface QuestionnaireStep3Props {
   onBack: () => void
   onFooterChange?: (state: { nextLabel: string; nextDisabled: boolean }) => void
   onRegisterNext?: (fn: () => void) => void
+  onSave?: (data: Partial<MentorshipRequest>) => void
+  onRegisterSave?: (fn: () => void) => void
 }
 
 export default function QuestionnaireStep3({
@@ -35,6 +37,8 @@ export default function QuestionnaireStep3({
   onBack,
   onFooterChange,
   onRegisterNext,
+  onSave,
+  onRegisterSave,
 }: QuestionnaireStep3Props) {
   const [selectedDays, setSelectedDays] = useState<DayOfWeek[]>(
     initialData?.availability?.days ?? []
@@ -62,7 +66,15 @@ export default function QuestionnaireStep3({
   useEffect(() => {
     onFooterChange?.({ nextLabel: '다음', nextDisabled: selectedDays.length === 0 })
     onRegisterNext?.(handleNext)
-  }, [selectedDays, onFooterChange, onRegisterNext])
+    onRegisterSave?.(() => {
+      onSave?.({
+        availability: {
+          ...initialData?.availability,
+          days: selectedDays,
+        } as MentorshipRequest['availability'],
+      })
+    })
+  }, [selectedDays, initialData?.availability, onFooterChange, onRegisterNext, onRegisterSave, onSave])
 
   return (
     <div className={stepStyles.wrapper}>

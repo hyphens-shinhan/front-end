@@ -19,6 +19,8 @@ interface QuestionnaireStep3bProps {
   onBack: () => void
   onFooterChange?: (state: { nextLabel: string; nextDisabled: boolean }) => void
   onRegisterNext?: (fn: () => void) => void
+  onSave?: (data: Partial<MentorshipRequest>) => void
+  onRegisterSave?: (fn: () => void) => void
 }
 
 export default function QuestionnaireStep3b({
@@ -27,6 +29,8 @@ export default function QuestionnaireStep3b({
   onBack,
   onFooterChange,
   onRegisterNext,
+  onSave,
+  onRegisterSave,
 }: QuestionnaireStep3bProps) {
   const [selectedTimes, setSelectedTimes] = useState<TimeOfDay[]>(
     initialData?.availability?.timeOfDay ?? []
@@ -54,7 +58,15 @@ export default function QuestionnaireStep3b({
   useEffect(() => {
     onFooterChange?.({ nextLabel: '다음', nextDisabled: selectedTimes.length === 0 })
     onRegisterNext?.(handleNext)
-  }, [selectedTimes, onFooterChange, onRegisterNext])
+    onRegisterSave?.(() => {
+      onSave?.({
+        availability: {
+          ...initialData?.availability,
+          timeOfDay: selectedTimes,
+        } as MentorshipRequest['availability'],
+      })
+    })
+  }, [selectedTimes, initialData?.availability, onFooterChange, onRegisterNext, onRegisterSave, onSave])
 
   return (
     <div className={stepStyles.wrapper}>

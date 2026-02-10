@@ -17,6 +17,8 @@ interface QuestionnaireStep2Props {
   onBack: () => void
   onFooterChange?: (state: { nextLabel: string; nextDisabled: boolean }) => void
   onRegisterNext?: (fn: () => void) => void
+  onSave?: (data: Partial<MentorshipRequest>) => void
+  onRegisterSave?: (fn: () => void) => void
 }
 
 export default function QuestionnaireStep2({
@@ -25,6 +27,8 @@ export default function QuestionnaireStep2({
   onBack,
   onFooterChange,
   onRegisterNext,
+  onSave,
+  onRegisterSave,
 }: QuestionnaireStep2Props) {
   const [goalTimeline, setGoalTimeline] = useState<GoalTimeline | null>(
     initialData?.goalTimeline ?? null
@@ -37,7 +41,10 @@ export default function QuestionnaireStep2({
   useEffect(() => {
     onFooterChange?.({ nextLabel: '다음', nextDisabled: !goalTimeline })
     onRegisterNext?.(handleNext)
-  }, [goalTimeline, onFooterChange, onRegisterNext])
+    onRegisterSave?.(() => {
+      if (goalTimeline) onSave?.({ goalTimeline })
+    })
+  }, [goalTimeline, onFooterChange, onRegisterNext, onRegisterSave, onSave])
 
   return (
     <div className="flex flex-col flex-1 min-h-0">

@@ -6,8 +6,6 @@ export const MENTOR_ROUTES = {
   MATCHES: '/mentors/matches',
   /** 나의 멘토링 내역 */
   HISTORY: '/mentors/history',
-  /** 멘토 프로필 상세 - use with /mentors/[id] */
-  DETAIL_PREFIX: '/mentors/',
   /** 멘토링 신청 풀스크린 - pathPattern /mentors/[id]/apply */
   APPLY: '/mentors/apply',
 } as const

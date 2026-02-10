@@ -28,14 +28,9 @@ export default function CommonFriendsSection({
   const displayFriends = friends.length > 0 ? friends : DEFAULT_FRIENDS
 
   return (
-    <div className="space-y-3 px-4">
-      <h2 className="font-semibold text-lg text-grey-10">함께 아는 친구</h2>
-      <div
-        className={cn(
-          'flex gap-3 overflow-x-auto pb-2 scrollbar-hide',
-          '[&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]'
-        )}
-      >
+    <div className={styles.section}>
+      <h2 className={styles.title}>함께 아는 친구</h2>
+      <div className={styles.cardList}>
         {displayFriends.map((friend) => (
           <FriendRecommendationCard
             key={friend.userId}
@@ -50,4 +45,13 @@ export default function CommonFriendsSection({
       </div>
     </div>
   )
+}
+
+const styles = {
+  section: cn('flex flex-col gap-3'),
+  title: cn('title-16 text-grey-10'),
+  cardList: cn(
+    'flex gap-3 overflow-x-auto pb-2 scrollbar-hide',
+    'scrollbar-hide',
+  ),
 }

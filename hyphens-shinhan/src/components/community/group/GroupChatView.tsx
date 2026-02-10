@@ -6,6 +6,7 @@ import { useClub } from '@/hooks/clubs/useClubs'
 import { useHeaderStore, useUserStore, useBottomSheetStore } from '@/stores'
 import { useClubChatMessages, useChatRooms, chatKeys } from '@/hooks/chat/useChat'
 import { useJoinClubChat, useSendMessage, useLeaveClubChat } from '@/hooks/chat/useChatMutations'
+import { useChatRealtime } from '@/hooks/chat/useChatRealtime'
 import { useLeaveClub } from '@/hooks/clubs/useClubMutations'
 import MessageInput from '@/components/common/MessageInput'
 import EmptyContent from '@/components/common/EmptyContent'
@@ -77,10 +78,15 @@ export default function GroupChatView({ clubId }: GroupChatViewProps) {
   }, [chatRoomsData, clubId, club])
 
   // 클럽 채팅 메시지 조회 (채팅방이 준비된 후에만 조회)
+  // 상대방 메시지: Realtime INSERT로 수신. 탭 복귀 시 refetchOnWindowFocus로 갱신
+  const messageParams = {}
   const {
     data: messagesData,
     isLoading: isMessagesLoading,
-  } = useClubChatMessages(clubId, {}, isChatRoomReady)
+  } = useClubChatMessages(clubId, messageParams, isChatRoomReady)
+
+  // 실시간 구독: 채팅방 입장 후 새 메시지 INSERT 시 React Query 캐시 갱신
+  useChatRealtime(roomId, { clubId, params: messageParams })
 
   // 메시지 데이터 변환
   const messages: GroupChatMessage[] = messagesData?.messages
@@ -240,7 +246,7 @@ export default function GroupChatView({ clubId }: GroupChatViewProps) {
 }
 
 const styles = {
-  container: cn('flex flex-1 flex-col min-h-0 bg-white overflow-hidden'),
+  container: cn('flex flex-1 flex-col min-h-0 bg-white overflow-hidden pb-20'),
   messagesContainer: cn('flex-1 min-h-0 overflow-y-auto px-4 pb-4'),
   dateLabel: cn('py-3 text-center text-[14px] font-normal leading-5 text-grey-8'),
   messagesList: cn('flex flex-col gap-5'),

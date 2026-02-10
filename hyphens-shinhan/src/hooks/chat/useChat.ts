@@ -47,16 +47,23 @@ export const useMessages = (
   })
 }
 
+export interface UseClubChatMessagesOptions {
+  /** 주기 refetch(ms). Realtime 미지원/미동작 시에만 사용 권장, 기본 없음 */
+  refetchInterval?: number
+}
+
 /**
  * 클럽 채팅 메시지 조회 (GET /clubs/{club_id}/messages)
  * @param clubId 클럽 ID
  * @param params 쿼리 파라미터 (cursor, limit)
  * @param enabled 쿼리 활성화 여부 (채팅방이 준비되었는지 확인용)
+ * @param options refetchInterval 등 (필요 시에만)
  */
 export const useClubChatMessages = (
   clubId: string | null,
   params?: { cursor?: string; limit?: number },
   enabled: boolean = true,
+  options?: UseClubChatMessagesOptions,
 ) => {
   return useQuery({
     queryKey: chatKeys.clubMessages(clubId ?? '', params),
@@ -65,5 +72,6 @@ export const useClubChatMessages = (
         ? ChatService.getClubChatMessages(clubId, params)
         : Promise.resolve(null),
     enabled: !!clubId && enabled,
+    refetchInterval: options?.refetchInterval,
   })
 }

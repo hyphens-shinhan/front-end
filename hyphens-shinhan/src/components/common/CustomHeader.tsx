@@ -233,7 +233,7 @@ const styles = {
     ),
     navItem: cn(
         'flex items-center justify-center',
-        'text-primary-light py-2',
+        'text-gray-9 py-2',
     ),
     navText: cn(
         'body-5 font-semibold text-grey-6',

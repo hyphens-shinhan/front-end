@@ -32,6 +32,7 @@ export const EMPTY_CONTENT_MESSAGES = {
     SURVEY: '설문을 불러오지 못했어요.',
   },
   EMPTY: {
+    CHAT: '대화 상대가 없어요.',
     COMMENT: '아직 댓글이 없어요.',
     GROUP: '소모임이 없어요.',
     MY_GROUP: '참여 중인 소모임이 없어요.',

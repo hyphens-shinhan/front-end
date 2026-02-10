@@ -185,7 +185,8 @@ export const CUSTOM_HEADER_CONFIG: Record<string, CustomHeaderConfig> = {
     title: '알림',
   },
   [ROUTES.CHAT]: {
-    title: '채팅',
+    title: '메시지',
+    navItem: HEADER_ITEMS[HEADER_NAV_ITEM_KEY.NOTIFICATIONS],
   },
   /** Chat detail: title set by setCustomTitle in ChatView; more button uses store onClick */
   [ROUTES.CHAT_DETAIL]: {
@@ -418,6 +419,8 @@ export enum INPUT_BAR_TYPE {
   COMMENT = 'COMMENT',
   /** 멘토 검색 입력창 */
   MENTOR_SEARCH = 'MENTOR_SEARCH',
+  /** 대화 상대 검색 입력창 */
+  CHAT_SEARCH = 'CHAT_SEARCH',
 }
 
 /** InputBar 타입별 설정 상수 */
@@ -446,6 +449,13 @@ export const INPUT_BAR_ITEMS: Record<INPUT_BAR_TYPE, InputBarConfig> = {
   },
   [INPUT_BAR_TYPE.MENTOR_SEARCH]: {
     placeholder: '멘토 검색하기',
+    leftIcon: 'IconLLineSearchLine',
+    showAttach: false,
+    showEmoji: false,
+    sendButton: false,
+  },
+  [INPUT_BAR_TYPE.CHAT_SEARCH]: {
+    placeholder: '대화 상대 검색하기',
     leftIcon: 'IconLLineSearchLine',
     showAttach: false,
     showEmoji: false,

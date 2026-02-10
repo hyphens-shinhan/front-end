@@ -186,7 +186,6 @@ export const CUSTOM_HEADER_CONFIG: Record<string, CustomHeaderConfig> = {
   },
   [ROUTES.CHAT]: {
     title: '메시지',
-    navItem: HEADER_ITEMS[HEADER_NAV_ITEM_KEY.NOTIFICATIONS],
   },
   /** Chat detail: title set by setCustomTitle in ChatView; more button uses store onClick */
   [ROUTES.CHAT_DETAIL]: {

@@ -83,10 +83,12 @@ export default function GroupChatView({ clubId }: GroupChatViewProps) {
   const {
     data: messagesData,
     isLoading: isMessagesLoading,
-  } = useClubChatMessages(clubId, messageParams, isChatRoomReady)
+  } = useClubChatMessages(clubId, messageParams, isChatRoomReady, {
+    refetchInterval: 10000, // Polling safety net for missed broadcasts
+  })
 
-  // 실시간 구독: 채팅방 입장 후 새 메시지 INSERT 시 React Query 캐시 갱신
-  useChatRealtime(roomId, { clubId, params: messageParams })
+  // 실시간 구독: Broadcast 채널로 새 메시지 수신 + sendBroadcast로 전송 후 브로드캐스트
+  const { sendBroadcast } = useChatRealtime(roomId, { clubId, params: messageParams })
 
   // 메시지 데이터 변환
   const messages: GroupChatMessage[] = messagesData?.messages
@@ -162,7 +164,9 @@ export default function GroupChatView({ clubId }: GroupChatViewProps) {
         clubId, // 클럽 채팅 메시지 쿼리 갱신을 위해 전달
       },
       {
-        onSuccess: () => {
+        onSuccess: (data) => {
+          // Broadcast the saved message to all other room subscribers
+          sendBroadcast(data)
           setMessage('')
           isSendingRef.current = false
           setTimeout(() => {

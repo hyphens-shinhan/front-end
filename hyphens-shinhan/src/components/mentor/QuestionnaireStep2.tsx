@@ -2,28 +2,18 @@
 
 import { useState, useEffect } from 'react'
 import type { MentorshipRequest, GoalTimeline } from '@/types/mentor'
-import { cn } from '@/utils/cn'
+import SelectableOptionRow from './SelectableOptionRow'
 
 const TIMELINES: { value: GoalTimeline; label: string }[] = [
-  { value: 'short_term', label: '단기 (3개월 이내)' },
-  { value: 'medium_term', label: '중기 (6-12개월)' },
-  { value: 'long_term', label: '장기 (1-2년)' },
+  { value: 'short_term', label: '일회성 상담' },
+  { value: 'medium_term', label: '한 달 간 주기적으로' },
+  { value: 'long_term', label: '한 달 이상 장기적으로' },
 ]
 
 const stepStyles = {
   questionBlock: 'flex flex-col gap-1.5 pt-2 pb-2',
   questionTitle: 'body-5 text-grey-11',
   hint: 'body-8 text-grey-8',
-  optionRow: cn(
-    'flex items-center gap-2 py-3 px-0 cursor-pointer min-h-[48px]',
-    'border-b border-grey-2 last:border-b-0',
-  ),
-  optionCircle: cn(
-    'shrink-0 w-6 h-6 rounded-full flex items-center justify-center bg-grey-4 transition-colors',
-  ),
-  optionCircleSelected: 'bg-primary-secondaryroyal',
-  optionLabel: 'body-5 text-grey-10 flex-1',
-  optionLabelSelected: 'text-grey-11',
 } as const
 
 interface QuestionnaireStep2Props {
@@ -62,36 +52,17 @@ export default function QuestionnaireStep2({
           <p className={stepStyles.hint}>멘토링을 통해 달성하고 싶은 목표의 기간을 선택해주세요.</p>
         </div>
         <div className="flex flex-col">
-          {TIMELINES.map((timeline) => {
-            const isSelected = goalTimeline === timeline.value
-            return (
-              <label key={timeline.value} className={stepStyles.optionRow}>
-                <div
-                  className={cn(
-                    stepStyles.optionCircle,
-                    isSelected && stepStyles.optionCircleSelected,
-                  )}
-                >
-                  {isSelected && (
-                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden>
-                      <path d="M10 3L4.5 8.5L2 6" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  )}
-                </div>
-                <input
-                  type="radio"
-                  name="timeline"
-                  value={timeline.value}
-                  checked={isSelected}
-                  onChange={() => setGoalTimeline(timeline.value)}
-                  className="sr-only"
-                />
-                <span className={cn(stepStyles.optionLabel, isSelected && stepStyles.optionLabelSelected)}>
-                  {timeline.label}
-                </span>
-              </label>
-            )
-          })}
+          {TIMELINES.map((timeline) => (
+            <SelectableOptionRow
+              key={timeline.value}
+              value={timeline.value}
+              label={timeline.label}
+              selected={goalTimeline === timeline.value}
+              onToggle={() => setGoalTimeline(timeline.value)}
+              name="timeline"
+              variant="radio"
+            />
+          ))}
         </div>
       </div>
     </div>

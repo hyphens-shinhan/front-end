@@ -10,10 +10,18 @@ interface Friend {
   category: string
   mutualFriends?: number
   imageUrl?: string
+  mutualFriendAvatarUrls?: (string | null)[]
+  isFollowing?: boolean
 }
 
 interface CommonFriendsSectionProps {
   friends?: Friend[]
+  /** 카드 클릭 시 (퍼블릭 프로필로 이동 등) */
+  onClick?: (userId: string) => void
+  /** 팔로우 요청 클릭 시 */
+  onFollow?: (userId: string) => void
+  /** 팔로우 취소 클릭 시 */
+  onUnfollow?: (userId: string) => void
 }
 
 const DEFAULT_FRIENDS: Friend[] = [
@@ -24,6 +32,9 @@ const DEFAULT_FRIENDS: Friend[] = [
 
 export default function CommonFriendsSection({
   friends = [],
+  onClick,
+  onFollow,
+  onUnfollow,
 }: CommonFriendsSectionProps) {
   const displayFriends = friends.length > 0 ? friends : DEFAULT_FRIENDS
 
@@ -40,6 +51,11 @@ export default function CommonFriendsSection({
             category={friend.category}
             mutualFriends={friend.mutualFriends}
             imageUrl={friend.imageUrl}
+            mutualFriendAvatarUrls={friend.mutualFriendAvatarUrls}
+            isFollowing={friend.isFollowing}
+            onFollow={onFollow ? () => onFollow(friend.userId) : undefined}
+            onUnfollow={onUnfollow ? () => onUnfollow(friend.userId) : undefined}
+            onClick={onClick ? () => onClick(friend.userId) : undefined}
           />
         ))}
       </div>

@@ -13,19 +13,22 @@ interface FriendRecommendationCardProps {
   /** 함께 아는 친구 프로필 이미지 URL (최대 3개, 미리보기용) */
   mutualFriendAvatarUrls?: (string | null | undefined)[]
   imageUrl?: string
+  /** 이미 팔로우 중이면 true (팔로우 취소 버튼 표시) */
+  isFollowing?: boolean
   onFollow?: () => void
+  onUnfollow?: () => void
   onClick?: () => void
 }
 
-{/** 친구 프로필 카드 */ }
+/** 친구 프로필 카드 */
 export default function FriendRecommendationCard({
   name,
-  generation,
-  category,
   mutualFriends = 0,
   mutualFriendAvatarUrls = [],
   imageUrl,
+  isFollowing = false,
   onFollow,
+  onUnfollow,
   onClick,
 }: FriendRecommendationCardProps) {
   const previewAvatars = mutualFriendAvatarUrls.filter(Boolean).slice(0, 3) as string[]
@@ -78,16 +81,25 @@ export default function FriendRecommendationCard({
           </div>
           <p className={styles.mutualCount}>함께 아는 친구 {mutualFriends}명</p>
         </div>
-
       )}
       <div onClick={(e) => e.stopPropagation()} role="presentation">
-        <Button
-          label="팔로우 요청"
-          size="XS"
-          type="primary"
-          onClick={onFollow}
-          className={styles.followButton}
-        />
+        {isFollowing ? (
+          <Button
+            label="팔로우 취소"
+            size="XS"
+            type="secondary"
+            onClick={onUnfollow}
+            className={styles.followButton}
+          />
+        ) : (
+          <Button
+            label="팔로우 요청"
+            size="XS"
+            type="primary"
+            onClick={onFollow}
+            className={styles.followButton}
+          />
+        )}
       </div>
     </div>
   )

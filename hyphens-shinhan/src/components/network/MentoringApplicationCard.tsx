@@ -38,7 +38,7 @@ export default function MentoringApplicationCard() {
 }
 
 const styles = {
-  card: cn('bg-white rounded-[16px] border border-grey-2 shadow-none px-4 py-4.5'),
+  card: cn('bg-white rounded-[16px] border border-grey-2 shadow-none px-4 py-4.5 mt-3'),
   header: cn('flex items-center justify-between gap-9 mb-2.5'),
   titleBlock: cn('flex flex-col gap-1.5'),
   title: cn('title-16 text-grey-11'),

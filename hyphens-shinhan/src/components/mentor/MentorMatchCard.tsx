@@ -110,7 +110,7 @@ export default function MentorMatchCard({ match }: MentorMatchCardProps) {
   const { mentor, score } = match
 
   const handleOpenProfile = () => {
-    router.push(`${ROUTES.MENTORS.DETAIL_PREFIX}${mentor.id}`)
+    router.push(`${ROUTES.MENTORS.MAIN}/${mentor.id}`)
   }
 
   const roleOrCategory = mentor.currentRole || getCategoryLabel(mentor.primaryCategory)

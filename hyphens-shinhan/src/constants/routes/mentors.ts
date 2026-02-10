@@ -1,5 +1,6 @@
 /** 멘토링 라우트 상수 */
 export const MENTOR_ROUTES = {
+  MAIN: '/mentors',
   /** 멘토 찾기 설문 (신청하기 플로우) */
   QUESTIONNAIRE: '/mentors/questionnaire',
   /** 멘토 매칭 결과 목록 */

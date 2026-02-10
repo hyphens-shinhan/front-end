@@ -1,6 +1,6 @@
 'use client'
 
-import { MentorNotFoundView } from '@/components/mentor/MentorDetailView/MentorNotFoundView'
+import { MentoringHistoryView } from '@/components/mentor/MentorDetailView/MentoringHistoryView'
 import EmptyContent from '@/components/common/EmptyContent'
 import { EMPTY_CONTENT_MESSAGES } from '@/constants/emptyContent'
 import { useSentMentoringRequests } from '@/hooks/mentoring/useMentoring'
@@ -23,6 +23,6 @@ export default function MentorHistoryPage() {
   }
 
   return (
-    <MentorNotFoundView sentRequests={data?.requests} />
+    <MentoringHistoryView sentRequests={data?.requests} />
   )
 }

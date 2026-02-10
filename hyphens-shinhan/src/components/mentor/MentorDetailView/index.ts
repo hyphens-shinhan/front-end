@@ -1,5 +1,5 @@
 export { MentorDetailView } from './MentorDetailView'
-export { MentorNotFoundView } from './MentorNotFoundView'
+export { MentoringHistoryView } from './MentoringHistoryView'
 export { MentorDetailHeader } from './MentorDetailHeader'
 export { MentorDetailInfoCard } from './MentorDetailInfoCard'
 export { MentorDetailBio } from './MentorDetailBio'

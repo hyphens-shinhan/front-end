@@ -66,12 +66,12 @@ function buildHistoryFromRequests(
     }))
 }
 
-interface MentorNotFoundViewProps {
+interface MentoringHistoryViewProps {
   sentRequests?: MentoringRequestResponse[]
 }
 
 /** 나의 멘토링 내역 페이지 */
-export function MentorNotFoundView({ sentRequests }: MentorNotFoundViewProps) {
+export function MentoringHistoryView({ sentRequests }: MentoringHistoryViewProps) {
   const { data, isLoading, error } = useSentMentoringRequests()
   const resolvedRequests = sentRequests ?? data?.requests
   const isApiDataResolved = sentRequests !== undefined || data?.requests !== undefined

@@ -33,6 +33,7 @@ export const TOAST_MESSAGES = {
   REPORT: {
     DRAFT_SAVE_SUCCESS: '임시 저장했어요',
     DRAFT_SAVE_ERROR: '임시 저장에 실패했어요',
+    FILL_ALL_CONTENT: '모든 내용을 작성해주세요',
     SUBMIT_SUCCESS: '제출이 완료되었어요',
     SUBMIT_ERROR: '제출에 실패했어요',
     ATTENDANCE_ERROR: '처리에 실패했어요',
@@ -53,6 +54,11 @@ export const TOAST_MESSAGES = {
   MENTOR: {
     REQUEST_SUCCESS: '멘토링 요청이 전송되었어요',
     REQUEST_ERROR: '요청 전송에 실패했어요',
+  /** 학업 모니터링 */
+  MONITORING: {
+    SAVE_SUCCESS: '저장되었어요',
+    SUBMIT_COMPLETE: '이미 제출하였어요',
+    SUBMIT_SUCCESS: '제출이 완료되었어요',
   },
   /** 인증 */
   AUTH: {

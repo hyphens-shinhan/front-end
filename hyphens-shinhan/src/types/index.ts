@@ -53,12 +53,12 @@ export interface InputBarConfig {
 
 // MARK: - Activities (활동 요약/상태) API 타입
 export type {
+  ActivityStatus,
   CouncilReportStatus,
   AcademicReportStatus,
   MandatoryActivityType,
-  MandatoryReportStatus,
+  MandatoryActivityStatus,
   AppliedEventStatus,
-  AppliedEventsStatus,
   MonthlyActivityStatus,
   YearlyActivitySummary,
   ActivitiesSummaryResponse,
@@ -172,4 +172,37 @@ export type {
 } from './network'
 
 // MARK: - Notification (알림)
-export type { NotificationItem } from './notification'
+  ChatRoomType,
+  ChatRoomMember,
+  MessageResponse,
+  MessageCreate,
+  MessageListResponse,
+  ChatRoomResponse,
+  ChatRoomListResponse,
+  // Legacy DM types (하위 호환성)
+  MessageAttachment,
+  ChatMessage,
+  Conversation,
+} from './chat'
+
+// MARK: - Clubs (소모임)
+export type {
+  ClubCategory,
+  ClubAnonymity,
+  ClubCreate,
+  ClubUpdate,
+  UserClubProfile,
+  ClubResponse,
+  ClubListResponse,
+  ClubListQuery,
+  GalleryImageCreate,
+  GalleryImageResponse,
+  GalleryListResponse,
+  GalleryListQuery,
+  ClubJoinResponse,
+  ClubLeaveResponse,
+  GalleryDeleteResponse,
+  ClubMemberResponse,
+  ClubMemberListResponse,
+  RandomNicknameResponse,
+} from './clubs'

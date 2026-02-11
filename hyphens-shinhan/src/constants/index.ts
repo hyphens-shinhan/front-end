@@ -154,7 +154,7 @@ export const HEADER_CONFIG_BY_BOTTOM_NAV: Record<NavLink, HeaderConfig> = {
   },
   [ROUTES.COMMUNITY.MAIN]: {
     title: '커뮤니티',
-    navItems: [HEADER_ITEMS.NOTIFICATIONS, HEADER_ITEMS.SEARCH],
+    navItems: [HEADER_ITEMS.NOTIFICATIONS],
   },
   [ROUTES.NETWORK.MAIN]: {
     title: '네트워크',

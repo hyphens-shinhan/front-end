@@ -305,7 +305,6 @@ export const CUSTOM_HEADER_CONFIG: Record<string, CustomHeaderConfig> = {
     title: '소모임',
     type: 'Center',
     btnType: 'Back',
-    navItem: HEADER_ITEMS[HEADER_NAV_ITEM_KEY.MORE],
     backHref: ROUTES.COMMUNITY.GROUP.MAIN,
   },
   /** 소모임 채팅방 (/community/group/[id]/chat) - 제목은 setCustomTitle으로 그룹명 */

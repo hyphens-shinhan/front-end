@@ -44,8 +44,8 @@ self.addEventListener("push", (event: PushEvent) => {
   const url = payload.url ?? "/";
   const options: NotificationOptions = {
     body,
-    icon: "/favicon.ico",
-    badge: "/favicon.ico",
+    icon: "/assets/images/shinhan.png",
+    badge: "/assets/images/shinhan.png",
     tag: payload.url ?? "default",
     data: { url },
   };

@@ -2,7 +2,20 @@
   "name": "Hyphen",
   "short_name": "Hyphen",
   "description": "Hyphen APP",
-  "icons": [],
+  "icons": [
+    {
+      "src": "/assets/images/shinhan.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/images/shinhan.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
   "theme_color": "#FFFFFF",
   "background_color": "#FFFFFF",
   "start_url": "/",

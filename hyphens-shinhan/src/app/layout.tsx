@@ -22,10 +22,8 @@ export const metadata: Metadata = {
   description: APP_DESCRIPTION,
   manifest: "/manifest.json",
   icons: {
-    apple: [
-      // iOS Safari가 자동으로 요청하는 apple-touch-icon
-      // 실제 아이콘 파일이 없어도 메타 태그로 404 방지
-    ],
+    icon: '/assets/images/shinhan.png',
+    apple: '/assets/images/shinhan.png',
   },
   appleWebApp: {
     capable: true,

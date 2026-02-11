@@ -15,7 +15,7 @@ const HEART_LINE_PATH =
 const DEFAULT_TITLE = '자치회 활동 제출까지';
 
 /**
- * 홈 상단 제출 D-day 카드 (nearest incomplete mandatory activity from API)
+ * 홈 상단 제출 D-day 카드 (현재 월의 마지막 날 기준 계산)
  */
 export default function DocumentGuideCard() {
   const router = useRouter();
@@ -23,30 +23,28 @@ export default function DocumentGuideCard() {
   const { data: mandatoryStatus } = useMandatoryStatus(currentYear);
 
   const { title, dDay, showBanner } = useMemo(() => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+    // 현재 월의 마지막 날 구하기 (다음 달의 0번째 날 = 이번 달 마지막 날)
+    const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+
+    // 차이 계산 (밀리초 -> 일)
+    const diffMs = lastDayOfMonth.getTime() - today.getTime();
+    const dDay = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+
+    // API 데이터 기반으로 미완료 활동이 있는지 확인 (배너 노출 여부 결정)
     const activities = mandatoryStatus?.activities ?? [];
-    const incomplete = activities.filter((a) => !a.is_completed);
-    const futureDues = incomplete
-      .map((a) => ({
-        ...a,
-        dueTime: new Date(a.due_date).setHours(0, 0, 0, 0),
-      }))
-      .filter((a) => a.dueTime >= today.getTime())
-      .sort((a, b) => a.dueTime - b.dueTime);
-    const nearest = futureDues[0];
-    if (!nearest) {
-      return {
-        title: DEFAULT_TITLE,
-        dDay: 0,
-        showBanner: incomplete.length > 0,
-      };
-    }
-    const diffMs = nearest.dueTime - today.getTime();
-    const dDay = Math.ceil(diffMs / 86400000);
-    const dueDate = new Date(nearest.due_date);
-    const title = `${dueDate.getMonth() + 1}월 ${nearest.title} 제출까지`;
-    return { title, dDay: Math.max(0, dDay), showBanner: true };
+    const hasIncomplete = activities.some((a) => !a.is_completed);
+
+    const currentMonth = now.getMonth() + 1;
+    const title = `${currentMonth}월 ${DEFAULT_TITLE}`;
+
+    return {
+      title,
+      dDay: Math.max(0, dDay),
+      showBanner: hasIncomplete
+    };
   }, [mandatoryStatus]);
 
   const handleSubmit = () => {
@@ -57,6 +55,35 @@ export default function DocumentGuideCard() {
 
   return (
     <article className={styles.card}>
+      {/* 이미지: 카드 기준 절대 위치 (레이아웃에 영향 없음) */}
+      <div className={styles.rightImage}>
+        <div className={styles.ellipseWrapper}>
+          <img
+            src="/assets/images/ellipse.png"
+            alt=""
+            width={200}
+            height={200}
+            className={styles.ellipse}
+          />
+        </div>
+        <img
+          src="/assets/images/bg.png"
+          alt=""
+          width={160}
+          height={230}
+          style={{ width: 85, height: 170, objectFit: 'contain' }}
+          className={styles.bgImage}
+        />
+        <img
+          src="/assets/images/fox_run.gif"
+          alt=""
+          width={160}
+          height={230}
+          style={{ width: 160, height: 230, objectFit: 'contain' }}
+          className={styles.foxImage}
+        />
+      </div>
+
       <div className={styles.contentRow}>
         <div className={styles.leftContent}>
           <h2 className={styles.title}>{title}</h2>
@@ -86,21 +113,11 @@ export default function DocumentGuideCard() {
             </div>
             <Button
               label="지금 제출하러 가기"
-              size="L"
+              size="M"
               type="primary"
               onClick={handleSubmit}
             />
           </div>
-        </div>
-        <div className={styles.rightImage}>
-          <img
-            src="/assets/images/fe.png"
-            alt=""
-            width={160}
-            height={230}
-            style={{ width: 160, height: 230, objectFit: 'contain' }}
-            className={styles.image}
-          />
         </div>
       </div>
     </article>
@@ -109,17 +126,21 @@ export default function DocumentGuideCard() {
 
 const styles = {
   card: cn(
-    'mx-5 mb-3.5 flex flex-col gap-2 px-5 pb-5',
+    'mx-5 mb-3.5 flex flex-col gap-2 px-2 pb-5 relative overflow-hidden', // relative와 overflow-hidden 추가
   ),
-  contentRow: 'flex items-stretch justify-between gap-4',
-  leftContent: 'flex flex-col gap-2 min-w-0 flex-1',
-  rightImage: 'shrink-0 flex items-center',
-  image: '',
+  contentRow: 'relative z-10',
+  leftContent: 'flex flex-col gap-2',
+  rightImage:
+    'absolute -bottom-[10px] -right-[10px] w-[160px] h-[230px] pointer-events-none',
+  bgImage: 'absolute top-13 left-9.5 z-0',
+  foxImage: 'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10',
+  ellipseWrapper:
+    'absolute inset-0 flex items-end justify-center pointer-events-none z-0',
+  ellipse: 'w-[250px] h-[250px] object-contain',
   title: 'title-18 text-white',
   dDay: 'font-text48 leading-tight text-white',
   ctaWrap: 'flex flex-col items-start gap-3.5 mt-20',
   ctaRow: 'flex items-center gap-2',
   ctaLabel: 'body-5 text-white shrink-0',
   heartLine: 'w-[100px] h-[30px] shrink-0 translate-y-[-7px]',
-  button: 'w-auto self-start !border-white !bg-white !text-primary-shinhanblue',
 } as const;

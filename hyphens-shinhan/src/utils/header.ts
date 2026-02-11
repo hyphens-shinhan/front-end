@@ -1,5 +1,6 @@
 import {
   HEADER_CONFIG_BY_BOTTOM_NAV,
+  MENTOR_HEADER_CONFIG,
   ROUTES,
   HeaderConfig,
   CUSTOM_HEADER_CONFIG,
@@ -13,6 +14,17 @@ import { NavLink } from '@/types'
  * @returns 헤더 설정 또는 null
  */
 export function getHeaderConfig(pathname: string): HeaderConfig | null {
+  // 멘토 대시보드: 가장 긴 prefix 매칭
+  if (pathname.startsWith('/mentor')) {
+    const mentorRoutes = Object.keys(MENTOR_HEADER_CONFIG).sort(
+      (a, b) => b.length - a.length
+    )
+    for (const route of mentorRoutes) {
+      if (pathname.startsWith(route)) {
+        return MENTOR_HEADER_CONFIG[route]
+      }
+    }
+  }
   // 홈은 정확히 일치해야 함
   if (pathname === ROUTES.HOME.MAIN) {
     return HEADER_CONFIG_BY_BOTTOM_NAV[ROUTES.HOME.MAIN]

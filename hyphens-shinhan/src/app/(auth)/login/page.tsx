@@ -22,9 +22,10 @@ const LOGIN_CARDS = [
   },
   {
     label: '멘토',
+    email: 'douglas.han@shsf.com',
+    password: 'password123',
     role: 'mentor',
     accent: 'bg-[#FEF9C3] text-[#854D0E]',
-    redirectUrl: REDIRECT_URL,
   },
   {
     label: '관리자',

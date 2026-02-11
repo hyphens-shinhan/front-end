@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { HeaderContent } from '@/components/common/Header';
 import { BottomNavContent } from '@/components/common/BottomNav';
 import { cn } from '@/utils/cn';
@@ -31,10 +31,20 @@ export default function TabsLayoutClient({
     children: React.ReactNode;
 }) {
     const pathname = usePathname();
+    const router = useRouter();
     const { data: me, isSuccess, isError } = useMe();
     const setUser = useUserStore((s) => s.setUser);
     const user = useUserStore((s) => s.user);
     const isHome = pathname === ROUTES.HOME.MAIN;
+    const userRole = user ? toNavRole(user.role) : 'YB';
+
+    // 멘토는 홈(/) 진입 시 멘토 대시보드로 리다이렉트
+    useEffect(() => {
+        if (pathname !== ROUTES.HOME.MAIN || !user) return;
+        if (toNavRole(user.role) === 'MENTOR') {
+            router.replace(ROUTES.MENTOR_DASHBOARD.MAIN);
+        }
+    }, [pathname, user, router]);
     const onOpenCenterModal = useCenterModalStore((s) => s.onOpen);
     const { status, isSupported } = usePushSubscription();
     const hasOpenedPushPrompt = useRef(false);
@@ -76,8 +86,6 @@ export default function TabsLayoutClient({
 
         return () => clearTimeout(timer);
     }, [isHome, onOpenCenterModal]);
-
-    const userRole = user ? toNavRole(user.role) : 'YB';
 
     return (
         <div

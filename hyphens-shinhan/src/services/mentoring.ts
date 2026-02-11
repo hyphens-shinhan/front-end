@@ -5,8 +5,10 @@ import type {
   MentorProfileUpdate,
   MentorRecommendationsResponse,
   MentorRecommendationCard,
+  MentorStatsResponse,
   MentoringRequestListResponse,
   MentoringRequestResponse,
+  MentoringRequestScheduleUpdate,
   MentoringRequestStatus,
 } from '@/types/mentoring-api'
 import type {
@@ -262,6 +264,14 @@ export const MentoringService = {
   },
 
   /**
+   * GET /mentoring/stats - 멘토 대시보드 통계 (다가오는 미팅, 총 멘토링 시간, 응답률)
+   */
+  getMentorStats: async (): Promise<MentorStatsResponse> => {
+    const { data } = await apiClient.get<MentorStatsResponse>(`${BASE}/stats`)
+    return data
+  },
+
+  /**
    * GET /mentoring/requests/received - 멘토가 받은 요청
    */
   getReceivedRequests: async (params?: {
@@ -299,4 +309,54 @@ export const MentoringService = {
     )
     return data
   },
+
+  /**
+   * PATCH /mentoring/requests/{request_id} - 멘토가 수락된 요청의 일정/미팅 방식 수정
+   */
+  updateRequestSchedule: async (
+    requestId: string,
+    body: MentoringRequestScheduleUpdate,
+  ): Promise<MentoringRequestResponse> => {
+    const { data } = await apiClient.patch<MentoringRequestResponse>(
+      `${BASE}/requests/${requestId}`,
+      body,
+    )
+    return data
+  },
+}
+
+/** 멘토 대시보드 UI용 요청 타입 (API MentoringRequestResponse → 간단한 뷰 모델) */
+export interface MentorshipRequestForMentor {
+  id: string
+  menteeId: string
+  menteeName: string
+  menteeAvatar: string | null
+  status: string
+  created_at: string
+  message?: string | null
+  preferred_date?: string | null
+  preferred_time?: string | null
+  preferred_meeting_method?: string | null
+  scheduled_at?: string | null
+  meeting_method?: string | null
+}
+
+/** API 응답을 멘토 홈/멘티 목록용 타입으로 변환 */
+export function mapRequestToMentorshipForMentor(
+  r: MentoringRequestResponse,
+): MentorshipRequestForMentor {
+  return {
+    id: r.id,
+    menteeId: r.mentee.id,
+    menteeName: r.mentee.name,
+    menteeAvatar: r.mentee.avatar_url,
+    status: r.status,
+    created_at: r.created_at,
+    message: r.message ?? undefined,
+    preferred_date: r.preferred_date ?? undefined,
+    preferred_time: r.preferred_time ?? undefined,
+    preferred_meeting_method: r.preferred_meeting_method ?? undefined,
+    scheduled_at: r.scheduled_at ?? undefined,
+    meeting_method: r.meeting_method ?? undefined,
+  }
 }

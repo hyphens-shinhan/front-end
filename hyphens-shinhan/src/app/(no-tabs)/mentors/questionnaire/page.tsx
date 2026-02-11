@@ -1,5 +1,6 @@
 'use client'
 
+import { Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import type { MentorshipRequest } from '@/types/mentor'
 import { ROUTES } from '@/constants'
@@ -10,7 +11,7 @@ import { useMentoringSurvey } from '@/hooks/mentoring/useMentoringSurvey'
 import { useToast } from '@/hooks/useToast'
 import Button from '@/components/common/Button'
 
-export default function MentorQuestionnairePage() {
+function QuestionnairePageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const toast = useToast()
@@ -73,5 +74,13 @@ export default function MentorQuestionnairePage() {
       initialStep={initialStep}
       onComplete={handleComplete}
     />
+  )
+}
+
+export default function MentorQuestionnairePage() {
+  return (
+    <Suspense fallback={<EmptyContent variant="loading" message={EMPTY_CONTENT_MESSAGES.LOADING.DEFAULT} className="flex-1" />}>
+      <QuestionnairePageContent />
+    </Suspense>
   )
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useMemo } from 'react'
+import { Suspense, useCallback, useMemo } from 'react'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { cn } from '@/utils/cn'
 import type { Person } from '@/types/network'
@@ -28,7 +28,7 @@ function parseTabFromSearchParams(searchParams: ReturnType<typeof useSearchParam
   return 'networking'
 }
 
-export default function NetworkPage() {
+function NetworkPageContent() {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -107,4 +107,24 @@ const styles = {
   page: cn('flex flex-col h-full bg-white'),
   main: cn('flex-1 min-h-0'),
   content: cn('px-4 space-y-6 max-w-[800px] mx-auto pb-12'),
+}
+
+function NetworkPageFallback() {
+  return (
+    <div className={styles.page}>
+      <div className={styles.main}>
+        <div className={cn(styles.content, 'flex items-center justify-center min-h-[200px]')}>
+          <span className="text-grey-8">로딩 중...</span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default function NetworkPage() {
+  return (
+    <Suspense fallback={<NetworkPageFallback />}>
+      <NetworkPageContent />
+    </Suspense>
+  )
 }

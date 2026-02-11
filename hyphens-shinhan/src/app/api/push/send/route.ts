@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
 
     const results = await Promise.allSettled(
       subscriptions.map(({ subscription }) =>
-        webpush.sendNotification(subscription.subscription as webpush.PushSubscription, payload)
+        webpush.sendNotification(subscription as webpush.PushSubscription, payload)
       )
     )
     const succeeded = results.filter((r) => r.status === 'fulfilled').length

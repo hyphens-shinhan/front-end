@@ -47,7 +47,6 @@ self.addEventListener("push", (event: PushEvent) => {
     icon: "/favicon.ico",
     badge: "/favicon.ico",
     tag: payload.url ?? "default",
-    renotify: true,
     data: { url },
   };
   event.waitUntil(self.registration.showNotification(title, options));

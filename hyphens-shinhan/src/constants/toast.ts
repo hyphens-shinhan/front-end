@@ -31,6 +31,8 @@ export const TOAST_MESSAGES = {
   },
   /** 활동 보고서 */
   REPORT: {
+    EXPORT_SUCCESS: '자치회 게시판에 글이 올라갔어요',
+    VISIBILITY_HIDDEN_SUCCESS: '자치회 게시판에서 글을 내렸어요',
     DRAFT_SAVE_SUCCESS: '임시 저장했어요',
     DRAFT_SAVE_ERROR: '임시 저장에 실패했어요',
     FILL_ALL_CONTENT: '모든 내용을 작성해주세요',

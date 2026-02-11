@@ -86,10 +86,17 @@ function ReportDetailContentYB({
   }, [report?.id, rejectAttendance, toast])
   const handleExport = useCallback(() => {
     if (!report?.id) return
+    const wasPublic = report.is_public
     toggleVisibility.mutate(report.id, {
+      onSuccess: () =>
+        toast.show(
+          wasPublic
+            ? TOAST_MESSAGES.REPORT.VISIBILITY_HIDDEN_SUCCESS
+            : TOAST_MESSAGES.REPORT.EXPORT_SUCCESS
+        ),
       onError: () => toast.error(TOAST_MESSAGES.REPORT.ATTENDANCE_ERROR),
     })
-  }, [report?.id, toggleVisibility, toast])
+  }, [report?.id, report?.is_public, toggleVisibility, toast])
 
   const activitiesLoading = activitiesData === undefined
   const hasNoCouncil = !activitiesLoading && !councilId

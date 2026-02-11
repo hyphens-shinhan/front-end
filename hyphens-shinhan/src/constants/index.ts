@@ -163,6 +163,26 @@ export const HEADER_CONFIG_BY_BOTTOM_NAV: Record<NavLink, HeaderConfig> = {
     title: '프로필',
     navItems: [HEADER_ITEMS.MORE],
   },
+  [ROUTES.MENTOR_DASHBOARD.MAIN]: {
+    title: '',
+    navItems: [HEADER_ITEMS.CHAT, HEADER_ITEMS.NOTIFICATIONS],
+  },
+  [ROUTES.MENTOR_DASHBOARD.MENTEES]: {
+    title: '멘티',
+    navItems: [HEADER_ITEMS.NOTIFICATIONS],
+  },
+  [ROUTES.MENTOR_DASHBOARD.MESSAGES]: {
+    title: '메시지',
+    navItems: [HEADER_ITEMS.NOTIFICATIONS],
+  },
+  [ROUTES.MENTOR_DASHBOARD.CALENDAR]: {
+    title: '일정',
+    navItems: [HEADER_ITEMS.NOTIFICATIONS],
+  },
+  [ROUTES.MENTOR_DASHBOARD.PROFILE]: {
+    title: '프로필',
+    navItems: [HEADER_ITEMS.MORE],
+  },
 } as const
 
 /** 멘토 대시보드 경로별 헤더 설정 (getHeaderConfig에서 /mentor/* 매칭 시 사용) */

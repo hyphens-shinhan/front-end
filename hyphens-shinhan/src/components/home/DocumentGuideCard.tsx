@@ -99,6 +99,11 @@ export default function DocumentGuideCard() {
     ? `${getWeatherLabel(weather.code)} ${weather.temp}°C`
     : '불러오는 중…';
 
+  const handleCta = () => {
+    if (isOB) router.push(ROUTES.COMMUNITY.MAIN);
+    else router.push(ROUTES.SCHOLARSHIP.MAIN);
+  };
+
   return (
     <article className={styles.card}>
       <div className={styles.rightImage}>
@@ -131,6 +136,23 @@ export default function DocumentGuideCard() {
         <div className={styles.leftContent}>
           <h2 className={styles.title}>{title}</h2>
           <p className={styles.dDay}>{subtitle}</p>
+          <div className={styles.ctaWrap}>
+            {isOB ? (
+              <p className={styles.obMessage}>오늘도 좋은 하루 되세요</p>
+            ) : (
+              <>
+                <div className={styles.ctaRow}>
+                  <span className={styles.ctaLabel}>이번 달 활동 확인하기</span>
+                </div>
+                <Button
+                  label="MY활동 보기"
+                  size="M"
+                  type="primary"
+                  onClick={handleCta}
+                />
+              </>
+            )}
+          </div>
         </div>
       </div>
     </article>
@@ -152,4 +174,8 @@ const styles = {
   ellipse: 'w-[250px] h-[250px] object-contain',
   title: 'title-18 text-white',
   dDay: 'font-text48 leading-tight text-white',
+  ctaWrap: 'flex flex-col items-start gap-3.5 mt-20',
+  ctaRow: 'flex items-center gap-2',
+  ctaLabel: 'body-5 text-white shrink-0',
+  obMessage: 'body-5 text-white/90',
 } as const;

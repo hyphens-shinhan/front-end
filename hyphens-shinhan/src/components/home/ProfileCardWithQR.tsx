@@ -96,7 +96,7 @@ function ProfileCardWithQR({ onQRExpandChange }: ProfileCardWithQRProps) {
     >
       <div className={styles.dragBar} />
       <div className={styles.profileCardContainer}>
-        <ProfileCard profile={profile} isMyProfile={true} />
+        <ProfileCard profile={profile} isMyProfile={true} avatarSize={64} gap={16} />
         <button
           type="button"
           className={cn(styles.qrCodeButton, isQRExpanded && styles.qrExpandedCodeButton)}

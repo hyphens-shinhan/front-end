@@ -6,6 +6,8 @@ import { AppRole, ScholarshipType } from "@/types/user";
 import Avatar from "../common/Avatar";
 import { Icon } from "../common/Icon";
 
+const DEFAULT_AVATAR_SIZE = 80;
+
 interface ProfileCardProps {
     profile: UserMyProfile | UserPublicProfile;
     /** 내 프로필인지 여부 (내 프로필이면 모든 정보 표시) */
@@ -16,6 +18,10 @@ interface ProfileCardProps {
     onEditClick?: () => void;
     /** 프로필 이미지 URL 오버라이드 (미리보기용) */
     avatarUrl?: string | null;
+    /** 프로필 이미지 크기(px). 기본 80 */
+    avatarSize?: number;
+    /** 이미지와 정보 영역 사이 갭(px). 기본 24 */
+    gap?: number;
 }
 
 /** 역할 표시 라벨 매핑 */
@@ -48,6 +54,8 @@ export default function ProfileCard({
     showEditIcon = false,
     onEditClick,
     avatarUrl,
+    avatarSize = DEFAULT_AVATAR_SIZE,
+    gap,
 }: ProfileCardProps) {
     const roleLabel = ROLE_LABELS[profile.role] || profile.role;
     const scholarshipLabel = profile.scholarship_type
@@ -65,15 +73,21 @@ export default function ProfileCard({
     }, [avatarUrl, profile.avatar_url, displayAvatarUrl]);
 
     return (
-        <div className={styles.container}>
+        <div
+            className={styles.container}
+            style={gap !== undefined ? { gap: `${gap}px` } : undefined}
+        >
             {/** 프로필 이미지 */}
-            <div className={styles.imageWrapper}>
+            <div
+                className={styles.imageWrapper}
+                style={{ width: avatarSize, height: avatarSize }}
+            >
                 <Avatar
                     src={displayAvatarUrl}
                     alt={profile.name}
-                    width={80}
-                    height={80}
-                    containerClassName={styles.imageContainer}
+                    width={avatarSize}
+                    height={avatarSize}
+                    containerClassName={cn(styles.imageContainer, '!w-full !h-full')}
                     className={styles.image}
                 />
                 {showEditIcon && (

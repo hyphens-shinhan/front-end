@@ -91,11 +91,29 @@ export interface MentoringRequestResponse {
   message?: string | null
   status: MentoringRequestStatus
   created_at: string
+  preferred_date?: string | null
+  preferred_time?: string | null
+  preferred_meeting_method?: string | null
+  scheduled_at?: string | null
+  meeting_method?: string | null
+}
+
+/** Body for PATCH /mentoring/requests/{id} (mentor sets/edits schedule) */
+export interface MentoringRequestScheduleUpdate {
+  scheduled_at?: string | null
+  meeting_method?: string | null
 }
 
 export interface MentoringRequestListResponse {
   requests: MentoringRequestResponse[]
   total: number
+}
+
+/** GET /mentoring/stats - 멘토 대시보드 통계 (다가오는 미팅, 총 멘토링 시간, 응답률) */
+export interface MentorStatsResponse {
+  upcoming_meetings: number
+  total_hours: number
+  response_rate: number
 }
 
 // ========== Mentoring 설문조사 API (survey) ==========

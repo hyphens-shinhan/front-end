@@ -5,11 +5,16 @@ import {
   useQueries,
 } from '@tanstack/react-query'
 import { MentoringService } from '@/services/mentoring'
-import type { MentoringRequestStatus } from '@/types/mentoring-api'
+import type {
+  MentoringRequestStatus,
+  MentorProfileUpdate,
+  MentoringRequestScheduleUpdate,
+} from '@/types/mentoring-api'
 import type { MentorMatch, MatchScore } from '@/types/mentor'
 
 export const mentoringKeys = {
   all: ['mentoring'] as const,
+  myProfile: () => [...mentoringKeys.all, 'profile', 'me'] as const,
   mentors: (params?: {
     field?: string
     method?: string
@@ -25,6 +30,28 @@ export const mentoringKeys = {
     [...mentoringKeys.all, 'recommendationCards', params ?? {}] as const,
   sentRequests: (params?: { limit?: number; offset?: number }) =>
     [...mentoringKeys.all, 'requests', 'sent', params ?? {}] as const,
+  receivedRequests: (params?: {
+    limit?: number
+    offset?: number
+    status?: MentoringRequestStatus
+  }) => [...mentoringKeys.all, 'requests', 'received', params ?? {}] as const,
+  stats: () => [...mentoringKeys.all, 'stats'] as const,
+}
+
+/** 멘토 전용: 내 멘토 프로필 (GET /mentoring/profile/me) */
+export const useMyMentorProfile = () => {
+  return useQuery({
+    queryKey: mentoringKeys.myProfile(),
+    queryFn: () => MentoringService.getMyProfile(),
+  })
+}
+
+/** 멘토 전용: 대시보드 통계 (GET /mentoring/stats) - 다가오는 미팅, 총 멘토링 시간, 응답률 */
+export const useMentorStats = () => {
+  return useQuery({
+    queryKey: mentoringKeys.stats(),
+    queryFn: () => MentoringService.getMentorStats(),
+  })
 }
 
 export const useMentors = (params?: {
@@ -144,6 +171,73 @@ export const useCreateMentoringRequest = () => {
     mutationFn: (body: { mentor_id: string; message?: string | null }) =>
       MentoringService.createRequest(body),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: mentoringKeys.all })
+    },
+  })
+}
+
+/** 멘토가 받은 요청 목록 (멘토 홈/멘티 탭용) */
+export const useReceivedRequests = (params?: {
+  limit?: number
+  offset?: number
+  status?: MentoringRequestStatus
+}) => {
+  return useQuery({
+    queryKey: mentoringKeys.receivedRequests(params),
+    queryFn: () => MentoringService.getReceivedRequests(params),
+  })
+}
+
+/** 멘토가 요청 수락 */
+export const useAcceptRequest = () => {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (requestId: string) => MentoringService.acceptRequest(requestId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: mentoringKeys.all })
+    },
+  })
+}
+
+/** 멘토가 요청 거절 */
+export const useRejectRequest = () => {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (requestId: string) => MentoringService.rejectRequest(requestId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: mentoringKeys.all })
+    },
+  })
+}
+
+/** 멘토가 수락된 요청의 일정/미팅 방식 수정 (PATCH /mentoring/requests/{id}) */
+export const useUpdateRequestSchedule = () => {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: ({
+      requestId,
+      body,
+    }: {
+      requestId: string
+      body: MentoringRequestScheduleUpdate
+    }) => MentoringService.updateRequestSchedule(requestId, body),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [...mentoringKeys.all, 'requests', 'received'],
+      })
+      queryClient.invalidateQueries({ queryKey: mentoringKeys.stats() })
+    },
+  })
+}
+
+/** 멘토 프로필 수정 (PATCH /mentoring/profile) */
+export const useUpdateMentorProfile = () => {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (body: MentorProfileUpdate) =>
+      MentoringService.updateMyProfile(body),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: mentoringKeys.myProfile() })
       queryClient.invalidateQueries({ queryKey: mentoringKeys.all })
     },
   })

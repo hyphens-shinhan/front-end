@@ -27,23 +27,23 @@ export { TOAST_MESSAGES } from './toast'
  * 사용자 역할에 따라 바텀 네비게이션 아이템 상수를 반환합니다.
  */
 export const NAV_ITEMS_BY_ROLE: Record<UserRole, NavItem[]> = {
-  // TODO: 멘토 - 임의로 넣어둠 달라질 예정
+  /** 멘토 전용 대시보드 탭 */
   MENTOR: [
-    { label: '홈', href: ROUTES.HOME.MAIN, icon: 'IconLBoldHome' },
-    { label: 'MY활동', href: ROUTES.SCHOLARSHIP.MAIN, icon: 'IconLBoldChart2' },
+    { label: '홈', href: ROUTES.MENTOR_DASHBOARD.MAIN, icon: 'IconLBoldHome' },
+    { label: '멘티', href: ROUTES.MENTOR_DASHBOARD.MENTEES, icon: 'IconLBoldUserSquare1' },
     {
-      label: '커뮤니티',
-      href: ROUTES.COMMUNITY.MAIN,
-      icon: 'IconLBoldNote2',
+      label: '메시지',
+      href: ROUTES.MENTOR_DASHBOARD.MESSAGES,
+      icon: 'IconLBoldMessages3',
     },
     {
-      label: '네트워크',
-      href: ROUTES.NETWORK.MAIN,
-      icon: 'IconLBoldGlobal',
+      label: '일정',
+      href: ROUTES.MENTOR_DASHBOARD.CALENDAR,
+      icon: 'IconLBoldCalendar',
     },
     {
       label: '프로필',
-      href: ROUTES.MYPAGE.MAIN,
+      href: ROUTES.MENTOR_DASHBOARD.PROFILE,
       icon: 'IconLBoldFrame',
     },
   ],
@@ -166,6 +166,30 @@ export const HEADER_CONFIG_BY_BOTTOM_NAV: Record<NavLink, HeaderConfig> = {
   },
 } as const
 
+/** 멘토 대시보드 경로별 헤더 설정 (getHeaderConfig에서 /mentor/* 매칭 시 사용) */
+export const MENTOR_HEADER_CONFIG: Record<string, HeaderConfig> = {
+  [ROUTES.MENTOR_DASHBOARD.MAIN]: {
+    title: '',
+    navItems: [HEADER_ITEMS.CHAT, HEADER_ITEMS.NOTIFICATIONS],
+  },
+  [ROUTES.MENTOR_DASHBOARD.MENTEES]: {
+    title: '멘티',
+    navItems: [HEADER_ITEMS.NOTIFICATIONS],
+  },
+  [ROUTES.MENTOR_DASHBOARD.MESSAGES]: {
+    title: '메시지',
+    navItems: [HEADER_ITEMS.NOTIFICATIONS],
+  },
+  [ROUTES.MENTOR_DASHBOARD.CALENDAR]: {
+    title: '일정',
+    navItems: [HEADER_ITEMS.NOTIFICATIONS],
+  },
+  [ROUTES.MENTOR_DASHBOARD.PROFILE]: {
+    title: '프로필',
+    navItems: [HEADER_ITEMS.MORE],
+  },
+}
+
 /** 상세 페이지 헤더 설정 */
 export interface CustomHeaderConfig {
   type?: 'Center' | 'Left'
@@ -238,6 +262,13 @@ export const CUSTOM_HEADER_CONFIG: Record<string, CustomHeaderConfig> = {
     type: 'Left',
     btnType: 'Back',
     backHref: ROUTES.NETWORK.MAIN,
+  },
+  /** 멘토 프로필 수정 */
+  [ROUTES.MENTOR_DASHBOARD.PROFILE_EDIT]: {
+    title: '프로필 수정',
+    type: 'Left',
+    btnType: 'Back',
+    backHref: ROUTES.MENTOR_DASHBOARD.PROFILE,
   },
   /** 신한장학재단 공지 상세 - 목록보다 먼저 두어 /community/notice/[id] 매칭 */
   [ROUTES.COMMUNITY.NOTICE.DETAIL_PREFIX]: {

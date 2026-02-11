@@ -1,13 +1,15 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import { HeaderContent } from '@/components/common/Header';
 import { BottomNavContent } from '@/components/common/BottomNav';
 import { cn } from '@/utils/cn';
 import { useMe } from '@/hooks/user/useUser';
-import { useUserStore, toNavRole } from '@/stores';
+import { useUserStore, toNavRole, useCenterModalStore } from '@/stores';
 import { ROUTES } from '@/constants';
+import PushPromptSheetContent, { PUSH_PROMPT_DISMISSED_KEY } from '@/components/notification/PushPromptSheetContent';
+import { usePushSubscription } from '@/hooks/usePushSubscription';
 
 /** 홈 화면: 대각선 블루 + 수직 흰색 페이드 + 네비 뒤쪽까지 확실히 흰색 */
 const HOME_GRADIENT = [
@@ -33,6 +35,13 @@ export default function TabsLayoutClient({
     const setUser = useUserStore((s) => s.setUser);
     const user = useUserStore((s) => s.user);
     const isHome = pathname === ROUTES.HOME.MAIN;
+    const onOpenCenterModal = useCenterModalStore((s) => s.onOpen);
+    const { status, isSupported } = usePushSubscription();
+    const hasOpenedPushPrompt = useRef(false);
+    const statusRef = useRef(status);
+    const isSupportedRef = useRef(isSupported);
+    statusRef.current = status;
+    isSupportedRef.current = isSupported;
 
     useEffect(() => {
         if (isSuccess && me) {
@@ -42,6 +51,31 @@ export default function TabsLayoutClient({
             setUser(null);
         }
     }, [isSuccess, isError, me, setUser]);
+
+    // 홈 진입 시 알림 권한 요청 중앙 모달 한 번 띄우기
+    useEffect(() => {
+        if (!isHome || typeof window === 'undefined') return;
+        if (localStorage.getItem(PUSH_PROMPT_DISMISSED_KEY)) return;
+        if (hasOpenedPushPrompt.current) return;
+
+        const timer = setTimeout(() => {
+            if (hasOpenedPushPrompt.current) return;
+            if (localStorage.getItem(PUSH_PROMPT_DISMISSED_KEY)) return;
+            const s = statusRef.current;
+            const sup = isSupportedRef.current;
+            if (s === 'subscribed' || s === 'denied') return;
+            if (!sup && s === 'unsupported') return;
+
+            hasOpenedPushPrompt.current = true;
+            onOpenCenterModal({
+                title: '알림을 켜 주세요',
+                content: <PushPromptSheetContent />,
+                closeOnOverlayClick: true,
+            });
+        }, 1500);
+
+        return () => clearTimeout(timer);
+    }, [isHome, onOpenCenterModal]);
 
     const userRole = user ? toNavRole(user.role) : 'YB';
 

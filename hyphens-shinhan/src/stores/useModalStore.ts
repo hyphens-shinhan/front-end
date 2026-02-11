@@ -39,6 +39,30 @@ export const useBottomSheetStore = create<BottomSheetState>((set) => ({
 }))
 
 /* ========================================
+ * 중앙(Center) 모달 스토어
+ * ======================================== */
+
+interface CenterModalOptions {
+  title?: string
+  content?: ReactNode
+  closeOnOverlayClick?: boolean
+}
+
+interface CenterModalState {
+  isOpen: boolean
+  options: CenterModalOptions
+  onOpen: (options: CenterModalOptions) => void
+  onClose: () => void
+}
+
+export const useCenterModalStore = create<CenterModalState>((set) => ({
+  isOpen: false,
+  options: {},
+  onOpen: (options) => set({ isOpen: true, options }),
+  onClose: () => set({ isOpen: false, options: {} }),
+}))
+
+/* ========================================
  * 확인(Confirm) 모달 스토어
  * ======================================== */
 

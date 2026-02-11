@@ -219,5 +219,8 @@ export type {
   NotificationListResponse,
   MarkAllReadResponse,
   NotificationMessageResponse,
+  PushSubscriptionCreate,
+  VapidKeyResponse,
+  PushSubscriptionMessageResponse,
   NotificationItem,
 } from './notification'

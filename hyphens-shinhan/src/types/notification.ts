@@ -52,6 +52,26 @@ export interface NotificationMessageResponse {
   message: string
 }
 
+// ========== 웹 푸시 (Web Push) API 타입 ==========
+// Base: /api/v1/notifications | 인증: Bearer
+
+/** 구독 등록/해제 시 body (브라우저 PushSubscription 기준) */
+export interface PushSubscriptionCreate {
+  endpoint: string
+  p256dh: string
+  auth: string
+}
+
+/** VAPID 공개키 응답 */
+export interface VapidKeyResponse {
+  vapid_public_key: string
+}
+
+/** 푸시 구독 등록/해제 메시지 응답 */
+export interface PushSubscriptionMessageResponse {
+  message: string
+}
+
 // ========== UI용 타입 (기존 리스트 표시) ==========
 
 /** 단일 알림 아이템 (리스트 UI용, 상세 이동용 id 포함) */

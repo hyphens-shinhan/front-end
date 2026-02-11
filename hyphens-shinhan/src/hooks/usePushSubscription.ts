@@ -6,6 +6,8 @@ import {
   isPushSupported,
   getNotificationPermission,
 } from '@/utils/push'
+import { NotificationService } from '@/services/notifications'
+import type { PushSubscriptionCreate } from '@/types/notification'
 
 export type PushStatus =
   | 'unsupported'
@@ -82,26 +84,22 @@ export function usePushSubscription(): UsePushSubscriptionReturn {
         return
       }
       const reg = await navigator.serviceWorker.ready
-      const keyRes = await fetch('/api/push/vapid-public-key')
-      if (!keyRes.ok) {
-        const data = await keyRes.json().catch(() => ({}))
-        throw new Error(data?.error ?? 'VAPID 키를 가져올 수 없습니다.')
-      }
-      const { publicKey } = await keyRes.json()
+      const { vapid_public_key } = await NotificationService.getVapidPublicKey()
       const sub = await reg.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(publicKey) as BufferSource,
+        applicationServerKey: urlBase64ToUint8Array(vapid_public_key) as BufferSource,
       })
       const subJson = sub.toJSON()
-      const saveRes = await fetch('/api/push/subscribe', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(subJson),
-      })
-      if (!saveRes.ok) {
-        const data = await saveRes.json().catch(() => ({}))
-        throw new Error(data?.error ?? '구독 저장에 실패했습니다.')
+      const keys = subJson.keys
+      if (!keys?.p256dh || !keys?.auth) {
+        throw new Error('구독 정보를 읽을 수 없습니다.')
       }
+      const body: PushSubscriptionCreate = {
+        endpoint: subJson.endpoint ?? '',
+        p256dh: keys.p256dh,
+        auth: keys.auth,
+      }
+      await NotificationService.subscribeToPush(body)
       setStatus('subscribed')
     } catch (e) {
       setStatus('error')

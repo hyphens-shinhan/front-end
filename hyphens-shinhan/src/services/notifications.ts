@@ -3,6 +3,9 @@ import type {
   NotificationListResponse,
   MarkAllReadResponse,
   NotificationMessageResponse,
+  PushSubscriptionCreate,
+  VapidKeyResponse,
+  PushSubscriptionMessageResponse,
 } from '@/types/notification'
 
 /**
@@ -65,6 +68,47 @@ export const NotificationService = {
   ): Promise<NotificationMessageResponse> => {
     const response = await apiClient.delete<NotificationMessageResponse>(
       `${BASE}/${id}`,
+    )
+    return response.data
+  },
+
+  // ---------- 웹 푸시 (Web Push) ----------
+
+  /**
+   * GET /notifications/push/vapid-key - VAPID 공개키 조회
+   * 클라이언트에서 pushManager.subscribe() 할 때 사용
+   */
+  getVapidPublicKey: async (): Promise<VapidKeyResponse> => {
+    const response = await apiClient.get<VapidKeyResponse>(
+      `${BASE}/push/vapid-key`,
+    )
+    return response.data
+  },
+
+  /**
+   * POST /notifications/push/subscribe - 푸시 구독 등록
+   * endpoint 기준 upsert (같은 endpoint면 갱신)
+   */
+  subscribeToPush: async (
+    body: PushSubscriptionCreate,
+  ): Promise<PushSubscriptionMessageResponse> => {
+    const response = await apiClient.post<PushSubscriptionMessageResponse>(
+      `${BASE}/push/subscribe`,
+      body,
+    )
+    return response.data
+  },
+
+  /**
+   * DELETE /notifications/push/subscribe - 푸시 구독 해제
+   * body: PushSubscriptionCreate (endpoint로 구독 식별)
+   */
+  unsubscribeFromPush: async (
+    body: PushSubscriptionCreate,
+  ): Promise<PushSubscriptionMessageResponse> => {
+    const response = await apiClient.delete<PushSubscriptionMessageResponse>(
+      `${BASE}/push/subscribe`,
+      { data: body },
     )
     return response.data
   },

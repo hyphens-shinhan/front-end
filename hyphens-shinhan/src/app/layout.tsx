@@ -3,6 +3,7 @@ import type { ReactNode } from 'react'
 import './globals.css'
 import RQProvider from '@/providers/rq-provider'
 import BottomModal from '@/components/common/BottomModal'
+import CenterModal from '@/components/common/CenterModal'
 import ConfirmModal from '@/components/common/ConfirmModal'
 import AlertModal from '@/components/common/AlertModal'
 import ToastContainer from '@/components/common/ToastContainer'
@@ -76,6 +77,7 @@ export default function RootLayout({
           {children}
           {/* 전역 모달 */}
           <BottomModal />
+          <CenterModal />
           <ConfirmModal />
           <AlertModal />
           <ToastContainer />

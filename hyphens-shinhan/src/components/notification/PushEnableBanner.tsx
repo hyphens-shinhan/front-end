@@ -1,40 +1,11 @@
 'use client';
 
-import { useState } from 'react';
 import { usePushSubscription } from '@/hooks/usePushSubscription';
 import { getUnsupportedReason } from '@/utils/push';
 import { cn } from '@/utils/cn';
 
 export default function PushEnableBanner() {
   const { status, subscribe, errorMessage, isSupported, recheckSupport } = usePushSubscription();
-  const [sending, setSending] = useState(false);
-  const [sendResult, setSendResult] = useState<string | null>(null);
-
-  const handleSendTest = async () => {
-    setSending(true);
-    setSendResult(null);
-    try {
-      const res = await fetch('/api/push/send', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          title: 'Hyphen 테스트',
-          body: '푸시 알림이 정상적으로 동작합니다.',
-          url: '/notification',
-        }),
-      });
-      const data = await res.json().catch(() => ({}));
-      if (res.ok) {
-        setSendResult(`발송 완료 (${data.sent}/${data.total})`);
-      } else {
-        setSendResult(data?.error ?? '발송 실패');
-      }
-    } catch {
-      setSendResult('발송 중 오류');
-    } finally {
-      setSending(false);
-    }
-  };
 
   if (!isSupported) {
     const reason = getUnsupportedReason();
@@ -71,25 +42,7 @@ export default function PushEnableBanner() {
   return (
     <div className={cn('mx-4 mt-4 flex flex-col gap-3 rounded-xl bg-primary-lighter/30 px-4 py-3')}>
       {status === 'subscribed' ? (
-        <>
-          <p className="body-6 text-grey-11">푸시 알림이 켜져 있습니다.</p>
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={handleSendTest}
-              disabled={sending}
-              className={cn(
-                'rounded-lg bg-primary-light px-3 py-2 text-sm font-medium text-white',
-                'disabled:opacity-50',
-              )}
-            >
-              {sending ? '발송 중…' : '테스트 알림 보내기'}
-            </button>
-            {sendResult && (
-              <span className="font-caption-caption4 text-grey-8">{sendResult}</span>
-            )}
-          </div>
-        </>
+        <p className="body-6 text-grey-11">푸시 알림이 켜져 있습니다. 새 소식은 서버에서 알림으로 보내집니다.</p>
       ) : (
         <>
           <p className="body-6 text-grey-11">

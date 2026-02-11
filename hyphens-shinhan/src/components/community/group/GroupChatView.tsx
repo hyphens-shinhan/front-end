@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useQueryClient } from '@tanstack/react-query'
 import { useClub } from '@/hooks/clubs/useClubs'
 import { useBottomSheetStore, useHeaderStore, useUserStore } from '@/stores'
-import { useChatRooms, useClubChatMessages } from '@/hooks/chat/useChat'
+import { chatKeys, useChatRooms, useClubChatMessages } from '@/hooks/chat/useChat'
 import {
   useJoinClubChat,
   useLeaveClubChat,
@@ -105,8 +105,8 @@ export default function GroupChatView({ clubId }: GroupChatViewProps) {
     () =>
       messagesData?.messages
         ? messagesData.messages
-            .map((msg) => convertMessageToGroupChatMessage(msg, currentUserId))
-            .reverse() // API는 최신순이므로 역순으로 정렬
+          .map((msg) => convertMessageToGroupChatMessage(msg, currentUserId))
+          .reverse() // API는 최신순이므로 역순으로 정렬
         : [],
     [messagesData?.messages, currentUserId],
   )

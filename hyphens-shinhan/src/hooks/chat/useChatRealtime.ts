@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useCallback } from 'react'
-import { useQueryClient } from '@tanstack/react-query'
+import { useQueryClient, type QueryClient } from '@tanstack/react-query'
 import { createClient } from '@/utils/supabase/client'
 import type { RealtimeChannel } from '@supabase/supabase-js'
 import { chatKeys } from './useChat'
@@ -10,6 +10,19 @@ import type { MessageResponse } from '@/types/chat'
 export interface UseChatRealtimeOptions {
   clubId?: string | null
   params?: { cursor?: string; limit?: number }
+  currentUserId?: string | null
+}
+
+/** Mark the room as read, then invalidate the rooms cache so unread counts update. */
+function markRoomAsRead(roomId: string, userId: string, queryClient: QueryClient) {
+  createClient()
+    .from('chat_room_members')
+    .update({ last_read_at: new Date().toISOString() })
+    .eq('room_id', roomId)
+    .eq('user_id', userId)
+    .then(() => {
+      queryClient.invalidateQueries({ queryKey: chatKeys.rooms() })
+    })
 }
 
 /**
@@ -33,11 +46,13 @@ export function useChatRealtime(
 ) {
   const queryClient = useQueryClient()
   const channelRef = useRef<RealtimeChannel | null>(null)
-  const { clubId, params = {} } = options
+  const { clubId, params = {}, currentUserId } = options
 
   // Keep a stable ref to the latest values so the callback is never stale
-  const optionsRef = useRef({ clubId, params, queryClient, roomId })
-  optionsRef.current = { clubId, params, queryClient, roomId }
+  const optionsRef = useRef({ clubId, params, queryClient, roomId, currentUserId })
+  useEffect(() => {
+    optionsRef.current = { clubId, params, queryClient, roomId, currentUserId }
+  })
 
   useEffect(() => {
     if (!roomId) return
@@ -64,7 +79,7 @@ export function useChatRealtime(
         const newMessage = payload.payload as MessageResponse
         if (!newMessage?.id) return
 
-        const { clubId, params, queryClient } = optionsRef.current
+        const { clubId, params, queryClient, currentUserId } = optionsRef.current
 
         const mergeNewMessage = (
           old: { messages: MessageResponse[]; has_more: boolean } | undefined,
@@ -86,11 +101,21 @@ export function useChatRealtime(
             mergeNewMessage,
           )
         }
+
+        // Mark as read when receiving a message from another user
+        if (currentUserId && newMessage.sender_id !== currentUserId) {
+          markRoomAsRead(roomId, currentUserId, queryClient)
+        }
       })
       .subscribe((status, err) => {
         if (cancelled) return
         if (status === 'SUBSCRIBED') {
           channelRef.current = channel
+          // Mark as read when user opens the chat room
+          const { currentUserId, queryClient: qc } = optionsRef.current
+          if (currentUserId) {
+            markRoomAsRead(roomId, currentUserId, qc)
+          }
         }
         if (process.env.NODE_ENV === 'development') {
           if (status === 'SUBSCRIBED') {

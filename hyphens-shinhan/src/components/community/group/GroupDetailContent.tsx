@@ -6,6 +6,7 @@ import { cn } from "@/utils/cn";
 import Button from "@/components/common/Button";
 import EmptyContent from "@/components/common/EmptyContent";
 import GroupCard from "./GroupCard";
+import Thumbnail from "@/components/common/Thumbnail";
 import Tab from "@/components/common/Tab";
 import JoinProfileOptions from "@/components/common/JoinProfileOptions";
 import type { JoinProfileType } from "@/components/common/JoinProfileOptions";
@@ -169,8 +170,11 @@ export default function GroupDetailContent({ clubId }: GroupDetailContentProps) 
 
     return (
         <div className={styles.container}>
-            {/** 대표 이미지 영역 - TODO: 이미지 URL 연동 (클래스는 JSX에 직접 두어 purge 방지) */}
-            <div className={styles.imageContainer} />
+            {/** 대표 이미지 영역 (에러 시 프론트 이미지로 폴백) */}
+            <Thumbnail
+                src={club.recent_member_images?.[0] ?? null}
+                alt={club.name}
+            />
 
             {/** 소모임 정보 (멤버 미리보기 없음) */}
             <GroupCard club={club} variant="detail" />
@@ -212,5 +216,4 @@ const styles = {
     ),
     tabContainer: cn('flex gap-2'),
     tabContent: cn('py-4'),
-    imageContainer: cn('h-[158px] rounded-[16px] bg-grey-4 px-4 py-3'),
 };

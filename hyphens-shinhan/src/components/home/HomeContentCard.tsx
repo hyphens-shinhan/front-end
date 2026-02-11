@@ -64,8 +64,9 @@ function mapEligibilityToSummaryItems(
 }
 
 /**
- * 요약 데이터 기준으로 바로가기 태그 라벨 결정
- * - 하나라도 미충족이면 '유의 필요', 모두 충족이면 태그 없음(또는 '충족')
+ * 요약 데이터 기준으로 바로가기 태그 라벨·색상 결정
+ * - 하나라도 미충족이면 '유의 필요'(red), 모두 충족이면 태그 없음
+ * - 유지심사 상세(MaintenanceReviewProgress) 구간과 문구·색 맞춤
  */
 function getTagLabel(data: ScholarshipEligibilityResponse | undefined): string | undefined {
   if (!data) return undefined;
@@ -79,6 +80,21 @@ function getTagLabel(data: ScholarshipEligibilityResponse | undefined): string |
   return allOk ? undefined : '유의 필요';
 }
 
+function getTagColor(
+  data: ScholarshipEligibilityResponse | undefined,
+): 'red' | 'yellow' | 'green' | undefined {
+  if (!data) return undefined;
+  const mandatoryOk =
+    data.mandatory_total === 0 ||
+    data.mandatory_completed >= data.mandatory_total;
+  const gpaOk = data.gpa >= DISPLAY_TARGETS.GPA_MAX * 0.5;
+  const creditsOk = data.total_credits >= DISPLAY_TARGETS.CREDITS_TARGET;
+  const volunteerOk = data.volunteer_hours >= DISPLAY_TARGETS.VOLUNTEER_TARGET;
+  const allOk = mandatoryOk && gpaOk && creditsOk && volunteerOk;
+  if (allOk) return undefined;
+  return 'red';
+}
+
 const styles = {
   card: 'flex min-h-0 flex-1 flex-col rounded-t-[32px] bg-white pt-9 pb-20',
   shortcut: 'mt-7',
@@ -86,18 +102,24 @@ const styles = {
 } as const;
 
 interface HomeContentCardProps {
-  /** 유지심사 바로가기 태그 (데이터 없을 때만 사용, 있으면 API 기준으로 계산) */
+  /** 유지심사 바로가기 태그 문구 (데이터 없을 때만 사용, 있으면 API 기준으로 계산) */
   tagLabel?: string;
+  /** 유지심사 바로가기 태그 색 (데이터 없을 때만 사용) */
+  tagColor?: 'red' | 'yellow' | 'green';
   className?: string;
 }
 
 /** 홈 탭 메인 콘텐츠를 담는 흰색 카드 영역 (상단만 둥근 모서리) */
 export default function HomeContentCard({
   tagLabel: tagLabelProp,
+  tagColor: tagColorProp,
   className,
 }: HomeContentCardProps) {
   const { data: eligibility } = useScholarshipEligibility();
-  const tagLabel = eligibility != null ? getTagLabel(eligibility) : tagLabelProp;
+  const tagLabel =
+    eligibility != null ? getTagLabel(eligibility) : tagLabelProp;
+  const tagColor =
+    eligibility != null ? getTagColor(eligibility) : tagColorProp;
   const summaryItems =
     eligibility != null ? mapEligibilityToSummaryItems(eligibility) : undefined;
 
@@ -106,6 +128,7 @@ export default function HomeContentCard({
       <ShortcutMenuList />
       <MaintenanceReviewShortcut
         tagLabel={tagLabel}
+        tagColor={tagColor}
         href={ROUTES.SCHOLARSHIP.MAINTENANCE}
         className={styles.shortcut}
       />

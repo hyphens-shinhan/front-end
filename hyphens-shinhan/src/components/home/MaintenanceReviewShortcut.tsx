@@ -7,8 +7,10 @@ import { ROUTES } from '@/constants';
 import { cn } from '@/utils/cn';
 
 interface MaintenanceReviewShortcutProps {
-  /** 유지심사 상태 태그 (예: '유의 필요'). 없으면 태그 미표시 */
+  /** 유지심사 상태 태그 (예: '유의 필요'). 없으면 태그 미표시. 글자·색은 유지심사 상세 태그와 동일 */
   tagLabel?: string;
+  /** 태그 색상 (유지심사 상세와 맞출 때: red / yellow / green) */
+  tagColor?: 'red' | 'yellow' | 'green';
   /** 이동 경로. 기본: MY활동(장학) 메인 */
   href?: string;
   className?: string;
@@ -20,6 +22,7 @@ interface MaintenanceReviewShortcutProps {
  */
 export default function MaintenanceReviewShortcut({
   tagLabel,
+  tagColor = 'red',
   href = ROUTES.SCHOLARSHIP.MAIN,
   className,
 }: MaintenanceReviewShortcutProps) {
@@ -32,7 +35,7 @@ export default function MaintenanceReviewShortcut({
       <div className={styles.left}>
         <span className={styles.title}>나의 유지심사 현황</span>
         {tagLabel != null && tagLabel !== '' && (
-          <InfoTag label={tagLabel} color="red" />
+          <InfoTag label={tagLabel} color={tagColor} />
         )}
       </div>
       <Icon

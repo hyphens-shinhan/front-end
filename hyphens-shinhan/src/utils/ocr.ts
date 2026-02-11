@@ -88,13 +88,47 @@ export interface ExtractedItem {
 }
 
 /**
+ * Extract text from a receipt image using OpenAI GPT-4o vision (via /api/ocr/receipt).
+ * Uses OPENAI_API_KEY from server env; keeps the key off the client.
+ */
+async function extractTextFromImageViaOpenAI(imageFile: File): Promise<string> {
+  const formData = new FormData();
+  formData.append('image', imageFile);
+
+  const res = await fetch('/api/ocr/receipt', {
+    method: 'POST',
+    body: formData,
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: res.statusText }));
+    const message =
+      typeof err?.error === 'string' ? err.error : '영수증 OCR 요청에 실패했습니다.';
+    throw new Error(message);
+  }
+
+  const data = (await res.json()) as { text?: string };
+  const text = data.text ?? '';
+  if (!text.trim()) {
+    throw new Error('OpenAI returned no text');
+  }
+  return text;
+}
+
+/**
  * Extract text from an image using OCR with receipt-optimized settings.
- * Uses Korean-only so output is correct 한글 (no Latin misreads of Hangul).
- * - Language: kor only (prioritizes exact Korean; avoids "CBMsiRTRls"-style garbage)
- * - PSM 6 (single block), OEM 1 (LSTM)
- * - Preprocess: upscale 2x, grayscale, binarize, optional invert for thermal
+ * In the browser uses OpenAI GPT-4o via /api/ocr/receipt when available.
+ * Fallback: Tesseract (Korean-only, preprocessed).
  */
 export async function extractTextFromImage(imageFile: File): Promise<string> {
+  if (typeof window !== 'undefined') {
+    try {
+      return await extractTextFromImageViaOpenAI(imageFile);
+    } catch (e) {
+      console.warn('OpenAI receipt OCR failed, falling back to Tesseract:', e);
+    }
+  }
+
   const Tesseract = await getTesseract();
   const { createWorker, PSM, OEM } = Tesseract;
 

@@ -16,6 +16,8 @@ export interface ClubCreate {
   category: ClubCategory
   /** 익명 설정 */
   anonymity: ClubAnonymity
+  /** 커버 이미지 URL (선택, 업로드 후 URL 전달) */
+  cover_image_url?: string | null
 }
 
 /** 소모임 수정 요청 데이터 */

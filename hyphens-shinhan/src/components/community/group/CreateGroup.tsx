@@ -12,6 +12,7 @@ import type { ClubCategory, ClubAnonymity } from '@/types/clubs'
 import { cn } from '@/utils/cn'
 import { Icon } from '@/components/common/Icon'
 import { useMyProfile } from '@/hooks/user/useUser'
+import { useImageUpload } from '@/hooks/useImageUpload'
 
 const CATEGORIES: { value: ClubCategory; label: string }[] = [
   { value: 'STUDY', label: '스터디' },
@@ -31,14 +32,24 @@ const MAX_DESCRIPTION_LENGTH = 500
 export default function CreateGroup() {
   const router = useRouter()
   const { setHandlers, resetHandlers } = useHeaderStore()
-  const coverInputRef = useRef<HTMLInputElement>(null)
   const toast = useToast()
+
+  // 커버 이미지 (useImageUpload 훅 – 업로드 로직은 submit 시 uploadImages() 사용)
+  const {
+    images: coverImages,
+    fileInputRef: coverInputRef,
+    handleImageSelect: handleCoverSelect,
+    handleRemoveImage: handleRemoveCover,
+    openFilePicker: openCoverPicker,
+    uploadImages: uploadCoverImages,
+  } = useImageUpload({ maxImages: 1, bucket: 'clubs', pathPrefix: 'covers' })
+
+  const coverFile = coverImages[0] ?? null
 
   // Form State
   const [name, setName] = useState('')
   const [category, setCategory] = useState<ClubCategory | null>(null)
   const [participationMode, setParticipationMode] = useState<ClubAnonymity | null>(null)
-  const [coverFile, setCoverFile] = useState<{ url: string; file: File } | null>(null)
   const [description, setDescription] = useState('')
 
   // Mutations & Data
@@ -62,15 +73,23 @@ export default function CreateGroup() {
     }
 
     try {
-      // 1. 소모임 생성
+      // 1. 커버 이미지 업로드 (선택)
+      let coverImageUrl: string | null = null
+      if (coverImages.length > 0) {
+        const urls = await uploadCoverImages()
+        coverImageUrl = urls[0] ?? null
+      }
+
+      // 2. 소모임 생성
       const created = await createClub({
         name: name.trim(),
         description: description.trim(),
         category: category!,
         anonymity: participationMode!,
+        cover_image_url: coverImageUrl,
       })
 
-      // 2. 소모임 가입 (방장 가입)
+      // 3. 소모임 가입 (방장 가입)
       // participationMode가 'PRIVATE'이면 익명, 그 외(PUBLIC, BOTH)는 실명으로 기본 가입 처리
       const isAnonymous = participationMode === 'PRIVATE';
 
@@ -83,7 +102,7 @@ export default function CreateGroup() {
         }
       })
 
-      // 3. 채팅방 입장
+      // 4. 채팅방 입장
       try {
         await joinClubChat(created.id)
         toast.show(TOAST_MESSAGES.GROUP.CREATE_SUCCESS)
@@ -108,24 +127,18 @@ export default function CreateGroup() {
     return () => resetHandlers()
   }, [setHandlers, resetHandlers])
 
-  const handleCoverClick = () => coverInputRef.current?.click()
-
-  const handleCoverChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file?.type.startsWith('image/')) return
-    if (coverFile?.url) URL.revokeObjectURL(coverFile.url)
-    setCoverFile({ url: URL.createObjectURL(file), file })
-    e.target.value = ''
-  }
-
-  const removeCover = () => {
-    if (coverFile?.url) URL.revokeObjectURL(coverFile.url)
-    setCoverFile(null)
+  const handleCoverClick = () => {
+    if (coverFile) {
+      handleRemoveCover(0)
+      openCoverPicker()
+    } else {
+      openCoverPicker()
+    }
   }
 
   return (
     <main className="mx-auto max-w-[480px] px-5 pt-6 pb-20">
-      {/* 커버 이미지 섹션 */}
+      {/* 커버 이미지 섹션 (useImageUpload 훅 사용, 제출 시 uploadImages()로 업로드) */}
       <section className="mb-10">
         <p className="title-16 text-grey-11">
           커버 이미지 <span className="body-6 text-grey-8">(선택)</span>
@@ -134,21 +147,28 @@ export default function CreateGroup() {
           ref={coverInputRef}
           type="file"
           accept="image/*"
-          onChange={handleCoverChange}
+          onChange={handleCoverSelect}
           className="hidden"
         />
-        <button
-          type="button"
+        <div
+          role="button"
+          tabIndex={0}
           onClick={handleCoverClick}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              handleCoverClick()
+            }
+          }}
           className={cn(
-            'flex w-full aspect-2/1 items-center justify-center overflow-hidden rounded-[16px] bg-grey-1-1 mt-4',
+            'flex w-full aspect-2/1 items-center justify-center overflow-hidden rounded-[16px] bg-grey-1-1 mt-4 cursor-pointer',
             'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-shinhanblue focus-visible:ring-offset-2'
           )}
         >
           {coverFile ? (
             <div className="relative h-full w-full group">
               <img
-                src={coverFile.url}
+                src={coverFile.preview}
                 alt=""
                 className="h-full w-full object-cover"
               />
@@ -161,7 +181,7 @@ export default function CreateGroup() {
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation()
-                  removeCover()
+                  handleRemoveCover(0)
                 }}
                 className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-black/50 text-sm font-medium text-white opacity-0 transition-opacity group-hover:opacity-100"
               >
@@ -173,7 +193,7 @@ export default function CreateGroup() {
               이미지 추가
             </span>
           )}
-        </button>
+        </div>
       </section>
 
       {/* 이름 섹션 */}

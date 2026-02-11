@@ -210,3 +210,14 @@ export type {
 
 // MARK: - Videos (비디오 목록/생성/삭제, ADMIN 전용 생성·삭제)
 export type { VideoCreate, VideoResponse, VideoListResponse } from './videos'
+
+// MARK: - Notification (알림 API: /api/v1/notifications)
+export type {
+  NotificationType,
+  NotificationActor,
+  NotificationResponse,
+  NotificationListResponse,
+  MarkAllReadResponse,
+  NotificationMessageResponse,
+  NotificationItem,
+} from './notification'

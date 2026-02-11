@@ -49,15 +49,17 @@ export default function NoticeDetailContent({ noticeId }: NoticeDetailContentPro
         );
     }
 
-    const { title, content, is_pinned, view_count, file_urls, created_at } = notice;
+    const { title, content, is_pinned, view_count, file_urls, file_names, created_at } = notice;
     const getFileName = (url: string) => url.split('/').pop() || url;
+    const firstFileDisplayName =
+        (file_names && file_names[0]) || (file_urls?.[0] ? getFileName(file_urls[0]) : '');
 
     const handleAttachmentClick = (e: React.MouseEvent) => {
         e.preventDefault();
         if (!file_urls?.[0]) return;
         const a = document.createElement('a');
         a.href = file_urls[0];
-        a.download = getFileName(file_urls[0]);
+        a.download = firstFileDisplayName || getFileName(file_urls[0]);
         a.target = '_blank';
         a.rel = 'noopener noreferrer';
         a.click();
@@ -91,10 +93,10 @@ export default function NoticeDetailContent({ noticeId }: NoticeDetailContentPro
                     type="button"
                     onClick={handleAttachmentClick}
                     className={styles.attachmentContainer}
-                    aria-label={`첨부파일 다운로드: ${getFileName(file_urls[0])}`}
+                    aria-label={`첨부파일 다운로드: ${firstFileDisplayName}`}
                 >
-                    <Icon name="IconMBoldDocumentText" />
-                    {getFileName(file_urls[0])}
+                    <Icon name="IconMBoldDocumentText" className="shrink-0" />
+                    <span className={styles.attachmentFileName}>{firstFileDisplayName}</span>
                 </button>
             )}
         </article>
@@ -106,12 +108,12 @@ const styles = {
     titleContainer: cn('flex flex-col gap-2 py-4'),
     content: cn('body-6 text-grey-11', 'whitespace-pre-wrap', 'py-4'),
     attachmentContainer: cn(
-        'flex items-center gap-2.5',
-        'bg-grey-2 rounded-[6px]',
+        'flex min-w-0 items-center gap-2.5',
+        'bg-grey-2 rounded-[6px] border border-grey-3',
         'body-8 text-grey-9',
         'px-3 py-2',
         'cursor-pointer hover:bg-grey-3 transition-colors text-left underline',
-        'border-0 border border-grey-3 hover:cursor-pointer',
     ),
+    attachmentFileName: cn('min-w-0 truncate'),
     infoContainer: cn('flex items-center gap-4', 'font-caption-caption4 text-grey-8'),
 };

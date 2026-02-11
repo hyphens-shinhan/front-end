@@ -1,7 +1,6 @@
 'use client';
 
 import { memo } from "react";
-import { Icon } from "@/components/common/Icon";
 import { cn } from "@/utils/cn";
 import MemberCard from "./MemberCard";
 import { useClubMembers } from "@/hooks/clubs/useClubs";

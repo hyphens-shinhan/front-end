@@ -245,7 +245,6 @@ export const CUSTOM_HEADER_CONFIG: Record<string, CustomHeaderConfig> = {
     type: 'Center',
     btnType: 'Back',
     backHref: ROUTES.COMMUNITY.NOTICE.MAIN,
-    navItem: HEADER_ITEMS[HEADER_NAV_ITEM_KEY.MORE],
   },
   /** 신한장학재단 공지 목록 페이지 헤더 설정 */
   [ROUTES.COMMUNITY.NOTICE.MAIN]: {

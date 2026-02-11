@@ -30,7 +30,8 @@ export const ApplicationStatus = {
   CLOSED: 'CLOSED',
 } as const
 
-export type ApplicationStatus = (typeof ApplicationStatus)[keyof typeof ApplicationStatus]
+export type ApplicationStatus =
+  (typeof ApplicationStatus)[keyof typeof ApplicationStatus]
 
 /**
  * 게시글 작성자 정보
@@ -97,7 +98,9 @@ export interface NoticePostResponse extends BasePostResponse {
   /** 조회수 */
   view_count: number
   /** 첨부 파일 URL 목록 */
-  file_urls?: string[] | null
+  file_urls: string[] | null
+  /** 첨부 파일 표시명 목록 (file_urls와 인덱스 1:1) */
+  file_names: string[] | null
   // author 필드가 스키마에서 제외됨
 }
 
@@ -211,6 +214,8 @@ export interface NoticePostCreate {
   is_pinned: boolean
   /** 파일 URL 목록 (선택) */
   file_urls?: string[] | null
+  /** 파일 표시명 목록 (선택, file_urls와 인덱스 1:1) */
+  file_names?: string[] | null
   /** 이미지 URL 목록 (선택) */
   image_urls?: string[] | null
 }

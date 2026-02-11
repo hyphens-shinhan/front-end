@@ -22,6 +22,10 @@ function areNoticePropsEqual(prev: NoticeCardProps, next: NoticeCardProps): bool
     const bUrls = b.file_urls ?? [];
     if (aUrls.length !== bUrls.length) return false;
     if (aUrls.some((url, i) => url !== bUrls[i])) return false;
+    const aNames = a.file_names ?? [];
+    const bNames = b.file_names ?? [];
+    if (aNames.length !== bNames.length) return false;
+    if (aNames.some((name, i) => name !== bNames[i])) return false;
     return true;
 }
 
@@ -38,13 +42,14 @@ function NoticeCard({ notice }: NoticeCardProps) {
         is_pinned,
         view_count,
         file_urls,
+        file_names,
         created_at,
     } = notice;
 
-    // 파일명 추출 (URL에서 마지막 부분)
-    const getFileName = (url: string) => {
-        return url.split('/').pop() || url;
-    };
+    const getFileName = (url: string) => url.split('/').pop() || url;
+    /** 표시명: file_names[0] 우선, 없으면 URL에서 추출 */
+    const firstFileDisplayName =
+        (file_names && file_names[0]) || (file_urls?.[0] ? getFileName(file_urls[0]) : '');
 
     // 오늘 포함 3일 이내 공지인지 (뱃지 노출 조건)
     const isWithin3Days = (() => {
@@ -69,8 +74,8 @@ function NoticeCard({ notice }: NoticeCardProps) {
             {/** 첨부 파일 (리스트 카드에서는 표시만, 다운로드는 상세 페이지에서) */}
             {file_urls && file_urls.length > 0 && (
                 <div className={styles.attachmentContainer}>
-                    <Icon name='IconMBoldDocumentText' />
-                    {getFileName(file_urls[0])}
+                    <Icon name="IconMBoldDocumentText" className="shrink-0" />
+                    <span className={styles.attachmentFileName}>{firstFileDisplayName}</span>
                 </div>
             )}
 
@@ -93,11 +98,13 @@ const styles = {
         'line-clamp-2',
     ),
     attachmentContainer: cn(
-        'flex items-center gap-2.5',
+        'flex min-w-0 items-center gap-2.5',
         'bg-grey-2 rounded-[6px] border border-grey-3',
         'body-8 text-grey-9',
         'px-3 py-2',
     ),
+    /** 파일명만 한 줄 말줄임, 아이콘은 항상 왼쪽 고정 */
+    attachmentFileName: cn('min-w-0 truncate'),
     infoContainer: cn(
         'flex items-center gap-4',
         'font-caption-caption4 text-grey-8',

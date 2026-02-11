@@ -80,13 +80,15 @@ export default function CreateFeed({ postId }: CreateFeedProps) {
   // 현재 모드에 맞는 API 제출 중 여부 (완료 버튼 비활성·중복 클릭 방지에 사용)
   const isPending = isEditMode ? isUpdatePending : isCreatePending
 
-  // 수정 모드: post 데이터가 들어오면 폼 값 동기화 (한 번만 실행되진 않고 post 참조 바뀔 때마다)
+  // 수정 모드: post 데이터가 들어오면 폼 값 동기화 + textarea 높이 재계산
   useEffect(() => {
     if (post) {
       setContent(post.content)
       setExistingImageUrls(post.image_urls ?? []) // null/undefined면 빈 배열
+      // setState 후 렌더링이 완료된 뒤 textarea 높이를 재계산
+      requestAnimationFrame(() => handleResize())
     }
-  }, [post])
+  }, [post, handleResize])
 
   /**
    * 헤더 '완료' 클릭 시 실행.
@@ -264,7 +266,7 @@ export default function CreateFeed({ postId }: CreateFeedProps) {
 // 스타일
 // ─────────────────────────────────────────────────────────────
 const styles = {
-  container: cn('flex flex-col h-full relative overflow-y-auto scrollbar-hide px-4'),
+  container: cn('flex flex-col h-full relative overflow-y-auto scrollbar-hide px-4 pb-40'),
   contentContainer: cn('flex flex-col gap-5.5'),
   contentInput: cn(
     'w-full',

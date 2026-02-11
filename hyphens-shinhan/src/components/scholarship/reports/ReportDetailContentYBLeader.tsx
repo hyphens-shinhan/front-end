@@ -202,7 +202,8 @@ function ReportDetailContentYBLeader({
     }
 
     // ---------- 버튼 활성/비활성 조건 ----------
-    const canSubmit = !!reportId || !!initialReport?.id
+    // canSubmit 제거: handleSubmit 내부에서 saveDraftThen → data.id 로 제출하므로
+    // 사전에 reportId 가 없어도 제출 가능
     const isSaving = updateReport.isPending || submitReport.isPending
     const canSave = !!councilId
 
@@ -253,7 +254,7 @@ function ReportDetailContentYBLeader({
                 label="제출"
                 size="L"
                 type="primary"
-                disabled={!isSubmitEnabled || !canSubmit || !canSave || isSaving}
+                disabled={!isSubmitEnabled || !canSave || isSaving}
                 onClick={handleSubmit}
                 secondLabel="임시 저장"
                 secondType="secondary"

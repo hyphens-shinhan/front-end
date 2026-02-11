@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 import { cn } from '@/utils/cn';
 import DocumentGuideCard from './DocumentGuideCard';
 import HomeContentCard from './HomeContentCard';
@@ -12,7 +13,14 @@ export default function HomePageContent() {
 
   return (
     <div className={styles.root}>
-      <DocumentGuideCard />
+      {/* QR 펼침 시 문서 안내 영역이 위로 접혀서 프로필+QR이 상단까지 차지 */}
+      <motion.div
+        className="overflow-hidden shrink-0"
+        animate={{ height: isQRExpanded ? 0 : 'auto' }}
+        transition={{ duration: 0.2, ease: 'easeInOut' }}
+      >
+        <DocumentGuideCard />
+      </motion.div>
       {/* 아래 영역: 최소 높이 보장 + 콘텐츠만큼 늘어나서 전체가 한 번에 스크롤됨 */}
       <div className={styles.contentWrapper}>
         {/* 레이어 1: 프로필 카드 (QR 확장 시 z-20으로 올려서 scrollArea 위에 표시) */}

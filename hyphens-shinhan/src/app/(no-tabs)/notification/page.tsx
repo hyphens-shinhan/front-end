@@ -2,10 +2,11 @@
 
 import EmptyContent from '@/components/common/EmptyContent';
 import NotificationListContent from '@/components/notification/NotificationListContent';
+import PushEnableBanner from '@/components/notification/PushEnableBanner';
 import { EMPTY_CONTENT_MESSAGES } from '@/constants';
 import { useNotifications } from '@/hooks/notification';
-import { mapNotificationToItem } from '@/utils/notification';
 import { cn } from '@/utils/cn';
+import { mapNotificationToItem } from '@/utils/notification';
 
 export default function NotificationPage() {
     const { data, isLoading, isError } = useNotifications({ limit: 50 });
@@ -15,6 +16,7 @@ export default function NotificationPage() {
     if (isLoading) {
         return (
             <div className={cn(styles.container, 'min-h-[40vh]')}>
+                <PushEnableBanner />
                 <EmptyContent variant="loading" message={EMPTY_CONTENT_MESSAGES.LOADING.DEFAULT} />
             </div>
         );
@@ -23,6 +25,7 @@ export default function NotificationPage() {
     if (isError) {
         return (
             <div className={cn(styles.container, 'min-h-[40vh]')}>
+                <PushEnableBanner />
                 <EmptyContent variant="error" message={EMPTY_CONTENT_MESSAGES.ERROR.LIST} />
             </div>
         );
@@ -31,6 +34,7 @@ export default function NotificationPage() {
     if (items.length === 0) {
         return (
             <div className={cn(styles.container, 'min-h-[40vh]')}>
+                <PushEnableBanner />
                 <EmptyContent variant="empty" message="알림이 없어요." />
             </div>
         );
@@ -38,6 +42,7 @@ export default function NotificationPage() {
 
     return (
         <div className={styles.container}>
+            <PushEnableBanner />
             <NotificationListContent items={items} />
         </div>
     );

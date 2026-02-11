@@ -41,7 +41,7 @@ function MemberContent({ clubId }: MemberContentProps) {
     <div>
       <div className={styles.memberCountContainer}>
         <p className={styles.memberCountText}>전체 {total}명</p>
-        <Icon name="IconLLineSort" size={24} />
+        {/* <Icon name="IconLLineSort" size={24} /> */}
       </div>
 
       {members.length === 0 ? (

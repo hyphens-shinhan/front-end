@@ -122,8 +122,8 @@ function IncomeSubmitForm({ onAdd }: { onAdd: (name: string, file?: File) => voi
   if (!show) {
     return (
       <button type="button" onClick={() => setShow(true)} className={styles.submitButton}>
-        <Icon name="IconLLineArrowUp" size={18} />
-        소득 증빙자료 제출
+        <Icon name="IconLBoldFolderAdd" size={24} className={styles.submitButtonIcon} />
+        <p className={styles.submitButtonLabel}>소득 증빙자료 제출</p>
       </button>
     );
   }
@@ -162,11 +162,13 @@ const styles = {
   updateLabel: 'body-7 text-grey-9',
   updateValue: 'body-8 text-grey-11',
   submitButton: cn(
-    'w-full mt-4 py-3 rounded-xl body-8 font-medium',
-    'bg-primary-lighter text-primary-shinhanblue flex items-center justify-center gap-2',
+    'w-full mt-4 flex items-center justify-center gap-2.5',
+    'border border-dashed border-grey-6 rounded-[16px] px-4 py-3',
   ),
   form: 'mt-4 pt-4 border-t border-grey-2 space-y-3',
   fileButton: 'w-full py-3 rounded-lg border-2 border-dashed border-grey-3 body-7 text-grey-7',
   cancelButton: 'flex-1 py-3 rounded-xl body-8 text-grey-9 bg-grey-2',
   primaryButton: 'flex-1 py-3 rounded-xl body-8 font-medium text-white bg-primary-shinhanblue',
+  submitButtonIcon: cn('text-grey-9'),
+  submitButtonLabel: cn('font-caption-caption5 text-grey-9'),
 } as const;

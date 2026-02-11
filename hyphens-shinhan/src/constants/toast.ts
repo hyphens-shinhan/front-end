@@ -63,6 +63,13 @@ export const TOAST_MESSAGES = {
     SUBMIT_COMPLETE: '이미 제출하였어요',
     SUBMIT_SUCCESS: '제출이 완료되었어요',
   },
+  /** 유지심사 */
+  MAINTENANCE: {
+    VOLUNTEER_SAVE_SUCCESS: '봉사 시간이 저장되었어요',
+    VOLUNTEER_SAVE_ERROR: '봉사 시간 저장에 실패했어요',
+    GPA_CREDITS_SAVE_ERROR: '학업 탭에서 입력해주세요.',
+    EVENTS_SAVE_ERROR: '활동 탭에서 입력해주세요.',
+  },
   /** 인증 */
   AUTH: {
     LOGIN_ERROR: '로그인에 실패했어요',

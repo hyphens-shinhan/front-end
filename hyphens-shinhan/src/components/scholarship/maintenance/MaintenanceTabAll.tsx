@@ -7,13 +7,20 @@ import { cn } from '@/utils/cn';
 import { useScholarshipEligibility, useMandatoryStatus, useMyVolunteerHours } from '@/hooks/user/useUser';
 import { useYearGpa } from '@/hooks/grades';
 import { useUpdateMyVolunteerHours } from '@/hooks/user/useUserMutations';
-import { ROUTES } from '@/constants';
+import { ROUTES, TOAST_MESSAGES } from '@/constants';
 
 const statusStyles: Record<string, string> = {
   충족: 'bg-state-green-light text-state-green-dark',
   주의: 'bg-state-yellow-light text-state-yellow-dark',
   위험: 'bg-state-red-light text-state-red',
   미달: 'bg-grey-2 text-grey-8',
+};
+
+const statusBorderStyles: Record<string, string> = {
+  충족: 'border-state-green',
+  주의: 'border-state-yellow',
+  위험: 'border-state-red',
+  미달: 'border-grey-3',
 };
 
 const GPA_MAX = 4.5;
@@ -104,22 +111,21 @@ export default function MaintenanceTabAll() {
         { volunteer_hours: value },
         {
           onSuccess: () => {
-            toast.show('봉사 시간이 저장되었습니다.');
+            toast.show(TOAST_MESSAGES.MAINTENANCE.VOLUNTEER_SAVE_SUCCESS);
             setEditing(null);
           },
-          onError: () => toast.error('저장에 실패했습니다.'),
+          onError: () => toast.error(TOAST_MESSAGES.MAINTENANCE.VOLUNTEER_SAVE_ERROR),
         }
       );
       return;
     }
     if (key === 'gpa' || key === 'credits') {
-      toast.show('학업·학점은 학업 탭에서 성적을 입력하면 자동 반영됩니다.');
+      toast.error(TOAST_MESSAGES.MAINTENANCE.GPA_CREDITS_SAVE_ERROR);
       setEditing(null);
       router.push(`${ROUTES.SCHOLARSHIP.MAINTENANCE}?tab=학업`);
-      return;
     }
     if (key === 'events') {
-      toast.show('필수 행사는 활동 탭에서 제출하면 반영됩니다.');
+      toast.error(TOAST_MESSAGES.MAINTENANCE.EVENTS_SAVE_ERROR);
       setEditing(null);
       router.push(`${ROUTES.SCHOLARSHIP.MAINTENANCE}?tab=활동`);
     }
@@ -131,11 +137,17 @@ export default function MaintenanceTabAll() {
         <span className={styles.sectionLabel}>전체 현황</span>
         <div className={styles.statsGrid}>
           {stats.map((stat) => (
-            <button
+            <div
               key={stat.key}
-              type="button"
-              onClick={() => setEditing(stat.key)}
-              className={cn(styles.statItem, editing === stat.key && styles.statItemActive)}
+              role="button"
+              tabIndex={0}
+              // onClick={() => setEditing(stat.key)}
+              // onKeyDown={(e) => e.key === 'Enter' && setEditing(stat.key)}
+              className={cn(
+                styles.statItem,
+                statusBorderStyles[stat.status] ?? statusBorderStyles.미달,
+                editing === stat.key && styles.statItemActive
+              )}
             >
               <div className={styles.statHeader}>
                 <span className={styles.statLabel}>{stat.label}</span>
@@ -144,10 +156,10 @@ export default function MaintenanceTabAll() {
                 </span>
               </div>
               <span className={styles.statValue}>{stat.value}</span>
-            </button>
+            </div>
           ))}
         </div>
-        {editing && (
+        {/* {editing && (
           <EditForm
             editing={editing}
             stats={stats}
@@ -156,7 +168,7 @@ export default function MaintenanceTabAll() {
             onCancel={() => setEditing(null)}
             isPending={updateVolunteer.isPending}
           />
-        )}
+        )} */}
       </div>
 
       {nextDeadline && (
@@ -243,10 +255,10 @@ const styles = {
   sectionLabel: 'body-7 text-grey-9 mb-3 block',
   statsGrid: 'grid grid-cols-2 gap-3',
   statItem: cn(
-    'rounded-lg bg-grey-1-1 p-3 text-left w-full',
-    'border border-transparent hover:border-grey-3 transition-colors',
+    'rounded-lg bg-grey-1-1 p-3 text-left w-full border cursor-pointer',
+    'transition-colors hover:opacity-90',
   ),
-  statItemActive: 'border-primary-shinhanblue ring-1 ring-primary-shinhanblue',
+  statItemActive: 'ring-2 ring-primary-shinhanblue ring-offset-1',
   statHeader: 'flex justify-between items-center mb-1',
   statLabel: 'body-7 text-grey-9',
   statusBadge: 'px-2 py-0.5 rounded-full body-8',

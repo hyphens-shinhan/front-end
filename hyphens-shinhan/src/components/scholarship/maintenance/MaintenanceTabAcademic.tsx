@@ -140,7 +140,7 @@ export default function MaintenanceTabAcademic() {
           </div>
         </div>
         {/* 학기별 성적 추가: 성적·학점은 여기서 입력하면 자동 반영됩니다 */}
-        <AddGradeForm year={year} onSuccess={() => {}} />
+        <AddGradeForm year={year} onSuccess={() => { }} />
         {gpaData.grades.length > 0 && (
           <GradeList year={year} grades={gpaData.grades} />
         )}
@@ -517,7 +517,7 @@ const styles = {
   ),
   cardHeader: 'flex flex-row justify-between items-center mb-3',
   cardTitle: 'title-14 text-grey-11',
-  gpaValue: 'body-7 text-grey-11',
+  gpaValue: 'body-6 text-grey-11',
   gpaRow: 'flex flex-row items-center gap-2 mb-4',
   gpaBar: 'flex-1 h-2.5 rounded-full',
   hintIcon: 'flex shrink-0',

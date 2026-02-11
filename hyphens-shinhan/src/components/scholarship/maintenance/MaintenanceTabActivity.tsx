@@ -140,7 +140,7 @@ export default function MaintenanceTabActivity() {
           onAdd={(addedHours) => {
             updateVolunteer.mutate(
               { volunteer_hours: volunteerHours + addedHours },
-              { onSuccess: () => {}, onError: () => {} }
+              { onSuccess: () => { }, onError: () => { } }
             );
           }}
           isPending={updateVolunteer.isPending}
@@ -213,7 +213,7 @@ export default function MaintenanceTabActivity() {
             </div>
           </div>
         )}
-        <Link href={ROUTES.SCHOLARSHIP.MAIN} className={styles.submitButton}>
+        <Link href={ROUTES.SCHOLARSHIP.MAIN} role="button" tabIndex={0} className={styles.LinkButton}>
           <Icon name="IconLLineArrowUp" size={18} />
           필수 활동 제출하러 가기
         </Link>
@@ -263,8 +263,8 @@ function VolunteerSubmitForm({
         disabled={isPending}
         className={styles.submitButton}
       >
-        <Icon name="IconLLineArrowUp" size={18} />
-        봉사활동 제출
+        <Icon name="IconLBoldFolderAdd" size={24} className={styles.submitButtonIcon} />
+        <p className={styles.submitButtonLabel}>봉사 활동 자료 업로드</p>
       </button>
     );
   }
@@ -320,15 +320,21 @@ const styles = {
   updateRow: 'flex flex-col gap-2 pt-2 border-t border-grey-2',
   updateItem: 'flex flex-col gap-0.5',
   updateLabel: 'body-7 text-grey-9',
-  updateValue: 'body-8 text-grey-11',
+  updateValue: 'body-7 text-grey-11',
   submitButton: cn(
-    'w-full mt-4 py-3 rounded-xl body-8 font-medium',
-    'bg-primary-lighter text-primary-shinhanblue flex items-center justify-center gap-2',
+    'w-full mt-4 flex items-center justify-center gap-2.5',
+    'border border-dashed border-grey-6 rounded-[16px] px-4 py-3',
   ),
+  submitButtonIcon: cn('text-grey-9'),
+  submitButtonLabel: cn('font-caption-caption5 text-grey-9'),
   form: 'mt-4 pt-4 border-t border-grey-2 space-y-3',
   formLabel: 'block body-7 text-grey-9 mb-1',
   input: 'w-full px-4 py-3 rounded-lg border border-grey-2 body-8 text-grey-11 placeholder:text-grey-6',
   fileButton: 'w-full py-3 rounded-lg border-2 border-dashed border-grey-3 body-7 text-grey-7',
   cancelButton: 'flex-1 py-3 rounded-xl body-8 text-grey-9 bg-grey-2',
   primaryButton: 'flex-1 py-3 rounded-xl body-8 font-medium text-white bg-primary-shinhanblue',
+  LinkButton: cn(
+    'body-7 w-full mt-4 flex items-center justify-center gap-2.5 border border-grey-2 rounded-[16px] px-4 py-3',
+    'text-primary-shinhanblue flex items-center justify-center gap-2',
+  ),
 } as const;

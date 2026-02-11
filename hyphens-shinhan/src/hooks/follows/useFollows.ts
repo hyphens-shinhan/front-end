@@ -31,6 +31,15 @@ export const useMyFollowing = (params?: {
   })
 }
 
+/** 특정 유저에 대한 팔로우 여부 (내가 이미 팔로우 중인지) */
+export const useFollowStatus = (userId: string | undefined) => {
+  return useQuery({
+    queryKey: followKeys.status(userId ?? ''),
+    queryFn: () => FollowsService.getFollowStatus(userId!),
+    enabled: !!userId,
+  })
+}
+
 export const useAcceptFollowRequest = () => {
   const queryClient = useQueryClient()
   return useMutation({

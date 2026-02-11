@@ -11,7 +11,7 @@ import EmptyContent from "../common/EmptyContent";
 import { EMPTY_CONTENT_MESSAGES, ROUTES } from "@/constants";
 import { useUserStore, useHeaderStore } from "@/stores";
 import { AppRole } from "@/types";
-import { useFollow } from "@/hooks/follows/useFollows";
+import { useFollow, useFollowStatus, useUnfollow } from "@/hooks/follows/useFollows";
 
 interface PublicProfileContentProps {
     userId: string;
@@ -25,6 +25,11 @@ export default function PublicProfileContent({ userId }: PublicProfileContentPro
     const isMyProfile = currentUser?.id === userId;
     const { setCustomTitle, resetHandlers } = useHeaderStore();
     const followMutation = useFollow();
+    const unfollowMutation = useUnfollow();
+    const { data: followStatus } = useFollowStatus(userId);
+    const isFollowing = followStatus?.is_following ?? false;
+    /** 요청만 보냄, 수락 대기 중 */
+    const isRequestPending = followStatus?.status === 'PENDING';
 
     // 헤더 제목을 "프로필"로 설정
     useEffect(() => {
@@ -58,10 +63,29 @@ export default function PublicProfileContent({ userId }: PublicProfileContentPro
             {/** 프로필 (공개 설정에 따라 필터링된 정보만 표시) */}
             <Profile profile={profile} isMyProfile={isMyProfile} />
 
-            {/** 퍼블릭 페이지 : 팔로우 요청 */}
+            {/** 퍼블릭 페이지 : 팔로우 요청 / 팔로우 요청됨 / 팔로우 취소 */}
             {!isMyProfile && (
                 <div className={styles.button}>
-                    <Button label="팔로우 요청" size="L" type="secondary" fullWidth className='bg-grey-1-1' onClick={() => { followMutation.mutate(userId) }} />
+                    {isFollowing ? (
+                        <Button
+                            label="팔로우 취소"
+                            size="L"
+                            type="secondary"
+                            fullWidth
+                            className="bg-grey-1-1"
+                            onClick={() => unfollowMutation.mutate(userId)}
+                        />
+                    ) : (
+                        <Button
+                            label={isRequestPending ? '팔로우 요청됨' : '팔로우 요청'}
+                            size="L"
+                            type="secondary"
+                            fullWidth
+                            className={cn('bg-grey-1-1', isRequestPending && 'opacity-70')}
+                            disabled={isRequestPending}
+                            onClick={() => followMutation.mutate(userId)}
+                        />
+                    )}
                 </div>
             )}
 

@@ -10,6 +10,7 @@ import MoreButton from "@/components/community/MoreButton";
 import PostContent from "@/components/community/feed/PostContent";
 import { FeedPostResponse } from "@/types/posts";
 import { useUserStore } from "@/stores";
+import { useFollowStatus } from "@/hooks/follows/useFollows";
 import { useFeedPostMoreMenu } from "@/hooks/useFeedPostMoreMenu";
 import { useCouncilReportMoreMenu } from "@/hooks/useCouncilReportMoreMenu";
 import Avatar from "@/components/common/Avatar";
@@ -70,13 +71,17 @@ function PostCard({ post, detailHref, disableProfileInteraction = false, postTyp
 
     const currentUser = useUserStore((s) => s.user);
     const isMyPost = currentUser?.id === author?.id;
+    const { data: followStatus } = useFollowStatus(author?.id);
+    const isFollowingAuthor = followStatus?.is_following ?? author?.is_following ?? false;
+    const isRequestPending = followStatus?.status === 'PENDING';
+    const shouldHideFollowButton = isFollowingAuthor || isRequestPending;
     // 프로필 상호작용이 비활성화되어 있거나, 내 게시글이거나, 익명이거나, 작성자가 없으면 프로필 링크 없음
     const profileLink = !disableProfileInteraction && !isMyPost && !is_anonymous && author
         ? ROUTES.MYPAGE.PUBLIC_PROFILE(author.id)
         : null;
-    // 내 글이 아니고, 프로필 상호작용 가능하고, 익명이 아니고, 작성자가 있으며, 아직 팔로우하지 않은 경우에만 팔로우 버튼 표시
+    // 내 글이 아니고, 프로필 상호작용 가능하고, 익명이 아니고, 작성자가 있으며, 팔로우/요청 대기 중이 아닐 때만 팔로우 버튼 표시
     const showFollowButton =
-        !isMyPost && !disableProfileInteraction && !is_anonymous && !!author && !author.is_following;
+        !isMyPost && !disableProfileInteraction && !is_anonymous && !!author && !shouldHideFollowButton;
 
     const handleProfileClick = (e: React.MouseEvent) => {
         e.preventDefault();

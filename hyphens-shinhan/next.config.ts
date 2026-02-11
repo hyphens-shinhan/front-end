@@ -1,6 +1,7 @@
 import type { NextConfig } from 'next'
 import withSerwistInit from '@serwist/next'
 import { spawnSync } from 'child_process'
+import path from 'path'
 
 // 서비스 워커에게 지금 데이터가 새 버전인지 알려주기 위해
 // Git Hash나 UUID revision으로 불러오기
@@ -11,7 +12,7 @@ const revision =
 // 1. 기존 Next.js 설정
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-
+  transpilePackages: ['tesseract.js'],
   images: {
     remotePatterns: [
       {
@@ -22,6 +23,10 @@ const nextConfig: NextConfig = {
   },
 
   webpack(config) {
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      'tesseract.js': path.resolve(__dirname, 'node_modules/tesseract.js'),
+    }
     // 1. 기존 SVG 처리 규칙을 찾아서 제외 (중요)
     const fileLoaderRule = config.module.rules.find((rule: any) =>
       rule.test?.test?.('.svg'),

@@ -54,9 +54,11 @@ export interface NotificationMessageResponse {
 
 // ========== UI용 타입 (기존 리스트 표시) ==========
 
-/** 단일 알림 아이템 (리스트 UI용) */
+/** 단일 알림 아이템 (리스트 UI용, 상세 이동용 id 포함) */
 export interface NotificationItem {
   id: string
+  /** 알림 유형 (상세 이동 분기용) */
+  type: NotificationType
   /** 알림 제목 */
   title: string
   /** 알림 본문 요약 */
@@ -69,4 +71,12 @@ export interface NotificationItem {
   unread: boolean
   /** 리스트에서 사용할 아이콘 */
   icon: IconName
+  /** 상세 이동용: 게시글 id (LIKE, COMMENT, COMMENT_REPLY) */
+  post_id?: string | null
+  /** 상세 이동용: 채팅방/상대 id (CHAT_MESSAGE) */
+  room_id?: string | null
+  /** 상세 이동용: 알림을 일으킨 유저 id (팔로우/멘토링 등) */
+  actor_id?: string | null
+  /** 상세 이동용: 소모임 id (club 관련 알림) */
+  club_id?: string | null
 }

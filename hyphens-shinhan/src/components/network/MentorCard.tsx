@@ -1,28 +1,41 @@
 'use client'
 
-import { useState } from 'react'
 import type { Person } from '@/types/network'
 import { cn } from '@/utils/cn'
 import Avatar from '@/components/common/Avatar'
 import Button from '../common/Button'
+import { useFollowStatus } from '@/hooks/follows/useFollows'
 
 interface MentorCardProps {
   person: Person
   onFollowRequest?: (personId: string) => void
+  onUnfollowRequest?: (personId: string) => void
   onClick?: () => void
 }
 
 export default function MentorCard({
   person,
   onFollowRequest,
+  onUnfollowRequest,
   onClick,
 }: MentorCardProps) {
-  const [followRequested, setFollowRequested] = useState(false)
+  const { data: followStatus } = useFollowStatus(person.id)
+  const isFollowing = followStatus?.is_following ?? false
+  const isRequestPending = followStatus?.status === 'PENDING'
+  const showFollowArea = onFollowRequest != null || onUnfollowRequest != null
 
-  const handleFollowRequest = () => {
-    if (followRequested) return
-    setFollowRequested(true)
-    onFollowRequest?.(person.id)
+  const getButtonLabel = () => {
+    if (isFollowing) return '팔로우 취소'
+    if (isRequestPending) return '팔로우 요청됨'
+    return '팔로우 요청'
+  }
+
+  const handleButtonClick = () => {
+    if (isFollowing || isRequestPending) {
+      onUnfollowRequest?.(person.id)
+    } else {
+      onFollowRequest?.(person.id)
+    }
   }
 
   return (
@@ -51,14 +64,15 @@ export default function MentorCard({
           {person.university}
         </p>
       </div>
-      {onFollowRequest && (
+      {showFollowArea && (
         <div onClick={(e) => e.stopPropagation()}>
           <Button
             type="secondary"
             size="S"
-            label={followRequested ? '팔로우 요청됨' : '팔로우 요청'}
-            disabled={followRequested}
-            onClick={handleFollowRequest}
+            label={getButtonLabel()}
+            disabled={false}
+            className={isRequestPending ? 'opacity-90' : undefined}
+            onClick={handleButtonClick}
           />
         </div>
       )}

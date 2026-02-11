@@ -63,7 +63,7 @@ export default function PublicProfileContent({ userId }: PublicProfileContentPro
             {/** 프로필 (공개 설정에 따라 필터링된 정보만 표시) */}
             <Profile profile={profile} isMyProfile={isMyProfile} />
 
-            {/** 퍼블릭 페이지 : 팔로우 요청 / 팔로우 요청됨 / 팔로우 취소 */}
+            {/** 퍼블릭 페이지 : 팔로우 요청 / 팔로우 요청됨(클릭 시 요청 취소) / 팔로우 취소 */}
             {!isMyProfile && (
                 <div className={styles.button}>
                     {isFollowing ? (
@@ -75,14 +75,22 @@ export default function PublicProfileContent({ userId }: PublicProfileContentPro
                             className="bg-grey-1-1"
                             onClick={() => unfollowMutation.mutate(userId)}
                         />
-                    ) : (
+                    ) : isRequestPending ? (
                         <Button
-                            label={isRequestPending ? '팔로우 요청됨' : '팔로우 요청'}
+                            label="팔로우 요청됨"
                             size="L"
                             type="secondary"
                             fullWidth
-                            className={cn('bg-grey-1-1', isRequestPending && 'opacity-70')}
-                            disabled={isRequestPending}
+                            className="bg-grey-1-1 opacity-90"
+                            onClick={() => unfollowMutation.mutate(userId)}
+                        />
+                    ) : (
+                        <Button
+                            label="팔로우 요청"
+                            size="L"
+                            type="secondary"
+                            fullWidth
+                            className="bg-grey-1-1"
                             onClick={() => followMutation.mutate(userId)}
                         />
                     )}

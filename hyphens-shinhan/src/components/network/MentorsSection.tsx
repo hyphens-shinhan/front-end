@@ -28,12 +28,14 @@ const REGION_LABEL_MAP = Object.fromEntries(
 interface MentorsSectionProps {
   mentors: Person[]
   onFollowRequest?: (personId: string) => void
+  onUnfollowRequest?: (personId: string) => void
   onPersonClick?: (person: Person) => void
 }
 
 export default function MentorsSection({
   mentors,
   onFollowRequest,
+  onUnfollowRequest,
   onPersonClick,
 }: MentorsSectionProps) {
   const [searchQuery, setSearchQuery] = useState('')
@@ -203,6 +205,7 @@ export default function MentorsSection({
             key={person.id}
             person={person}
             onFollowRequest={onFollowRequest}
+            onUnfollowRequest={onUnfollowRequest}
             onClick={() => onPersonClick?.(person)}
           />
         )) : (

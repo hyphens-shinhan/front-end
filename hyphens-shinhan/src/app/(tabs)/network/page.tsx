@@ -16,6 +16,7 @@ import {
   useAcceptFollowRequest,
   useRejectFollowRequest,
   useFollow,
+  useUnfollow,
 } from '@/hooks/follows/useFollows'
 import { useMentors } from '@/hooks/mentoring/useMentoring'
 
@@ -54,6 +55,7 @@ function NetworkPageContent() {
   const acceptRequest = useAcceptFollowRequest()
   const rejectRequest = useRejectFollowRequest()
   const followMutation = useFollow()
+  const unfollowMutation = useUnfollow()
 
   const followRequests = followRequestsData?.requests ?? []
   const myFollowing = myFollowingData?.followers ?? []
@@ -82,6 +84,7 @@ function NetworkPageContent() {
               mentors={mentors}
               isLoading={mentorsLoading}
               onFollowRequest={handleFollow}
+              onUnfollowRequest={(personId) => unfollowMutation.mutate(personId)}
               onPersonClick={handlePersonClick}
             />
           )}

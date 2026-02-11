@@ -77,8 +77,6 @@ export default function DocumentGuideCard() {
         <img
           src="/assets/images/fox_run.gif"
           alt=""
-          width={160}
-          height={230}
           style={{ width: 160, height: 230, objectFit: 'contain' }}
           className={styles.foxImage}
         />
@@ -91,8 +89,14 @@ export default function DocumentGuideCard() {
 
           <div className={styles.ctaWrap}>
             <div className={styles.ctaRow}>
-              <p className={styles.ctaLabel}>서두르자구!</p>
-              <svg
+              <div className={styles.ctaLabel}>
+                <img
+                  src="/assets/images/hurryup.png"
+                  alt=""
+                  className={styles.hurryupImage}
+                />
+              </div>
+              {/* <svg
                 className={styles.heartLine}
                 viewBox="0 0 100 50"
                 fill="none"
@@ -109,7 +113,7 @@ export default function DocumentGuideCard() {
                   animate={{ pathLength: 1 }}
                   transition={{ duration: 5, ease: 'easeInOut' }}
                 />
-              </svg>
+              </svg> */}
             </div>
             <Button
               label="지금 제출하러 가기"
@@ -143,4 +147,5 @@ const styles = {
   ctaRow: 'flex items-center gap-2',
   ctaLabel: 'body-5 text-white shrink-0',
   heartLine: 'w-[100px] h-[30px] shrink-0 translate-y-[-7px]',
+  hurryupImage: 'w-[80px] h-[30px] object-contain',
 } as const;

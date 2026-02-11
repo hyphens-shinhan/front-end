@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import type { ReactNode } from 'react'
+import localFont from 'next/font/local'
 import './globals.css'
 import RQProvider from '@/providers/rq-provider'
 import BottomModal from '@/components/common/BottomModal'
@@ -7,6 +8,72 @@ import CenterModal from '@/components/common/CenterModal'
 import ConfirmModal from '@/components/common/ConfirmModal'
 import AlertModal from '@/components/common/AlertModal'
 import ToastContainer from '@/components/common/ToastContainer'
+
+const wantedSans = localFont({
+  src: [
+    {
+      path: '../../public/fonts/WantedSans-Regular.ttf',
+      weight: '400',
+      style: 'normal',
+    },
+    {
+      path: '../../public/fonts/WantedSans-Medium.ttf',
+      weight: '500',
+      style: 'normal',
+    },
+    {
+      path: '../../public/fonts/WantedSans-SemiBold.ttf',
+      weight: '600',
+      style: 'normal',
+    },
+    {
+      path: '../../public/fonts/WantedSans-Bold.ttf',
+      weight: '700',
+      style: 'normal',
+    },
+    {
+      path: '../../public/fonts/WantedSans-ExtraBold.ttf',
+      weight: '800',
+      style: 'normal',
+    },
+    {
+      path: '../../public/fonts/WantedSans-Black.ttf',
+      weight: '900',
+      style: 'normal',
+    },
+    {
+      path: '../../public/fonts/WantedSans-ExtraBlack.ttf',
+      weight: '950',
+      style: 'normal',
+    },
+  ],
+  variable: '--font-wanted-sans',
+  display: 'swap',
+  preload: true,
+})
+
+const oneShinhan = localFont({
+  src: [
+    {
+      path: '../../public/fonts/OneShinhanLight.ttf',
+      weight: '300',
+      style: 'normal',
+    },
+    {
+      path: '../../public/fonts/OneShinhanMedium.ttf',
+      weight: '500',
+      style: 'normal',
+    },
+    {
+      path: '../../public/fonts/OneShinhanBold.ttf',
+      weight: '700',
+      style: 'normal',
+    },
+  ],
+  variable: '--font-one-shinhan',
+  display: 'swap',
+  preload: true,
+})
 
 const APP_NAME = 'Hyphen'
 const APP_DEFAULT_TITLE = 'Hyphen APP'
@@ -70,7 +137,7 @@ export default function RootLayout({
   children: ReactNode
 }>) {
   return (
-    <html lang="en" dir="ltr">
+    <html lang="en" dir="ltr" className={`${wantedSans.variable} ${oneShinhan.variable}`}>
       <head />
       <body>
         <RQProvider>

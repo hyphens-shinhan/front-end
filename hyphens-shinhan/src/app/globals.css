@@ -3,39 +3,14 @@
 /* 이 파일 안에 :root 변수, @theme(컬러), @utility(폰트 세트)가 모두 들어있습니다. */
 @import '../styles/variables.css';
 
-/* 2. 폰트 등록 (public/fonts 폴더의 실제 파일명과 확장자 .ttf 반영) */
-/* Wanted Sans - Regular */
-@font-face {
-  font-family: 'Wanted Sans Variable';
-  src: url('/fonts/WantedSans-Regular.ttf') format('truetype');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-/* Wanted Sans - Bold */
-@font-face {
-  font-family: 'Wanted Sans Variable';
-  src: url('/fonts/WantedSans-Bold.ttf') format('truetype');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-/* OneShinhan - Bold */
-@font-face {
-  font-family: 'OneShinhan';
-  src: url('/fonts/OneShinhanBold.ttf') format('truetype');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
+/* 2. 폰트는 next/font/local로 layout.tsx에서 등록됨 (자동 preload & 최적화) */
+/* CSS 변수 --font-wanted-sans, --font-one-shinhan이 <html>에 주입됩니다. */
 
 @theme {
   /* 3. 기본 폰트 패밀리 연결 */
-  /* 시스템 폰트 폴백(Fallback)을 함께 설정합니다. */
-  --font-sans: 'Wanted Sans Variable', ui-sans-serif, system-ui, sans-serif;
-  --font-shinhan: 'OneShinhan', sans-serif;
+  /* next/font가 생성한 CSS 변수를 사용하여 폰트를 연결합니다. */
+  --font-sans: var(--font-wanted-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-shinhan: var(--font-one-shinhan), sans-serif;
 }
 
 /* 4. 변수를 활용한 기본 스타일 설정 */

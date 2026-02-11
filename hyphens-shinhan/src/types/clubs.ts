@@ -8,63 +8,46 @@ export type ClubAnonymity = 'PUBLIC' | 'PRIVATE' | 'BOTH'
 
 /** 소모임 생성 요청 데이터 */
 export interface ClubCreate {
-  /** 소모임 이름 */
   name: string
-  /** 소모임 소개 */
   description: string
-  /** 카테고리 */
+  /** 이미지(커버) URL (선택, 업로드 후 전달) */
+  image_url?: string | null
   category: ClubCategory
-  /** 익명 설정 */
   anonymity: ClubAnonymity
-  /** 커버 이미지 URL (선택, 업로드 후 URL 전달) */
-  cover_image_url?: string | null
 }
 
 /** 소모임 수정 요청 데이터 */
 export interface ClubUpdate {
   name?: string | null
   description?: string | null
+  image_url?: string | null
   category?: ClubCategory | null
   anonymity?: ClubAnonymity | null
 }
 
 /**
- * 소모임 내 내 프로필 (익명/실명, 닉네임·아바타)
- * - 가입(POST /join) 시 Request Body로 사용
- * - anonymity 규칙: PUBLIC=실명만(is_anonymous: false), PRIVATE=익명만(true), BOTH=둘 다. 익명일 때는 nickname 필수
+ * 소모임 내 내 프로필 (가입 시 Request Body)
+ * - anonymity: PUBLIC=실명만, PRIVATE=익명만, BOTH=둘 다. 익명일 때 nickname 필수
  */
 export interface UserClubProfile {
-  /** 익명 모드 여부 */
-  is_anonymous: boolean | null
-  /** 닉네임 (익명일 때 필수) */
-  nickname: string | null
-  /** 프로필 이미지 URL */
-  avatar_url: string | null
+  is_anonymous?: boolean | null
+  nickname?: string | null
+  avatar_url?: string | null
 }
 
 /** 소모임 응답 */
 export interface ClubResponse {
-  /** 소모임 고유 ID */
   id: string
-  /** 생성자 ID */
   creator_id: string
-  /** 소모임 이름 */
   name: string
-  /** 소모임 소개 */
   description: string
-  /** 카테고리 */
+  image_url: string | null
   category: ClubCategory
-  /** 익명 설정 */
   anonymity: ClubAnonymity
-  /** 멤버 수 */
   member_count: number
-  /** 생성 일시 (ISO 8601) */
   created_at: string
-  /** 현재 사용자 가입 여부 */
   is_member: boolean
-  /** 소모임 내 내 프로필 */
   user_profile: UserClubProfile | null
-  /** 최근 멤버 프로필 이미지 URL 목록 */
   recent_member_images: string[] | null
 }
 

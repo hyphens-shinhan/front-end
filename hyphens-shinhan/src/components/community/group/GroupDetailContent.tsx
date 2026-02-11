@@ -27,6 +27,16 @@ const DETAIL_TABS: DetailTab[] = ['멤버', '앨범'];
 
 const BOTTOM_BUTTON_HINT = <p className="font-caption-caption3 text-grey-9">소모임 채팅방에서 멤버와 대화할 수 있어요.</p>;
 
+/** API가 상대 경로만 줄 때 Supabase 풀 URL로 보정. 빈 문자열은 null */
+function normalizeClubImageUrl(url: string | null | undefined): string | null {
+    if (url == null || typeof url !== 'string' || url.trim() === '') return null;
+    const trimmed = url.trim();
+    if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) return trimmed;
+    const base = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    if (!base) return trimmed;
+    return trimmed.startsWith('/') ? `${base}${trimmed}` : `${base}/storage/v1/object/${trimmed}`;
+}
+
 interface GroupDetailContentProps {
     clubId: string;
 }
@@ -48,6 +58,7 @@ export default function GroupDetailContent({ clubId }: GroupDetailContentProps) 
     const { data: club, isLoading, isError } = useClub(clubId);
     const { data: galleryData } = useGalleryImages(clubId);
     const galleryImages = useMemo(() => galleryData?.images ?? [], [galleryData?.images]);
+    const thumbnailSrc = useMemo(() => normalizeClubImageUrl(club?.image_url), [club?.image_url]);
     const joinClub = useJoinClub();
     const joinClubChat = useJoinClubChat();
     const toast = useToast();
@@ -172,7 +183,7 @@ export default function GroupDetailContent({ clubId }: GroupDetailContentProps) 
         <div className={styles.container}>
             {/** 대표 이미지 영역 (에러 시 프론트 이미지로 폴백) */}
             <Thumbnail
-                src={club.recent_member_images?.[0] ?? null}
+                src={thumbnailSrc}
                 alt={club.name}
             />
 

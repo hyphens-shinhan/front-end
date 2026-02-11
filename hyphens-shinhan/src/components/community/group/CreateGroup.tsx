@@ -86,7 +86,7 @@ export default function CreateGroup() {
         description: description.trim(),
         category: category!,
         anonymity: participationMode!,
-        cover_image_url: coverImageUrl,
+        image_url: coverImageUrl,
       })
 
       // 3. 소모임 가입 (방장 가입)

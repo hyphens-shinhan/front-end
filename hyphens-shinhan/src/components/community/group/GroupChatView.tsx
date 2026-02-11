@@ -1,19 +1,23 @@
 'use client'
 
-import { useEffect, useRef, useState, useCallback } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useQueryClient } from '@tanstack/react-query'
 import { useClub } from '@/hooks/clubs/useClubs'
-import { useHeaderStore, useUserStore, useBottomSheetStore } from '@/stores'
-import { useClubChatMessages, useChatRooms, chatKeys } from '@/hooks/chat/useChat'
-import { useJoinClubChat, useSendMessage, useLeaveClubChat } from '@/hooks/chat/useChatMutations'
+import { useBottomSheetStore, useHeaderStore, useUserStore } from '@/stores'
+import { useChatRooms, useClubChatMessages } from '@/hooks/chat/useChat'
+import {
+  useJoinClubChat,
+  useLeaveClubChat,
+  useSendMessage,
+} from '@/hooks/chat/useChatMutations'
 import { useChatRealtime } from '@/hooks/chat/useChatRealtime'
 import { useLeaveClub } from '@/hooks/clubs/useClubMutations'
 import MessageInput from '@/components/common/MessageInput'
 import EmptyContent from '@/components/common/EmptyContent'
 import GroupChatMessageItem from './GroupChatMessageItem'
 import GroupMoreOptionsMenu from './GroupMoreOptionsMenu'
-import { INPUT_BAR_TYPE, EMPTY_CONTENT_MESSAGES, ROUTES } from '@/constants'
+import { EMPTY_CONTENT_MESSAGES, INPUT_BAR_TYPE, ROUTES } from '@/constants'
 import { cn } from '@/utils/cn'
 import type { MessageResponse } from '@/types/chat'
 import {
@@ -37,7 +41,8 @@ export default function GroupChatView({ clubId }: GroupChatViewProps) {
   const currentUserId = user?.id ?? null
   const { data: club, isLoading: isClubLoading } = useClub(clubId)
   const { setCustomTitle, setHandlers, resetHandlers } = useHeaderStore()
-  const { onOpen: openBottomSheet, onClose: closeBottomSheet } = useBottomSheetStore()
+  const { onOpen: openBottomSheet, onClose: closeBottomSheet } =
+    useBottomSheetStore()
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   const [roomId, setRoomId] = useState<string | null>(null)
@@ -83,29 +88,34 @@ export default function GroupChatView({ clubId }: GroupChatViewProps) {
   // 클럽 채팅 메시지 조회 (채팅방이 준비된 후에만 조회)
   // 상대방 메시지: Realtime INSERT로 수신. 탭 복귀 시 refetchOnWindowFocus로 갱신
   const messageParams = {}
-  const {
-    data: messagesData,
-    isLoading: isMessagesLoading,
-  } = useClubChatMessages(clubId, messageParams, isChatRoomReady, {
-    refetchInterval: 10000, // Polling safety net for missed broadcasts
-  })
+  const { data: messagesData, isLoading: isMessagesLoading } =
+    useClubChatMessages(clubId, messageParams, isChatRoomReady, {
+      refetchInterval: 10000, // Polling safety net for missed broadcasts
+    })
 
   // 실시간 구독: Broadcast 채널로 새 메시지 수신 + sendBroadcast로 전송 후 브로드캐스트
-  const { sendBroadcast } = useChatRealtime(roomId, { clubId, params: messageParams })
+  const { sendBroadcast } = useChatRealtime(roomId, {
+    clubId,
+    params: messageParams,
+    currentUserId,
+  })
 
   // 메시지 데이터 변환
-  const messages: GroupChatMessage[] = messagesData?.messages
-    ? messagesData.messages
-      .map((msg) => convertMessageToGroupChatMessage(msg, currentUserId))
-      .reverse() // API는 최신순이므로 역순으로 정렬
-    : []
+  const messages: GroupChatMessage[] = useMemo(
+    () =>
+      messagesData?.messages
+        ? messagesData.messages
+            .map((msg) => convertMessageToGroupChatMessage(msg, currentUserId))
+            .reverse() // API는 최신순이므로 역순으로 정렬
+        : [],
+    [messagesData?.messages, currentUserId],
+  )
 
   useEffect(() => {
     setCustomTitle(club?.name ?? '채팅')
     return () => setCustomTitle(null)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [club?.name])
-
 
   useEffect(() => {
     setHandlers({
@@ -189,7 +199,7 @@ export default function GroupChatView({ clubId }: GroupChatViewProps) {
         },
       },
     )
-  }, [message, roomId, clubId, sendMessageMutation])
+  }, [message, roomId, clubId, sendMessageMutation, sendBroadcast])
 
   if (
     isClubLoading ||
@@ -206,31 +216,20 @@ export default function GroupChatView({ clubId }: GroupChatViewProps) {
   }
 
   if (!club) {
-    return (
-      <EmptyContent
-        variant="error"
-        message="소모임을 찾을 수 없습니다."
-      />
-    )
+    return <EmptyContent variant="error" message="소모임을 찾을 수 없습니다." />
   }
 
-  const dateLabel = messages.length > 0 ? formatDateLabel(messages[0].created_at) : ''
+  const dateLabel =
+    messages.length > 0 ? formatDateLabel(messages[0].created_at) : ''
 
   return (
     <div className={styles.container}>
       {/* 메시지 목록 */}
       <div className={styles.messagesContainer}>
-        {dateLabel && (
-          <p className={styles.dateLabel}>
-            {dateLabel}
-          </p>
-        )}
+        {dateLabel && <p className={styles.dateLabel}>{dateLabel}</p>}
         <div className={styles.messagesList}>
           {messages.length === 0 ? (
-            <EmptyContent
-              variant="empty"
-              message="아직 메시지가 없습니다."
-            />
+            <EmptyContent variant="empty" message="아직 메시지가 없습니다." />
           ) : (
             messages.map((msg, idx) => (
               <GroupChatMessageItem
@@ -263,7 +262,9 @@ export default function GroupChatView({ clubId }: GroupChatViewProps) {
 const styles = {
   container: cn('flex flex-1 flex-col min-h-0 bg-white overflow-hidden pb-20'),
   messagesContainer: cn('flex-1 min-h-0 overflow-y-auto px-4 pb-4'),
-  dateLabel: cn('py-3 text-center text-[14px] font-normal leading-5 text-grey-8'),
+  dateLabel: cn(
+    'py-3 text-center text-[14px] font-normal leading-5 text-grey-8',
+  ),
   messagesList: cn('flex flex-col gap-5'),
   inputWrapper: cn('flex flex-col fixed bottom-0 left-0 right-0', 'bg-white'),
   inputInner: cn('w-full max-w-md mx-auto'),

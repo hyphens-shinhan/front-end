@@ -184,9 +184,7 @@ export function useMandatoryGoalForm(activityId: string): UseMandatoryGoalFormRe
         { submissionId, body },
         {
           onSuccess: () =>
-            toast.show(TOAST_MESSAGES.REPORT.DRAFT_SAVE_SUCCESS, {
-              position: 'bottom-above-tabs',
-            }),
+            toast.show(TOAST_MESSAGES.REPORT.DRAFT_SAVE_SUCCESS),
           onError: () => toast.error(TOAST_MESSAGES.REPORT.DRAFT_SAVE_ERROR),
         }
       )
@@ -196,9 +194,7 @@ export function useMandatoryGoalForm(activityId: string): UseMandatoryGoalFormRe
         {
           onSuccess: (res) => {
             setSubmissionId(res.id)
-            toast.show(TOAST_MESSAGES.REPORT.DRAFT_SAVE_SUCCESS, {
-              position: 'bottom-above-tabs',
-            })
+            toast.show(TOAST_MESSAGES.REPORT.DRAFT_SAVE_SUCCESS)
           },
           onError: () => toast.error(TOAST_MESSAGES.REPORT.DRAFT_SAVE_ERROR),
         }
@@ -236,9 +232,7 @@ export function useMandatoryGoalForm(activityId: string): UseMandatoryGoalFormRe
         const doSubmit = (id: string) => {
           submitSubmission.mutate(id, {
             onSuccess: () =>
-              toast.show(TOAST_MESSAGES.REPORT.SUBMIT_SUCCESS, {
-                position: 'bottom-above-tabs',
-              }),
+              toast.show(TOAST_MESSAGES.REPORT.SUBMIT_SUCCESS),
             onError: () => toast.error(TOAST_MESSAGES.REPORT.SUBMIT_ERROR),
           })
         }

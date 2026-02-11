@@ -4,7 +4,7 @@ import type { ToastPosition, ToastVariant } from '@/components/common/Toast'
 export type { ToastPosition }
 
 export interface ToastOptions {
-  /** 화면 내 위치 프리셋 (기본: 'top-default-header') */
+  /** 화면 내 위치 프리셋 (기본: 'bottom-above-tabs') */
   position?: ToastPosition
   /** 아이콘 표시 여부 (기본: true) */
   showIcon?: boolean
@@ -33,7 +33,7 @@ const DEFAULT_DURATION = 3000
 export const useToastStore = create<ToastState>((set, get) => ({
   isOpen: false,
   message: '',
-  position: 'top-default-header',
+  position: 'bottom-above-tabs',
   showIcon: true,
   variant: 'default',
   _timerId: null,
@@ -47,7 +47,7 @@ export const useToastStore = create<ToastState>((set, get) => ({
     set({
       isOpen: true,
       message,
-      position: options.position ?? 'top-default-header',
+      position: options.position ?? 'bottom-above-tabs',
       showIcon: options.showIcon ?? true,
       variant: options.variant ?? 'default',
       _timerId: null,

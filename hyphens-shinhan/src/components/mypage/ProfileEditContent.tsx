@@ -127,7 +127,7 @@ export default function ProfileEditContent({ onCancel }: { onCancel: () => void 
                 URL.revokeObjectURL(avatarPreviewUrl);
                 setAvatarPreviewUrl(null);
             }
-            toast.show(TOAST_MESSAGES.PROFILE.SAVE_SUCCESS, { position: 'top-default-header' });
+            toast.show(TOAST_MESSAGES.PROFILE.SAVE_SUCCESS);
             onCancel();
         } catch (error) {
             console.error('프로필 업데이트 실패:', error);

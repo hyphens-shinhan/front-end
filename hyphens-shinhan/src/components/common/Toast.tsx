@@ -10,7 +10,7 @@ export const TOAST_POSITION_STYLES = {
   /** 커스텀 헤더 아래 */
   'top-custom-header': 'fixed top-16 left-1/2 -translate-x-1/2 z-[100]',
   /** 탭이 있을 때: 탭 바 위 */
-  'bottom-above-tabs': 'fixed bottom-20 left-1/2 -translate-x-1/2 z-[100]',
+  'bottom-above-tabs': 'fixed bottom-30 left-1/2 -translate-x-1/2 z-[100]',
   /** 탭이 없을 때: 화면 하단 */
   'bottom-no-tabs': 'fixed bottom-8 left-1/2 -translate-x-1/2 z-[100]',
 } as const;
@@ -46,7 +46,7 @@ interface ToastProps {
 export default function Toast({
   message,
   showIcon = true,
-  position = 'top-default-header',
+  position = 'bottom-no-tabs',
   variant = 'default',
   className,
 }: ToastProps) {

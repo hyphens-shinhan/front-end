@@ -11,6 +11,7 @@ interface NearbyFriendsSectionProps {
   /** From GET /networking/nearby; when provided, replaces mock data */
   people?: Person[]
   currentLocation?: Location
+  onPersonClick?: (person: Person) => void
 }
 
 /** 주변 친구 목록 */
@@ -18,6 +19,7 @@ export default function NearbyFriendsSection({
   onToggleMap,
   people: peopleProp,
   currentLocation: currentLocationProp,
+  onPersonClick,
 }: NearbyFriendsSectionProps) {
   const people = peopleProp ?? MOCK_NEARBY_PEOPLE
   const currentLocation = currentLocationProp ?? CURRENT_LOCATION
@@ -39,6 +41,7 @@ export default function NearbyFriendsSection({
         <MapView
           currentLocation={currentLocation}
           people={people}
+          onPersonClick={onPersonClick}
           className={styles.mapView}
         />
       </div>
@@ -53,6 +56,6 @@ const styles = {
   sectionTitle: cn('title-18 text-grey-11'),
   subsectionTitle: cn('title-16 text-grey-10'),
   arrowIcon: cn('text-grey-9'),
-  mapWrapper: cn('relative w-full h-[153px] overflow-hidden bg-grey-3'),
+  mapWrapper: cn('relative w-full h-[220px] overflow-hidden bg-grey-3 rounded-xl'),
   mapView: cn('h-full'),
 }

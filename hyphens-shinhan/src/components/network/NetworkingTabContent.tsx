@@ -103,6 +103,7 @@ export default function NetworkingTabContent(_props: NetworkingTabContentProps) 
       <NearbyFriendsSection
         people={nearbyLoading ? undefined : nearbyPeople}
         currentLocation={nearbyCenter}
+        onPersonClick={(person) => handleProfileClick(person.id)}
       />
       <CommonFriendsSection
         friends={commonFriends}

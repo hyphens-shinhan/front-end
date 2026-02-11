@@ -91,7 +91,7 @@ export default function ProfileCard({
             <div className={styles.infoContainer}>
                 <h2 className={styles.name}>{profile.name}</h2>
                 <div className={styles.infoTags}>
-                    <InfoTag label={roleLabel} color="blue" />
+                    <InfoTag label={roleLabel} color="middleBlue" />
                     {/** 장학 정보: 공개 설정에 따라 표시 (API에서 이미 필터링됨) */}
                     {profile.scholarship_batch && (
                         <InfoTag label={`${profile.scholarship_batch}기`} color="yellow" />

@@ -21,6 +21,18 @@ const LETTER_GRADES: SemesterGradeCreate['grade'][] = [
   'A+', 'A', 'B+', 'B', 'C+', 'C', 'D+', 'D', 'F',
 ];
 
+/** 성적 → 학점 자동 매핑 (사용자가 수정 가능) */
+const GRADE_POINT_MAP: Record<SemesterGradeCreate['grade'], number> = {
+  'A+': 4.5, 'A': 4.0,
+  'B+': 3.5, 'B': 3.0,
+  'C+': 2.5, 'C': 2.0,
+  'D+': 1.5, 'D': 1.0,
+  'F': 0,
+};
+
+/** 포커스 시 입력값 전체 선택 (기본값이 바로 지워지는 효과) */
+const selectOnFocus = (e: React.FocusEvent<HTMLInputElement>) => e.target.select();
+
 /** 유지심사 현황 - 학업 탭 (Figma 727:677 학업성적 카드) */
 export default function MaintenanceTabAcademic() {
   const { data: eligibility } = useScholarshipEligibility();
@@ -157,7 +169,7 @@ function AddGradeForm({ year, onSuccess }: { year: number; onSuccess: () => void
   const [semester, setSemester] = useState<SemesterGradeCreate['semester']>(1);
   const [courseName, setCourseName] = useState('');
   const [grade, setGrade] = useState<SemesterGradeCreate['grade']>('A');
-  const [credits, setCredits] = useState(3);
+  const [credits, setCredits] = useState(GRADE_POINT_MAP['A']);
   const toast = useToast();
   const createGrade = useCreateGrade();
 
@@ -174,7 +186,7 @@ function AddGradeForm({ year, onSuccess }: { year: number; onSuccess: () => void
           toast.show('성적이 반영되었습니다.');
           setShow(false);
           setCourseName('');
-          setCredits(3);
+          setCredits(GRADE_POINT_MAP['A']);
           onSuccess();
         },
         onError: () => toast.show('저장에 실패했습니다. 다시 시도해 주세요.'),
@@ -221,11 +233,15 @@ function AddGradeForm({ year, onSuccess }: { year: number; onSuccess: () => void
         <label className="text-sm text-grey-11">성적</label>
         <select
           value={grade}
-          onChange={(e) => setGrade(e.target.value as SemesterGradeCreate['grade'])}
+          onChange={(e) => {
+            const g = e.target.value as SemesterGradeCreate['grade'];
+            setGrade(g);
+            setCredits(GRADE_POINT_MAP[g]);
+          }}
           className="border border-grey-2 rounded-lg px-3 py-2"
         >
           {LETTER_GRADES.map((g) => (
-            <option key={g} value={g}>{g}</option>
+            <option key={g} value={g}>{g} ({GRADE_POINT_MAP[g]})</option>
           ))}
         </select>
       </div>
@@ -233,9 +249,11 @@ function AddGradeForm({ year, onSuccess }: { year: number; onSuccess: () => void
         <label className="text-sm text-grey-11">학점</label>
         <input
           type="number"
-          min={1}
-          max={10}
+          min={0}
+          max={4.5}
+          step={0.5}
           value={credits}
+          onFocus={selectOnFocus}
           onChange={(e) => setCredits(Number(e.target.value) || 0)}
           className="border border-grey-2 rounded-lg px-3 py-2"
         />
@@ -391,18 +409,24 @@ function GradeEditForm({
       />
       <select
         value={letterGrade}
-        onChange={(e) => setLetterGrade(e.target.value as SemesterGradeCreate['grade'])}
-        className="w-16 rounded border border-grey-2 px-2 py-1 text-sm"
+        onChange={(e) => {
+          const g = e.target.value as SemesterGradeCreate['grade'];
+          setLetterGrade(g);
+          setCredits(GRADE_POINT_MAP[g]);
+        }}
+        className="w-20 rounded border border-grey-2 px-2 py-1 text-sm"
       >
         {LETTER_GRADES.map((g) => (
-          <option key={g} value={g}>{g}</option>
+          <option key={g} value={g}>{g} ({GRADE_POINT_MAP[g]})</option>
         ))}
       </select>
       <input
         type="number"
-        min={1}
-        max={10}
+        min={0}
+        max={4.5}
+        step={0.5}
         value={credits}
+        onFocus={selectOnFocus}
         onChange={(e) => setCredits(Number(e.target.value) || 0)}
         className="w-14 rounded border border-grey-2 px-2 py-1 text-sm"
       />

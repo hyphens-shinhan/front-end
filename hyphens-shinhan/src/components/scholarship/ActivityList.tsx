@@ -186,7 +186,7 @@ const styles = {
         'px-4',
     ),
     space: cn(
-        'h-20',
+        'h-13',
     ),
     space2: cn(
         'h-13',

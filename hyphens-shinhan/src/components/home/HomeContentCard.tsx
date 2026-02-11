@@ -7,6 +7,7 @@ import MaintenanceReviewSummary, {
 import ShortcutMenuList from '@/components/home/ShortcutMenuList';
 import { ROUTES } from '@/constants';
 import { useScholarshipEligibility } from '@/hooks/user/useUser';
+import { useUserStore, toNavRole } from '@/stores';
 import type { ScholarshipEligibilityResponse } from '@/types';
 import { cn } from '@/utils/cn';
 import RecommendedContent from './RecommendedContent';
@@ -115,6 +116,10 @@ export default function HomeContentCard({
   tagColor: tagColorProp,
   className,
 }: HomeContentCardProps) {
+  const user = useUserStore((s) => s.user);
+  const userRole = user ? toNavRole(user.role) : 'YB';
+  const isOB = userRole === 'OB';
+
   const { data: eligibility } = useScholarshipEligibility();
   const tagLabel =
     eligibility != null ? getTagLabel(eligibility) : tagLabelProp;
@@ -126,14 +131,16 @@ export default function HomeContentCard({
   return (
     <div className={cn(styles.card, className)}>
       <ShortcutMenuList />
-      <MaintenanceReviewShortcut
-        tagLabel={tagLabel}
-        tagColor={tagColor}
-        href={ROUTES.SCHOLARSHIP.MAINTENANCE}
-        className={styles.shortcut}
-      />
+      {!isOB && (
+        <MaintenanceReviewShortcut
+          tagLabel={tagLabel}
+          tagColor={tagColor}
+          href={ROUTES.SCHOLARSHIP.MAINTENANCE}
+          className={styles.shortcut}
+        />
+      )}
       <div className={styles.summaryWrap}>
-        <MaintenanceReviewSummary items={summaryItems} />
+        {!isOB && <MaintenanceReviewSummary items={summaryItems} />}
         <RecommendedContent />
       </div>
     </div>

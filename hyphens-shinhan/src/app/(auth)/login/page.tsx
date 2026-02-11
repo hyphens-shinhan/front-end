@@ -14,6 +14,13 @@ const LOGIN_CARDS = [
     accent: 'bg-[#EEF2FF] text-[#3730A3]',
   },
   {
+    label: 'OB 회원',
+    email: 'taeyoung.kwon@shsf.com',
+    password: 'password123',
+    role: 'ob',
+    accent: 'bg-[#F3E8FF] text-[#6B21A8]',
+  },
+  {
     label: 'YB 팀장',
     email: 'comet@shsf.com',
     password: 'password123',

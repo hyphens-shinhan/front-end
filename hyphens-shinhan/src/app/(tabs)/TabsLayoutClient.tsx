@@ -45,6 +45,14 @@ export default function TabsLayoutClient({
             router.replace(ROUTES.MENTOR_DASHBOARD.MAIN);
         }
     }, [pathname, user, router]);
+
+    // OB 회원은 MY활동(장학) 탭 비노출 → 해당 경로 진입 시 홈으로 리다이렉트
+    useEffect(() => {
+        if (!pathname.startsWith(ROUTES.SCHOLARSHIP.MAIN) || !user) return;
+        if (userRole === 'OB') {
+            router.replace(ROUTES.HOME.MAIN);
+        }
+    }, [pathname, user, userRole, router]);
     const onOpenCenterModal = useCenterModalStore((s) => s.onOpen);
     const { status, isSupported } = usePushSubscription();
     const hasOpenedPushPrompt = useRef(false);

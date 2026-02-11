@@ -47,10 +47,9 @@ export const NAV_ITEMS_BY_ROLE: Record<UserRole, NavItem[]> = {
       icon: 'IconLBoldFrame',
     },
   ],
-  // TODO: 졸업 장학생 - 활동 탭만 다름 임의로 넣어둠 달라질 예정
+  /** OB 회원: MY활동 탭 비노출 */
   OB: [
     { label: '홈', href: ROUTES.HOME.MAIN, icon: 'IconLBoldHome' },
-    { label: 'MY활동', href: ROUTES.SCHOLARSHIP.MAIN, icon: 'IconLBoldChart2' },
     {
       label: '커뮤니티',
       href: ROUTES.COMMUNITY.MAIN,

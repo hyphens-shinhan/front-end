@@ -71,11 +71,10 @@ export default PostInteraction;
 
 const styles = {
     container: cn(
-        'flex items-center justify-between gap-2',
-        'px-6 py-3',
+        'flex items-center px-2 py-3',
     ),
     item: cn(
-        'flex items-center gap-1',
+        'flex flex-1 items-center justify-center gap-1 min-w-0',
     ),
     icon: cn(
         'text-grey-5',
@@ -87,6 +86,6 @@ const styles = {
         scrap: cn('text-state-yellow transition-colors'),
     },
     text: cn(
-        'font-caption-caption1 text-grey-9',
+        'font-caption-caption1 text-grey-9 tabular-nums',
     ),
 }

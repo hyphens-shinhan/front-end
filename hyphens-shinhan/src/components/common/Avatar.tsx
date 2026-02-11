@@ -96,5 +96,5 @@ export default function Avatar({
 }
 
 const styles = {
-    container: cn('relative'),
+    container: cn('relative overflow-hidden'),
 }

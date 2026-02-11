@@ -6,11 +6,13 @@ import { cn } from "@/utils/cn";
 import Button from "@/components/common/Button";
 import EmptyContent from "@/components/common/EmptyContent";
 import GroupCard from "./GroupCard";
+import Thumbnail from "@/components/common/Thumbnail";
 import Tab from "@/components/common/Tab";
 import JoinProfileOptions from "@/components/common/JoinProfileOptions";
 import type { JoinProfileType } from "@/components/common/JoinProfileOptions";
 import { useClub, useGalleryImages } from "@/hooks/clubs/useClubs";
 import { useJoinClub } from "@/hooks/clubs/useClubMutations";
+import { useJoinClubChat } from "@/hooks/chat/useChatMutations";
 import { useConfirmModalStore } from "@/stores";
 import { EMPTY_CONTENT_MESSAGES, ROUTES } from "@/constants";
 import { TOAST_MESSAGES } from "@/constants/toast";
@@ -24,6 +26,16 @@ type DetailTab = '멤버' | '앨범';
 const DETAIL_TABS: DetailTab[] = ['멤버', '앨범'];
 
 const BOTTOM_BUTTON_HINT = <p className="font-caption-caption3 text-grey-9">소모임 채팅방에서 멤버와 대화할 수 있어요.</p>;
+
+/** API가 상대 경로만 줄 때 Supabase 풀 URL로 보정. 빈 문자열은 null */
+function normalizeClubImageUrl(url: string | null | undefined): string | null {
+    if (url == null || typeof url !== 'string' || url.trim() === '') return null;
+    const trimmed = url.trim();
+    if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) return trimmed;
+    const base = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    if (!base) return trimmed;
+    return trimmed.startsWith('/') ? `${base}${trimmed}` : `${base}/storage/v1/object/${trimmed}`;
+}
 
 interface GroupDetailContentProps {
     clubId: string;
@@ -46,7 +58,9 @@ export default function GroupDetailContent({ clubId }: GroupDetailContentProps) 
     const { data: club, isLoading, isError } = useClub(clubId);
     const { data: galleryData } = useGalleryImages(clubId);
     const galleryImages = useMemo(() => galleryData?.images ?? [], [galleryData?.images]);
+    const thumbnailSrc = useMemo(() => normalizeClubImageUrl(club?.image_url), [club?.image_url]);
     const joinClub = useJoinClub();
+    const joinClubChat = useJoinClubChat();
     const toast = useToast();
     const { onOpen: openConfirmModal, updateOptions } = useConfirmModalStore();
     const [joinProfileType, setJoinProfileType] = useState<JoinProfileType>('realname');
@@ -58,7 +72,7 @@ export default function GroupDetailContent({ clubId }: GroupDetailContentProps) 
     anonymousNicknameRef.current = anonymousNickname;
 
     useEffect(() => {
-        if (joinModalOpen) {
+        if (joinModalOpen && club) {
             updateOptions({
                 content: (
                     <JoinProfileOptions
@@ -66,11 +80,12 @@ export default function GroupDetailContent({ clubId }: GroupDetailContentProps) 
                         onChange={setJoinProfileType}
                         anonymousNickname={anonymousNickname}
                         onAnonymousNicknameChange={setAnonymousNickname}
+                        anonymity={club.anonymity}
                     />
                 ),
             });
         }
-    }, [joinModalOpen, joinProfileType, anonymousNickname, updateOptions]);
+    }, [joinModalOpen, joinProfileType, anonymousNickname, club, updateOptions]);
 
     const doJoin = () => {
         if (!club || club.is_member) return;
@@ -83,7 +98,18 @@ export default function GroupDetailContent({ clubId }: GroupDetailContentProps) 
         joinClub.mutate(
             { clubId, profile },
             {
-                onSuccess: () => toast.show(TOAST_MESSAGES.GROUP.JOIN_SUCCESS),
+                onSuccess: () => {
+                    // 클럽 가입 성공 후 채팅방 join API 호출
+                    joinClubChat.mutate(clubId, {
+                        onSuccess: () => {
+                            toast.show(TOAST_MESSAGES.GROUP.JOIN_SUCCESS);
+                        },
+                        onError: (error) => {
+                            // 채팅방 join 실패 시 에러 표시
+                            toast.error('채팅방 입장에 실패했습니다. 다시 시도해주세요.');
+                        },
+                    });
+                },
                 onError: (error) => {
                     toast.error(TOAST_MESSAGES.GROUP.JOIN_ERROR);
                 },
@@ -93,12 +119,16 @@ export default function GroupDetailContent({ clubId }: GroupDetailContentProps) 
 
     const handleJoin = () => {
         if (!club || club.is_member) return;
-        setJoinProfileType('realname');
+        // anonymity 설정에 따라 초기값 설정
+        const initialProfileType: JoinProfileType =
+            club.anonymity === 'PRIVATE' ? 'anonymous' : 'realname';
+        setJoinProfileType(initialProfileType);
+        // PRIVATE일 때는 익명이므로 닉네임은 JoinProfileOptions에서 자동 생성됨
+        // PUBLIC이나 BOTH일 때는 실명이므로 닉네임 불필요
         setAnonymousNickname('');
         setJoinModalOpen(true);
         openConfirmModal({
             title: '그룹에 참여할\n프로필을 선택해주세요',
-            message: '참여 후 소모임 채팅방에서 멤버와 대화할 수 있어요.',
             confirmText: '참여하기',
             cancelText: '취소',
             content: (
@@ -107,6 +137,7 @@ export default function GroupDetailContent({ clubId }: GroupDetailContentProps) 
                     onChange={setJoinProfileType}
                     anonymousNickname={anonymousNickname}
                     onAnonymousNicknameChange={setAnonymousNickname}
+                    anonymity={club.anonymity}
                 />
             ),
             onConfirm: () => {
@@ -115,6 +146,11 @@ export default function GroupDetailContent({ clubId }: GroupDetailContentProps) 
             },
             onCancel: () => setJoinModalOpen(false),
         });
+    };
+
+    const handleGoToChat = () => {
+        if (!club || !club.is_member) return;
+        router.push(`${ROUTES.COMMUNITY.GROUP.DETAIL}/${clubId}/chat`);
     };
 
     if (isLoading) {
@@ -145,8 +181,11 @@ export default function GroupDetailContent({ clubId }: GroupDetailContentProps) 
 
     return (
         <div className={styles.container}>
-            {/** 대표 이미지 영역 - TODO: 이미지 URL 연동 (클래스는 JSX에 직접 두어 purge 방지) */}
-            <div className={styles.imageContainer} />
+            {/** 대표 이미지 영역 (에러 시 프론트 이미지로 폴백) */}
+            <Thumbnail
+                src={thumbnailSrc}
+                alt={club.name}
+            />
 
             {/** 소모임 정보 (멤버 미리보기 없음) */}
             <GroupCard club={club} variant="detail" />
@@ -171,12 +210,11 @@ export default function GroupDetailContent({ clubId }: GroupDetailContentProps) 
 
             {/** 하단 버튼 */}
             <BottomFixedButton
-                label="참여하기"
+                label={club.is_member ? '채팅방 가기' : '참여하기'}
                 size="M"
                 type="primary"
-                disabled={joinClub.isPending}
-                /** TODO: 멤버가 아니면 참여 모달, 멤버면 채팅방 이동 등 (TODO) */
-                onClick={club.is_member ? undefined : handleJoin}
+                disabled={joinClub.isPending || joinClubChat.isPending}
+                onClick={club.is_member ? handleGoToChat : handleJoin}
                 bottomContent={BOTTOM_BUTTON_HINT}
             />
         </div>
@@ -189,5 +227,4 @@ const styles = {
     ),
     tabContainer: cn('flex gap-2'),
     tabContent: cn('py-4'),
-    imageContainer: cn('h-[158px] rounded-[16px] bg-grey-4 px-4 py-3'),
 };

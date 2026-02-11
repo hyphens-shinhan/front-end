@@ -18,6 +18,8 @@ export const clubKeys = {
   /** 멤버 목록 쿼리 키 */
   members: (clubId: string) =>
     [...clubKeys.detail(clubId), 'members'] as const,
+  /** 랜덤 닉네임 생성 쿼리 키 */
+  randomNickname: () => [...clubKeys.all, 'random-nickname'] as const,
 }
 
 /**
@@ -79,5 +81,19 @@ export const useClubMembers = (clubId: string) => {
     queryKey: clubKeys.members(clubId),
     queryFn: () => ClubService.getClubMembers(clubId),
     enabled: !!clubId,
+  })
+}
+
+/**
+ * 랜덤 닉네임 생성 조회
+ * enabled를 false로 설정하고 refetch를 사용하여 버튼 클릭 시 호출 가능
+ * 또는 useMutation을 사용할 수도 있음
+ */
+export const useRandomNickname = (enabled = false) => {
+  return useQuery({
+    queryKey: clubKeys.randomNickname(),
+    queryFn: () => ClubService.generateClubNickname(),
+    enabled,
+    staleTime: 0, // 항상 새로운 닉네임을 가져오도록
   })
 }

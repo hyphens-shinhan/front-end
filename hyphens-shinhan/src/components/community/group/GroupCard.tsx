@@ -26,6 +26,7 @@ function areGroupCardPropsEqual(prev: GroupCardProps, next: GroupCardProps): boo
   if (a.id !== b.id) return false;
   if (a.name !== b.name) return false;
   if (a.description !== b.description) return false;
+  if (a.image_url !== b.image_url) return false;
   if (a.category !== b.category) return false;
   if (a.is_member !== b.is_member) return false;
   if (a.member_count !== b.member_count) return false;

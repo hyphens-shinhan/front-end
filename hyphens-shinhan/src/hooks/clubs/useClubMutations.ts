@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { ClubService } from '@/services/clubs'
 import { clubKeys } from './useClubs'
+import { chatKeys } from '@/hooks/chat/useChat'
 import type {
   ClubCreate,
   ClubUpdate,
@@ -65,6 +66,9 @@ export const useLeaveClub = () => {
     onSuccess: (_, clubId) => {
       queryClient.invalidateQueries({ queryKey: clubKeys.detail(clubId) })
       queryClient.invalidateQueries({ queryKey: clubKeys.lists() })
+      // 채팅방 관련 쿼리도 무효화
+      queryClient.invalidateQueries({ queryKey: chatKeys.rooms() })
+      queryClient.invalidateQueries({ queryKey: chatKeys.clubMessages(clubId) })
     },
   })
 }
@@ -101,5 +105,15 @@ export const useDeleteGalleryImage = () => {
       queryClient.invalidateQueries({ queryKey: clubKeys.detail(clubId) })
       queryClient.invalidateQueries({ queryKey: clubKeys.gallery(clubId) })
     },
+  })
+}
+
+/**
+ * 랜덤 닉네임 생성 훅
+ * 버튼 클릭 시 호출하여 리롤 가능
+ */
+export const useGenerateRandomNickname = () => {
+  return useMutation({
+    mutationFn: () => ClubService.generateClubNickname(),
   })
 }

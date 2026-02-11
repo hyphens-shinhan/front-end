@@ -15,6 +15,7 @@ import {
   GalleryDeleteResponse,
   ClubMemberResponse,
   ClubMemberListResponse,
+  RandomNicknameResponse,
 } from '@/types/clubs'
 
 const BASE = '/clubs'
@@ -140,6 +141,19 @@ export const ClubService = {
   getClubMembers: async (clubId: string): Promise<ClubMemberListResponse> => {
     const response = await apiClient.get<ClubMemberListResponse>(
       `${BASE}/${clubId}/members`,
+    )
+    return response.data
+  },
+
+  // --- Random Nickname API ---
+
+  /**
+   * 클럽 가입용 랜덤 닉네임 생성 (GET /clubs/generate-nickname)
+   * 리롤 가능 (반복 호출로 다른 닉네임 생성)
+   */
+  generateClubNickname: async (): Promise<RandomNicknameResponse> => {
+    const response = await apiClient.get<RandomNicknameResponse>(
+      `${BASE}/generate-nickname`,
     )
     return response.data
   },

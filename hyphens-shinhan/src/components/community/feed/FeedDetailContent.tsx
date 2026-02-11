@@ -20,6 +20,7 @@ import { TOAST_MESSAGES } from "@/constants/toast";
 import { useToast } from "@/hooks/useToast";
 import { FeedPostResponse, PostType, PublicReportResponse } from "@/types/posts";
 import { useUserStore, useHeaderStore } from "@/stores";
+import { useFollowStatus } from "@/hooks/follows/useFollows";
 
 interface FeedDetailContentProps {
     postId: string;
@@ -71,6 +72,12 @@ export default function FeedDetailContent({ postId, postType = 'feed' }: FeedDet
 
     // 훅은 조건부 return 이전에 항상 호출 (Rules of Hooks)
     const isMyPost = !!post && currentUser?.id === post.author?.id;
+    const authorId = post?.author?.id;
+    const { data: followStatus } = useFollowStatus(authorId);
+    const isFollowingAuthor = followStatus?.is_following ?? post?.author?.is_following ?? false;
+    /** 이미 팔로우 중이거나 요청만 보낸 상태(PENDING)면 버튼 숨김 */
+    const isRequestPending = followStatus?.status === 'PENDING';
+    const shouldHideFollowButton = isFollowingAuthor || isRequestPending;
     const { openMenu: openFeedMoreMenu } = useFeedPostMoreMenu(postId, isMyPost, {
         afterDeleteNavigateTo: ROUTES.COMMUNITY.MAIN,
     });
@@ -177,8 +184,8 @@ export default function FeedDetailContent({ postId, postType = 'feed' }: FeedDet
                         </p>
                         <time className={styles.time}>{formatDateKrWithTime(created_at)}</time>
                     </div>
-                    {/** 익명이 아니고, 내 글이 아니고, 팔로우하지 않은 경우에만 팔로우 버튼 표시 */}
-                    {!is_anonymous && author && !isMyPost && !author.is_following && (
+                    {/** 익명이 아니고, 내 글이 아니고, 팔로우/요청 대기 중이 아닐 때만 팔로우 버튼 표시 */}
+                    {!is_anonymous && author && !isMyPost && !shouldHideFollowButton && (
                         <div className={styles.followButtonWrapper}>
                             <FollowButton type="button" />
                         </div>

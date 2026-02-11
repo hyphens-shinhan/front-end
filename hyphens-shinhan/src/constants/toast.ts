@@ -26,6 +26,7 @@ export const TOAST_MESSAGES = {
   /** 소모임 */
   GROUP: {
     JOIN_SUCCESS: '소모임에 참여했어요',
+    CREATE_SUCCESS: '소모임이 만들어졌어요',
     JOIN_ERROR: '참여에 실패했어요',
   },
   /** 활동 보고서 */
@@ -48,6 +49,11 @@ export const TOAST_MESSAGES = {
   SETTING: {
     PRIVACY_SAVE_SUCCESS: '설정이 저장되었어요',
     PRIVACY_SAVE_ERROR: '설정 저장에 실패했어요',
+  },
+  /** 멘토링 */
+  MENTOR: {
+    REQUEST_SUCCESS: '멘토링 요청이 전송되었어요',
+    REQUEST_ERROR: '요청 전송에 실패했어요',
   },
   /** 학업 모니터링 */
   MONITORING: {

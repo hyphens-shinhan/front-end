@@ -117,8 +117,7 @@ export default function GroupList() {
                 </button>
             )}
 
-            {/** TODO: 소모임 추가 기능 구현 후 활성화 */}
-            {/* <PostFAB type={POST_FAB_ITEM_KEY.ADD} /> */}
+            <PostFAB type={POST_FAB_ITEM_KEY.ADD} />
         </div>
     );
 }

@@ -1,5 +1,10 @@
 /** EmptyContent(로딩/빈/에러) 문구 상수 (해요체) */
 export const EMPTY_CONTENT_MESSAGES = {
+  NETWORK: {
+    FOLLOWING_EMPTY: '내가 팔로우하는 사람이 없어요.',
+    COMMON_FRIENDS_EMPTY: '함께 아는 친구가 없어요.',
+    MENTORS_EMPTY: '등록된 멘토가 없어요.',
+  },
   LOADING: {
     DEFAULT: '로딩 중...',
     COMMENT: '댓글을 불러오는 중...',
@@ -23,8 +28,11 @@ export const EMPTY_CONTENT_MESSAGES = {
     REPORT: '보고서를 불러올 수 없어요.',
     /** 연간 필수 활동 상세 조회 실패 */
     MANDATORY_ACTIVITY: '연간 필수 활동을 불러올 수 없어요.',
+    /** 멘토 설문 조회 실패 */
+    SURVEY: '설문을 불러오지 못했어요.',
   },
   EMPTY: {
+    CHAT: '대화 상대가 없어요.',
     COMMENT: '아직 댓글이 없어요.',
     GROUP: '소모임이 없어요.',
     MY_GROUP: '참여 중인 소모임이 없어요.',
@@ -40,6 +48,11 @@ export const EMPTY_CONTENT_MESSAGES = {
     REPORT_NO_COUNCIL: '해당 연도의 자치회 정보가 없어요.',
     /** 활동 보고서 - 등록된 사진 없음 */
     ACTIVITY_PHOTOS: '등록된 활동 사진이 없어요.',
+  },
+  /** 멘토 상세 - 멘토 없음 */
+  MENTOR: {
+    NOT_FOUND: '멘토를 찾을 수 없습니다.',
+    GO_TO_MATCHES: '매칭 목록으로',
   },
   /** 제출 완료 등 완료 상태 문구 */
   SUBMITTED: {

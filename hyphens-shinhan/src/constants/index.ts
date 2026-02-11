@@ -185,10 +185,59 @@ export const CUSTOM_HEADER_CONFIG: Record<string, CustomHeaderConfig> = {
     title: '알림',
   },
   [ROUTES.CHAT]: {
-    title: '채팅',
+    title: '메시지',
+  },
+  /** Chat detail: title set by setCustomTitle in ChatView; more button uses store onClick */
+  [ROUTES.CHAT_DETAIL]: {
+    pathPattern: /^\/chat\/[^/]+$/,
+    title: '',
+    type: 'Center',
+    btnType: 'Back',
+    backHref: ROUTES.CHAT,
+    navItem: {
+      icon: 'IconLLine3DotVertical',
+      ariaLabel: '더보기',
+      type: 'button',
+    },
   },
   [ROUTES.SEARCH]: {
     title: '검색',
+  },
+  /** 멘토링 신청 설문 */
+  [ROUTES.MENTORS.QUESTIONNAIRE]: {
+    title: '멘토링 신청하기',
+    type: 'Left',
+    btnType: 'Back',
+  },
+  /** 멘토 매칭 결과 */
+  [ROUTES.MENTORS.MATCHES]: {
+    title: '멘토 매칭 결과',
+    type: 'Left',
+    btnType: 'Back',
+    backHref: ROUTES.NETWORK.MAIN,
+  },
+  /** 멘토링 신청 풀스크린 (/mentors/[id]/apply) */
+  [ROUTES.MENTORS.APPLY]: {
+    pathPattern: /^\/mentors\/[^/]+\/apply$/,
+    title: '멘토링 신청',
+    type: 'Left',
+    btnType: 'Back',
+  },
+  /** 멘토 상세 프로필 (/mentors/[id]) */
+  [ROUTES.MENTORS.MAIN]: {
+    pathPattern: /^\/mentors\/[^/]+$/,
+    title: '프로필',
+    type: 'Left',
+    btnType: 'Back',
+    backHref: ROUTES.NETWORK.MAIN,
+  },
+  /** 나의 멘토링 내역 (pathPattern so /mentors/history is not matched by DETAIL_PREFIX) */
+  [ROUTES.MENTORS.HISTORY]: {
+    pathPattern: /^\/mentors\/history$/,
+    title: '나의 멘토링 내역',
+    type: 'Left',
+    btnType: 'Back',
+    backHref: ROUTES.NETWORK.MAIN,
   },
   /** 신한장학재단 공지 상세 - 목록보다 먼저 두어 /community/notice/[id] 매칭 */
   [ROUTES.COMMUNITY.NOTICE.DETAIL_PREFIX]: {
@@ -220,10 +269,12 @@ export const CUSTOM_HEADER_CONFIG: Record<string, CustomHeaderConfig> = {
     btnType: 'Close',
     navItem: HEADER_ITEMS[HEADER_NAV_ITEM_KEY.COMPLETE],
   },
-  /** 커뮤니티 소모임 추가하기 페이지 헤더 설정 */
+  /** 커뮤니티 소모임 만들기 페이지 헤더 설정 */
   [ROUTES.COMMUNITY.GROUP.CREATE]: {
-    title: '추가하기',
+    title: '소모임 만들기',
     type: 'Left',
+    btnType: 'Back',
+    navItem: { text: '만들기', ariaLabel: '소모임 만들기' },
   },
   /** 게시글 상세 보기 (공유 링크 진입 시 뒤로가기 = 커뮤니티로) */
   [ROUTES.COMMUNITY.FEED.DETAIL]: {
@@ -257,6 +308,14 @@ export const CUSTOM_HEADER_CONFIG: Record<string, CustomHeaderConfig> = {
     navItem: HEADER_ITEMS[HEADER_NAV_ITEM_KEY.MORE],
     backHref: ROUTES.COMMUNITY.GROUP.MAIN,
   },
+  /** 소모임 채팅방 (/community/group/[id]/chat) - 제목은 setCustomTitle으로 그룹명 */
+  [ROUTES.COMMUNITY.GROUP.CHAT]: {
+    pathPattern: /^\/community\/group\/[^/]+\/chat$/,
+    title: '채팅',
+    type: 'Left',
+    btnType: 'Back',
+    navItem: HEADER_ITEMS[HEADER_NAV_ITEM_KEY.MORE],
+  },
   /** 유지심사 현황 상세보기 */
   [ROUTES.SCHOLARSHIP.MAINTENANCE]: {
     title: '나의 유지심사',
@@ -287,6 +346,7 @@ export const CUSTOM_HEADER_CONFIG: Record<string, CustomHeaderConfig> = {
   'mandatory-camp': {
     pathPattern: /^\/scholarship\/mandatory\/camp\/[^/]+$/,
     title: '장학캠프',
+
     type: 'Left',
     btnType: 'Back',
     backHref: ROUTES.SCHOLARSHIP.MAIN,
@@ -344,7 +404,7 @@ export const POST_FAB_ITEMS: Record<POST_FAB_ITEM_KEY, PostFABItem> = {
   [POST_FAB_ITEM_KEY.ADD]: {
     icon: 'IconLLinePlus',
     href: ROUTES.COMMUNITY.GROUP.CREATE,
-    ariaLabel: '추가하기',
+    ariaLabel: '소모임 만들기',
   },
 } as const
 
@@ -356,6 +416,10 @@ export enum INPUT_BAR_TYPE {
   CHAT = 'CHAT',
   /** 댓글 입력창 */
   COMMENT = 'COMMENT',
+  /** 멘토 검색 입력창 */
+  MENTOR_SEARCH = 'MENTOR_SEARCH',
+  /** 대화 상대 검색 입력창 */
+  CHAT_SEARCH = 'CHAT_SEARCH',
 }
 
 /** InputBar 타입별 설정 상수 */
@@ -381,5 +445,19 @@ export const INPUT_BAR_ITEMS: Record<INPUT_BAR_TYPE, InputBarConfig> = {
     showEmoji: false,
     sendButton: true,
     showAnonymous: true,
+  },
+  [INPUT_BAR_TYPE.MENTOR_SEARCH]: {
+    placeholder: '멘토 검색하기',
+    leftIcon: 'IconLLineSearchLine',
+    showAttach: false,
+    showEmoji: false,
+    sendButton: false,
+  },
+  [INPUT_BAR_TYPE.CHAT_SEARCH]: {
+    placeholder: '대화 상대 검색하기',
+    leftIcon: 'IconLLineSearchLine',
+    showAttach: false,
+    showEmoji: false,
+    sendButton: false,
   },
 } as const

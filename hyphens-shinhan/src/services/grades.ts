@@ -2,6 +2,7 @@ import apiClient from './apiClient'
 import type {
   SemesterGradeListResponse,
   SemesterGradeCreate,
+  SemesterGradeUpdate,
   SemesterGradeResponse,
   YearGPAResponse,
 } from '@/types'
@@ -17,7 +18,7 @@ export interface ListGradesParams {
 
 /**
  * 학점(Grades) API 서비스
- * - GET/POST /grades, GET /grades/{year}/gpa, DELETE /grades/{grade_id}
+ * - GET/POST /grades, GET /grades/{year}/gpa, PATCH /grades/{grade_id}, DELETE /grades/{grade_id}
  */
 export const GradesService = {
   /**
@@ -53,6 +54,20 @@ export const GradesService = {
   getYearGpa: async (year: number): Promise<YearGPAResponse> => {
     const response = await apiClient.get<YearGPAResponse>(
       `${BASE}/${year}/gpa`,
+    )
+    return response.data
+  },
+
+  /**
+   * 학점 수정 (PATCH /grades/{grade_id})
+   */
+  updateGrade: async (
+    gradeId: string,
+    data: SemesterGradeUpdate,
+  ): Promise<SemesterGradeResponse> => {
+    const response = await apiClient.patch<SemesterGradeResponse>(
+      `${BASE}/${gradeId}`,
+      data,
     )
     return response.data
   },

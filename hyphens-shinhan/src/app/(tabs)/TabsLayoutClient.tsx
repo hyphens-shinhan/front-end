@@ -52,7 +52,7 @@ export default function TabsLayoutClient({
         >
             <HeaderContent pathname={pathname} />
             <main className={styles.main}>
-                <div className={styles.content}>{children}</div>
+                <div className={cn(styles.content, !isHome && 'bg-white')}>{children}</div>
             </main>
             <BottomNavContent pathname={pathname} userRole={userRole} />
         </div>
@@ -63,6 +63,7 @@ const styles = {
     container: cn(
         'relative mx-auto max-w-md',
         'h-[100dvh] overflow-hidden flex flex-col',
+        'bg-white', /* non-home: explicit background for all browsers; home: overridden by inline gradient */
     ),
     main: cn(
         'flex-1',

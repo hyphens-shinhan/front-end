@@ -37,7 +37,12 @@ export default function Button({ label, size, type, fullWidth = false, disabled 
     );
 
     return (
-        <button className={cn(containerStyle, className)} disabled={disabled} onClick={onClick}>
+        <button
+            type="button"
+            className={cn(containerStyle, className)}
+            disabled={disabled}
+            onClick={onClick}
+        >
             <span>{label}</span>
         </button>
     );

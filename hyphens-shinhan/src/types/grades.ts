@@ -43,6 +43,13 @@ export interface SemesterGradeCreate {
   credits: number
 }
 
+/** 학점 수정 요청 (PATCH /grades/{grade_id}) – 모두 선택 */
+export interface SemesterGradeUpdate {
+  course_name?: string
+  grade?: LetterGrade
+  credits?: number
+}
+
 /** 연도별 GPA 학기별 breakdown 1건 */
 export interface SemesterBreakdownItem {
   semester: number

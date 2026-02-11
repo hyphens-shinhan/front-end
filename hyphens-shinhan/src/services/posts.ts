@@ -278,6 +278,22 @@ export const PostService = {
   // --- MY POSTS API ---
 
   /**
+   * 특정 유저(멘토)가 작성한 포스트 목록 조회
+   * GET /posts/user/{userId}
+   */
+  getUserPosts: async (
+    userId: string,
+    limit = 20,
+    offset = 0,
+  ): Promise<MyPostsResponse> => {
+    const response = await apiClient.get<MyPostsResponse>(
+      `/posts/user/${userId}`,
+      { params: { limit, offset } },
+    )
+    return response.data
+  },
+
+  /**
    * 내가 작성한 포스트 목록 조회 (Feed + Council Report 통합)
    * @param limit 가져올 개수
    * @param offset 시작 위치

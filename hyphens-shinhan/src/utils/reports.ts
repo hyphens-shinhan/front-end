@@ -1,6 +1,29 @@
 import type { ReportMonth } from '@/services/reports'
 import type { AttendanceResponse } from '@/types/reports'
 
+/** 캘린더/폼 표시용 placeholder */
+export const ACTIVITY_DATE_PLACEHOLDER = 'YYYY.MM.DD'
+
+/**
+ * API 날짜(YYYY-MM-DD) → 캘린더/폼 표시용(YYYY.MM.DD).
+ * GET 응답으로 폼에 채울 때 사용.
+ */
+export function activityDateToDisplay(apiDate: string | null | undefined): string {
+  if (!apiDate || apiDate === ACTIVITY_DATE_PLACEHOLDER) return ACTIVITY_DATE_PLACEHOLDER
+  const normalized = apiDate.trim().replace(/-/g, '.')
+  return normalized.includes('.') ? normalized : ACTIVITY_DATE_PLACEHOLDER
+}
+
+/**
+ * 캘린더/폼 값(YYYY.MM.DD) → API용(YYYY-MM-DD).
+ * PATCH/POST body의 activity_date에 사용. 빈 값·placeholder면 null.
+ */
+export function activityDateToApi(displayDate: string | null | undefined): string | null {
+  if (!displayDate || displayDate === ACTIVITY_DATE_PLACEHOLDER) return null
+  const normalized = displayDate.trim().replace(/\./g, '-')
+  return /^\d{4}-\d{2}-\d{2}$/.test(normalized) ? normalized : null
+}
+
 /** 활동 보고서 월: 4–12만 유효 */
 const REPORT_MONTH_MIN = 4
 const REPORT_MONTH_MAX = 12

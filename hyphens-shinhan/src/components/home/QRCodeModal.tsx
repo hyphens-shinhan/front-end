@@ -19,6 +19,8 @@ interface QRCodeModalProps {
   onClose: () => void;
   /** QR에 담을 URL (예: 프로필 공유 링크) */
   qrValue: string;
+  /** 모달 열릴 때 기본 뷰 모드 (기본값: 'qr') */
+  defaultViewMode?: 'qr' | 'scan';
 }
 
 /** 퍼블릭 프로필 URL에서 userId 추출 (예: https://.../mypage/abc123 → abc123) */
@@ -37,9 +39,10 @@ export default function QRCodeModal({
   isOpen,
   onClose,
   qrValue,
+  defaultViewMode = 'qr',
 }: QRCodeModalProps) {
   const router = useRouter();
-  const [viewMode, setViewMode] = useState<'qr' | 'scan'>('qr');
+  const [viewMode, setViewMode] = useState<'qr' | 'scan'>(defaultViewMode);
   const [scanError, setScanError] = useState<string | null>(null);
 
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -81,7 +84,7 @@ export default function QRCodeModal({
     if (!isOpen) return;
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        if (viewMode === 'scan') {
+        if (viewMode === 'scan' && defaultViewMode !== 'scan') {
           setViewMode('qr');
           setScanError(null);
         } else {
@@ -102,7 +105,7 @@ export default function QRCodeModal({
   // 모달 닫을 때 스캔 모드/스트림 정리
   useEffect(() => {
     if (!isOpen) {
-      setViewMode('qr');
+      setViewMode(defaultViewMode);
       setScanError(null);
       if (streamRef.current) {
         streamRef.current.getTracks().forEach((t) => t.stop());
@@ -210,13 +213,13 @@ export default function QRCodeModal({
 
   const handleOverlayClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
-      if (viewMode === 'scan') setViewMode('qr');
+      if (viewMode === 'scan' && defaultViewMode !== 'scan') setViewMode('qr');
       else onClose();
     }
   };
 
   const handleClose = () => {
-    if (viewMode === 'scan') {
+    if (viewMode === 'scan' && defaultViewMode !== 'scan') {
       setViewMode('qr');
       setScanError(null);
     } else {

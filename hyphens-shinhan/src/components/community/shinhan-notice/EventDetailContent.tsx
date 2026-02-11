@@ -15,6 +15,7 @@ import { TOAST_MESSAGES } from "@/constants/toast";
 import { useToast } from "@/hooks/useToast";
 import Separator from "@/components/common/Separator";
 import BottomFixedButton from "@/components/common/BottomFixedButton";
+import Thumbnail from "@/components/common/Thumbnail";
 
 interface EventDetailContentProps {
     eventId: string;
@@ -108,9 +109,10 @@ export default function EventDetailContent({ eventId }: EventDetailContentProps)
     return (
         <article className={styles.container}>
             {/* 사진 */}
-            <div className={styles.imageContainer}>
-                {/** TODO: 이미지 추가 */}
-            </div>
+            <Thumbnail
+                src={event.image_urls?.[0] ?? null}
+                alt={event.title}
+            />
 
             {/** 제목 */}
             <EventTitleHeader

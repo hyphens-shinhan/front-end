@@ -125,7 +125,7 @@ export function useImageUpload(
             throw new Error(`이미지 업로드 실패: ${error.message}`)
           }
 
-          return `${supabaseUrl}/storage/v1/object/${bucket}/${filePath}`
+          return `${supabaseUrl}/storage/v1/object/public/${bucket}/${filePath}`
         }),
       )
 

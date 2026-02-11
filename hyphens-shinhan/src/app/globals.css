@@ -70,7 +70,7 @@ body {
 }
 
 body {
-  background: var(--background);
+  background: var(--background, #ffffff);
   color: var(--foreground);
   font-family: var(--font-sans); /* 전체 기본 폰트 적용 */
   -webkit-font-smoothing: antialiased; /* 폰트를 더 매끄럽게 표현 */

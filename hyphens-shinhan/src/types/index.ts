@@ -157,6 +157,67 @@ export type {
   SemesterGradeResponse,
   SemesterGradeListResponse,
   SemesterGradeCreate,
+  SemesterGradeUpdate,
   SemesterBreakdownItem,
   YearGPAResponse,
 } from './grades'
+
+// MARK: - Network (네트워크/멘토/팔로잉)
+export type {
+  Generation,
+  ScholarshipType as NetworkScholarshipType,
+  Location,
+  MentorListRole,
+  Person,
+} from './network'
+
+// MARK: - Chat (채팅: DM + Group)
+export type {
+  ChatRoomType,
+  ChatRoomMember,
+  MessageResponse,
+  MessageCreate,
+  MessageListResponse,
+  ChatRoomResponse,
+  ChatRoomListResponse,
+  // Legacy DM types (하위 호환성)
+  MessageAttachment,
+  ChatMessage,
+  Conversation,
+} from './chat'
+
+// MARK: - Clubs (소모임)
+export type {
+  ClubCategory,
+  ClubAnonymity,
+  ClubCreate,
+  ClubUpdate,
+  UserClubProfile,
+  ClubResponse,
+  ClubListResponse,
+  ClubListQuery,
+  GalleryImageCreate,
+  GalleryImageResponse,
+  GalleryListResponse,
+  GalleryListQuery,
+  ClubJoinResponse,
+  ClubLeaveResponse,
+  GalleryDeleteResponse,
+  ClubMemberResponse,
+  ClubMemberListResponse,
+  RandomNicknameResponse,
+} from './clubs'
+
+// MARK: - Videos (비디오 목록/생성/삭제, ADMIN 전용 생성·삭제)
+export type { VideoCreate, VideoResponse, VideoListResponse } from './videos'
+
+// MARK: - Notification (알림 API: /api/v1/notifications)
+export type {
+  NotificationType,
+  NotificationActor,
+  NotificationResponse,
+  NotificationListResponse,
+  MarkAllReadResponse,
+  NotificationMessageResponse,
+  NotificationItem,
+} from './notification'

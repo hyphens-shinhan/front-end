@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import type { HeaderNavItem } from '@/types'
 
 /* ========================================
  * 커스텀 헤더 스토어
@@ -18,12 +19,21 @@ interface HeaderState {
   handlers: HeaderHandlers
   /** 경로 기반 title을 오버라이드할 제목 (예: '4월 활동') */
   customTitle: string | null
+  /**
+   * 우측 navItem 표시 제어.
+   * - undefined: config의 navItem 사용
+   * - null: 우측 버튼 숨김
+   * - HeaderNavItem: 해당 아이템 표시
+   */
+  navItemOverride: HeaderNavItem | null | undefined
   /** 핸들러 설정 */
   setHandlers: (handlers: HeaderHandlers) => void
   /** 핸들러 초기화 */
   resetHandlers: () => void
   /** 동적 헤더 제목 설정 (상세 페이지 등) */
   setCustomTitle: (title: string | null) => void
+  /** 우측 navItem 표시 제어 (이전 설문 없을 때 버튼 숨기기 등) */
+  setNavItemOverride: (item: HeaderNavItem | null | undefined) => void
 }
 
 /**
@@ -42,7 +52,9 @@ interface HeaderState {
 export const useHeaderStore = create<HeaderState>((set) => ({
   handlers: {},
   customTitle: null,
+  navItemOverride: undefined,
   setHandlers: (handlers) => set({ handlers }),
-  resetHandlers: () => set({ handlers: {} }),
+  resetHandlers: () => set({ handlers: {}, navItemOverride: undefined }),
   setCustomTitle: (title) => set({ customTitle: title }),
+  setNavItemOverride: (navItemOverride) => set({ navItemOverride }),
 }))

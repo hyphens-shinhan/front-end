@@ -15,10 +15,10 @@ export interface ShortcutMenuItem {
  * TODO: 멘토, 지도, 팔로우 경로 체크 필요
  */
 const DEFAULT_SHORTCUT_ITEMS: ShortcutMenuItem[] = [
-  { label: '멘토', icon: 'IconLBoldBriefcase', href: ROUTES.NETWORK.MAIN },
+  { label: '멘토', icon: 'IconLBoldBriefcase', href: `${ROUTES.NETWORK.MAIN}?tab=mentors` },
   { label: '공지사항', icon: 'IconLBoldNote', href: ROUTES.COMMUNITY.NOTICE.MAIN },
-  { label: '지도', icon: 'IconLBoldMap', href: ROUTES.NETWORK.MAIN },
-  { label: '팔로우', icon: 'IconLBoldProfile2user', href: ROUTES.NETWORK.MAIN },
+  { label: '지도', icon: 'IconLBoldMap', href: ROUTES.NETWORK.MAIN }, // TODO: 지도 탭 추가 필요
+  { label: '팔로우', icon: 'IconLBoldProfile2user', href: `${ROUTES.NETWORK.MAIN}?tab=friends` },
 ];
 
 interface ShortcutMenuListProps {

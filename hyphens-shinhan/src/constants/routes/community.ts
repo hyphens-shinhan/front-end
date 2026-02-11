@@ -27,9 +27,12 @@ export const COMMUNITY_ROUTES = {
     DETAIL: '/community/council',
   },
   GROUP: {
-    /** 이벤트 목록 = 공지 페이지 이벤트 탭 (뒤로가기/목록으로용) */
+    /** 소모임 목록 탭 */
     MAIN: '/community?tab=소모임',
     CREATE: '/community/group/create',
+    /** 소모임 상세 - use ${DETAIL}/${id} */
     DETAIL: '/community/group',
+    /** 소모임 채팅 - use ${DETAIL}/${id}/chat. Config key for header. */
+    CHAT: '/community/group/chat',
   },
 } as const

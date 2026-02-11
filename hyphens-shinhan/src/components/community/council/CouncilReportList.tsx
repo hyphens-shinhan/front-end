@@ -93,8 +93,6 @@ export default function CouncilReportList() {
                     {isFetchingNextPage ? '불러오는 중...' : '더 보기'}
                 </button>
             )}
-
-            <PostFAB type={POST_FAB_ITEM_KEY.WRITE} />
         </div>
     );
 }

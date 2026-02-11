@@ -1,12 +1,13 @@
 'use client'
 
-import { forwardRef, memo, useMemo, useEffect, useImperativeHandle, useRef, useState } from "react"
+import { ChangeEvent, forwardRef, memo, useCallback, useMemo, useEffect, useImperativeHandle, useRef, useState } from "react"
 import { cn } from "@/utils/cn"
 import ReportTitle from "../ReportTitle"
 import ImagePicker from "@/components/common/ImagePicker"
 import { useImageUpload } from "@/hooks/useImageUpload"
 import { IMAGE_UPLOAD } from "@/constants/imageUpload"
 import { Icon } from "@/components/common/Icon"
+import { processReceiptOCR } from "@/utils/ocr"
 import type { ReceiptCreate, ReceiptItemCreate, ReceiptResponse } from "@/types/reports"
 
 export interface ActivityCostReceiptInputRef {
@@ -76,6 +77,8 @@ const ActivityCostReceiptInput = forwardRef<
     detailItemsRef.current = detailItems
     /** 최초 1회만 서버 값 반영. 임시 저장 후 refetch 시 기존 목록으로 덮어써서 삭제한 영수증이 다시 뜨는 것 방지 */
     const initialSyncDoneRef = useRef(false)
+    const [isProcessingOCR, setIsProcessingOCR] = useState(false)
+    const [ocrError, setOcrError] = useState<string | null>(null)
 
     // ---------- 기존 영수증 목록 동기화: 진입 시 1회만. refetch 시에는 덮어쓰지 않음 ----------
     useEffect(() => {
@@ -99,7 +102,7 @@ const ActivityCostReceiptInput = forwardRef<
     const {
         images,
         fileInputRef,
-        handleImageSelect,
+        handleImageSelect: hookHandleImageSelect,
         handleRemoveImage,
         openFilePicker,
         uploadImages: doUploadImages,
@@ -117,6 +120,37 @@ const ActivityCostReceiptInput = forwardRef<
     /** image_url이 있는 영수증만 카운트 (빈 url은 세부 내역만 저장된 경우) */
     const receiptCountWithImage =
         keptExistingReceipts.filter((r) => r.image_url).length + images.length
+
+    /** 영수증 추가 시 첫 이미지에 대해 OCR 실행 후 세부 내역 자동 채움 */
+    const handleImageSelect = useCallback(
+        (e: ChangeEvent<HTMLInputElement>) => {
+            const fileList = e.target.files
+            const files = fileList ? Array.from(fileList) : []
+            hookHandleImageSelect(e)
+            const firstImage = files.find((f) => f.type.startsWith('image/'))
+            if (!firstImage) return
+            setIsProcessingOCR(true)
+            setOcrError(null)
+            processReceiptOCR(firstImage)
+                .then((extractedItems) => {
+                    if (extractedItems.length > 0) {
+                        setDetailItems(
+                            extractedItems.map((item) => ({
+                                item_name: item.name,
+                                price: item.price,
+                            })),
+                        )
+                    } else {
+                        setOcrError('영수증에서 항목을 찾을 수 없습니다. 수동으로 입력해주세요.')
+                    }
+                })
+                .catch((err) => {
+                    setOcrError(err instanceof Error ? err.message : '영수증 처리 중 오류가 발생했습니다.')
+                })
+                .finally(() => setIsProcessingOCR(false))
+        },
+        [hookHandleImageSelect],
+    )
 
     useEffect(() => {
         onImagesChange?.(images.map((img) => img.file))
@@ -187,7 +221,7 @@ const ActivityCostReceiptInput = forwardRef<
         <div className={styles.container}>
             <ReportTitle title="활동 비용과 영수증을 첨부해주세요" checkIcon={true} isChecked={isReceiptChecked} className="py-0" />
             {/** 기존 영수증(불러온 것) + 새로 추가한 영수증 */}
-            <div className={styles.imagePickerContainer}>
+            <div className={cn(styles.imagePickerContainer, isProcessingOCR && 'pointer-events-none')}>
                 {keptExistingReceipts
                     .filter((receipt) => receipt.image_url)
                     .map((receipt, index) => (
@@ -216,68 +250,96 @@ const ActivityCostReceiptInput = forwardRef<
                     onAdd={openFilePicker}
                     canAddMore={canAddMore}
                     fileInputRef={fileInputRef}
+                    disabled={isProcessingOCR}
                     addButtonContent={
                         <div className={styles.addButtonContent}>
-                            <Icon name='IconLBoldReceipt' size={24} />
-                            <p className={styles.addButtonContentText}>영수증 추가</p>
+                            {isProcessingOCR ? (
+                                <>
+                                    <span className={styles.ocrSpinner} aria-hidden />
+                                    <p className={styles.addButtonContentText}>처리 중...</p>
+                                </>
+                            ) : (
+                                <>
+                                    <Icon name='IconLBoldReceipt' size={24} />
+                                    <p className={styles.addButtonContentText}>영수증 추가</p>
+                                </>
+                            )}
                         </div>}
                 />
             </div>
 
             {/** 총 비용 (세부 내역 합계 자동 계산, 입력 불가) */}
             <div className={styles.totalCostContainer}>
-                <input
-                    type="text"
-                    inputMode="numeric"
-                    readOnly
-                    className={styles.totalCostInput}
-                    placeholder="총 비용을 입력해주세요"
-                    value={computedTotal === 0 ? "" : formatWithCommas(computedTotal)}
-                />
+                {isProcessingOCR ? (
+                    <div className={styles.skeletonTotalInput} aria-hidden />
+                ) : (
+                    <input
+                        type="text"
+                        inputMode="numeric"
+                        readOnly
+                        className={styles.totalCostInput}
+                        placeholder="총 비용을 입력해주세요"
+                        value={computedTotal === 0 ? "" : formatWithCommas(computedTotal)}
+                    />
+                )}
                 <p className={styles.totalCostLabel}>세부 내역 금액의 합계가 자동으로 반영됩니다.</p>
+                {ocrError && <p className={styles.ocrError}>{ocrError}</p>}
             </div>
 
             {/** 세부 내역 */}
             <div className={styles.detailSection}>
                 <p className={styles.detailSectionLabel}>세부 내역</p>
                 <div className={styles.detailList}>
-                    {detailItems.map((item, index) => (
-                        <div key={index} className={styles.detailRow}>
-                            <input
-                                type="text"
-                                className={styles.detailItemName}
-                                placeholder="내역명"
-                                value={item.item_name}
-                                onChange={(e) => updateDetailItem(index, { item_name: e.target.value })}
-                            />
-                            <input
-                                type="number"
-                                className={styles.detailPrice}
-                                placeholder="금액"
-                                value={item.price || ""}
-                                onChange={(e) =>
-                                    updateDetailItem(index, {
-                                        price: Number(e.target.value.replace(/,/g, "")) || 0,
-                                    })
-                                }
-                            />
+                    {isProcessingOCR ? (
+                        <>
+                            {[1, 2, 3].map((i) => (
+                                <div key={i} className={styles.detailRow} aria-hidden>
+                                    <div className={styles.skeletonDetailName} />
+                                    <div className={styles.skeletonDetailPrice} />
+                                </div>
+                            ))}
+                        </>
+                    ) : (
+                        <>
+                            {detailItems.map((item, index) => (
+                                <div key={index} className={styles.detailRow}>
+                                    <input
+                                        type="text"
+                                        className={styles.detailItemName}
+                                        placeholder="내역명"
+                                        value={item.item_name}
+                                        onChange={(e) => updateDetailItem(index, { item_name: e.target.value })}
+                                    />
+                                    <input
+                                        type="number"
+                                        className={styles.detailPrice}
+                                        placeholder="금액"
+                                        value={item.price || ""}
+                                        onChange={(e) =>
+                                            updateDetailItem(index, {
+                                                price: Number(e.target.value.replace(/,/g, "")) || 0,
+                                            })
+                                        }
+                                    />
+                                    <button
+                                        type="button"
+                                        className={styles.detailRemoveButton}
+                                        onClick={() => removeDetailItem(index)}
+                                        aria-label="삭제"
+                                    >
+                                        <Icon name="IconLLineClose" size={18} />
+                                    </button>
+                                </div>
+                            ))}
                             <button
                                 type="button"
-                                className={styles.detailRemoveButton}
-                                onClick={() => removeDetailItem(index)}
-                                aria-label="삭제"
+                                onClick={addDetailItem}
+                                className={styles.detailAddRowButton}
                             >
-                                <Icon name="IconLLineClose" size={18} />
+                                내역 추가
                             </button>
-                        </div>
-                    ))}
-                    <button
-                        type="button"
-                        onClick={addDetailItem}
-                        className={styles.detailAddRowButton}
-                    >
-                        내역 추가
-                    </button>
+                        </>
+                    )}
                 </div>
             </div>
         </div>
@@ -287,7 +349,7 @@ const ActivityCostReceiptInput = forwardRef<
 export default memo(ActivityCostReceiptInput)
 
 const styles = {
-    container: cn('flex flex-col px-4 pt-6'),
+    container: cn('relative flex flex-col px-4 pt-6'),
     imagePickerContainer: cn('flex flex-row flex-wrap gap-2 py-3.5'),
     imageWrapper: cn('relative'),
     imageInner: cn('relative w-full h-full rounded-[16px] overflow-hidden bg-grey-2'),
@@ -305,6 +367,11 @@ const styles = {
         'body-6 text-grey-10 focus:outline-none focus:ring-1 focus:ring-primary-secondarysky',
     ),
     totalCostLabel: cn('pl-4 font-caption-caption4 text-grey-8'),
+    ocrError: cn('pl-4 font-caption-caption4 text-red-500'),
+    ocrSpinner: cn('size-6 rounded-full border-2 border-grey-4 border-t-primary-secondarysky animate-spin'),
+    skeletonTotalInput: cn('h-12 w-full max-w-[200px] rounded-[16px] bg-grey-2 animate-pulse'),
+    skeletonDetailName: cn('flex-1 min-w-0 h-10 rounded-[12px] bg-grey-2 animate-pulse'),
+    skeletonDetailPrice: cn('h-10 w-[100px] shrink-0 rounded-[12px] bg-grey-2 animate-pulse'),
     detailSection: cn('flex flex-col gap-2 py-4'),
     detailSectionLabel: cn('font-caption-caption1 text-grey-9'),
     detailList: cn('flex flex-col gap-2'),

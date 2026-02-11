@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Avatar from "../common/Avatar";
 import InputBar, { INPUT_BAR_TYPE } from "../common/InputBar";
@@ -9,7 +9,6 @@ import { ChatRoomResponse, ChatRoomMember } from "@/types/chat";
 import { useUserStore } from "@/stores";
 
 export default function ChatList() {
-  const router = useRouter();
   const { data, isLoading, error } = useChatRooms();
   const currentUser = useUserStore((s) => s.user);
 
@@ -106,14 +105,19 @@ function ChatRoomItem({ room, currentUserId }: { room: ChatRoomResponse; current
       <div className="flex flex-col flex-1 overflow-hidden">
         <div className="flex items-center justify-between">
           <p className="title-16 text-grey-11 truncate">{displayName}</p>
-          {lastMsg?.sent_at && (
-            <span className="text-[10px] text-grey-8">
-              {formatChatTime(lastMsg.sent_at)}
-            </span>
-          )}
         </div>
         <p className="body-6 text-grey-10 truncate">{messageContent}</p>
       </div>
+      {/* <span className="text-[10px] text-grey-8">
+                {formatChatTime(lastMsg.sent_at)}
+              </span> */}
+      {room.unread_count > 0 && (
+        <div className="flex items-center justify-center bg-grey-5 rounded-full px-2 py-1 my-auto">
+          <span className="font-caption-caption3 text-grey-11">
+            {room.unread_count > 99 ? '99+' : room.unread_count}
+          </span>
+        </div>
+      )}
     </div>
   );
 }

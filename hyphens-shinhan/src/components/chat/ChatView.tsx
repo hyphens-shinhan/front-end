@@ -126,9 +126,15 @@ export default function ChatView({ otherUserId }: ChatViewProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [otherUserId])
 
-  // 새 메시지 시 스크롤
+  // 채팅방 진입 시·메시지 로드 시 맨 아래(최신)로 스크롤 (레이아웃 완료 후)
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    if (messages.length === 0) return
+    const raf = requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'auto' })
+      })
+    })
+    return () => cancelAnimationFrame(raf)
   }, [messages])
 
   // 메시지 전송

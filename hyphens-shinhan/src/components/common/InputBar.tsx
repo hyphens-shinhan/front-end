@@ -67,7 +67,7 @@ export default function InputBar({
                 ref={inputRef}
                 type="text"
                 placeholder={config.placeholder}
-                value={value}
+                value={value ?? ''}
                 onChange={(e) => onChange?.(e.target.value)}
                 className={styles.input}
             />

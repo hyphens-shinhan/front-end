@@ -99,6 +99,7 @@ export interface ChatRoomResponse {
   name: string | null // GROUP일 때 클럽명
   image_url: string | null // GROUP일 때 클럽 이미지
   last_message: MessageResponse | null
+  unread_count: number
 }
 
 /** 채팅방 목록 응답 */

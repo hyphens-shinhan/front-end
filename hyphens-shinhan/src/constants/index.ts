@@ -30,7 +30,11 @@ export const NAV_ITEMS_BY_ROLE: Record<UserRole, NavItem[]> = {
   /** 멘토 전용 대시보드 탭 */
   MENTOR: [
     { label: '홈', href: ROUTES.MENTOR_DASHBOARD.MAIN, icon: 'IconLBoldHome' },
-    { label: '멘티', href: ROUTES.MENTOR_DASHBOARD.MENTEES, icon: 'IconLBoldUserSquare1' },
+    {
+      label: '멘티',
+      href: ROUTES.MENTOR_DASHBOARD.MENTEES,
+      icon: 'IconLBoldUserSquare1',
+    },
     {
       label: '메시지',
       href: ROUTES.MENTOR_DASHBOARD.MESSAGES,
@@ -482,8 +486,8 @@ export const INPUT_BAR_ITEMS: Record<INPUT_BAR_TYPE, InputBarConfig> = {
   [INPUT_BAR_TYPE.CHAT]: {
     placeholder: '메시지 입력하기',
     leftIcon: undefined,
-    showAttach: true,
-    showEmoji: true,
+    showAttach: false,
+    showEmoji: false,
     sendButton: true,
   },
   [INPUT_BAR_TYPE.COMMENT]: {

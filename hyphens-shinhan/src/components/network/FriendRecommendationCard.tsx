@@ -59,23 +59,16 @@ export default function FriendRecommendationCard({
         <div className={styles.mutualFriendsContainer}>
           <div className={styles.mutualFriendsInfoContainer}>
             <div className={styles.memberPreviewContainer}>
-              {previewAvatars.length > 0 ? (
-                previewAvatars.map((avatarUrl, index) => (
-                  <Avatar
-                    key={avatarUrl || `avatar-${index}`}
-                    src={avatarUrl}
-                    alt="친구 프로필"
-                    fill
-                    containerClassName={styles.memberPreviewItem}
-                  />
-                ))
-              ) : (
-                <>
-                  <div className={cn(styles.memberPreviewItem, 'bg-grey-7')} />
-                  <div className={cn(styles.memberPreviewItem, 'bg-grey-8')} />
-                  <div className={cn(styles.memberPreviewItem, 'bg-grey-9')} />
-                </>
-              )}
+              {(previewAvatars.length > 0 ? previewAvatars : [null, null, null]).map((avatarUrl, index) => (
+                <Avatar
+                  key={avatarUrl || `avatar-${index}`}
+                  src={avatarUrl}
+                  alt="친구 프로필"
+                  size={20}
+                  fill
+                  containerClassName={styles.memberPreviewItem}
+                />
+              ))}
             </div>
             <p className={styles.meta}>오시온님 외</p>
           </div>

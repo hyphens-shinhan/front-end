@@ -1,8 +1,11 @@
 'use client'
 
+import { useState } from 'react'
 import Image from 'next/image'
+import { AnimatePresence } from 'framer-motion'
 import ImagePicker from '@/components/common/ImagePicker'
 import ImageErrorPlaceholder from '@/components/common/ImageErrorPlaceholder'
+import ImagePreviewModal from '@/components/common/ImagePreviewModal'
 import { useImageUpload } from '@/hooks/useImageUpload'
 import { useMultipleImageError } from '@/hooks/useMultipleImageError'
 import { IMAGE_UPLOAD } from '@/constants/imageUpload'
@@ -17,6 +20,7 @@ interface ActivityPhotosProps {
 /** 활동 보고서 상세 - 활동 사진 섹션 (기존 이미지 표시 + 추가 업로드, 최대 5장) */
 export default function ActivityPhotos({ imageUrls }: ActivityPhotosProps) {
   const { handleImageError, isFailed } = useMultipleImageError()
+  const [previewIndex, setPreviewIndex] = useState<number | null>(null)
   const existingUrls = imageUrls?.filter(Boolean) ?? []
   const {
     images,
@@ -45,7 +49,11 @@ export default function ActivityPhotos({ imageUrls }: ActivityPhotosProps) {
             )
           }
           return (
-            <div key={`existing-${index}`} className={styles.imageWrap}>
+            <div
+              key={`existing-${index}`}
+              className={cn(styles.imageWrap, 'cursor-pointer')}
+              onClick={() => setPreviewIndex(index)}
+            >
               <div className={styles.imageInner}>
                 <Image
                   src={url}
@@ -68,6 +76,17 @@ export default function ActivityPhotos({ imageUrls }: ActivityPhotosProps) {
           fileInputRef={fileInputRef}
         />
       </div>
+
+      {/* 이미지 미리보기 모달 */}
+      <AnimatePresence>
+        {previewIndex !== null && existingUrls.length > 0 && (
+          <ImagePreviewModal
+            images={existingUrls}
+            initialIndex={previewIndex}
+            onClose={() => setPreviewIndex(null)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   )
 }

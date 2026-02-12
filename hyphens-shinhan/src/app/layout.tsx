@@ -8,10 +8,10 @@ import ConfirmModal from '@/components/common/ConfirmModal'
 import AlertModal from '@/components/common/AlertModal'
 import ToastContainer from '@/components/common/ToastContainer'
 
-const APP_NAME = 'Hyphen'
-const APP_DEFAULT_TITLE = 'Hyphen APP'
-const APP_TITLE_TEMPLATE = '%s - Hyphen APP'
-const APP_DESCRIPTION = 'Hyphen APP'
+const APP_NAME = '하이픈'
+const APP_DEFAULT_TITLE = '하이픈'
+const APP_TITLE_TEMPLATE = '%s - 하이픈'
+const APP_DESCRIPTION = '하이픈 앱'
 
 export const metadata: Metadata = {
   applicationName: APP_NAME,

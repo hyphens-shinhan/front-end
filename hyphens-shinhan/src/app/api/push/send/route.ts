@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
   }
   try {
     const body = await request.json().catch(() => ({}))
-    const title = (body.title as string) ?? 'Hyphen'
+    const title = (body.title as string) ?? '하이픈'
     const bodyText = (body.body as string) ?? '테스트 알림입니다.'
     const url = (body.url as string) ?? '/'
     const payload = JSON.stringify({ title, body: bodyText, url })

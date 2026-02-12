@@ -3,28 +3,23 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { cn } from '@/utils/cn';
-import { useUserStore, toNavRole } from '@/stores';
 import DocumentGuideCard from './DocumentGuideCard';
-import ActivityDdayCard from './ActivityDdayCard';
 import HomeContentCard from './HomeContentCard';
 import ProfileCardWithQR from './ProfileCardWithQR';
 
-/** 홈 탭 전체 레이아웃: 역할별 배너(OB=날씨, YB/YB팀장=D-day) + 프로필 카드 레이어 + 스크롤 영역 */
+/** 홈 탭 전체 레이아웃: 문서 안내 + 프로필 카드 레이어 + 스크롤 영역 */
 export default function HomePageContent() {
   const [isQRExpanded, setIsQRExpanded] = useState(false);
-  const user = useUserStore((s) => s.user);
-  const navRole = user ? toNavRole(user.role) : 'YB';
-  const isOB = navRole === 'OB';
 
   return (
     <div className={styles.root}>
-      {/* QR 펼침 시 배너 영역이 위로 접혀서 프로필+QR이 상단까지 차지 */}
+      {/* QR 펼침 시 문서 안내 영역이 위로 접혀서 프로필+QR이 상단까지 차지 */}
       <motion.div
         className="overflow-hidden shrink-0"
         animate={{ height: isQRExpanded ? 0 : 'auto' }}
         transition={{ duration: 0.2, ease: 'easeInOut' }}
       >
-        {isOB ? <DocumentGuideCard /> : <ActivityDdayCard />}
+        <DocumentGuideCard />
       </motion.div>
       {/* 아래 영역: 최소 높이 보장 + 콘텐츠만큼 늘어나서 전체가 한 번에 스크롤됨 */}
       <div className={styles.contentWrapper}>

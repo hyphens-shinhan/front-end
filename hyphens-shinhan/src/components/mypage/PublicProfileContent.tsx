@@ -112,6 +112,7 @@ export default function PublicProfileContent({ userId }: PublicProfileContentPro
                 userName={profile.name}
                 userId={userId}
                 userAvatarUrl={profile.avatar_url}
+                postsUserId={userId}
             />
         </div>
     );

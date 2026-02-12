@@ -50,7 +50,7 @@ export default function MentorProfilePage() {
               )}
             </div>
           </div>
-          <div className="mt-6 flex justify-end">
+          <div className="mt-6 flex justify-center">
             <Link
               href={ROUTES.MENTOR_DASHBOARD.PROFILE_EDIT}
               className={cn(

@@ -1,11 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Button from '@/components/common/Button';
 import { cn } from '@/utils/cn';
 import { ROUTES } from '@/constants';
 import { useUserStore, toNavRole } from '@/stores';
+import { useMandatoryStatus } from '@/hooks/user/useUser';
 
 /** WMO 기상 코드 → 한글 설명 (간단 매핑) */
 const WEATHER_LABELS: Record<number, string> = {
@@ -39,13 +40,15 @@ function getWeatherLabel(code: number): string {
   return WEATHER_LABELS[code] ?? '흐림';
 }
 
+const DEFAULT_TITLE = '자치회 활동 제출까지';
 const SEOUL_LAT = 37.5665;
 const SEOUL_LON = 126.978;
 const OPEN_METEO_URL = `https://api.open-meteo.com/v1/forecast?latitude=${SEOUL_LAT}&longitude=${SEOUL_LON}&current=temperature_2m,weather_code&timezone=Asia%2FSeoul`;
 
 /**
- * 홈 상단 서울 오늘 날씨 카드.
- * OB: 날씨 + "오늘도 좋은 하루" 문구만. YB: 날씨 + "MY활동 보기" 버튼.
+ * 홈 상단 카드.
+ * OB: 서울 오늘 날씨 + "오늘도 좋은 하루" 문구.
+ * YB: D-day 제출 카드 + "지금 제출하러 가기" 버튼.
  */
 export default function DocumentGuideCard() {
   const router = useRouter();
@@ -53,6 +56,36 @@ export default function DocumentGuideCard() {
   const userRole = user ? toNavRole(user.role) : 'YB';
   const isOB = userRole === 'OB';
 
+  // --- YB: D-day 계산 ---
+  const currentYear = new Date().getFullYear();
+  const { data: mandatoryStatus } = useMandatoryStatus(currentYear);
+
+  const { ybTitle, dDay, showBanner } = useMemo(() => {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+    // 현재 월의 마지막 날 구하기 (다음 달의 0번째 날 = 이번 달 마지막 날)
+    const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+
+    // 차이 계산 (밀리초 -> 일)
+    const diffMs = lastDayOfMonth.getTime() - today.getTime();
+    const dDay = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+
+    // API 데이터 기반으로 미완료 활동이 있는지 확인 (배너 노출 여부 결정)
+    const activities = mandatoryStatus?.activities ?? [];
+    const hasIncomplete = activities.some((a) => !a.is_completed);
+
+    const currentMonth = now.getMonth() + 1;
+    const ybTitle = `${currentMonth}월 ${DEFAULT_TITLE}`;
+
+    return {
+      ybTitle,
+      dDay: Math.max(0, dDay),
+      showBanner: hasIncomplete,
+    };
+  }, [mandatoryStatus]);
+
+  // --- OB: 날씨 ---
   const [weather, setWeather] = useState<{
     temp: number;
     code: number;
@@ -61,6 +94,7 @@ export default function DocumentGuideCard() {
   } | null>(null);
 
   useEffect(() => {
+    if (!isOB) return; // OB만 날씨 fetch
     let cancelled = false;
     fetch(OPEN_METEO_URL)
       .then((res) => res.json())
@@ -90,22 +124,26 @@ export default function DocumentGuideCard() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [isOB]);
 
-  const title = weather
+  // OB 표시용
+  const obTitle = weather
     ? `서울 ${weather.month}월 ${weather.day}일 날씨`
     : '서울 날씨';
-  const subtitle = weather
+  const obSubtitle = weather
     ? `${getWeatherLabel(weather.code)} ${weather.temp}°C`
     : '불러오는 중…';
 
-  const handleCta = () => {
-    if (isOB) router.push(ROUTES.COMMUNITY.MAIN);
-    else router.push(ROUTES.SCHOLARSHIP.MAIN);
+  const handleSubmit = () => {
+    router.push(ROUTES.SCHOLARSHIP.MAIN);
   };
+
+  // YB: 미완료 활동 없으면 카드 숨김
+  if (!isOB && !showBanner) return null;
 
   return (
     <article className={styles.card}>
+      {/* 이미지: 카드 기준 절대 위치 (레이아웃에 영향 없음) */}
       <div className={styles.rightImage}>
         <div className={styles.ellipseWrapper}>
           <img
@@ -134,25 +172,37 @@ export default function DocumentGuideCard() {
 
       <div className={styles.contentRow}>
         <div className={styles.leftContent}>
-          <h2 className={styles.title}>{title}</h2>
-          <p className={styles.dDay}>{subtitle}</p>
-          <div className={styles.ctaWrap}>
-            {isOB ? (
-              <p className={styles.obMessage}>오늘도 좋은 하루 되세요</p>
-            ) : (
-              <>
+          {isOB ? (
+            <>
+              <h2 className={styles.title}>{obTitle}</h2>
+              <p className={styles.dDay}>{obSubtitle}</p>
+              <div className={styles.ctaWrap}>
+                <p className={styles.obMessage}>오늘도 좋은 하루 되세요</p>
+              </div>
+            </>
+          ) : (
+            <>
+              <h2 className={styles.title}>{ybTitle}</h2>
+              <p className={styles.dDay}>D-{dDay}</p>
+              <div className={styles.ctaWrap}>
                 <div className={styles.ctaRow}>
-                  <span className={styles.ctaLabel}>이번 달 활동 확인하기</span>
+                  <div className={styles.ctaLabel}>
+                    <img
+                      src="/assets/images/hurryup.png"
+                      alt=""
+                      className={styles.hurryupImage}
+                    />
+                  </div>
                 </div>
                 <Button
-                  label="MY활동 보기"
+                  label="지금 제출하러 가기"
                   size="M"
                   type="primary"
-                  onClick={handleCta}
+                  onClick={handleSubmit}
                 />
-              </>
-            )}
-          </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </article>
@@ -161,7 +211,7 @@ export default function DocumentGuideCard() {
 
 const styles = {
   card: cn(
-    'mx-5 mb-3.5 flex flex-col gap-2 px-2 pb-5 relative overflow-hidden', // relative와 overflow-hidden 추가
+    'mx-5 mb-3.5 flex flex-col gap-2 px-2 pb-5 relative overflow-hidden',
   ),
   contentRow: 'relative z-10',
   leftContent: 'flex flex-col gap-2 h-[290px]',
@@ -178,4 +228,5 @@ const styles = {
   ctaRow: 'flex items-center gap-2',
   ctaLabel: 'body-5 text-white shrink-0',
   obMessage: 'body-5 text-white/90',
+  hurryupImage: 'w-[80px] h-[30px] object-contain',
 } as const;

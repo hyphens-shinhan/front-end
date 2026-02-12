@@ -41,6 +41,7 @@ function ProfileCardWithQR({ onQRExpandChange }: ProfileCardWithQRProps) {
     (_: unknown, info: { offset: { y: number } }) => {
       animate(y, 0, { type: 'spring', stiffness: 300, damping: 30 });
       if (info.offset.y < -30 && !isQRExpanded) toggleQR(true);
+      if (info.offset.y > 30 && isQRExpanded) toggleQR(false);
     },
     [y, isQRExpanded, toggleQR],
   );
@@ -82,16 +83,20 @@ function ProfileCardWithQR({ onQRExpandChange }: ProfileCardWithQRProps) {
 
   return (
     <motion.div
-      className={cn(styles.container, isQRExpanded && 'pb-8')}
+      className={cn(styles.container, isQRExpanded ? 'h-auto pb-8' : '')}
       style={{
         y,
         ...(isQRExpanded
           ? { background: 'linear-gradient(180deg, #E6F2FF 0%, #FFFFFF 100%)' }
           : {}),
       }}
-      drag={isQRExpanded ? false : 'y'}
-      dragConstraints={{ top: DRAG_LIMIT_UP, bottom: DRAG_LIMIT_DOWN }}
-      dragElastic={0.15}
+      drag="y"
+      dragConstraints={
+        isQRExpanded
+          ? { top: 0, bottom: DRAG_LIMIT_DOWN }
+          : { top: DRAG_LIMIT_UP, bottom: DRAG_LIMIT_DOWN }
+      }
+      dragElastic={isQRExpanded ? 0.08 : 0.15}
       onDragEnd={handleDragEnd}
     >
       <div className={styles.dragBar} />
@@ -122,7 +127,7 @@ function ProfileCardWithQR({ onQRExpandChange }: ProfileCardWithQRProps) {
             exit={{
               height: 0,
               opacity: 0,
-              transition: { duration: 0.2, ease: 'easeInOut' },
+              transition: { type: 'spring', stiffness: 500, damping: 40 },
             }}
             className="overflow-hidden"
           >

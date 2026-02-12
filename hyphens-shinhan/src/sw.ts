@@ -39,7 +39,7 @@ self.addEventListener("push", (event: PushEvent) => {
   } catch {
     payload = { title: "알림", body: event.data.text() || "새 알림이 있습니다." };
   }
-  const title = payload.title ?? "Hyphen";
+  const title = payload.title ?? "하이픈";
   const body = payload.body ?? "새 알림이 있습니다.";
   const url = payload.url ?? "/";
   const options: NotificationOptions = {

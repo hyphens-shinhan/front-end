@@ -1,7 +1,7 @@
 {
-  "name": "Hyphen",
-  "short_name": "Hyphen",
-  "description": "Hyphen APP",
+  "name": "하이픈",
+  "short_name": "하이픈",
+  "description": "하이픈 앱",
   "icons": [
     {
       "src": "/assets/images/shinhan.png",

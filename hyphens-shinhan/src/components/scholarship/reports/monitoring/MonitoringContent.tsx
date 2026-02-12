@@ -210,12 +210,23 @@ export default function MonitoringContent({
         </>
       )}
 
-      <MonitoringEvidenceUpload
-        evidenceUrls={evidenceUrls}
-        onEvidenceUrlsChange={setEvidenceUrls}
-        isChecked={isEvidenceChecked}
-        hideUploadButton={showGoalsSummary}
-      />
+      {!showGoalsSummary ? (
+        <MonitoringEvidenceUpload
+          evidenceUrls={evidenceUrls}
+          onEvidenceUrlsChange={setEvidenceUrls}
+          isChecked={isEvidenceChecked}
+          hideUploadButton={false}
+        />
+      ) : (
+        <div className="px-4 py-2">
+          <ReportTitle title="증빙자료" className="py-0" />
+          {!isEvidenceChecked && (
+            <p className="body-7 text-grey-8 mt-2">
+              수정하기 버튼을 눌러 증빙자료를 제출해주세요.
+            </p>
+          )}
+        </div>
+      )}
 
       <BottomFixedButton
         label="제출하기"

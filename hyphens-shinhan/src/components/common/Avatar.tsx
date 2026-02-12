@@ -77,7 +77,10 @@ export default function Avatar({
     }
 
     return (
-        <div className={cn(styles.container, containerClassName)}>
+        <div
+            className={cn(styles.container, containerClassName)}
+            style={{ width: finalWidth, height: finalHeight }}
+        >
             {normalizedSrc && !imageError ? (
                 <Image
                     src={normalizedSrc}
@@ -96,5 +99,5 @@ export default function Avatar({
 }
 
 const styles = {
-    container: cn('relative overflow-hidden'),
+    container: cn('relative overflow-hidden rounded-full shrink-0'),
 }

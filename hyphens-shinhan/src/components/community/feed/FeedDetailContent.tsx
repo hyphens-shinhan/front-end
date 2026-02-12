@@ -21,6 +21,8 @@ import { useToast } from "@/hooks/useToast";
 import { FeedPostResponse, PostType, PublicReportResponse } from "@/types/posts";
 import { useUserStore, useHeaderStore } from "@/stores";
 import { useFollowStatus } from "@/hooks/follows/useFollows";
+import ImagePreviewModal from "@/components/common/ImagePreviewModal";
+import { AnimatePresence } from "framer-motion";
 
 interface FeedDetailContentProps {
     postId: string;
@@ -89,6 +91,9 @@ export default function FeedDetailContent({ postId, postType = 'feed' }: FeedDet
         setHandlers({ onClick: openMenu });
         return () => resetHandlers();
     }, [postType, post?.id, setHandlers, resetHandlers, openFeedMoreMenu, openCouncilMoreMenu]);
+
+    // 이미지 미리보기 상태
+    const [previewIndex, setPreviewIndex] = useState<number | null>(null);
 
     // 댓글 입력 상태
     const [comment, setComment] = useState('');
@@ -196,6 +201,7 @@ export default function FeedDetailContent({ postId, postType = 'feed' }: FeedDet
                     content={post.content}
                     imageUrls={post.image_urls}
                     className="p-4"
+                    onImageClick={(index) => setPreviewIndex(index)}
                 />
                 {/** 댓글 영역 */}
                 <div className={styles.commentListWrapper}>
@@ -207,6 +213,17 @@ export default function FeedDetailContent({ postId, postType = 'feed' }: FeedDet
                     />
                 </div>
             </div>
+            {/** 이미지 미리보기 모달 */}
+            <AnimatePresence>
+                {previewIndex !== null && post.image_urls && post.image_urls.length > 0 && (
+                    <ImagePreviewModal
+                        images={post.image_urls}
+                        initialIndex={previewIndex}
+                        onClose={() => setPreviewIndex(null)}
+                    />
+                )}
+            </AnimatePresence>
+
             {/** 댓글 작성 영역 (하단 고정, 데스크탑에서 최대 너비 제한) */}
             <div className={styles.inputWrapper}>
                 <div className={styles.inputInner}>

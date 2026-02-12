@@ -15,6 +15,8 @@ interface PostContentProps {
   maxImages?: number
   /** 추가 className */
   className?: string
+  /** 이미지 클릭 시 콜백 (index: 클릭한 이미지의 원본 목록 내 인덱스) */
+  onImageClick?: (index: number) => void
 }
 
 /**
@@ -28,6 +30,7 @@ const PostContent = memo(function PostContent({
   lineClamp,
   maxImages,
   className,
+  onImageClick,
 }: PostContentProps) {
   const { handleImageError, isFailed } = useMultipleImageError()
 
@@ -59,7 +62,11 @@ const PostContent = memo(function PostContent({
               )
             }
             return (
-              <div key={index} className={styles.imageItem}>
+              <div
+                key={index}
+                className={cn(styles.imageItem, onImageClick && 'cursor-pointer')}
+                onClick={() => onImageClick?.(index)}
+              >
                 <Image
                   src={url}
                   alt={`post-image-${index}`}

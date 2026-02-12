@@ -150,7 +150,7 @@ function ReportDetailContentYB({
           }
           action={
             <Button
-              label="팀장에게 요청하기"
+              label="목록으로 돌아가기"
               size="M"
               type="primary"
               onClick={backToList}

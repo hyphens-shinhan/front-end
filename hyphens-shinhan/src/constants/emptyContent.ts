@@ -25,7 +25,7 @@ export const EMPTY_CONTENT_MESSAGES = {
     /** 개인정보 설정 조회 실패 */
     PRIVACY: '개인정보 설정을 불러올 수 없어요.',
     /** 활동 보고서 상세 조회 실패 */
-    REPORT: '보고서를 불러올 수 없어요.',
+    REPORT: '팀장님이 작성 중인 상태에요.',
     /** 연간 필수 활동 상세 조회 실패 */
     MANDATORY_ACTIVITY: '연간 필수 활동을 불러올 수 없어요.',
     /** 멘토 설문 조회 실패 */

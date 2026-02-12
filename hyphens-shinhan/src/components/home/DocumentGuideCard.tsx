@@ -1,11 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Button from '@/components/common/Button';
 import { cn } from '@/utils/cn';
-import { ROUTES } from '@/constants';
-import { useUserStore, toNavRole } from '@/stores';
 
 /** WMO 기상 코드 → 한글 설명 (간단 매핑) */
 const WEATHER_LABELS: Record<number, string> = {
@@ -44,15 +40,10 @@ const SEOUL_LON = 126.978;
 const OPEN_METEO_URL = `https://api.open-meteo.com/v1/forecast?latitude=${SEOUL_LAT}&longitude=${SEOUL_LON}&current=temperature_2m,weather_code&timezone=Asia%2FSeoul`;
 
 /**
- * 홈 상단 서울 오늘 날씨 카드.
- * OB: 날씨 + "오늘도 좋은 하루" 문구만. YB: 날씨 + "MY활동 보기" 버튼.
+ * 홈 상단 OB 전용 서울 오늘 날씨 카드.
+ * 날씨 + "오늘도 좋은 하루 되세요" 문구만 표시.
  */
 export default function DocumentGuideCard() {
-  const router = useRouter();
-  const user = useUserStore((s) => s.user);
-  const userRole = user ? toNavRole(user.role) : 'YB';
-  const isOB = userRole === 'OB';
-
   const [weather, setWeather] = useState<{
     temp: number;
     code: number;
@@ -99,11 +90,6 @@ export default function DocumentGuideCard() {
     ? `${getWeatherLabel(weather.code)} ${weather.temp}°C`
     : '불러오는 중…';
 
-  const handleCta = () => {
-    if (isOB) router.push(ROUTES.COMMUNITY.MAIN);
-    else router.push(ROUTES.SCHOLARSHIP.MAIN);
-  };
-
   return (
     <article className={styles.card}>
       <div className={styles.rightImage}>
@@ -137,21 +123,7 @@ export default function DocumentGuideCard() {
           <h2 className={styles.title}>{title}</h2>
           <p className={styles.dDay}>{subtitle}</p>
           <div className={styles.ctaWrap}>
-            {isOB ? (
-              <p className={styles.obMessage}>오늘도 좋은 하루 되세요</p>
-            ) : (
-              <>
-                <div className={styles.ctaRow}>
-                  <span className={styles.ctaLabel}>이번 달 활동 확인하기</span>
-                </div>
-                <Button
-                  label="MY활동 보기"
-                  size="M"
-                  type="primary"
-                  onClick={handleCta}
-                />
-              </>
-            )}
+            <p className={styles.obMessage}>오늘도 좋은 하루 되세요</p>
           </div>
         </div>
       </div>
@@ -175,7 +147,5 @@ const styles = {
   title: 'title-18 text-white',
   dDay: 'font-text48 leading-tight text-white',
   ctaWrap: 'flex flex-col items-start gap-3.5 mt-20',
-  ctaRow: 'flex items-center gap-2',
-  ctaLabel: 'body-5 text-white shrink-0',
   obMessage: 'body-5 text-white/90',
 } as const;

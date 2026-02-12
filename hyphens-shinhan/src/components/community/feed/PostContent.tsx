@@ -85,7 +85,7 @@ export default PostContent
 const styles = {
   container: cn('flex flex-col gap-4'),
   content: cn('body-8', 'text-grey-11'),
-  imageWrapper: cn('flex flex-row gap-2 items-center'),
+  imageWrapper: cn('flex flex-row gap-2 items-center flex-wrap'),
   imageItem: cn(
     'relative',
     'w-22 h-22 rounded-[12px] overflow-hidden',

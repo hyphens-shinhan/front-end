@@ -43,7 +43,7 @@ export default function MenteeDetailPage() {
         <h1 className={styles.headerTitle}>멘티 프로필</h1>
       </div>
 
-      <PublicProfileContent userId={menteeId} />
+      <PublicProfileContent userId={menteeId} mentorView />
     </div>
   );
 }

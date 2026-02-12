@@ -14,6 +14,8 @@ const BASE = '/follows'
  */
 export interface FollowRequestDisplay {
   id: string
+  /** 요청자 userId */
+  requesterId: string
   name: string
   avatar_url?: string | null
   university?: string
@@ -22,6 +24,7 @@ export interface FollowRequestDisplay {
 function mapFollowRequestToDisplay(req: FollowRequest): FollowRequestDisplay {
   return {
     id: req.id,
+    requesterId: req.requester.id,
     name: req.requester.name,
     avatar_url: req.requester.avatar_url,
   }

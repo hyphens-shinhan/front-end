@@ -11,14 +11,16 @@ import EmptyContent from "../common/EmptyContent";
 import { EMPTY_CONTENT_MESSAGES, ROUTES } from "@/constants";
 import { useUserStore, useHeaderStore } from "@/stores";
 import { AppRole } from "@/types";
-import { useFollow, useFollowStatus, useUnfollow } from "@/hooks/follows/useFollows";
+import { useFollow, useFollowStatus, useUnfollow, useFollowRequests, useAcceptFollowRequest } from "@/hooks/follows/useFollows";
 
 interface PublicProfileContentProps {
     userId: string;
+    /** 멘토뷰 모드: 팔로우 수락/채팅 버튼만 표시 */
+    mentorView?: boolean;
 }
 
 /** 다른 유저의 퍼블릭 프로필 컨텐츠 */
-export default function PublicProfileContent({ userId }: PublicProfileContentProps) {
+export default function PublicProfileContent({ userId, mentorView = false }: PublicProfileContentProps) {
     const router = useRouter();
     const { data: profile, isLoading, error } = usePublicProfile(userId);
     const currentUser = useUserStore((s) => s.user);
@@ -30,6 +32,13 @@ export default function PublicProfileContent({ userId }: PublicProfileContentPro
     const isFollowing = followStatus?.is_following ?? false;
     /** 요청만 보냄, 수락 대기 중 */
     const isRequestPending = followStatus?.status === 'PENDING';
+
+    // 멘토뷰: 멘티가 보낸 팔로우 요청 확인
+    const { data: followRequestsData } = useFollowRequests();
+    const pendingRequest = mentorView
+        ? followRequestsData?.requests?.find((r) => r.requesterId === userId)
+        : null;
+    const acceptFollowRequest = useAcceptFollowRequest();
 
     // 헤더 제목을 "프로필"로 설정
     useEffect(() => {
@@ -63,8 +72,31 @@ export default function PublicProfileContent({ userId }: PublicProfileContentPro
             {/** 프로필 (공개 설정에 따라 필터링된 정보만 표시) */}
             <Profile profile={profile} isMyProfile={isMyProfile} />
 
+            {/** 멘토뷰: 팔로우 수락 / 채팅하기 */}
+            {!isMyProfile && mentorView && (
+                <div className={styles.button}>
+                    {isFollowing ? (
+                        <Button
+                            label="채팅하기"
+                            size="L"
+                            type="primary"
+                            fullWidth
+                            onClick={() => router.push(`${ROUTES.CHAT}/${userId}`)}
+                        />
+                    ) : pendingRequest ? (
+                        <Button
+                            label="팔로우 수락"
+                            size="L"
+                            type="primary"
+                            fullWidth
+                            onClick={() => acceptFollowRequest.mutate(pendingRequest.id)}
+                        />
+                    ) : null}
+                </div>
+            )}
+
             {/** 퍼블릭 페이지 : 팔로우 요청 / 팔로우 요청됨(클릭 시 요청 취소) / 팔로우 취소 */}
-            {!isMyProfile && (
+            {!isMyProfile && !mentorView && (
                 <div className={styles.button}>
                     {isFollowing ? (
                         <div className={styles.buttonRow}>

@@ -31,8 +31,8 @@ export default function MentorMenteesPage() {
                   type="button"
                   onClick={() => router.push(ROUTES.MENTOR_DASHBOARD.MENTEE_DETAIL(m.menteeId))}
                   className={cn(
-                    'flex w-full items-center gap-4 rounded-[16px] border border-grey-2 bg-white p-4 text-left',
-                    'hover:bg-grey-1 active:bg-grey-2 transition-colors'
+                    'flex w-full items-center gap-4 rounded-[16px] bg-[#fafafa] p-4 text-left',
+                    'hover:bg-[#f5f5f5] active:bg-[#f0f0f0] transition-colors'
                   )}
                 >
                   <div className="h-12 w-12 shrink-0 overflow-hidden rounded-full">

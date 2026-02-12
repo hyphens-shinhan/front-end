@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Avatar from '@/components/common/Avatar';
+import { Icon } from '@/components/common/Icon';
+import { Skeleton } from '@/components/common/Skeleton';
 import {
   useReceivedRequests,
   useAcceptRequest,
@@ -29,6 +31,14 @@ function getMeetingMethodLabel(method: string | null | undefined): string {
   return MEETING_METHOD_LABELS[method] ?? method
 }
 
+/** Prefer human-readable date; strip ISO time part when showing raw. */
+function formatDateRaw(raw: string): string {
+  const trimmed = raw.trim()
+  const tIndex = trimmed.indexOf('T')
+  if (tIndex !== -1) return trimmed.slice(0, tIndex)
+  return trimmed
+}
+
 function formatRequestDateTime(req: MentorshipRequestForMentor): string {
   const scheduled = req.scheduled_at
   if (scheduled) {
@@ -42,10 +52,30 @@ function formatRequestDateTime(req: MentorshipRequestForMentor): string {
       // ignore
     }
   }
-  const date = req.preferred_date
+  const dateRaw = req.preferred_date
   const time = req.preferred_time
-  if (date && time) return `${date} ${time}`
-  if (date) return date
+  if (dateRaw && time) {
+    try {
+      const d = new Date(dateRaw)
+      if (!Number.isNaN(d.getTime())) {
+        return `${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일 ${time}`
+      }
+    } catch {
+      // ignore
+    }
+    return `${formatDateRaw(dateRaw)} ${time}`
+  }
+  if (dateRaw) {
+    try {
+      const d = new Date(dateRaw)
+      if (!Number.isNaN(d.getTime())) {
+        return `${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일`
+      }
+    } catch {
+      // ignore
+    }
+    return formatDateRaw(dateRaw)
+  }
   if (time) return time
   return ''
 }
@@ -163,7 +193,7 @@ export default function MentorHomePage() {
 
   return (
     <div className="min-h-full bg-white">
-      <div className="mx-auto max-w-[800px] px-4 py-6 sm:py-8">
+      <div className="mx-auto max-w-[800px] px-4 py-6 sm:py-8 md:px-6 md:py-10 lg:px-8">
         <header className="mb-6 flex flex-row items-start justify-between gap-4">
           <div className="min-w-0">
             <h1 className="text-[20px] font-bold leading-tight text-grey-10">
@@ -185,7 +215,7 @@ export default function MentorHomePage() {
           </button>
         </header>
 
-        {/* Stats — from GET /mentoring/stats (NEXT_PUBLIC_API_BASE_URL) */}
+        {/* Stats — YB design system: single card + 2x2 grid (MaintenanceReviewSummary) */}
         <section className="mb-8">
           {statsError && (
             <p className="mb-3 text-[13px] text-red-600">
@@ -193,33 +223,75 @@ export default function MentorHomePage() {
               {typeof window !== 'undefined' ? process.env.NEXT_PUBLIC_API_BASE_URL : ''})
             </p>
           )}
-          <div className="grid grid-cols-2 gap-3 sm:gap-4">
-            <div className="flex flex-col justify-between rounded-2xl border border-grey-2 bg-grey-1/50 p-4 sm:p-5">
-              <p className="text-[13px] font-medium text-grey-5">활성 멘티</p>
-              <p className="mt-2 text-[22px] font-bold tabular-nums leading-none text-grey-10">
-                {statsLoading ? '—' : activeMenteesCount}
-              </p>
-            </div>
-            <div className="flex flex-col justify-between rounded-2xl border border-grey-2 bg-grey-1/50 p-4 sm:p-5">
-              <p className="text-[13px] font-medium text-grey-5">다가오는 미팅</p>
-              <p className="mt-2 text-[22px] font-bold tabular-nums leading-none text-grey-10">
-                {statsLoading ? '—' : upcomingMeetings}
-              </p>
-            </div>
-            <div className="flex flex-col justify-between rounded-2xl border border-grey-2 bg-grey-1/50 p-4 sm:p-5">
-              <p className="text-[13px] font-medium text-grey-5">총 멘토링 시간</p>
-              <p className="mt-2 text-[22px] font-bold tabular-nums leading-none text-grey-10">
-                {statsLoading ? '—' : totalHours}
-                <span className="ml-1 text-[14px] font-medium text-grey-5">시간</span>
-              </p>
-            </div>
-            <div className="flex flex-col justify-between rounded-2xl border border-grey-2 bg-grey-1/50 p-4 sm:p-5">
-              <p className="text-[13px] font-medium text-grey-5">응답률</p>
-              <p className="mt-2 text-[22px] font-bold tabular-nums leading-none text-grey-10">
-                {statsLoading ? '—' : responseRate}
-                <span className="ml-1 text-[14px] font-medium text-grey-5">%</span>
-              </p>
-            </div>
+          <div className="w-full rounded-[16px] border border-grey-2 bg-white p-6">
+            {statsLoading ? (
+              <div className="grid grid-cols-2 gap-y-7">
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} className="flex flex-col gap-1.5">
+                    <div className="flex flex-row items-center gap-2">
+                      <Skeleton.Box className="size-5 shrink-0 rounded" />
+                      <Skeleton.Box className="h-5 w-16 rounded" />
+                    </div>
+                    <div className="flex flex-row items-center gap-2">
+                      <Skeleton.Box className="h-5 w-20 rounded" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-y-7">
+                <div className="flex flex-col gap-1.5">
+                  <div className="flex flex-row items-center gap-2">
+                    <span className="flex shrink-0">
+                      <Icon name="IconMBoldMenuBoard" size={20} className="text-grey-8" />
+                    </span>
+                    <span className="body-5 text-grey-9">활성 멘티</span>
+                  </div>
+                  <div className="flex flex-row items-center gap-2">
+                    <span className="body-6 text-grey-11 tabular-nums">{activeMenteesCount}</span>
+                  </div>
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <div className="flex flex-row items-center gap-2">
+                    <span className="flex shrink-0">
+                      <Icon name="IconMBoldCalendar" size={20} className="text-grey-8" />
+                    </span>
+                    <span className="body-5 text-grey-9">다가오는 미팅</span>
+                  </div>
+                  <div className="flex flex-row items-center gap-2">
+                    <span className="body-6 text-grey-11 tabular-nums">{upcomingMeetings}</span>
+                  </div>
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <div className="flex flex-row items-center gap-2">
+                    <span className="flex shrink-0">
+                      <Icon name="IconMBoldMedalStar" size={20} className="text-grey-8" />
+                    </span>
+                    <span className="body-5 text-grey-9">총 멘토링 시간</span>
+                  </div>
+                  <div className="flex flex-row items-center gap-2">
+                    <span className="body-6 text-grey-11 tabular-nums">
+                      {totalHours}
+                      <span className="ml-1 font-normal text-grey-9">시간</span>
+                    </span>
+                  </div>
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <div className="flex flex-row items-center gap-2">
+                    <span className="flex shrink-0">
+                      <Icon name="IconMBoldBookmark" size={20} className="text-grey-8" />
+                    </span>
+                    <span className="body-5 text-grey-9">응답률</span>
+                  </div>
+                  <div className="flex flex-row items-center gap-2">
+                    <span className="body-6 text-grey-11 tabular-nums">
+                      {responseRate}
+                      <span className="ml-1 font-normal text-grey-9">%</span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </section>
 
@@ -247,14 +319,14 @@ export default function MentorHomePage() {
               <p className="mt-1 text-[13px] text-grey-5">새 요청이 들어오면 여기에 표시됩니다</p>
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-4 md:space-y-5">
               {requests.map((req) => (
                 <article
                   key={req.id}
                   className="overflow-hidden rounded-2xl border border-grey-2 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)] transition-shadow hover:shadow-[0_2px_8px_rgba(0,0,0,0.06)]"
                 >
-                  <div className="flex flex-col gap-4 p-4 sm:flex-row sm:items-start sm:gap-5 sm:p-5">
-                    <div className="flex min-w-0 flex-1 gap-4">
+                  <div className="flex flex-col gap-4 p-4 sm:flex-row sm:items-start sm:gap-5 sm:p-5 md:gap-6 md:p-6">
+                    <div className="flex min-w-0 flex-1 gap-4 md:gap-5">
                       <div className="h-12 w-12 shrink-0 rounded-full ring-2 ring-grey-2 overflow-hidden">
                         <Avatar
                           src={req.menteeAvatar}
@@ -271,16 +343,16 @@ export default function MentorHomePage() {
                           {req.menteeName}님
                         </p>
                         {req.message && (
-                          <div className="mt-2 rounded-xl border-l-2 border-grey-3 bg-grey-1/60 pl-3 pr-2 py-2">
-                            <p className="line-clamp-3 text-[14px] font-normal leading-relaxed text-grey-6">
+                          <div className="mt-2 w-[330px] rounded-xl border-l-2 border-grey-3 bg-grey-1/60 pl-3 pr-2 py-2 md:mt-3 md:pl-4 md:pr-3 md:py-3">
+                            <p className="line-clamp-4 w-[330px] text-[14px] font-normal leading-relaxed text-grey-6 break-words">
                               {req.message}
                             </p>
                           </div>
                         )}
                         {(req.preferred_date || req.preferred_time || req.preferred_meeting_method) && (
-                          <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[13px] text-grey-6">
+                          <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[13px] text-grey-6 md:mt-3 md:gap-x-4 md:gap-y-2">
                             {(req.preferred_date || req.preferred_time) && (
-                              <span>
+                              <span className="whitespace-nowrap">
                                 {formatRequestDateTime(req)}
                               </span>
                             )}
@@ -293,7 +365,7 @@ export default function MentorHomePage() {
                         )}
                       </div>
                     </div>
-                    <div className="flex shrink-0 items-center gap-2 border-t border-grey-2 pt-4 sm:border-t-0 sm:border-l sm:border-grey-2 sm:pl-5 sm:pt-0">
+                    <div className="flex shrink-0 items-center gap-2 border-t border-grey-2 pt-4 sm:border-t-0 sm:border-l sm:border-grey-2 sm:pl-5 sm:pt-0 md:pl-6">
                       <button
                         type="button"
                         onClick={() =>
@@ -324,14 +396,14 @@ export default function MentorHomePage() {
         {acceptedRequests.length > 0 && (
           <section className="mb-8">
             <h2 className="mb-4 text-[16px] font-bold text-grey-10">수락된 요청</h2>
-            <div className="space-y-4">
+            <div className="space-y-4 md:space-y-5">
               {acceptedRequests.map((req) => (
                 <article
                   key={req.id}
                   className="overflow-hidden rounded-2xl border border-grey-2 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)] transition-shadow hover:shadow-[0_2px_8px_rgba(0,0,0,0.06)]"
                 >
-                  <div className="flex flex-col gap-4 p-4 sm:flex-row sm:items-start sm:gap-5 sm:p-5">
-                    <div className="flex min-w-0 flex-1 gap-4">
+                  <div className="flex flex-col gap-4 p-4 sm:flex-row sm:items-start sm:gap-5 sm:p-5 md:gap-6 md:p-6">
+                    <div className="flex min-w-0 flex-1 gap-4 md:gap-5">
                       <div className="h-12 w-12 shrink-0 rounded-full ring-2 ring-grey-2 overflow-hidden">
                         <Avatar
                           src={req.menteeAvatar}
@@ -347,9 +419,9 @@ export default function MentorHomePage() {
                         <p className="mt-0.5 text-[16px] font-bold leading-snug text-grey-10">
                           {req.menteeName}님
                         </p>
-                        <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[13px] text-grey-6">
+                        <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[13px] text-grey-6 md:mt-3 md:gap-x-4 md:gap-y-2">
                           {formatRequestDateTime(req) && (
-                            <span>{formatRequestDateTime(req)}</span>
+                            <span className="whitespace-nowrap">{formatRequestDateTime(req)}</span>
                           )}
                           {(req.meeting_method || req.preferred_meeting_method) && (
                             <span className="rounded-full bg-grey-2 px-2 py-0.5 font-medium text-grey-7">
@@ -359,7 +431,7 @@ export default function MentorHomePage() {
                         </div>
                       </div>
                     </div>
-                    <div className="flex shrink-0 items-center border-t border-grey-2 pt-4 sm:border-t-0 sm:border-l sm:border-grey-2 sm:pl-5 sm:pt-0">
+                    <div className="flex shrink-0 items-center border-t border-grey-2 pt-4 sm:border-t-0 sm:border-l sm:border-grey-2 sm:pl-5 sm:pt-0 md:pl-6">
                       <button
                         type="button"
                         onClick={() => openScheduleModal(req)}

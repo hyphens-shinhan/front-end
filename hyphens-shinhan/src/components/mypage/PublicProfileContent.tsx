@@ -40,17 +40,17 @@ export default function PublicProfileContent({ userId }: PublicProfileContentPro
         };
     }, [setCustomTitle, resetHandlers]);
 
-    // MENTOR / OB 인 경우 멘토 상세 페이지로 이동
+    // MENTOR 인 경우 멘토 상세 페이지로 이동
     useEffect(() => {
         if (!profile) return;
 
-        if (profile.role === AppRole.MENTOR || profile.role === AppRole.OB) {
+        if (profile.role === AppRole.MENTOR) {
             router.replace(`${ROUTES.MENTORS.MAIN}/${profile.id}`);
         }
     }, [profile, router]);
 
     // 프로필 리다이렉트 중이거나 로딩 중일 때
-    if (isLoading || (!error && profile && (profile.role === AppRole.MENTOR || profile.role === AppRole.OB))) {
+    if (isLoading || (!error && profile && profile.role === AppRole.MENTOR)) {
         return <EmptyContent variant="loading" message={EMPTY_CONTENT_MESSAGES.LOADING.DEFAULT} />;
     }
 
@@ -67,14 +67,23 @@ export default function PublicProfileContent({ userId }: PublicProfileContentPro
             {!isMyProfile && (
                 <div className={styles.button}>
                     {isFollowing ? (
-                        <Button
-                            label="팔로우 취소"
-                            size="L"
-                            type="secondary"
-                            fullWidth
-                            className="bg-grey-1-1"
-                            onClick={() => unfollowMutation.mutate(userId)}
-                        />
+                        <div className={styles.buttonRow}>
+                            <Button
+                                label="팔로우 취소"
+                                size="L"
+                                type="secondary"
+                                fullWidth
+                                className="bg-grey-1-1"
+                                onClick={() => unfollowMutation.mutate(userId)}
+                            />
+                            <Button
+                                label="채팅하기"
+                                size="L"
+                                type="primary"
+                                fullWidth
+                                onClick={() => router.push(`${ROUTES.CHAT}/${userId}`)}
+                            />
+                        </div>
                     ) : isRequestPending ? (
                         <Button
                             label="팔로우 요청됨"
@@ -111,4 +120,5 @@ export default function PublicProfileContent({ userId }: PublicProfileContentPro
 const styles = {
     container: cn('flex flex-1 flex-col overflow-x-hidden'),
     button: cn('px-4 pb-4'),
+    buttonRow: cn('flex gap-2'),
 }
